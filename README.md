@@ -3,8 +3,7 @@ ETL
 
 C++11 Embedded Template Library for AVR 8-bit microcontrollers.
 
-**ETL** is a header only template library geared towards the size and performance
-constraints of embedded applications.
+**ETL** is a header only template library geared towards the size and performance constraints of embedded applications.
 
 
 ###Using ETL in an Atmel Studio project
@@ -21,8 +20,10 @@ constraints of embedded applications.
 3. Add ETL include path in your configuration :
   In 'Project' -> 'Project properties' -> 'Toolchain' -> 'AVR/GNU C++ Compiler'
   -> 'General'
-  add "C:\\*your_path*\ETL\include" in the 'Default Include Paths:' field (where
-  '*your_path*' is the actual location of the ETL library).
+   - add **"C:\\*your_path*\ETL\include"** in the 'Default Include Paths:' field.*
+   - Add **"C:\\*your_path*\ETL\libstd\include"** unless your toolchain has already a C++ standard library.
+
+      \*(where ***your_path*** is the actual location of the ETL library).
 
 4. Add #include <etl.h> in your cpp file.
   You can now use new, delete, new[], delete[] and placement new operators.
