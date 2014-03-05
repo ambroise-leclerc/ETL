@@ -1,0 +1,39 @@
+#include <etl/freestore.h>
+
+/// Allocates requested number of bytes.
+/// @param[in] size number of bytes to allocate
+/// @return pointer to allocated memory
+void* operator new(std::size_t size){
+  return etl::FreeStore::Allocate(size);
+}
+
+/// Deallocates memory space previously allocated by a matching operator new.
+/// @param[in] pointer to the memory to deallocate
+/// @return
+void operator delete(void* ptr) {
+  etl::FreeStore::Deallocate(ptr);
+}
+
+/// Allocates requested number of bytes.
+/// @param[in] size number of bytes to allocate
+/// @return pointer to allocated memory
+void* operator new[](size_t size) {
+  return etl::FreeStore::Allocate(size);
+}
+
+/// Deallocates memory space previously allocated by a matching operator new.
+/// @param[in] pointer to the memory to deallocate
+/// @return
+void operator delete[](void* ptr) {
+  etl::FreeStore::Deallocate(ptr);
+}
+
+/// Placement new for allocating the object inside a given memory buffer.
+/// @param[in] ptr pointer to a memory area to initialize the object at
+void* operator new(size_t, void* const buf){
+  return buf;
+}
+
+/// Placement delete called automatically on "placement new" failure.
+void operator delete(void*, void* const){
+}
