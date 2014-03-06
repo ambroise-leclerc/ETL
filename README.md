@@ -25,7 +25,7 @@ C++11 Embedded Template Library for AVR 8-bit microcontrollers.
 
       \*(where ***your_path*** is the actual location of the ETL library).
 
-4. Add #include <etl.h> in your cpp file.
+4. Add `#include <etl.h>` in your cpp file.
   You can now use new, delete, new[], delete[] and placement new operators.
   The free store manager provides you additional functions :
     - `etl::FreeStore::GetMemorySize()`
