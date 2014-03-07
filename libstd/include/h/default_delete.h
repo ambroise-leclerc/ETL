@@ -1,7 +1,7 @@
-/// @file cstddef
-/// @data 05/03/2014 18:23:53
+/// @file default_delete.h
+/// @data 07/03/2014 11:35:53
 /// @author Ambroise Leclerc
-/// @brief
+/// @brief Default destruction policy used by std::unique_ptr when no deleter is specified.
 //
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
@@ -31,10 +31,39 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_CSTDDEF_
-#define ETL_LIBSTD_CSTDDEF_
+#ifndef ETL_LIBSTD_DEFAULT_DELETE_H
+#define ETL_LIBSTD_DEFAULT_DELETE_H
 
-#include <stddef.h>
-#include "h/cstddef.h"
+namespace std {
+  
+template <typename T>
+struct default_delete {
+  /// Default constructor.
+  constexpr default_delete() noexcept = default;
+  
+  /// Converting constructor from another type.
+  template <typename T2>
+  constexpr default_delete(const default_delete<T2>&) noexcept { }
+    
+  void operator()(T* pointer) {
+    delete pointer;
+  }
+};
 
-#endif // ETL_LIBSTD_CSTDDEF_
+/// std::default_delete specialization for arrays
+template <typename T>
+struct default_delete<T[]> {
+  /// Default constructor.
+  constexpr default_delete() noexcept = default;
+  
+  /// Converting constructor from another type.
+  template <typename T2>
+  constexpr default_delete(const default_delete<T2[]>&) noexcept { }
+    
+  void operator()(T* pointer) {
+    delete[] pointer;
+  }
+};
+
+} // namespace std
+#endif // ETL_LIBSTD_DEFAULT_DELETE_H

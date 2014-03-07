@@ -34,7 +34,11 @@
 #ifndef ETL_LIBSTD_UNIQUE_PTR_H
 #define ETL_LIBSTD_UNIQUE_PTR_H
 #include <utility>
+#include <cstddef>
+#include <h/default_delete.h>
 
+namespace std {
+  
 template <class T, class D = default_delete<T>>
 class unique_ptr {
  public:
@@ -49,11 +53,11 @@ class unique_ptr {
   constexpr unique_ptr() noexcept : pointer_(), deleter_() { }
   
   /// Constructs an emply std::unique_ptr.
-  constexpr unique_ptr(nullptr_t) noexcept : unique_ptr() { }
+  constexpr unique_ptr(decltype(nullptr)) noexcept : unique_ptr() { }
   
   /// Constructs a std::unique_ptr which owns p.
   /// @param p pointer
-  explicit unique_ptr(pointer p) noexcept : pointer_(p, deleter_type()) { }
+  explicit unique_ptr(pointer p) noexcept : pointer_(p), deleter_(deleter_type()) { }
   
   /// Constructs a unique_ptr by transferring ownership from source to *this.
   /// @param[in] source source pointer
@@ -62,7 +66,7 @@ class unique_ptr {
   
   /// Converting constructor from another type
   template <class T2, class D2>
-  unique_ptr(unique_ptr<T2, D2>&& u) noexcept
+  unique_ptr(unique_ptr<T2, D2>&& source) noexcept
    : pointer_(source.release(), std::forward<D2>(source.get_deleter())) { }
 
   // Disable copy from lvalue.
@@ -74,7 +78,7 @@ class unique_ptr {
   unique_ptr& operator=(unique_ptr&& source) noexcept {
     reset(source.release());
     get_deleter() = std::forward<deleter_type>(source.get_deleter());
-    return *this,
+    return *this;
   }
 
   /// Destructs the managed object.
@@ -165,4 +169,5 @@ class unique_ptr {
   }
 };
 
+} // namespace std
 #endif // ETL_LIBSTD_UNIQUE_PTR_H

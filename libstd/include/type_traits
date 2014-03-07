@@ -31,57 +31,12 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_TYPE_TRAITS_PTR_H
-#define ETL_LIBSTD_TYPE_TRAITS_PTR_H
+#ifndef ETL_LIBSTD_TYPE_TRAITS_H
+#define ETL_LIBSTD_TYPE_TRAITS_H
+#include <utility>
 
-namespace std {
-/// Base class for type traits. Wraps a static constant of specified type.
-template<class T, T v>
-struct integral_constant {
-  static constexpr T value = v;
-  typedef T value_type;
-  typedef integral_constant type;
-  constexpr operator value_type() const { return value; }
-  constexpr value_type operator()() const { return value; }
-};
+#include <h/traits_operations.h>
+#include <h/traits_primary_types.h>
+#include <h/traits_references.h>
 
-typedef integral_constant<bool, true> true_type;	///> Specialization for type bool
-typedef integral_constant<bool, false> false_type;  ///> Specialization for type bool
-
- 
-/// Determines whether the two given types are equivalent.
-template<typename T, typename U> struct is_same       : false_type {};
-template<typename T>             struct is_same<T, T> : true_type {};  
- 
-/// Provides member typedef type, which is defined as T if B is true at
-/// compile time, or as F if B is false.
-template<bool, class T, class F>  struct conditional { typedef T type; };
-template<class T, class F>        struct conditional<false, T, F> { typedef F type; };
-
-
-/// Obtains the type T without const or volatile qualification.
-template <class T>
-struct remove_cv {
-    typedef typename std::remove_volatile<typename std::remove_const<T>::type>::type type;
-};
-
-/// Obtains the type T without const qualification.
-template <class T> struct remove_const          { typedef T type; };
-template <class T> struct remove_const<const T> { typedef T type; };
-
-/// Obtains the type T without volatile qualification. 
-template <class T> struct remove_volatile             { typedef T type; };
-template <class T> struct remove_volatile<volatile T> { typedef T type; };
-
-
-/// Checks whether T is a void type. is_void< >::value equals true if T is of
-/// type void, const void, volatile void, or const volatile void.
-template <class T>
-struct is_void
- : std::integral_constant<bool, std::is_same<void, typename std::remove_cv<T>::type>::value>
-{};
-
-
-
-} // namespace std
-#endif // ETL_LIBSTD_TYPE_TRAITS_PTR_H
+#endif // ETL_LIBSTD_TYPE_TRAITS_H
