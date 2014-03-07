@@ -12,32 +12,8 @@
 
 namespace etl {
   
-template <typename T, T v>
-struct integral_constant {
-  static constexpr T value = v;
-  typedef T value_type;
-  typedef integral_constant<T,v> type;
-  constexpr operator T() { return v; }
-};  
-  
-typedef integral_constant<bool, true> true_type;
-typedef integral_constant<bool, true> false_type;
- 
-/// \brief Determines whether the two given types are equivalent.
-template<typename T, typename U> struct is_same       : false_type {};
-template<typename T>             struct is_same<T, T> : true_type {};  
-
-/// \brief Determines whether the given type is void.
-template<typename T> struct is_void : false_type {};
-template<> struct is_void<void> : true_type {};
- 
-/// \brief Provides member typedef type, which is defined as T if B is true at
-/// compile time, or as F if B is false.
-template<bool, class T, class F>  struct conditional { typedef T type; };
-template<class T, class F>        struct conditional<false, T, F> { typedef F type; };
-
 class EmptyType {};
-
+  
 // Comparison of two types :
 //  SameType<int, float>::result == 1
 //  SameType<int, int>::result == 0
