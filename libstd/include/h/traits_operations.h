@@ -3,6 +3,7 @@
 /// @author Ambroise Leclerc
 /// @brief Type traits operations.
 //
+// Embedded Template Library
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
 //

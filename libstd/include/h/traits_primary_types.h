@@ -3,6 +3,7 @@
 /// @author Ambroise Leclerc
 /// @brief Type traits primary types.
 //
+// Embedded Template Library
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
 //
@@ -35,7 +36,7 @@
 #define ETL_LIBSTD_TRAITS_PRIMARY_TYPES_H
 
 namespace etlHelper {
-  template <typename> struct is_type_entier        : std::false_type { };
+  template<typename> struct is_type_entier        : std::false_type { };
   template <> struct is_type_entier<bool>          : std::true_type { };
   template <> struct is_type_entier<int8_t>        : std::true_type { };
   template <> struct is_type_entier<uint8_t>       : std::true_type { };
@@ -45,43 +46,43 @@ namespace etlHelper {
   template <> struct is_type_entier<uint32_t>      : std::true_type { };
   template <> struct is_type_entier<int64_t>       : std::true_type { };
   template <> struct is_type_entier<uint64_t>      : std::true_type { };
-  template <typename> struct is_type_flottant      : std::false_type { };
+  template<typename> struct is_type_flottant      : std::false_type { };
   template <> struct is_type_flottant<float>       : std::true_type { };
   template <> struct is_type_flottant<double>      : std::true_type { };
   template <> struct is_type_flottant<long double> : std::true_type { };
-  template <typename T> struct is_pointeur         : std::false_type { };
-  template <typename T> struct is_pointeur<T*>     : std::true_type { };
-  template <typename T> struct is_mb_pointeur      : std::false_type { };
-  template <typename T, typename U> struct is_mb_pointeur<T U::*>     : std::true_type { };
+  template<typename T> struct is_pointeur         : std::false_type { };
+  template<typename T> struct is_pointeur<T*>     : std::true_type { };
+  template<typename T> struct is_mb_pointeur      : std::false_type { };
+  template<typename T, typename U> struct is_mb_pointeur<T U::*>     : std::true_type { };
 } // namespace etlHelper 
 
 namespace std {
 /// Checks whether T is a void type. is_void< >::value equals true if T is of
 /// type void, const void, volatile void, or const volatile void.
-template <typename T>
+template<typename T>
 struct is_void
  : std::integral_constant<bool, std::is_same<void, typename std::remove_cv<T>::type>::value>
 {};
 
 /// Checks if T is an union.
 /// is_union::value is true if T is an union, false otherwise.                         
-template <typename T> struct is_union : std::integral_constant<bool, __is_union(T)> { };
-template <typename T> struct is_enum : std::integral_constant<bool, __is_enum(T)> { };
-template <typename T> struct is_class : std::integral_constant<bool, __is_class(T)> { };
-template <typename T> struct is_integral : etlHelper::is_type_entier<typename std::remove_cv<T>::type>::type { };
-template <typename T> struct is_floating_point : etlHelper::is_type_flottant<typename std::remove_cv<T>::type>::type { };
-template <typename T> struct is_pointer : etlHelper::is_pointeur<typename std::remove_cv<T>::type> {};
-template <typename T> struct is_member_pointer : etlHelper::is_mb_pointeur<typename std::remove_cv<T>::type> {};
+template<typename T> struct is_union : std::integral_constant<bool, __is_union(T)> { };
+template<typename T> struct is_enum : std::integral_constant<bool, __is_enum(T)> { };
+template<typename T> struct is_class : std::integral_constant<bool, __is_class(T)> { };
+template<typename T> struct is_integral : etlHelper::is_type_entier<typename std::remove_cv<T>::type>::type { };
+template<typename T> struct is_floating_point : etlHelper::is_type_flottant<typename std::remove_cv<T>::type>::type { };
+template<typename T> struct is_pointer : etlHelper::is_pointeur<typename std::remove_cv<T>::type> {};
+template<typename T> struct is_member_pointer : etlHelper::is_mb_pointeur<typename std::remove_cv<T>::type> {};
   
   
-template <typename T> 
+template<typename T> 
 struct is_arithmetic : std::integral_constant<bool,
                          std::is_integral<T>::value ||
                          std::is_floating_point<T>::value> { };
                            
 /// Checks if T is a scalar type.
 /// is_scalar::value is true if T is a scalar type, false otherwise.  
-template <typename T>
+template<typename T>
 struct is_scalar : std::integral_constant<bool,
                      std::is_arithmetic<T>::value     ||
                      std::is_enum<T>::value           ||
@@ -91,15 +92,15 @@ struct is_scalar : std::integral_constant<bool,
 
 /// Checks if T is an array.
 /// is_array::value is true if T is an array, false otherwise.                         
-template <typename T> struct is_array                       : std::false_type { };
-template <typename T> struct is_array<T[]>                  : std::true_type { };
-template <typename T, std::size_t N> struct is_array<T[N]>  : std::true_type { };
+template<typename T> struct is_array                       : std::false_type { };
+template<typename T> struct is_array<T[]>                  : std::true_type { };
+template<typename T, std::size_t N> struct is_array<T[N]>  : std::true_type { };
 
 
 
 /// Checks if T is an object type (scalar, array, class, union).
 /// is_object::value is true if T is an object, false otherwise.
-template <typename T>
+template<typename T>
 struct is_object : std::integral_constant<bool,
                      std::is_scalar<T>::value ||
                      std::is_array<T>::value  ||

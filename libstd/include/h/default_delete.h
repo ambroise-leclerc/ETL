@@ -3,6 +3,7 @@
 /// @author Ambroise Leclerc
 /// @brief Default destruction policy used by std::unique_ptr when no deleter is specified.
 //
+// Embedded Template Library
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
 //
@@ -36,13 +37,13 @@
 
 namespace std {
   
-template <typename T>
+template<typename T>
 struct default_delete {
   /// Default constructor.
   constexpr default_delete() noexcept = default;
   
   /// Converting constructor from another type.
-  template <typename T2>
+  template<typename T2>
   constexpr default_delete(const default_delete<T2>&) noexcept { }
     
   void operator()(T* pointer) {
@@ -51,13 +52,13 @@ struct default_delete {
 };
 
 /// std::default_delete specialization for arrays
-template <typename T>
+template<typename T>
 struct default_delete<T[]> {
   /// Default constructor.
   constexpr default_delete() noexcept = default;
   
   /// Converting constructor from another type.
-  template <typename T2>
+  template<typename T2>
   constexpr default_delete(const default_delete<T2[]>&) noexcept { }
     
   void operator()(T* pointer) {

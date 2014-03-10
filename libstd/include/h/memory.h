@@ -3,6 +3,7 @@
 /// @author Ambroise Leclerc
 /// @brief
 //
+// Embedded Template Library
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
 //
@@ -33,10 +34,11 @@
 
 #ifndef ETL_LIBSTD_MEMORY_H_
 #define ETL_LIBSTD_MEMORY_H_
+#include <utility>
 
 namespace std {
   
-template <typename T>
+template<typename T>
 class allocator {
  public:
   typedef T* pointer;
@@ -45,9 +47,14 @@ class allocator {
   typedef T& reference;
   typedef const T& const_reference;
   // construct helper using placement new:
-  static void construct(reference p, const_reference value) {
+/*  static void construct(reference p, const_reference value) {
     new (&p) T(value); // T must support copy-constructor
   }
+  */
+  template<typename T2, typename... Args>
+  static void construct(T2* p, Args&&... value) {
+    new((void*)p) T2(std::forward<Args>(value)...);
+  }    
 
   // destroy helper to invoke destructor explicitly.
   static void destroy(const_reference t) {

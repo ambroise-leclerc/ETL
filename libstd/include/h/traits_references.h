@@ -3,6 +3,7 @@
 /// @author Ambroise Leclerc
 /// @brief Type traits references operations.
 //
+// Embedded Template Library
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
 //
@@ -35,33 +36,33 @@
 #define ETL_LIBSTD_TRAITS_REFERENCE_H
 
 namespace std {
-  template <typename T> struct is_reference             : std::false_type {};
-  template <typename T> struct is_reference<T&>         : std::true_type {};
-  template <typename T> struct is_reference<T&&>        : std::true_type {};
+  template<typename T> struct is_reference             : std::false_type {};
+  template<typename T> struct is_reference<T&>         : std::true_type {};
+  template<typename T> struct is_reference<T&&>        : std::true_type {};
 } // namespace std
 
 namespace etlHelper {
-  template <typename T> struct is_referenceable
+  template<typename T> struct is_referenceable
    : std::integral_constant<bool, (std::is_object<T>::value == true || std::is_reference<T>::value == true)>::type { };
      
-  template <typename T, bool b> struct rvalue_reference_type { typedef T type; };
-  template <typename T> struct rvalue_reference_type<T, true> { typedef T&& type; }; 
+  template<typename T, bool b> struct rvalue_reference_type { typedef T type; };
+  template<typename T> struct rvalue_reference_type<T, true> { typedef T&& type; }; 
 } // namespace etlHelper
 
 namespace std {
-  template <typename T> struct is_rvalue_reference      : std::false_type { };
-  template <typename T> struct is_rvalue_reference<T&&> : std::true_type  { };
-  template <typename T> struct is_lvalue_reference      : std::false_type { };
-  template <typename T> struct is_lvalue_reference<T&>  : std::true_type  { };
+  template<typename T> struct is_rvalue_reference      : std::false_type { };
+  template<typename T> struct is_rvalue_reference<T&&> : std::true_type  { };
+  template<typename T> struct is_lvalue_reference      : std::false_type { };
+  template<typename T> struct is_lvalue_reference<T&>  : std::true_type  { };
   
-  template <typename T> struct add_rvalue_reference {
+  template<typename T> struct add_rvalue_reference {
     typedef typename etlHelper::rvalue_reference_type< 
       T, (is_void<T>::value == false && is_reference<T>::value == false)>::type type;
   };
-  template <typename T> struct add_lvalue_reference   { typedef T type; };
+  template<typename T> struct add_lvalue_reference   { typedef T type; };
     
-  template <typename T> using add_rvalue_reference_t = typename add_rvalue_reference<T>::type;
-  template <typename T> using add_lvalue_reference_t = typename add_lvalue_reference<T>::type;
+  template<typename T> using add_rvalue_reference_t = typename add_rvalue_reference<T>::type;
+  template<typename T> using add_lvalue_reference_t = typename add_lvalue_reference<T>::type;
   
 } // namespace std 
 

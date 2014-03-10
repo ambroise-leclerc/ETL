@@ -3,6 +3,7 @@
 /// @author Ambroise Leclerc
 /// @brief Traits : part of type support library
 //
+// Embedded Template Library
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
 //
@@ -38,5 +39,14 @@
 #include <h/traits_operations.h>
 #include <h/traits_primary_types.h>
 #include <h/traits_references.h>
+
+namespace std {
+
+/// If T is an array of some type X, provides the member type equal to X, otherwise type is T.
+template<class T> struct remove_extent { using type = T; };
+template<class T> struct remove_extent<T[]> { using type = T; };
+template<class T, std::size_t N> struct remove_extent<T[N]> { using type = T; };
+
+} // namespace std
 
 #endif // ETL_LIBSTD_TYPE_TRAITS_H

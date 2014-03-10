@@ -51,10 +51,10 @@ auto Max(const T1& t1, const T2& t2, const T3&... t3) -> decltype(Max(((t2 < t1)
 }
 
 
-template <typename T, typename M> M MemberType(M T::*);
-template <typename T, typename M> T ClassType(M T::*);
+template<typename T, typename M> M MemberType(M T::*);
+template<typename T, typename M> T ClassType(M T::*);
 
-template <typename T, typename R, R T::*M >
+template<typename T, typename R, R T::*M >
 constexpr std::size_t OffsetOf() {
   return reinterpret_cast<std::size_t>(&(((T*)0)->*M));
 }
