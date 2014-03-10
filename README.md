@@ -15,7 +15,7 @@ C++(11/14) Embedded Template Library for AVR 8-bit microcontrollers.
 2. Configure the project to use C++11 :
   In 'Project' -> 'Project properties' -> 'Toolchain' -> 'AVR/GNU C++ Compiler'
   ->  'Miscellaneous'
-  add "-std=c++11" in the 'Other flags:' field.
+  add `-std=c++11` in the 'Other flags:' field (or add `-std=gnu++1y` if you need C++14 functionnalities such as std::make_unique).
 
 3. Add ETL include path in your configuration :
   In 'Project' -> 'Project properties' -> 'Toolchain' -> 'AVR/GNU C++ Compiler'
