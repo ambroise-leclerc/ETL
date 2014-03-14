@@ -38,31 +38,28 @@
 
 namespace std {
 
-template <class T> struct remove_reference      { typedef T type; };
-template <class T> struct remove_reference<T&>  { typedef T type; };
-template <class T> struct remove_reference<T&&> { typedef T type; };
-
 /// Returns an rvalue reference to arg and converts arg to an xvalue.
 /// @param arg object to be moved
 /// @return rvalue reference to arg
-template <class T>
+template<typename T>
 typename remove_reference<T>::type&& move(T&& arg) noexcept {
   return static_cast<typename std::remove_reference<T>::type&&>(arg);
 }  
 
 /// Forwards arg to another function exactly as it was passed to the calling function
 /// @param arg object to be forwarded
-template <class T>
+template<typename T>
 constexpr T&& forward( typename std::remove_reference<T>::type& arg ) noexcept {
   return static_cast<T&&>(arg);
 }
 
 /// Forwards arg to another function exactly as it was passed to the calling function
 /// @param arg object to be forwarded
-template <class T>
+template<typename T>
 constexpr T&& forward( typename std::remove_reference<T>::type&& t ) noexcept {
   return static_cast<T&&>(t);
 }
+
 
 } // namespace std
 #endif /* ETL_LIBSTD_UTILITY_H_ */

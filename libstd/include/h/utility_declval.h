@@ -1,7 +1,7 @@
-/// @file traits_references.h
-/// @data 07/03/2014 11:35:53
+/// @file utility_declval.h
+/// @data 13/03/2014 22:09:55
 /// @author Ambroise Leclerc
-/// @brief Type traits references operations.
+/// @brief ISO §20.2.4
 //
 // Embedded Template Library
 // Copyright (c) 2014, Ambroise Leclerc
@@ -32,26 +32,24 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_TRAITS_REFERENCE_H
-#define ETL_LIBSTD_TRAITS_REFERENCE_H
 
-namespace std {
-  template<typename T> struct is_reference             : std::false_type {};
-  template<typename T> struct is_reference<T&>         : std::true_type {};
-  template<typename T> struct is_reference<T&&>        : std::true_type {};
-} // namespace std
+#ifndef ETL_LIBSTD_UTILITY_DECLVAL_H_
+#define ETL_LIBSTD_UTILITY_DECLVAL_H_
 
 namespace etlHelper {
-  template<typename T> struct is_referenceable
-   : std::integral_constant<bool, (std::is_object<T>::value == true || std::is_reference<T>::value == true)>::type { };     
-} // namespace etlHelper
+
+  template<typename T> struct declval {
+    static const bool never_use = false;
+    static typename std::add_rvalue_reference<T>::type ret();
+  };
+}
 
 namespace std {
-  template<typename T> struct is_rvalue_reference      : std::false_type { };
-  template<typename T> struct is_rvalue_reference<T&&> : std::true_type  { };
-  template<typename T> struct is_lvalue_reference      : std::false_type { };
-  template<typename T> struct is_lvalue_reference<T&>  : std::true_type  { };
   
-} // namespace std 
+template<typename T> typename std::add_rvalue_reference<T>::type declval() noexcept {
+  static_assert(etlHelper::declval<T>::never_use, "std::declval() return value must never be used (ISO §20.2.4).");
+  return etlHelper::declval<T>::ret();
+}
 
-#endif // ETL_LIBSTD_TRAITS_REFERENCE_H
+}
+#endif // ETL_LIBSTD_UTILITY_DECLVAL_H_

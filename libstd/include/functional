@@ -1,9 +1,8 @@
-/// @file traits_references.h
-/// @data 07/03/2014 11:35:53
+/// @file <functional>
+/// @data 14/03/2014 17:02:55
 /// @author Ambroise Leclerc
-/// @brief Type traits references operations.
+/// @brief Function objects.
 //
-// Embedded Template Library
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
 //
@@ -32,26 +31,8 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_TRAITS_REFERENCE_H
-#define ETL_LIBSTD_TRAITS_REFERENCE_H
-
-namespace std {
-  template<typename T> struct is_reference             : std::false_type {};
-  template<typename T> struct is_reference<T&>         : std::true_type {};
-  template<typename T> struct is_reference<T&&>        : std::true_type {};
-} // namespace std
-
-namespace etlHelper {
-  template<typename T> struct is_referenceable
-   : std::integral_constant<bool, (std::is_object<T>::value == true || std::is_reference<T>::value == true)>::type { };     
-} // namespace etlHelper
-
-namespace std {
-  template<typename T> struct is_rvalue_reference      : std::false_type { };
-  template<typename T> struct is_rvalue_reference<T&&> : std::true_type  { };
-  template<typename T> struct is_lvalue_reference      : std::false_type { };
-  template<typename T> struct is_lvalue_reference<T&>  : std::true_type  { };
-  
-} // namespace std 
-
-#endif // ETL_LIBSTD_TRAITS_REFERENCE_H
+#ifndef ETL_LIBSTD_FUNCTIONAL_
+#define ETL_LIBSTD_FUNCTIONAL_
+#include "h/functional.h"
+#include "h/functional_operators.h"
+#endif // ETL_LIBSTD_FUNCTIONAL_

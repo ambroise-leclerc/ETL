@@ -34,6 +34,7 @@
 
 #ifndef ETL_LIBSTD_MEMORY_H_
 #define ETL_LIBSTD_MEMORY_H_
+#include <type_traits>
 #include <utility>
 
 namespace std {

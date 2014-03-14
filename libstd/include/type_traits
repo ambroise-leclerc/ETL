@@ -1,4 +1,4 @@
-/// @file type_traits
+/// @file <type_traits>
 /// @data 07/03/2014 08:50:53
 /// @author Ambroise Leclerc
 /// @brief Traits : part of type support library
@@ -34,18 +34,16 @@
 
 #ifndef ETL_LIBSTD_TYPE_TRAITS_H
 #define ETL_LIBSTD_TYPE_TRAITS_H
-#include <utility>
 
 #include <h/traits_operations.h>
 #include <h/traits_primary_types.h>
 #include <h/traits_references.h>
+#include <h/traits_add.h>
+#include <h/utility_declval.h>
+#include <h/traits_utils.h>
 
 namespace std {
 
-/// If T is an array of some type X, provides the member type equal to X, otherwise type is T.
-template<class T> struct remove_extent { using type = T; };
-template<class T> struct remove_extent<T[]> { using type = T; };
-template<class T, std::size_t N> struct remove_extent<T[N]> { using type = T; };
 
 } // namespace std
 

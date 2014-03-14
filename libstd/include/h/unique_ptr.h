@@ -37,6 +37,8 @@
 #include <utility>
 #include <cstddef>
 #include <h/default_delete.h>
+#include <type_traits>
+#include <functional>
 
 namespace std {
   
@@ -64,13 +66,13 @@ class unique_ptr {
   /// @param[in] source source pointer
   unique_ptr(unique_ptr&& source) noexcept
    : pointer_(source.release()),
-     deleter_(std::forward<deleter_type>(source.get_deleter())) { }
+     deleter_(forward<deleter_type>(source.get_deleter())) { }
   
   /// Converting constructor from another type
   template <class T2, class D2>
   unique_ptr(unique_ptr<T2, D2>&& source) noexcept
    : pointer_(source.release()),
-     deleter_(std::forward<D2>(source.get_deleter())) { }
+     deleter_(forward<D2>(source.get_deleter())) { }
 
   // Disable copy from lvalue.
   unique_ptr(const unique_ptr&) = delete;
@@ -80,7 +82,7 @@ class unique_ptr {
   /// @param[in] u the object to transfer ownership from.
   unique_ptr& operator=(unique_ptr&& source) noexcept {
     reset(source.release());
-    get_deleter() = std::forward<deleter_type>(source.get_deleter());
+    get_deleter() = forward<deleter_type>(source.get_deleter());
     return *this;
   }
 
@@ -98,7 +100,7 @@ class unique_ptr {
   template <class T2, class D2>
   unique_ptr& operator=(unique_ptr<T2, D2>&& source) noexcept {
     reset(source.release());
-    get_deleter() = std::forward<D2>(source.get_deleter());
+    get_deleter() = forward<D2>(source.get_deleter());
   }
   
   /// Assignment to nullptr : same effect as calling reset().
@@ -109,7 +111,7 @@ class unique_ptr {
 
   /// Provides access to the managed object.
   /// @return the object owned by *this, i.e. *get().
-  typename std::add_lvalue_reference<T>::type operator*() const {
+  typename add_lvalue_reference<T>::type operator*() const {
     return *get();
   }
   
@@ -197,13 +199,13 @@ class unique_ptr<T[], D> {
   /// @param[in] source source pointer
   unique_ptr(unique_ptr&& source) noexcept
    : pointer_(source.release()),
-     deleter_(std::forward<deleter_type>(source.get_deleter())) { }
+     deleter_(forward<deleter_type>(source.get_deleter())) { }
   
   /// Converting constructor from another type
   template <class T2, class D2>
   unique_ptr(unique_ptr<T2, D2>&& source) noexcept
    : pointer_(source.release()),
-     deleter_(std::forward<D2>(source.get_deleter())) { }
+     deleter_(forward<D2>(source.get_deleter())) { }
 
   // Disable copy from lvalue.
   unique_ptr(const unique_ptr&) = delete;
@@ -213,7 +215,7 @@ class unique_ptr<T[], D> {
   /// @param[in] u the object to transfer ownership from.
   unique_ptr& operator=(unique_ptr&& source) noexcept {
     reset(source.release());
-    get_deleter() = std::forward<deleter_type>(source.get_deleter());
+    get_deleter() = forward<deleter_type>(source.get_deleter());
     return *this;
   }
 
@@ -231,7 +233,7 @@ class unique_ptr<T[], D> {
   template <class T2, class D2>
   unique_ptr& operator=(unique_ptr<T2, D2>&& source) noexcept {
     reset(source.release());
-    get_deleter() = std::forward<D2>(source.get_deleter());
+    get_deleter() = forward<D2>(source.get_deleter());
   }
   
   /// Assignment to nullptr : same effect as calling reset().
@@ -242,7 +244,7 @@ class unique_ptr<T[], D> {
 
   /// Provides access to the managed object.
   /// @return the object owned by *this, i.e. *get().
-  typename std::add_lvalue_reference<T>::type operator[](std::size_t index) const {
+  typename add_lvalue_reference<T>::type operator[](size_t index) const {
     return *get()[index];
   }
   
@@ -303,29 +305,92 @@ class unique_ptr<T[], D> {
 
 
 namespace etlHelper {
-  template<typename T> struct unique_if { using single_object = std::unique_ptr<T>; };
-  template<typename T> struct unique_if<T[]> { using unknown_bound = std::unique_ptr<T[]>; };
-  template<typename T, size_t N> struct unique_if<T[N]> { using known_bound = void; };
-}  
+  template<typename T> struct unique_if { using non_array = std::unique_ptr<T>; };
+  template<typename T> struct unique_if<T[]> { using runtime_sized = std::unique_ptr<T[]>; };
+  template<typename T, size_t N> struct unique_if<T[N]> { using compiletime_size = void; };
+}
+
+
 
 namespace std {
   
+//#if __cplusplus > 201103L
+/// Creates a non-array object and wraps it in a std::unique_ptr.
+/// @param[in] Args list of arguments for the object constructor.
+/// @return created std::unique_ptr.
 template<typename T, typename... Args>
-typename etlHelper::unique_if<T>::single_object make_unique(Args&&... args) {
-  return unique_ptr<T>(new T(std::forward<Args>(args)...));
+typename etlHelper::unique_if<T>::non_array make_unique(Args&&... args) {
+  return unique_ptr<T>(new T(forward<Args>(args)...));
 }
 
+/// Creates an array object and wraps it in a std::unique_ptr.
+/// @param[in] size size of the array to construct
+/// @return created std::unique_ptr.
 template<typename T>
-typename etlHelper::unique_if<T>::unknown_bound make_unique(size_t n) {
-  typedef typename remove_extent<T>::type U;
-  return unique_ptr<T>(new U[n]());
+typename etlHelper::unique_if<T>::runtime_sized make_unique(size_t size) {
+  return unique_ptr<T>(new typename remove_extent<T>::type[size]());
 }
 
 template<typename T, typename... Args>
-typename etlHelper::unique_if<T>::known_bound make_unique(Args&&...) = delete;
+typename etlHelper::unique_if<T>::compiletime_size make_unique(Args&&...) = delete;
+
+//#endif // __cplusplus >= 201103L
+
+
+// Non-member functions
+template<class T, class D>
+void swap(unique_ptr<T, D>& x, unique_ptr<T, D>& y) noexcept { x.swap(y); }
+
+template<class T1, class D1, class T2, class D2>
+bool operator==(const unique_ptr<T1, D1>& x, const unique_ptr<T2, D2>& y) {
+  return x.get() == y.get();
+}
+  
+template<class T1, class D1, class T2, class D2>
+bool operator!=(const unique_ptr<T1, D1>& x, const unique_ptr<T2, D2>& y) {
+  return x.get() != y.get();
+}  
+
+template<class T1, class D1, class T2, class D2>
+bool operator<(const unique_ptr<T1, D1>& x, const unique_ptr<T2, D2>& y) {
+  typedef typename common_type<typename unique_ptr<T1, D1>::pointer, 
+                               typename unique_ptr<T2, D2>::pointer>::type Comp;
+  return less<Comp>()(x.get(), y.get());
+}  
+  
+  
+template<class T1, class D1, class T2, class D2>
+bool operator<=(const unique_ptr<T1, D1>& x, const unique_ptr<T2, D2>& y);
+template<class T1, class D1, class T2, class D2>
+bool operator>(const unique_ptr<T1, D1>& x, const unique_ptr<T2, D2>& y);
+template<class T1, class D1, class T2, class D2>
+bool operator>=(const unique_ptr<T1, D1>& x, const unique_ptr<T2, D2>& y);
+
+template <class T, class D>
+bool operator==(const unique_ptr<T, D>& x, nullptr_t) noexcept;
+template <class T, class D>
+bool operator==(nullptr_t, const unique_ptr<T, D>& y) noexcept;
+template <class T, class D>
+bool operator!=(const unique_ptr<T, D>& x, nullptr_t) noexcept;
+template <class T, class D>
+bool operator!=(nullptr_t, const unique_ptr<T, D>& y) noexcept;
+template <class T, class D>
+bool operator<(const unique_ptr<T, D>& x, nullptr_t);
+template <class T, class D>
+bool operator<(nullptr_t, const unique_ptr<T, D>& y);
+template <class T, class D>
+bool operator<=(const unique_ptr<T, D>& x, nullptr_t);
+template <class T, class D>
+bool operator<=(nullptr_t, const unique_ptr<T, D>& y);
+template <class T, class D>
+bool operator>(const unique_ptr<T, D>& x, nullptr_t);
+template <class T, class D>
+bool operator>(nullptr_t, const unique_ptr<T, D>& y);
+template <class T, class D>
+bool operator>=(const unique_ptr<T, D>& x, nullptr_t);
+template <class T, class D>
+bool operator>=(nullptr_t, const unique_ptr<T, D>& y);
 
 } // namespace std
-
-
 
 #endif // ETL_LIBSTD_UNIQUE_PTR_H

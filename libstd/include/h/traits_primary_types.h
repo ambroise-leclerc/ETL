@@ -36,7 +36,7 @@
 #define ETL_LIBSTD_TRAITS_PRIMARY_TYPES_H
 
 namespace etlHelper {
-  template<typename> struct is_type_entier        : std::false_type { };
+  template<typename> struct is_type_entier         : std::false_type { };
   template <> struct is_type_entier<bool>          : std::true_type { };
   template <> struct is_type_entier<int8_t>        : std::true_type { };
   template <> struct is_type_entier<uint8_t>       : std::true_type { };
@@ -46,13 +46,13 @@ namespace etlHelper {
   template <> struct is_type_entier<uint32_t>      : std::true_type { };
   template <> struct is_type_entier<int64_t>       : std::true_type { };
   template <> struct is_type_entier<uint64_t>      : std::true_type { };
-  template<typename> struct is_type_flottant      : std::false_type { };
+  template<typename> struct is_type_flottant       : std::false_type { };
   template <> struct is_type_flottant<float>       : std::true_type { };
   template <> struct is_type_flottant<double>      : std::true_type { };
   template <> struct is_type_flottant<long double> : std::true_type { };
-  template<typename T> struct is_pointeur         : std::false_type { };
-  template<typename T> struct is_pointeur<T*>     : std::true_type { };
-  template<typename T> struct is_mb_pointeur      : std::false_type { };
+  template<typename T> struct is_pointeur          : std::false_type { };
+  template<typename T> struct is_pointeur<T*>      : std::true_type { };
+  template<typename T> struct is_mb_pointeur       : std::false_type { };
   template<typename T, typename U> struct is_mb_pointeur<T U::*>     : std::true_type { };
 } // namespace etlHelper 
 
@@ -106,6 +106,13 @@ struct is_object : std::integral_constant<bool,
                      std::is_array<T>::value  ||
                      std::is_union<T>::value  ||
                      std::is_class<T>::value> { };
+
+/// Checks if T is a function type.
+/// is_function::value is true if T is a function type, false otherwise
+template<typename> struct is_function : std::false_type { };
+template<typename Ret, typename... Args> struct is_function<Ret(Args...)> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args......)> : std::true_type {};
+
 
 } // namespace std
 #endif // ETL_LIBSTD_TRAITS_PRIMARY_TYPES_H

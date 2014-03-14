@@ -33,6 +33,7 @@
 
 #ifndef ETL_FREESTORE_H_
 #define ETL_FREESTORE_H_
+#include <cstddef>
 
 namespace etl {
   

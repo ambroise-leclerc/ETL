@@ -1,7 +1,7 @@
-/// @file traits_references.h
-/// @data 07/03/2014 11:35:53
+/// @file traits_utils.h
+/// @data 13/03/2014 22:55:53
 /// @author Ambroise Leclerc
-/// @brief Type traits references operations.
+/// @brief Type traits operations.
 //
 // Embedded Template Library
 // Copyright (c) 2014, Ambroise Leclerc
@@ -32,26 +32,29 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_TRAITS_REFERENCE_H
-#define ETL_LIBSTD_TRAITS_REFERENCE_H
+#ifndef ETL_LIBSTD_TRAITS_UTILS_H
+#define ETL_LIBSTD_TRAITS_UTILS_H
 
 namespace std {
-  template<typename T> struct is_reference             : std::false_type {};
-  template<typename T> struct is_reference<T&>         : std::true_type {};
-  template<typename T> struct is_reference<T&&>        : std::true_type {};
-} // namespace std
 
-namespace etlHelper {
-  template<typename T> struct is_referenceable
-   : std::integral_constant<bool, (std::is_object<T>::value == true || std::is_reference<T>::value == true)>::type { };     
-} // namespace etlHelper
+template<typename ...T> struct common_type;
+template<typename T> struct common_type<T> {
+  using type = std::decay_t<T>;
+};
+template<typename... T >
+using common_type_t = typename common_type<T...>::type;
+ 
+template<typename T1, typename T2>
+struct common_type<T1, T2> {
+    using type = std::decay_t<decltype(true ? std::declval<T1>() : std::declval<T2>())>;
+};
+ 
+template <typename T1, typename T2, typename... T3>
+struct common_type<T1, T2, T3...> {
+    using type = std::common_type_t<std::common_type_t<T1, T2>, T3...>;
+};
 
-namespace std {
-  template<typename T> struct is_rvalue_reference      : std::false_type { };
-  template<typename T> struct is_rvalue_reference<T&&> : std::true_type  { };
-  template<typename T> struct is_lvalue_reference      : std::false_type { };
-  template<typename T> struct is_lvalue_reference<T&>  : std::true_type  { };
   
-} // namespace std 
+}  
 
-#endif // ETL_LIBSTD_TRAITS_REFERENCE_H
+#endif // ETL_LIBSTD_TRAITS_UTILS_H
