@@ -9,11 +9,11 @@ A C++14 Standard Library implementation for ETL.
 
 So far, **C++ Standard Library for ETL* covers the following aspects of C++11 Standard Library :
 
-- new, delete, new[], delete[], placement new and delete operators
+- `new`, `delete`, `new[]`, `delete[]`, placement new and delete operators
 - a Freestore implementation used by the new and delete opearators.
-- std::move and std::forward needed for xvalue support, move semantics and perferct forwading.
-- <type_traits>
-- <cstddef>
-- std::unique_ptr
-- std::make_unique
+- `std::move` and `std::forward` needed for xvalue support, move semantics and perferct forwading.
+- `<type_traits>`
+- `<cstddef>`
+- `std::unique_ptr`
+- `std::make_unique`
 
