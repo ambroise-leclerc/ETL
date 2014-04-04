@@ -100,9 +100,9 @@ class FreeStore : public FreeStoreTracePolicy {
   }
 
   /// Computes storage space overhead caused by memory fragmentation. A 0%
-  /// fragmentation level means that memory is allocated optimally. A 100%
-  /// level indicates that fragmentation doubles the memory space needs. More
-  /// than 100% is a final warning for an inevitable failure.
+  /// fragmentation level means that memory is allocated optimally. A 50%
+  /// level indicates that fragmentation doubles the memory space needs : 50%
+  /// of memory is used by fragmentation holes.
   /// @return Fragmentation level in percents
   static uint8_t GetMemoryFragmentation() noexcept {
     uint16_t holessize = GetChunksSize(false);
