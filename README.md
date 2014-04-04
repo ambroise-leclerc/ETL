@@ -28,6 +28,25 @@ C++(11/14) Embedded Template Library for AVR 8-bit microcontrollers.
 4. Add `#include <etl.h>` in your cpp file.
   You can now use new, delete, new[], delete[] and placement new operators.
   The free store manager provides you additional functions :
-    - `etl::FreeStore::GetMemorySize()`
-    - `etl::FreeStore::GetMemoryFragmentation()`
-    - `etl::Freestore::GetFreeMemory()`
+
+```
+  etl::FreeStore::GetMemorySize()  
+  etl::FreeStore::GetMemoryFragmentation()  
+  etl::Freestore::GetFreeMemory()
+```
+  
+  An optional freestore trace log can be activated by defining ETL_FREESTORE_LOG_DEPTH with the requested log depth (3 bytes are used per log so a 64 log depth will consume 192 bytes of SRAM) :
+  
+```
+  #define ETL_FREESTORE_LOG_DEPTH 64
+  #include <etl.h>
+```
+
+  This defines three public variables in :
+  
+```
+  uint8_t etl::FreeStore::DebugTracePolicy::log_counter;       // number of logged operations
+  Operation etl::FreeStore::DebugTracePolicy::log_operation[]  // logged operation
+  void* etl::FreeStore::DebugTracePolicy::log_address[]        // logged address
+```
+  
