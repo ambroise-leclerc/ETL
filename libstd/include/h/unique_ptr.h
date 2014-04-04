@@ -212,7 +212,7 @@ class unique_ptr<T[], D> {
   unique_ptr& operator=(const unique_ptr&) = delete;
   
   /// Move assignment operator.
-  /// @param[in] u the object to transfer ownership from.
+  /// @param[in] source the object to transfer ownership from.
   unique_ptr& operator=(unique_ptr&& source) noexcept {
     reset(source.release());
     get_deleter() = forward<deleter_type>(source.get_deleter());

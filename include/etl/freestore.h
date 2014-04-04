@@ -36,21 +36,20 @@
 #include <cstddef>
 
 namespace etl {
-  
 
-class FreeStore {
+class FreeStore : public FreeStoreTracePolicy {
  public:
   /// Allocates size bytes of uninitialized storage.
   /// @param[in] size number of bytes to allocate
   /// @return Pointer to the beginning of allocated memory. The pointer must be
   /// deallocated with FreeStore::Deallocate.
   static void* Allocate(std::size_t size) noexcept {
-    auto chunk_parser = reinterpret_cast<Chunk*>(free_chunk_);
+    auto chunk_parser = free_chunk_;
       
     // 0 Setup the start of allocatable area (data_) to the first unallocated block
     while (chunk_parser->IsAllocated()) {
       chunk_parser = chunk_parser->NextChunk();
-      free_chunk_ = reinterpret_cast<uint8_t*>(chunk_parser);
+      free_chunk_ = chunk_parser;
     }
     auto second_choice = chunk_parser;
     uint16_t second_choice_size = 0b1111111111111u;
@@ -75,6 +74,7 @@ class FreeStore {
     if (second_choice->ChunkSize() < (size+2)) {
       second_choice = chunk_parser;
     }
+    FreeStoreTracePolicy::Log(FreeStoreTracePolicy::Allocation, second_choice);
     return second_choice->AllocateData(size);
   }
 
@@ -84,18 +84,19 @@ class FreeStore {
   /// @param[in] pointer to the memory to deallocate
   /// @return
   static void Deallocate(void* ptr) noexcept {
-    auto deallocatable = reinterpret_cast<uint8_t*>(ptr);
-    deallocatable -= CompileTimeOffsetOf(&Chunk::data);           // Point to chunk beginning
+    auto deallocatable = reinterpret_cast<Chunk*>(
+                           reinterpret_cast<decltype(Chunk::descriptor)*>(ptr)-1);// Point to chunk beginning
+    FreeStoreTracePolicy::Log(FreeStoreTracePolicy::DeallocationRequest, ptr);
     if (deallocatable < free_chunk_) {                            // if chunk to deallocate is before the current first free chunk
-      free_chunk_ = reinterpret_cast<uint8_t*>(deallocatable);    // then we define it's address as the new first free chunk
+      free_chunk_ = deallocatable;    // then we define it's address as the new first free chunk
     }
-    reinterpret_cast<Chunk*>(deallocatable)->Deallocate();
+    deallocatable->Deallocate();
   }
     
   /// Returns how many bytes have been allocated.
   /// @return allocated bytes
   static std::size_t GetMemorySize() noexcept {
-    return GetChunksSize(false);
+    return GetChunksSize(true);
   }
 
   /// Computes storage space overhead caused by memory fragmentation. A 0%
@@ -104,23 +105,23 @@ class FreeStore {
   /// than 100% is a final warning for an inevitable failure.
   /// @return Fragmentation level in percents
   static uint8_t GetMemoryFragmentation() noexcept {
-    uint16_t holessize = GetChunksSize(true);
+    uint16_t holessize = GetChunksSize(false);
     uint16_t memsize = GetMemorySize();
     if (0 == memsize) return 0;
     return 100-((100 * memsize) / (memsize + holessize));
   }
 
-  /// Computes available RAM (i.e. total microcontroller on-board SRAM
+  /// Computes available RAM (i.e. total micro-controller on-board SRAM
   /// minus global variables, stack and free store consumption).
   /// @return Available RAM in bytes
   static std::size_t GetFreeMemory() noexcept {
     uint16_t stack_limit = 0;
-    auto mem_spread = reinterpret_cast<std::size_t>(&stack_limit);
-    Chunk* chunk_parser = reinterpret_cast<Chunk*>(free_chunk_);
+
+    auto chunk_parser = free_chunk_;
     while (!chunk_parser->IsLastChunk()) {
       chunk_parser = chunk_parser->NextChunk();
     }
-    mem_spread -= reinterpret_cast<std::size_t>(chunk_parser);
+    std::size_t mem_spread = reinterpret_cast<uint8_t*>(&stack_limit) - reinterpret_cast<uint8_t*>(chunk_parser);
     return mem_spread;
   }
 
@@ -160,22 +161,28 @@ class FreeStore {
     }
 
     void Deallocate() {
-      // Deallocation of this chunk :
-      //  - if next chunk is unallocated then we have to merge both chunks
-      //  - if not, we simply mark this chunk has unallocated
-      if (!NextChunk()->IsAllocated()) {
-        SetChunkSize(ChunkSize() + NextChunk()->ChunkSize());
-      }
+      FreeStoreTracePolicy::Log(FreeStoreTracePolicy::DeallocateChunk, this);
+      if (!IsLastChunk()) {
+        // Deallocation of this chunk :
+        //  - if next chunk is unallocated then we have to merge both chunks
+        //  - if not, we simply mark this chunk has unallocated
+        if (!NextChunk()->IsAllocated()) {
+          if (NextChunk()->IsLastChunk()) {
+            SetLastChunk();
+          }            
+          SetChunkSize(ChunkSize() + NextChunk()->ChunkSize());
+        }
+      }        
       ResetAllocated();
     }
   };
 
-  static std::size_t GetChunksSize(bool allocated) {
-    Chunk* chunk_parser = reinterpret_cast<Chunk*>(__malloc_heap_start);
-    uint16_t size = 0;
+  static std::size_t GetChunksSize(bool allocated) __attribute__((noinline)) {
+    auto chunk_parser = reinterpret_cast<Chunk*>(__malloc_heap_start);
+    std::size_t size = 0;
       
-    while (allocated == chunk_parser->IsLastChunk()) {
-      if (chunk_parser->IsAllocated()) {
+    while (!chunk_parser->IsLastChunk()) {
+      if (allocated == chunk_parser->IsAllocated()) {
         size += chunk_parser->ChunkSize();
       }
       chunk_parser = chunk_parser->NextChunk();
@@ -191,10 +198,14 @@ class FreeStore {
     reinterpret_cast<Chunk*>(free_chunk_)->ResetAllocated();
     return true;
   }
-  static uint8_t* free_chunk_;
+
+  static Chunk* free_chunk_;
+  
+ public:
+  
 };
 
-uint8_t* FreeStore::free_chunk_ = reinterpret_cast<uint8_t*>(__malloc_heap_start);
+FreeStore::Chunk* FreeStore::free_chunk_ = reinterpret_cast<FreeStore::Chunk*>(__malloc_heap_start);
 
 } // namespace etl
 
