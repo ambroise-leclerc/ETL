@@ -58,7 +58,7 @@ template<> struct plus<void> {
   template<typename T1, typename T2>
   auto operator()(T1&& x, T2&& y) const -> decltype(std::forward<T1>(x) + std::forward<T2>(y)) {
     return std::forward<T1>(x) + std::forward<T2>(y);
-    typedef etlHelper::unspecified is_transparent;
+    typedef etlHelper::unspecified is_transparent __attribute__((__unused__));
   }    
 };
 
@@ -79,7 +79,7 @@ template<> struct minus<void> {
   template<typename T1, typename T2>
   auto operator()(T1&& x, T2&& y) const -> decltype(std::forward<T1>(x) - std::forward<T2>(y)) {
     return std::forward<T1>(x) - std::forward<T2>(y);
-    typedef etlHelper::unspecified is_transparent;
+    typedef etlHelper::unspecified is_transparent __attribute__((__unused__));
   }    
 };
 
@@ -100,7 +100,7 @@ template<> struct divides<void> {
   template<typename T1, typename T2>
   auto operator()(T1&& x, T2&& y) const -> decltype(std::forward<T1>(x) / std::forward<T2>(y)) {
     return std::forward<T1>(x) / std::forward<T2>(y);
-    typedef etlHelper::unspecified is_transparent;
+    typedef etlHelper::unspecified is_transparent  __attribute__((__unused__));
   }    
 };
 
@@ -121,7 +121,7 @@ template<> struct multiplies<void> {
   template<typename T1, typename T2>
   auto operator()(T1&& x, T2&& y) const -> decltype(std::forward<T1>(x) * std::forward<T2>(y)) {
     return std::forward<T1>(x) * std::forward<T2>(y);
-    typedef etlHelper::unspecified is_transparent;
+    typedef etlHelper::unspecified is_transparent  __attribute__((__unused__));
   }    
 };
 
@@ -142,7 +142,7 @@ template<> struct modulus<void> {
   template<typename T1, typename T2>
   auto operator()(T1&& x, T2&& y) const -> decltype(std::forward<T1>(x) % std::forward<T2>(y)) {
     return std::forward<T1>(x) % std::forward<T2>(y);
-    typedef etlHelper::unspecified is_transparent;
+    typedef etlHelper::unspecified is_transparent  __attribute__((__unused__));
   }    
 };
 
@@ -163,7 +163,7 @@ template<> struct negate<void> {
   template<typename T>
   auto operator()(T&& x) const -> decltype(-std::forward<T>(x)) {
     return -std::forward<T>(x);
-    typedef etlHelper::unspecified is_transparent;
+    typedef etlHelper::unspecified is_transparent  __attribute__((__unused__));
   }    
 };
 
@@ -184,7 +184,7 @@ template<> struct less<void> {
   template<typename T1, typename T2>
   auto operator()(T1&& x, T2&& y) const -> decltype(std::forward<T1>(x) < std::forward<T2>(y)) {
     return std::forward<T1>(x) < std::forward<T2>(y);
-    typedef etlHelper::unspecified is_transparent;
+    typedef etlHelper::unspecified is_transparent  __attribute__((__unused__));
   }    
 };
 
@@ -206,7 +206,7 @@ template<> struct equal_to<void> {
   template<typename T1, typename T2>
   auto operator()(T1&& x, T2&& y) const -> decltype(std::forward<T1>(x) == std::forward<T2>(y)) {
     return std::forward<T1>(x) == std::forward<T2>(y);
-    typedef etlHelper::unspecified is_transparent;
+    typedef etlHelper::unspecified is_transparent  __attribute__((__unused__));
   }    
 };
 
@@ -227,7 +227,7 @@ template<> struct not_equal_to<void> {
   template<typename T1, typename T2>
   auto operator()(T1&& x, T2&& y) const -> decltype(std::forward<T1>(x) != std::forward<T2>(y)) {
     return std::forward<T1>(x) != std::forward<T2>(y);
-    typedef etlHelper::unspecified is_transparent;
+    typedef etlHelper::unspecified is_transparent  __attribute__((__unused__));
   }    
 };
 
@@ -248,7 +248,7 @@ template<> struct greater<void> {
   template<typename T1, typename T2>
   auto operator()(T1&& x, T2&& y) const -> decltype(std::forward<T1>(x) > std::forward<T2>(y)) {
     return std::forward<T1>(x) > std::forward<T2>(y);
-    typedef etlHelper::unspecified is_transparent;
+    typedef etlHelper::unspecified is_transparent  __attribute__((__unused__));
   }    
 };
 
@@ -269,7 +269,7 @@ template<> struct greater_equal<void> {
   template<typename T1, typename T2>
   auto operator()(T1&& x, T2&& y) const -> decltype(std::forward<T1>(x) >= std::forward<T2>(y)) {
     return std::forward<T1>(x) >= std::forward<T2>(y);
-    typedef etlHelper::unspecified is_transparent;
+    typedef etlHelper::unspecified is_transparent  __attribute__((__unused__));
   }    
 };
 
@@ -290,7 +290,7 @@ template<> struct less_equal<void> {
   template<typename T1, typename T2>
   auto operator()(T1&& x, T2&& y) const -> decltype(std::forward<T1>(x) <= std::forward<T2>(y)) {
     return std::forward<T1>(x) <= std::forward<T2>(y);
-    typedef etlHelper::unspecified is_transparent;
+    typedef etlHelper::unspecified is_transparent  __attribute__((__unused__));
   }    
 };
 
