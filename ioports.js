@@ -48,20 +48,41 @@ function GenFooter(file) {
 
 function GenPinWrapperClass(file, port, pin) {
   file.WriteLine("struct Pin"+port+pin+" {");
-  file.WriteLine("  static void Set()       { PORT"+port+" |= (1<<"+pin+"); }");
-  file.WriteLine("  static void Clear()     { PORT"+port+" &= (~(1<<"+pin+")); }");
-  file.WriteLine("  static void Toggle()    { PORT"+port+" ^= (1<<"+pin+"); }");
-  file.WriteLine("  static void SetOutput() { DDR"+port+" |= (1<<"+pin+"); }");
-  file.WriteLine("  static void SetInput()  { DDR"+port+" &= (~(1<<"+pin+")); }");
+  file.WriteLine("  /// Sets Pin" + port + pin + " to HIGH." + port + ".");
+  file.WriteLine("  static void Set()       { PORT" + port + " |= (1<<" + pin + "); }");
+  file.WriteLine("");
+  file.WriteLine("  /// Sets Pin" + port + pin + " to LOW." + port + ".");
+  file.WriteLine("  static void Clear()     { PORT" + port + " &= (~(1<<" + pin + ")); }");
+  file.WriteLine("");
+  file.WriteLine("  /// Toggles Pin" + port + pin + " value." + port + ".");
+  file.WriteLine("  static void Toggle()    { PIN" + port + " |= (1<<" + pin + "); }");
+  file.WriteLine("");
+  file.WriteLine("  /// Configures Pin" + port + pin + "  as an output pin.");
+  file.WriteLine("  static void SetOutput() { DDR" + port + " |= (1<<" + pin + "); }");
+  file.WriteLine("");
+  file.WriteLine("  /// Configures Pin" + port + pin + "  as an input pin.");
+  file.WriteLine("  static void SetInput()  { DDR" + port + " &= (~(1<<" + pin + ")); }");
   file.WriteLine("  static void PulseHigh() { PORT"+port+" |= (1<<"+pin+"); PORT"+port+" &= (~(1<<"+pin+")); }");
-  file.WriteLine("  static void PulseLow()  { PORT"+port+" &= (~(1<<"+pin+")); PORT"+port+" |= (1<<"+pin+"); }");
+  file.WriteLine("  static void PulseLow()  { PORT" + port + " &= (~(1<<" + pin + ")); PORT" + port + " |= (1<<" + pin + "); }");
+  file.WriteLine("");
+  file.WriteLine("  /// Reads Pin" + port + pin + "  value.");
+  file.WriteLine("  /// @return Port pin value.");
   file.WriteLine("  static bool Test()      { return PIN"+port+" & (1<<"+pin+"); }");
   file.WriteLine("");
-  file.WriteLine("  static constexpr decltype(PORT"+port+") GetNativePort() { return PORT"+port+"; }");
-  file.WriteLine("  static constexpr uint8_t bitmask()               { return (1<<"+pin+"); }");
-  file.WriteLine("  static constexpr uint8_t bit()                   { return "+pin+"; }");
+  file.WriteLine('  /// Returns the native port #definition corresponding to Pin"+port+pin+" as defined in "avr/io.h" ');
+  file.WriteLine("  /// @return PORT"+port);
+  file.WriteLine("  static constexpr decltype(PORT" + port + ") GetNativePort() { return PORT" + port + "; }");
   file.WriteLine("");
-  file.WriteLine("  typedef Port"+port+" Port;");
+  file.WriteLine("  /// Returns the bitmask corresponding to this pin.");
+  file.WriteLine("  /// @return (1<<"+pin+")");
+  file.WriteLine("  static constexpr uint8_t bitmask()               { return (1<<" + pin + "); }");
+  file.WriteLine("");
+  file.WriteLine("  /// Returns the bit corresponding to this pin.");
+  file.WriteLine("  /// @return "+pin);
+  file.WriteLine("  static constexpr uint8_t bit()                   { return " + pin + "; }");
+  file.WriteLine("");
+  file.WriteLine("  /// Port is defined as the Port object to which this pin belongs.")
+  file.WriteLine("  using Port = Port"+port+";");
   file.WriteLine("};");
   file.WriteLine("");
 }
@@ -78,19 +99,19 @@ function GenPortWrapperClass(file, port) {
   file.WriteLine("");
   file.WriteLine("  /// Clears masked bits in PORT"+port+".");
   file.WriteLine("  /// @param[in] mask bits to clear");
-  file.WriteLine("  static void ClearBits(uint8_t mask) { PORT"+port+" &= (~mask);} ");
+  file.WriteLine("  static void ClearBits(uint8_t mask) { PORT"+port+" &= ~mask;} ");
   file.WriteLine("");
   file.WriteLine("  /// Toggles masked bits in PORT"+port+".");
   file.WriteLine("  /// @param[in] mask bits to toggle");
-  file.WriteLine("  static void ToggleBits(uint8_t mask) { PORT"+port+" ^= (~mask);} ");
+  file.WriteLine("  static void ToggleBits(uint8_t mask) { PORT"+port+" ^= mask;} ");
   file.WriteLine("");
   file.WriteLine("  /// Pulses masked bits in PORT"+port+" with high state first.");
   file.WriteLine("  /// @param[in] mask bits to pulse");
-  file.WriteLine("  static void PulseHigh(uint8_t mask) { PORT"+port+" |= mask; PORT"+port+" &= (~mask); }");
+  file.WriteLine("  static void PulseHigh(uint8_t mask) { PORT"+port+" |= mask; PORT"+port+" &= ~mask; }");
   file.WriteLine("");
   file.WriteLine("  /// Pulses masked bits in PORT"+port+" with low state first.");
   file.WriteLine("  /// @param[in] mask bits to pulse");
-  file.WriteLine("  static void PulseLow(uint8_t mask)  { PORT"+port+" &= (~mask); PORT"+port+" |= mask; }");
+  file.WriteLine("  static void PulseLow(uint8_t mask)  { PORT"+port+" &= ~mask; PORT"+port+" |= mask; }");
   file.WriteLine("");
   file.WriteLine("  /// Set corresponding masked bits of PORT"+port+" to output direction.");
   file.WriteLine("  /// @param[in] mask bits");
@@ -98,7 +119,7 @@ function GenPortWrapperClass(file, port) {
   file.WriteLine("");
   file.WriteLine("  /// Set corresponding masked bits of PORT"+port+" to input direction.");
   file.WriteLine("  /// @param[in] mask bits");
-  file.WriteLine("  static void ClearDDR(uint8_t mask)  { DDR"+port+" &= (~mask); }");
+  file.WriteLine("  static void ClearDDR(uint8_t mask)  { DDR"+port+" &= ~mask; }");
   file.WriteLine("");
   file.WriteLine("  /// Returns PIN"+port+" register.");
   file.WriteLine("  static uint8_t GetPIN()             { return PIN"+port+"; }");
@@ -141,7 +162,7 @@ function GenSPIWrapperClasses(file, module, register, bitlen) {
   file.WriteLine("");
   file.WriteLine("  /// Clears masked bits in "+register);
   file.WriteLine("  /// @param[in] mask bits to clear");
-  file.WriteLine("  static void Clear(uint"+bitlen+"_t mask)    { "+register+" &= (~mask); }");
+  file.WriteLine("  static void Clear(uint"+bitlen+"_t mask)    { "+register+" &= ~mask; }");
   file.WriteLine("  static uint8_t Get()               { return "+register+"; }");
   file.WriteLine("  static bool TestBits(uint"+bitlen+"_t mask) { return "+register+" & mask; }");
   file.WriteLine("  void operator=(uint8_t value)      { "+register+" = value; }");
@@ -159,9 +180,9 @@ function GenTimerWrapperClasses(file, timernum, timerwidth) {
   file.WriteLine("  static void AddValue(value_type value)  { TCNT" + timernum + " += value; }");
   file.WriteLine("  static void SubValue(value_type value)  { TCNT" + timernum + " -= value; }");
   file.WriteLine("  static void SetCtrlRegA(uint8_t mask)   { TCCR" + timernum + "A |= mask; }");
-  file.WriteLine("  static void ClearCtrlRegA(uint8_t mask) { TCCR" + timernum + "A &= (~mask); }");
+  file.WriteLine("  static void ClearCtrlRegA(uint8_t mask) { TCCR" + timernum + "A &= ~mask; }");
   file.WriteLine("  static void SetCtrlRegB(uint8_t mask)   { TCCR" + timernum + "B |= mask; }");
-  file.WriteLine("  static void ClearCtrlRegB(uint8_t mask) { TCCR" + timernum + "B &= (~mask); }");
+  file.WriteLine("  static void ClearCtrlRegB(uint8_t mask) { TCCR" + timernum + "B &= ~mask; }");
   file.WriteLine("    ");
   file.WriteLine("  enum Prescaler : uint8_t {");
   file.WriteLine("    STOP_TIMER = 0, NO_PRESCALER = (1<<CS" + timernum + "0), CLK_DIV_8 = (1<<CS" + timernum + "1),");
@@ -179,7 +200,7 @@ var fso = new ActiveXObject("Scripting.FileSystemObject");
 var file = fso.CreateTextFile(outputFileName, true);
 
 GenHeader(file);
-for (port=66; port<76; port++)
+for (port=66; port<77; port++)
   GenGPIOWrapperClasses(file, String.fromCharCode(port));
 
 GenSPIWrapperClasses(file, "Spi", "SPCR", 8);
