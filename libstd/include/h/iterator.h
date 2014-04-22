@@ -1,7 +1,7 @@
-/// @file new
-/// @data 06/03/2014 20:13:53
+/// @file iterator.h
+/// @data 16/04/2014 11:46:53
 /// @author Ambroise Leclerc
-/// @brief
+/// @brief Provides definition for iterator.
 //
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
@@ -31,50 +31,22 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_NEW_
-#define ETL_LIBSTD_NEW_
+#ifndef ETL_LIBSTD_ITERATOR_H_
+#define ETL_LIBSTD_ITERATOR_H_
 
-#include <etl/freestore.h>
+namespace std {
 
-/// Allocates requested number of bytes.
-/// @param[in] size number of bytes to allocate
-/// @return pointer to allocated memory
-void* operator new(std::size_t size){
-  return etl::FreeStore::Allocate(size);
-}
+template<typename Category, typename T, typename Distance = std::ptrdiff_t,
+         typename Pointer = T*, typename Reference = T&>
+struct iterator {
+  using iterator_category = Category;
+  using value_type        = T;
+  using difference_type   = Distance;
+  using pointer           = Pointer;
+  using reference         = Reference;
+};
 
-/// Deallocates memory space previously allocated by a matching operator new.
-/// @param[in] pointer to the memory to deallocate
-/// @return
-void operator delete(void* ptr) {
-  etl::FreeStore::Deallocate(ptr);
-}
-
-/// Allocates requested number of bytes.
-/// @param[in] size number of bytes to allocate
-/// @return pointer to allocated memory
-void* operator new[](size_t size) {
-  return etl::FreeStore::Allocate(size);
-}
-
-/// Deallocates memory space previously allocated by a matching operator new.
-/// @param[in] pointer to the memory to deallocate
-void operator delete[](void* ptr) {
-  etl::FreeStore::Deallocate(ptr);
-}
-
-/// Placement new for allocating the object inside a given memory buffer.
-/// @param[in] ptr pointer to a memory area to initialize the object at
-void* operator new(size_t, void* const buf){
-  return buf;
-}
-void* operator new[](size_t, void* const buf){
-  return buf;
-}
-
-/// Placement delete called automatically on "placement new" failure.
-void operator delete(void*, void* const){ }
-void operator delete[](void*, void* const){ }
+}; // namespace std
 
 
-#endif // ETL_LIBSTD_NEW_
+#endif // ETL_LIBSTD_ITERATOR_H_

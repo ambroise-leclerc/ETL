@@ -50,6 +50,12 @@ class HardwareInitializer {
 };
 bool HardwareInitializer::freestore_initialized_ = FreeStore::Initialize();
 
+struct Architecture {
+  constexpr static uint16_t kDefaultBufferSize = 10;
+  using off_type = uint16_t;
+};  
+
+
 } // namespace etl
 
 #endif /* ETL_H_ */

@@ -1,7 +1,7 @@
-/// @file new
-/// @data 06/03/2014 20:13:53
+/// @file basic_string.h
+/// @data 17/04/2014 16:31:53
 /// @author Ambroise Leclerc
-/// @brief
+/// @brief Stores and manipulates sequences of characters.
 //
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
@@ -31,50 +31,33 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_NEW_
-#define ETL_LIBSTD_NEW_
+#ifndef ETL_LIBSTD_BASIC_STRING_H_
+#define ETL_LIBSTD_BASIC_STRING_H_
 
-#include <etl/freestore.h>
+#include <vector>
 
-/// Allocates requested number of bytes.
-/// @param[in] size number of bytes to allocate
-/// @return pointer to allocated memory
-void* operator new(std::size_t size){
-  return etl::FreeStore::Allocate(size);
+namespace std {
+
+template<typename CharT, typename Traits = std::char_traits<CharT>, typename Allocator = std::allocator<CharT>>
+class basic_string {
+ public:
+  using traits_type	= Traits;
+  using value_type = Traits::char_type;
+  using allocator_type = Allocator;
+  using size_type = std::size_t;
+  using difference_type = std::ptrdiff_t;
+  using reference	= value_type&;
+  using const_reference =	const value_type&;
+  using pointer	= std::allocator_traits<Allocator>::pointer;
+  using const_pointer = std::allocator_traits<Allocator>::const_pointer;
+  using iterator = std::vector<CharT, Allocator>;
+  using const_iterator = std::vector<CharT, Allocator>;
+  using reverse_iterator = std::reverse_iterator<iterator>;
+  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
+  static const size_type npos = -1;
+};  
+
 }
 
-/// Deallocates memory space previously allocated by a matching operator new.
-/// @param[in] pointer to the memory to deallocate
-/// @return
-void operator delete(void* ptr) {
-  etl::FreeStore::Deallocate(ptr);
-}
-
-/// Allocates requested number of bytes.
-/// @param[in] size number of bytes to allocate
-/// @return pointer to allocated memory
-void* operator new[](size_t size) {
-  return etl::FreeStore::Allocate(size);
-}
-
-/// Deallocates memory space previously allocated by a matching operator new.
-/// @param[in] pointer to the memory to deallocate
-void operator delete[](void* ptr) {
-  etl::FreeStore::Deallocate(ptr);
-}
-
-/// Placement new for allocating the object inside a given memory buffer.
-/// @param[in] ptr pointer to a memory area to initialize the object at
-void* operator new(size_t, void* const buf){
-  return buf;
-}
-void* operator new[](size_t, void* const buf){
-  return buf;
-}
-
-/// Placement delete called automatically on "placement new" failure.
-void operator delete(void*, void* const){ }
-void operator delete[](void*, void* const){ }
-
-
-#endif // ETL_LIBSTD_NEW_
+#endif // ETL_LIBSTD_BASIC_STRING_H_

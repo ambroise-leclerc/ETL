@@ -314,12 +314,11 @@ namespace etlHelper {
 
 namespace std {
   
-//#if __cplusplus > 201103L
 /// Creates a non-array object and wraps it in a std::unique_ptr.
 /// @param[in] Args list of arguments for the object constructor.
 /// @return created std::unique_ptr.
 template<typename T, typename... Args>
-typename etlHelper::unique_if<T>::non_array make_unique(Args&&... args) {
+typename ::etlHelper::unique_if<T>::non_array make_unique(Args&&... args) {
   return unique_ptr<T>(new T(forward<Args>(args)...));
 }
 
@@ -327,12 +326,12 @@ typename etlHelper::unique_if<T>::non_array make_unique(Args&&... args) {
 /// @param[in] size size of the array to construct
 /// @return created std::unique_ptr.
 template<typename T>
-typename etlHelper::unique_if<T>::runtime_sized make_unique(size_t size) {
+typename ::etlHelper::unique_if<T>::runtime_sized make_unique(size_t size) {
   return unique_ptr<T>(new typename remove_extent<T>::type[size]());
 }
 
 template<typename T, typename... Args>
-typename etlHelper::unique_if<T>::compiletime_size make_unique(Args&&...) = delete;
+typename ::etlHelper::unique_if<T>::compiletime_size make_unique(Args&&...) = delete;
 
 //#endif // __cplusplus >= 201103L
 

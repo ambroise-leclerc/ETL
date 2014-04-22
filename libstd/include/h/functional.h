@@ -33,4 +33,12 @@
 
 #ifndef ETL_LIBSTD_FUNCTIONAL_H_
 #define ETL_LIBSTD_FUNCTIONAL_H_
+
+namespace std {
+
+  
+  
+} // namespace std  
+
+
 #endif // ETL_LIBSTD_FUNCTIONAL_H_

@@ -1,7 +1,7 @@
-/// @file new
-/// @data 06/03/2014 20:13:53
+/// @file iterator_traits.h
+/// @data 16/04/2014 12:19:53
 /// @author Ambroise Leclerc
-/// @brief
+/// @brief Provides definition for iterator traits.
 //
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
@@ -31,50 +31,43 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_NEW_
-#define ETL_LIBSTD_NEW_
+namespace std {
 
-#include <etl/freestore.h>
+// Iterator_tags : define the category of an iterator.
+struct input_iterator_tag { };
+struct output_iterator_tag { };
+struct forward_iterator_tag : public input_iterator_tag { };
+struct bidirectional_iterator_tag : public forward_iterator_tag { };
+struct random_access_iterator_tag : public bidirectional_iterator_tag { };
 
-/// Allocates requested number of bytes.
-/// @param[in] size number of bytes to allocate
-/// @return pointer to allocated memory
-void* operator new(std::size_t size){
-  return etl::FreeStore::Allocate(size);
-}
-
-/// Deallocates memory space previously allocated by a matching operator new.
-/// @param[in] pointer to the memory to deallocate
-/// @return
-void operator delete(void* ptr) {
-  etl::FreeStore::Deallocate(ptr);
-}
-
-/// Allocates requested number of bytes.
-/// @param[in] size number of bytes to allocate
-/// @return pointer to allocated memory
-void* operator new[](size_t size) {
-  return etl::FreeStore::Allocate(size);
-}
-
-/// Deallocates memory space previously allocated by a matching operator new.
-/// @param[in] pointer to the memory to deallocate
-void operator delete[](void* ptr) {
-  etl::FreeStore::Deallocate(ptr);
-}
-
-/// Placement new for allocating the object inside a given memory buffer.
-/// @param[in] ptr pointer to a memory area to initialize the object at
-void* operator new(size_t, void* const buf){
-  return buf;
-}
-void* operator new[](size_t, void* const buf){
-  return buf;
-}
-
-/// Placement delete called automatically on "placement new" failure.
-void operator delete(void*, void* const){ }
-void operator delete[](void*, void* const){ }
+template<typename Iterator>
+struct iterator_traits {
+  using iterator_category = typename Iterator::iterator_category;
+  using value_type        = typename Iterator::value_type;
+  using difference_type   = typename Iterator::difference_type;
+  using pointer           = typename Iterator::pointer;
+  using reference         = typename Iterator::reference;
+};
 
 
-#endif // ETL_LIBSTD_NEW_
+/// iterator_traits specialization for raw pointers.
+template<typename T>
+struct iterator_traits<T*> {
+  using iterator_category = random_access_iterator_tag;
+  using value_type        = T;
+  using difference_type   = std::ptrdiff_t;
+  using pointer           = T*;
+  using reference         = T&;
+};
+
+/// iterator_traits specialization for const raw pointers.
+template<typename T>
+struct iterator_traits<const T*> {
+  using iterator_category = random_access_iterator_tag;
+  using value_type        = T;
+  using difference_type   = std::ptrdiff_t;
+  using pointer           = const T*;
+  using reference         = const T&;
+};
+  
+} // namespace std  

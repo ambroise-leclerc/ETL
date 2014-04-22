@@ -37,16 +37,42 @@
 #include <type_traits>
 #include <utility>
 
+namespace etlHelper {
+
+// addressof helpers taken from Boost library
+template<class T>
+struct addressof_ref {
+  T & v_; 
+  addressof_ref( T & v ): v_( v ) {}
+  operator T& () const { return v_; }
+
+ private:
+  addressof_ref & operator=(const addressof_ref &);
+};
+
+template<class T>
+struct addressof_impl
+{
+  static T * f( T & v, long ) {
+    return reinterpret_cast<T*>(
+      &const_cast<char&>(reinterpret_cast<const volatile char &>(v)));
+  }
+
+  static T * f( T * v, int ) { return v; }
+};
+}  
+
 namespace std {
   
 template<typename T>
 class allocator {
  public:
-  typedef T* pointer;
-  typedef const T* const_pointer;
-  typedef T value_type;
-  typedef T& reference;
-  typedef const T& const_reference;
+  using pointer         = T*;
+  using const_pointer   = const T*;
+  using value_type      = T;
+  using reference       = T&;
+  using const_reference =  const T&;
+  
   // construct helper using placement new:
 /*  static void construct(reference p, const_reference value) {
     new (&p) T(value); // T must support copy-constructor
@@ -62,6 +88,11 @@ class allocator {
     t.~T(); // T must support non-throwing destructor
   }
 };
+
+template<typename T>
+T* addressof(T& arg) {
+  return ::etlHelper::addressof_impl<T>::f(::etlHelper::addressof_ref<T>(arg), 0);
+}  
 
 } // namespace std
 #endif // ETL_LIBSTD_MEMORY_H_

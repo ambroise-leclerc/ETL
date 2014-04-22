@@ -1,0 +1,113 @@
+/// @file exception
+/// @data 16/04/2014 19:24:53
+/// @author Ambroise Leclerc
+/// @brief Standard exceptions definitions.
+//
+// Copyright (c) 2014, Ambroise Leclerc
+//   All rights reserved.
+//
+//   Redistribution and use in source and binary forms, with or without
+//   modification, are permitted provided that the following conditions are met:
+//
+//   * Redistributions of source code must retain the above copyright
+//     notice, this list of conditions and the following disclaimer.
+//   * Redistributions in binary form must reproduce the above copyright
+//     notice, this list of conditions and the following disclaimer in
+//     the documentation and/or other materials provided with the
+//     distribution.
+//   * Neither the name of the copyright holders nor the names of
+//     contributors may be used to endorse or promote products derived
+//     from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+//  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+//  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+//  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+//  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+//  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+//  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+//  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+//  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+//  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+//  POSSIBILITY OF SUCH DAMAGE.
+
+#ifndef ETL_LIBSTD_STDEXCEPT_
+#define ETL_LIBSTD_STDEXCEPT_
+
+namespace std {
+
+class logic_error : public exception {
+ protected:
+  string mstring;
+ public:
+  logic_error() throw();
+  explicit logic_error(const string& what_arg);
+  explicit logic_error(const char* what_arg);
+
+  virtual ~logic_error() throw() {}
+  virtual const char* what() const throw() { return buffer; }
+};	
+
+class domain_error : public logic_error {
+ public:
+  domain_error() : logic_error() {}
+  domain_error(const string& what_arg) : logic_error(what_arg) {}
+  virtual ~domain_error() throw() {}
+};
+
+class invalid_argument : public logic_error {
+ public:
+  invalid_argument() : logic_error() {}
+  invalid_argument(const string& what_arg) : logic_error(what_arg) {}
+  virtual ~invalid_argument() throw() {}
+};
+
+class length_error : public logic_error {
+ public:
+  length_error() : logic_error() {}
+  length_error(const string& what_arg) : logic_error(what_arg){}
+  virtual ~length_error() throw() {}
+};
+
+class out_of_range : public logic_error{
+ public:
+  out_of_range();
+  out_of_range(const string & what_arg);
+  virtual ~out_of_range() throw() {}
+};
+
+class runtime_error : public exception {
+ protected:
+  string mstring;
+ public:
+  runtime_error();
+  runtime_error(const string& what_arg);
+  virtual ~runtime_error() throw() {}
+  virtual const char* what() const throw();
+};
+
+class range_error : public runtime_error {
+ public:
+  range_error() : runtime_error() {}
+  range_error(const string& what_arg) : runtime_error(what_arg) {}
+  virtual ~range_error() throw() {}
+};
+
+
+class overflow_error : public runtime_error {
+ public:
+  overflow_error() : runtime_error() {}
+  overflow_error(const string& what_arg) : runtime_error(what_arg) {}
+  virtual ~overflow_error() throw() {}
+};
+
+class underflow_error : public runtime_error {
+ public:
+  underflow_error() : runtime_error() {}
+  underflow_error(const string& what_arg) : runtime_error(what_arg) {}
+  virtual ~underflow_error() throw() {}
+};
+
+} // namespace std
+
+#endif // ETL_LIBSTD_STDEXCEPT_

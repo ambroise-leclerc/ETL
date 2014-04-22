@@ -1,7 +1,7 @@
-/// @file new
-/// @data 06/03/2014 20:13:53
+/// @file iterator_utils.h
+/// @data 16/04/2014 15:46:53
 /// @author Ambroise Leclerc
-/// @brief
+/// @brief Provides utilities for iterators.
 //
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
@@ -31,50 +31,28 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_NEW_
-#define ETL_LIBSTD_NEW_
-
-#include <etl/freestore.h>
-
-/// Allocates requested number of bytes.
-/// @param[in] size number of bytes to allocate
-/// @return pointer to allocated memory
-void* operator new(std::size_t size){
-  return etl::FreeStore::Allocate(size);
+#ifndef ETL_LIBSTD_ITERATOR_UTILS_H_
+#define ETL_LIBSTD_ITERATOR_UTILS_H_
+namespace std {
+  
+/// Convenience function template that constructs a std::reverse_iterator from
+/// the given iterator iter.
+/// @param iter iterator to be converter to reverse_iterator
+/// @return a std::reverse_iterator constructed from iter
+template<typename Iterator>
+reverse_iterator<Iterator> make_reverse_iterator(Iterator iter) {
+  return reverse_iterator<Iterator>(iter);
 }
 
-/// Deallocates memory space previously allocated by a matching operator new.
-/// @param[in] pointer to the memory to deallocate
-/// @return
-void operator delete(void* ptr) {
-  etl::FreeStore::Deallocate(ptr);
+/// Convenience function template that constructs a std::move_iterator from
+/// the given iterator iter.
+/// @param iter iterator to be converter to move_iterator
+/// @return a std::move_iterator constructed from iter
+template<typename Iterator >
+move_iterator<Iterator> make_move_iterator(Iterator iter) {
+  return move_iterator<Iterator>(iter);
 }
+  
+} // namespace std  
 
-/// Allocates requested number of bytes.
-/// @param[in] size number of bytes to allocate
-/// @return pointer to allocated memory
-void* operator new[](size_t size) {
-  return etl::FreeStore::Allocate(size);
-}
-
-/// Deallocates memory space previously allocated by a matching operator new.
-/// @param[in] pointer to the memory to deallocate
-void operator delete[](void* ptr) {
-  etl::FreeStore::Deallocate(ptr);
-}
-
-/// Placement new for allocating the object inside a given memory buffer.
-/// @param[in] ptr pointer to a memory area to initialize the object at
-void* operator new(size_t, void* const buf){
-  return buf;
-}
-void* operator new[](size_t, void* const buf){
-  return buf;
-}
-
-/// Placement delete called automatically on "placement new" failure.
-void operator delete(void*, void* const){ }
-void operator delete[](void*, void* const){ }
-
-
-#endif // ETL_LIBSTD_NEW_
+#endif // ETL_LIBSTD_ITERATOR_UTILS_H_
