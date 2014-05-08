@@ -34,6 +34,6 @@
 #ifndef ETL_LIBSTD_ARRAY_
 #define ETL_LIBSTD_ARRAY_
 
-#include <etl/array.h>
+#include <h/array.h>
 
 #endif // ETL_LIBSTD_ARRAY_

@@ -85,22 +85,26 @@ struct PortB {
 };
 
 struct PinB0 {
-  /// Sets PinB0 to HIGH.B.
+  /// Sets PinB0 to HIGH.
   static void Set()       { PORTB |= (1<<0); }
 
-  /// Sets PinB0 to LOW.B.
-  static void Clear()     { PORTB &= (~(1<<0)); }
+  /// Sets PinB0 to LOW.
+  static void Clear()     { PORTB &= ~(1<<0); }
 
-  /// Toggles PinB0 value.B.
+  /// Toggles PinB0 value.
   static void Toggle()    { PINB |= (1<<0); }
 
   /// Configures PinB0  as an output pin.
   static void SetOutput() { DDRB |= (1<<0); }
 
   /// Configures PinB0  as an input pin.
-  static void SetInput()  { DDRB &= (~(1<<0)); }
-  static void PulseHigh() { PORTB |= (1<<0); PORTB &= (~(1<<0)); }
-  static void PulseLow()  { PORTB &= (~(1<<0)); PORTB |= (1<<0); }
+  static void SetInput()  { DDRB &= ~(1<<0); }
+
+  /// Pulses PinB0 with high state first.
+  static void PulseHigh() { PORTB |= (1<<0); PORTB &= ~(1<<0); }
+
+  /// Pulses PinB0 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<0); PORTB |= (1<<0); }
 
   /// Reads PinB0  value.
   /// @return Port pin value.
@@ -123,22 +127,26 @@ struct PinB0 {
 };
 
 struct PinB1 {
-  /// Sets PinB1 to HIGH.B.
+  /// Sets PinB1 to HIGH.
   static void Set()       { PORTB |= (1<<1); }
 
-  /// Sets PinB1 to LOW.B.
-  static void Clear()     { PORTB &= (~(1<<1)); }
+  /// Sets PinB1 to LOW.
+  static void Clear()     { PORTB &= ~(1<<1); }
 
-  /// Toggles PinB1 value.B.
+  /// Toggles PinB1 value.
   static void Toggle()    { PINB |= (1<<1); }
 
   /// Configures PinB1  as an output pin.
   static void SetOutput() { DDRB |= (1<<1); }
 
   /// Configures PinB1  as an input pin.
-  static void SetInput()  { DDRB &= (~(1<<1)); }
-  static void PulseHigh() { PORTB |= (1<<1); PORTB &= (~(1<<1)); }
-  static void PulseLow()  { PORTB &= (~(1<<1)); PORTB |= (1<<1); }
+  static void SetInput()  { DDRB &= ~(1<<1); }
+
+  /// Pulses PinB1 with high state first.
+  static void PulseHigh() { PORTB |= (1<<1); PORTB &= ~(1<<1); }
+
+  /// Pulses PinB1 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<1); PORTB |= (1<<1); }
 
   /// Reads PinB1  value.
   /// @return Port pin value.
@@ -161,22 +169,26 @@ struct PinB1 {
 };
 
 struct PinB2 {
-  /// Sets PinB2 to HIGH.B.
+  /// Sets PinB2 to HIGH.
   static void Set()       { PORTB |= (1<<2); }
 
-  /// Sets PinB2 to LOW.B.
-  static void Clear()     { PORTB &= (~(1<<2)); }
+  /// Sets PinB2 to LOW.
+  static void Clear()     { PORTB &= ~(1<<2); }
 
-  /// Toggles PinB2 value.B.
+  /// Toggles PinB2 value.
   static void Toggle()    { PINB |= (1<<2); }
 
   /// Configures PinB2  as an output pin.
   static void SetOutput() { DDRB |= (1<<2); }
 
   /// Configures PinB2  as an input pin.
-  static void SetInput()  { DDRB &= (~(1<<2)); }
-  static void PulseHigh() { PORTB |= (1<<2); PORTB &= (~(1<<2)); }
-  static void PulseLow()  { PORTB &= (~(1<<2)); PORTB |= (1<<2); }
+  static void SetInput()  { DDRB &= ~(1<<2); }
+
+  /// Pulses PinB2 with high state first.
+  static void PulseHigh() { PORTB |= (1<<2); PORTB &= ~(1<<2); }
+
+  /// Pulses PinB2 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<2); PORTB |= (1<<2); }
 
   /// Reads PinB2  value.
   /// @return Port pin value.
@@ -199,22 +211,26 @@ struct PinB2 {
 };
 
 struct PinB3 {
-  /// Sets PinB3 to HIGH.B.
+  /// Sets PinB3 to HIGH.
   static void Set()       { PORTB |= (1<<3); }
 
-  /// Sets PinB3 to LOW.B.
-  static void Clear()     { PORTB &= (~(1<<3)); }
+  /// Sets PinB3 to LOW.
+  static void Clear()     { PORTB &= ~(1<<3); }
 
-  /// Toggles PinB3 value.B.
+  /// Toggles PinB3 value.
   static void Toggle()    { PINB |= (1<<3); }
 
   /// Configures PinB3  as an output pin.
   static void SetOutput() { DDRB |= (1<<3); }
 
   /// Configures PinB3  as an input pin.
-  static void SetInput()  { DDRB &= (~(1<<3)); }
-  static void PulseHigh() { PORTB |= (1<<3); PORTB &= (~(1<<3)); }
-  static void PulseLow()  { PORTB &= (~(1<<3)); PORTB |= (1<<3); }
+  static void SetInput()  { DDRB &= ~(1<<3); }
+
+  /// Pulses PinB3 with high state first.
+  static void PulseHigh() { PORTB |= (1<<3); PORTB &= ~(1<<3); }
+
+  /// Pulses PinB3 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<3); PORTB |= (1<<3); }
 
   /// Reads PinB3  value.
   /// @return Port pin value.
@@ -237,22 +253,26 @@ struct PinB3 {
 };
 
 struct PinB4 {
-  /// Sets PinB4 to HIGH.B.
+  /// Sets PinB4 to HIGH.
   static void Set()       { PORTB |= (1<<4); }
 
-  /// Sets PinB4 to LOW.B.
-  static void Clear()     { PORTB &= (~(1<<4)); }
+  /// Sets PinB4 to LOW.
+  static void Clear()     { PORTB &= ~(1<<4); }
 
-  /// Toggles PinB4 value.B.
+  /// Toggles PinB4 value.
   static void Toggle()    { PINB |= (1<<4); }
 
   /// Configures PinB4  as an output pin.
   static void SetOutput() { DDRB |= (1<<4); }
 
   /// Configures PinB4  as an input pin.
-  static void SetInput()  { DDRB &= (~(1<<4)); }
-  static void PulseHigh() { PORTB |= (1<<4); PORTB &= (~(1<<4)); }
-  static void PulseLow()  { PORTB &= (~(1<<4)); PORTB |= (1<<4); }
+  static void SetInput()  { DDRB &= ~(1<<4); }
+
+  /// Pulses PinB4 with high state first.
+  static void PulseHigh() { PORTB |= (1<<4); PORTB &= ~(1<<4); }
+
+  /// Pulses PinB4 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<4); PORTB |= (1<<4); }
 
   /// Reads PinB4  value.
   /// @return Port pin value.
@@ -275,22 +295,26 @@ struct PinB4 {
 };
 
 struct PinB5 {
-  /// Sets PinB5 to HIGH.B.
+  /// Sets PinB5 to HIGH.
   static void Set()       { PORTB |= (1<<5); }
 
-  /// Sets PinB5 to LOW.B.
-  static void Clear()     { PORTB &= (~(1<<5)); }
+  /// Sets PinB5 to LOW.
+  static void Clear()     { PORTB &= ~(1<<5); }
 
-  /// Toggles PinB5 value.B.
+  /// Toggles PinB5 value.
   static void Toggle()    { PINB |= (1<<5); }
 
   /// Configures PinB5  as an output pin.
   static void SetOutput() { DDRB |= (1<<5); }
 
   /// Configures PinB5  as an input pin.
-  static void SetInput()  { DDRB &= (~(1<<5)); }
-  static void PulseHigh() { PORTB |= (1<<5); PORTB &= (~(1<<5)); }
-  static void PulseLow()  { PORTB &= (~(1<<5)); PORTB |= (1<<5); }
+  static void SetInput()  { DDRB &= ~(1<<5); }
+
+  /// Pulses PinB5 with high state first.
+  static void PulseHigh() { PORTB |= (1<<5); PORTB &= ~(1<<5); }
+
+  /// Pulses PinB5 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<5); PORTB |= (1<<5); }
 
   /// Reads PinB5  value.
   /// @return Port pin value.
@@ -313,22 +337,26 @@ struct PinB5 {
 };
 
 struct PinB6 {
-  /// Sets PinB6 to HIGH.B.
+  /// Sets PinB6 to HIGH.
   static void Set()       { PORTB |= (1<<6); }
 
-  /// Sets PinB6 to LOW.B.
-  static void Clear()     { PORTB &= (~(1<<6)); }
+  /// Sets PinB6 to LOW.
+  static void Clear()     { PORTB &= ~(1<<6); }
 
-  /// Toggles PinB6 value.B.
+  /// Toggles PinB6 value.
   static void Toggle()    { PINB |= (1<<6); }
 
   /// Configures PinB6  as an output pin.
   static void SetOutput() { DDRB |= (1<<6); }
 
   /// Configures PinB6  as an input pin.
-  static void SetInput()  { DDRB &= (~(1<<6)); }
-  static void PulseHigh() { PORTB |= (1<<6); PORTB &= (~(1<<6)); }
-  static void PulseLow()  { PORTB &= (~(1<<6)); PORTB |= (1<<6); }
+  static void SetInput()  { DDRB &= ~(1<<6); }
+
+  /// Pulses PinB6 with high state first.
+  static void PulseHigh() { PORTB |= (1<<6); PORTB &= ~(1<<6); }
+
+  /// Pulses PinB6 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<6); PORTB |= (1<<6); }
 
   /// Reads PinB6  value.
   /// @return Port pin value.
@@ -351,22 +379,26 @@ struct PinB6 {
 };
 
 struct PinB7 {
-  /// Sets PinB7 to HIGH.B.
+  /// Sets PinB7 to HIGH.
   static void Set()       { PORTB |= (1<<7); }
 
-  /// Sets PinB7 to LOW.B.
-  static void Clear()     { PORTB &= (~(1<<7)); }
+  /// Sets PinB7 to LOW.
+  static void Clear()     { PORTB &= ~(1<<7); }
 
-  /// Toggles PinB7 value.B.
+  /// Toggles PinB7 value.
   static void Toggle()    { PINB |= (1<<7); }
 
   /// Configures PinB7  as an output pin.
   static void SetOutput() { DDRB |= (1<<7); }
 
   /// Configures PinB7  as an input pin.
-  static void SetInput()  { DDRB &= (~(1<<7)); }
-  static void PulseHigh() { PORTB |= (1<<7); PORTB &= (~(1<<7)); }
-  static void PulseLow()  { PORTB &= (~(1<<7)); PORTB |= (1<<7); }
+  static void SetInput()  { DDRB &= ~(1<<7); }
+
+  /// Pulses PinB7 with high state first.
+  static void PulseHigh() { PORTB |= (1<<7); PORTB &= ~(1<<7); }
+
+  /// Pulses PinB7 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<7); PORTB |= (1<<7); }
 
   /// Reads PinB7  value.
   /// @return Port pin value.
@@ -439,22 +471,26 @@ struct PortC {
 };
 
 struct PinC0 {
-  /// Sets PinC0 to HIGH.C.
+  /// Sets PinC0 to HIGH.
   static void Set()       { PORTC |= (1<<0); }
 
-  /// Sets PinC0 to LOW.C.
-  static void Clear()     { PORTC &= (~(1<<0)); }
+  /// Sets PinC0 to LOW.
+  static void Clear()     { PORTC &= ~(1<<0); }
 
-  /// Toggles PinC0 value.C.
+  /// Toggles PinC0 value.
   static void Toggle()    { PINC |= (1<<0); }
 
   /// Configures PinC0  as an output pin.
   static void SetOutput() { DDRC |= (1<<0); }
 
   /// Configures PinC0  as an input pin.
-  static void SetInput()  { DDRC &= (~(1<<0)); }
-  static void PulseHigh() { PORTC |= (1<<0); PORTC &= (~(1<<0)); }
-  static void PulseLow()  { PORTC &= (~(1<<0)); PORTC |= (1<<0); }
+  static void SetInput()  { DDRC &= ~(1<<0); }
+
+  /// Pulses PinC0 with high state first.
+  static void PulseHigh() { PORTC |= (1<<0); PORTC &= ~(1<<0); }
+
+  /// Pulses PinC0 with low state first.
+  static void PulseLow()  { PORTC &= ~(1<<0); PORTC |= (1<<0); }
 
   /// Reads PinC0  value.
   /// @return Port pin value.
@@ -477,22 +513,26 @@ struct PinC0 {
 };
 
 struct PinC1 {
-  /// Sets PinC1 to HIGH.C.
+  /// Sets PinC1 to HIGH.
   static void Set()       { PORTC |= (1<<1); }
 
-  /// Sets PinC1 to LOW.C.
-  static void Clear()     { PORTC &= (~(1<<1)); }
+  /// Sets PinC1 to LOW.
+  static void Clear()     { PORTC &= ~(1<<1); }
 
-  /// Toggles PinC1 value.C.
+  /// Toggles PinC1 value.
   static void Toggle()    { PINC |= (1<<1); }
 
   /// Configures PinC1  as an output pin.
   static void SetOutput() { DDRC |= (1<<1); }
 
   /// Configures PinC1  as an input pin.
-  static void SetInput()  { DDRC &= (~(1<<1)); }
-  static void PulseHigh() { PORTC |= (1<<1); PORTC &= (~(1<<1)); }
-  static void PulseLow()  { PORTC &= (~(1<<1)); PORTC |= (1<<1); }
+  static void SetInput()  { DDRC &= ~(1<<1); }
+
+  /// Pulses PinC1 with high state first.
+  static void PulseHigh() { PORTC |= (1<<1); PORTC &= ~(1<<1); }
+
+  /// Pulses PinC1 with low state first.
+  static void PulseLow()  { PORTC &= ~(1<<1); PORTC |= (1<<1); }
 
   /// Reads PinC1  value.
   /// @return Port pin value.
@@ -515,22 +555,26 @@ struct PinC1 {
 };
 
 struct PinC2 {
-  /// Sets PinC2 to HIGH.C.
+  /// Sets PinC2 to HIGH.
   static void Set()       { PORTC |= (1<<2); }
 
-  /// Sets PinC2 to LOW.C.
-  static void Clear()     { PORTC &= (~(1<<2)); }
+  /// Sets PinC2 to LOW.
+  static void Clear()     { PORTC &= ~(1<<2); }
 
-  /// Toggles PinC2 value.C.
+  /// Toggles PinC2 value.
   static void Toggle()    { PINC |= (1<<2); }
 
   /// Configures PinC2  as an output pin.
   static void SetOutput() { DDRC |= (1<<2); }
 
   /// Configures PinC2  as an input pin.
-  static void SetInput()  { DDRC &= (~(1<<2)); }
-  static void PulseHigh() { PORTC |= (1<<2); PORTC &= (~(1<<2)); }
-  static void PulseLow()  { PORTC &= (~(1<<2)); PORTC |= (1<<2); }
+  static void SetInput()  { DDRC &= ~(1<<2); }
+
+  /// Pulses PinC2 with high state first.
+  static void PulseHigh() { PORTC |= (1<<2); PORTC &= ~(1<<2); }
+
+  /// Pulses PinC2 with low state first.
+  static void PulseLow()  { PORTC &= ~(1<<2); PORTC |= (1<<2); }
 
   /// Reads PinC2  value.
   /// @return Port pin value.
@@ -553,22 +597,26 @@ struct PinC2 {
 };
 
 struct PinC3 {
-  /// Sets PinC3 to HIGH.C.
+  /// Sets PinC3 to HIGH.
   static void Set()       { PORTC |= (1<<3); }
 
-  /// Sets PinC3 to LOW.C.
-  static void Clear()     { PORTC &= (~(1<<3)); }
+  /// Sets PinC3 to LOW.
+  static void Clear()     { PORTC &= ~(1<<3); }
 
-  /// Toggles PinC3 value.C.
+  /// Toggles PinC3 value.
   static void Toggle()    { PINC |= (1<<3); }
 
   /// Configures PinC3  as an output pin.
   static void SetOutput() { DDRC |= (1<<3); }
 
   /// Configures PinC3  as an input pin.
-  static void SetInput()  { DDRC &= (~(1<<3)); }
-  static void PulseHigh() { PORTC |= (1<<3); PORTC &= (~(1<<3)); }
-  static void PulseLow()  { PORTC &= (~(1<<3)); PORTC |= (1<<3); }
+  static void SetInput()  { DDRC &= ~(1<<3); }
+
+  /// Pulses PinC3 with high state first.
+  static void PulseHigh() { PORTC |= (1<<3); PORTC &= ~(1<<3); }
+
+  /// Pulses PinC3 with low state first.
+  static void PulseLow()  { PORTC &= ~(1<<3); PORTC |= (1<<3); }
 
   /// Reads PinC3  value.
   /// @return Port pin value.
@@ -591,22 +639,26 @@ struct PinC3 {
 };
 
 struct PinC4 {
-  /// Sets PinC4 to HIGH.C.
+  /// Sets PinC4 to HIGH.
   static void Set()       { PORTC |= (1<<4); }
 
-  /// Sets PinC4 to LOW.C.
-  static void Clear()     { PORTC &= (~(1<<4)); }
+  /// Sets PinC4 to LOW.
+  static void Clear()     { PORTC &= ~(1<<4); }
 
-  /// Toggles PinC4 value.C.
+  /// Toggles PinC4 value.
   static void Toggle()    { PINC |= (1<<4); }
 
   /// Configures PinC4  as an output pin.
   static void SetOutput() { DDRC |= (1<<4); }
 
   /// Configures PinC4  as an input pin.
-  static void SetInput()  { DDRC &= (~(1<<4)); }
-  static void PulseHigh() { PORTC |= (1<<4); PORTC &= (~(1<<4)); }
-  static void PulseLow()  { PORTC &= (~(1<<4)); PORTC |= (1<<4); }
+  static void SetInput()  { DDRC &= ~(1<<4); }
+
+  /// Pulses PinC4 with high state first.
+  static void PulseHigh() { PORTC |= (1<<4); PORTC &= ~(1<<4); }
+
+  /// Pulses PinC4 with low state first.
+  static void PulseLow()  { PORTC &= ~(1<<4); PORTC |= (1<<4); }
 
   /// Reads PinC4  value.
   /// @return Port pin value.
@@ -629,22 +681,26 @@ struct PinC4 {
 };
 
 struct PinC5 {
-  /// Sets PinC5 to HIGH.C.
+  /// Sets PinC5 to HIGH.
   static void Set()       { PORTC |= (1<<5); }
 
-  /// Sets PinC5 to LOW.C.
-  static void Clear()     { PORTC &= (~(1<<5)); }
+  /// Sets PinC5 to LOW.
+  static void Clear()     { PORTC &= ~(1<<5); }
 
-  /// Toggles PinC5 value.C.
+  /// Toggles PinC5 value.
   static void Toggle()    { PINC |= (1<<5); }
 
   /// Configures PinC5  as an output pin.
   static void SetOutput() { DDRC |= (1<<5); }
 
   /// Configures PinC5  as an input pin.
-  static void SetInput()  { DDRC &= (~(1<<5)); }
-  static void PulseHigh() { PORTC |= (1<<5); PORTC &= (~(1<<5)); }
-  static void PulseLow()  { PORTC &= (~(1<<5)); PORTC |= (1<<5); }
+  static void SetInput()  { DDRC &= ~(1<<5); }
+
+  /// Pulses PinC5 with high state first.
+  static void PulseHigh() { PORTC |= (1<<5); PORTC &= ~(1<<5); }
+
+  /// Pulses PinC5 with low state first.
+  static void PulseLow()  { PORTC &= ~(1<<5); PORTC |= (1<<5); }
 
   /// Reads PinC5  value.
   /// @return Port pin value.
@@ -667,22 +723,26 @@ struct PinC5 {
 };
 
 struct PinC6 {
-  /// Sets PinC6 to HIGH.C.
+  /// Sets PinC6 to HIGH.
   static void Set()       { PORTC |= (1<<6); }
 
-  /// Sets PinC6 to LOW.C.
-  static void Clear()     { PORTC &= (~(1<<6)); }
+  /// Sets PinC6 to LOW.
+  static void Clear()     { PORTC &= ~(1<<6); }
 
-  /// Toggles PinC6 value.C.
+  /// Toggles PinC6 value.
   static void Toggle()    { PINC |= (1<<6); }
 
   /// Configures PinC6  as an output pin.
   static void SetOutput() { DDRC |= (1<<6); }
 
   /// Configures PinC6  as an input pin.
-  static void SetInput()  { DDRC &= (~(1<<6)); }
-  static void PulseHigh() { PORTC |= (1<<6); PORTC &= (~(1<<6)); }
-  static void PulseLow()  { PORTC &= (~(1<<6)); PORTC |= (1<<6); }
+  static void SetInput()  { DDRC &= ~(1<<6); }
+
+  /// Pulses PinC6 with high state first.
+  static void PulseHigh() { PORTC |= (1<<6); PORTC &= ~(1<<6); }
+
+  /// Pulses PinC6 with low state first.
+  static void PulseLow()  { PORTC &= ~(1<<6); PORTC |= (1<<6); }
 
   /// Reads PinC6  value.
   /// @return Port pin value.
@@ -705,22 +765,26 @@ struct PinC6 {
 };
 
 struct PinC7 {
-  /// Sets PinC7 to HIGH.C.
+  /// Sets PinC7 to HIGH.
   static void Set()       { PORTC |= (1<<7); }
 
-  /// Sets PinC7 to LOW.C.
-  static void Clear()     { PORTC &= (~(1<<7)); }
+  /// Sets PinC7 to LOW.
+  static void Clear()     { PORTC &= ~(1<<7); }
 
-  /// Toggles PinC7 value.C.
+  /// Toggles PinC7 value.
   static void Toggle()    { PINC |= (1<<7); }
 
   /// Configures PinC7  as an output pin.
   static void SetOutput() { DDRC |= (1<<7); }
 
   /// Configures PinC7  as an input pin.
-  static void SetInput()  { DDRC &= (~(1<<7)); }
-  static void PulseHigh() { PORTC |= (1<<7); PORTC &= (~(1<<7)); }
-  static void PulseLow()  { PORTC &= (~(1<<7)); PORTC |= (1<<7); }
+  static void SetInput()  { DDRC &= ~(1<<7); }
+
+  /// Pulses PinC7 with high state first.
+  static void PulseHigh() { PORTC |= (1<<7); PORTC &= ~(1<<7); }
+
+  /// Pulses PinC7 with low state first.
+  static void PulseLow()  { PORTC &= ~(1<<7); PORTC |= (1<<7); }
 
   /// Reads PinC7  value.
   /// @return Port pin value.
@@ -793,22 +857,26 @@ struct PortD {
 };
 
 struct PinD0 {
-  /// Sets PinD0 to HIGH.D.
+  /// Sets PinD0 to HIGH.
   static void Set()       { PORTD |= (1<<0); }
 
-  /// Sets PinD0 to LOW.D.
-  static void Clear()     { PORTD &= (~(1<<0)); }
+  /// Sets PinD0 to LOW.
+  static void Clear()     { PORTD &= ~(1<<0); }
 
-  /// Toggles PinD0 value.D.
+  /// Toggles PinD0 value.
   static void Toggle()    { PIND |= (1<<0); }
 
   /// Configures PinD0  as an output pin.
   static void SetOutput() { DDRD |= (1<<0); }
 
   /// Configures PinD0  as an input pin.
-  static void SetInput()  { DDRD &= (~(1<<0)); }
-  static void PulseHigh() { PORTD |= (1<<0); PORTD &= (~(1<<0)); }
-  static void PulseLow()  { PORTD &= (~(1<<0)); PORTD |= (1<<0); }
+  static void SetInput()  { DDRD &= ~(1<<0); }
+
+  /// Pulses PinD0 with high state first.
+  static void PulseHigh() { PORTD |= (1<<0); PORTD &= ~(1<<0); }
+
+  /// Pulses PinD0 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<0); PORTD |= (1<<0); }
 
   /// Reads PinD0  value.
   /// @return Port pin value.
@@ -831,22 +899,26 @@ struct PinD0 {
 };
 
 struct PinD1 {
-  /// Sets PinD1 to HIGH.D.
+  /// Sets PinD1 to HIGH.
   static void Set()       { PORTD |= (1<<1); }
 
-  /// Sets PinD1 to LOW.D.
-  static void Clear()     { PORTD &= (~(1<<1)); }
+  /// Sets PinD1 to LOW.
+  static void Clear()     { PORTD &= ~(1<<1); }
 
-  /// Toggles PinD1 value.D.
+  /// Toggles PinD1 value.
   static void Toggle()    { PIND |= (1<<1); }
 
   /// Configures PinD1  as an output pin.
   static void SetOutput() { DDRD |= (1<<1); }
 
   /// Configures PinD1  as an input pin.
-  static void SetInput()  { DDRD &= (~(1<<1)); }
-  static void PulseHigh() { PORTD |= (1<<1); PORTD &= (~(1<<1)); }
-  static void PulseLow()  { PORTD &= (~(1<<1)); PORTD |= (1<<1); }
+  static void SetInput()  { DDRD &= ~(1<<1); }
+
+  /// Pulses PinD1 with high state first.
+  static void PulseHigh() { PORTD |= (1<<1); PORTD &= ~(1<<1); }
+
+  /// Pulses PinD1 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<1); PORTD |= (1<<1); }
 
   /// Reads PinD1  value.
   /// @return Port pin value.
@@ -869,22 +941,26 @@ struct PinD1 {
 };
 
 struct PinD2 {
-  /// Sets PinD2 to HIGH.D.
+  /// Sets PinD2 to HIGH.
   static void Set()       { PORTD |= (1<<2); }
 
-  /// Sets PinD2 to LOW.D.
-  static void Clear()     { PORTD &= (~(1<<2)); }
+  /// Sets PinD2 to LOW.
+  static void Clear()     { PORTD &= ~(1<<2); }
 
-  /// Toggles PinD2 value.D.
+  /// Toggles PinD2 value.
   static void Toggle()    { PIND |= (1<<2); }
 
   /// Configures PinD2  as an output pin.
   static void SetOutput() { DDRD |= (1<<2); }
 
   /// Configures PinD2  as an input pin.
-  static void SetInput()  { DDRD &= (~(1<<2)); }
-  static void PulseHigh() { PORTD |= (1<<2); PORTD &= (~(1<<2)); }
-  static void PulseLow()  { PORTD &= (~(1<<2)); PORTD |= (1<<2); }
+  static void SetInput()  { DDRD &= ~(1<<2); }
+
+  /// Pulses PinD2 with high state first.
+  static void PulseHigh() { PORTD |= (1<<2); PORTD &= ~(1<<2); }
+
+  /// Pulses PinD2 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<2); PORTD |= (1<<2); }
 
   /// Reads PinD2  value.
   /// @return Port pin value.
@@ -907,22 +983,26 @@ struct PinD2 {
 };
 
 struct PinD3 {
-  /// Sets PinD3 to HIGH.D.
+  /// Sets PinD3 to HIGH.
   static void Set()       { PORTD |= (1<<3); }
 
-  /// Sets PinD3 to LOW.D.
-  static void Clear()     { PORTD &= (~(1<<3)); }
+  /// Sets PinD3 to LOW.
+  static void Clear()     { PORTD &= ~(1<<3); }
 
-  /// Toggles PinD3 value.D.
+  /// Toggles PinD3 value.
   static void Toggle()    { PIND |= (1<<3); }
 
   /// Configures PinD3  as an output pin.
   static void SetOutput() { DDRD |= (1<<3); }
 
   /// Configures PinD3  as an input pin.
-  static void SetInput()  { DDRD &= (~(1<<3)); }
-  static void PulseHigh() { PORTD |= (1<<3); PORTD &= (~(1<<3)); }
-  static void PulseLow()  { PORTD &= (~(1<<3)); PORTD |= (1<<3); }
+  static void SetInput()  { DDRD &= ~(1<<3); }
+
+  /// Pulses PinD3 with high state first.
+  static void PulseHigh() { PORTD |= (1<<3); PORTD &= ~(1<<3); }
+
+  /// Pulses PinD3 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<3); PORTD |= (1<<3); }
 
   /// Reads PinD3  value.
   /// @return Port pin value.
@@ -945,22 +1025,26 @@ struct PinD3 {
 };
 
 struct PinD4 {
-  /// Sets PinD4 to HIGH.D.
+  /// Sets PinD4 to HIGH.
   static void Set()       { PORTD |= (1<<4); }
 
-  /// Sets PinD4 to LOW.D.
-  static void Clear()     { PORTD &= (~(1<<4)); }
+  /// Sets PinD4 to LOW.
+  static void Clear()     { PORTD &= ~(1<<4); }
 
-  /// Toggles PinD4 value.D.
+  /// Toggles PinD4 value.
   static void Toggle()    { PIND |= (1<<4); }
 
   /// Configures PinD4  as an output pin.
   static void SetOutput() { DDRD |= (1<<4); }
 
   /// Configures PinD4  as an input pin.
-  static void SetInput()  { DDRD &= (~(1<<4)); }
-  static void PulseHigh() { PORTD |= (1<<4); PORTD &= (~(1<<4)); }
-  static void PulseLow()  { PORTD &= (~(1<<4)); PORTD |= (1<<4); }
+  static void SetInput()  { DDRD &= ~(1<<4); }
+
+  /// Pulses PinD4 with high state first.
+  static void PulseHigh() { PORTD |= (1<<4); PORTD &= ~(1<<4); }
+
+  /// Pulses PinD4 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<4); PORTD |= (1<<4); }
 
   /// Reads PinD4  value.
   /// @return Port pin value.
@@ -983,22 +1067,26 @@ struct PinD4 {
 };
 
 struct PinD5 {
-  /// Sets PinD5 to HIGH.D.
+  /// Sets PinD5 to HIGH.
   static void Set()       { PORTD |= (1<<5); }
 
-  /// Sets PinD5 to LOW.D.
-  static void Clear()     { PORTD &= (~(1<<5)); }
+  /// Sets PinD5 to LOW.
+  static void Clear()     { PORTD &= ~(1<<5); }
 
-  /// Toggles PinD5 value.D.
+  /// Toggles PinD5 value.
   static void Toggle()    { PIND |= (1<<5); }
 
   /// Configures PinD5  as an output pin.
   static void SetOutput() { DDRD |= (1<<5); }
 
   /// Configures PinD5  as an input pin.
-  static void SetInput()  { DDRD &= (~(1<<5)); }
-  static void PulseHigh() { PORTD |= (1<<5); PORTD &= (~(1<<5)); }
-  static void PulseLow()  { PORTD &= (~(1<<5)); PORTD |= (1<<5); }
+  static void SetInput()  { DDRD &= ~(1<<5); }
+
+  /// Pulses PinD5 with high state first.
+  static void PulseHigh() { PORTD |= (1<<5); PORTD &= ~(1<<5); }
+
+  /// Pulses PinD5 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<5); PORTD |= (1<<5); }
 
   /// Reads PinD5  value.
   /// @return Port pin value.
@@ -1021,22 +1109,26 @@ struct PinD5 {
 };
 
 struct PinD6 {
-  /// Sets PinD6 to HIGH.D.
+  /// Sets PinD6 to HIGH.
   static void Set()       { PORTD |= (1<<6); }
 
-  /// Sets PinD6 to LOW.D.
-  static void Clear()     { PORTD &= (~(1<<6)); }
+  /// Sets PinD6 to LOW.
+  static void Clear()     { PORTD &= ~(1<<6); }
 
-  /// Toggles PinD6 value.D.
+  /// Toggles PinD6 value.
   static void Toggle()    { PIND |= (1<<6); }
 
   /// Configures PinD6  as an output pin.
   static void SetOutput() { DDRD |= (1<<6); }
 
   /// Configures PinD6  as an input pin.
-  static void SetInput()  { DDRD &= (~(1<<6)); }
-  static void PulseHigh() { PORTD |= (1<<6); PORTD &= (~(1<<6)); }
-  static void PulseLow()  { PORTD &= (~(1<<6)); PORTD |= (1<<6); }
+  static void SetInput()  { DDRD &= ~(1<<6); }
+
+  /// Pulses PinD6 with high state first.
+  static void PulseHigh() { PORTD |= (1<<6); PORTD &= ~(1<<6); }
+
+  /// Pulses PinD6 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<6); PORTD |= (1<<6); }
 
   /// Reads PinD6  value.
   /// @return Port pin value.
@@ -1059,22 +1151,26 @@ struct PinD6 {
 };
 
 struct PinD7 {
-  /// Sets PinD7 to HIGH.D.
+  /// Sets PinD7 to HIGH.
   static void Set()       { PORTD |= (1<<7); }
 
-  /// Sets PinD7 to LOW.D.
-  static void Clear()     { PORTD &= (~(1<<7)); }
+  /// Sets PinD7 to LOW.
+  static void Clear()     { PORTD &= ~(1<<7); }
 
-  /// Toggles PinD7 value.D.
+  /// Toggles PinD7 value.
   static void Toggle()    { PIND |= (1<<7); }
 
   /// Configures PinD7  as an output pin.
   static void SetOutput() { DDRD |= (1<<7); }
 
   /// Configures PinD7  as an input pin.
-  static void SetInput()  { DDRD &= (~(1<<7)); }
-  static void PulseHigh() { PORTD |= (1<<7); PORTD &= (~(1<<7)); }
-  static void PulseLow()  { PORTD &= (~(1<<7)); PORTD |= (1<<7); }
+  static void SetInput()  { DDRD &= ~(1<<7); }
+
+  /// Pulses PinD7 with high state first.
+  static void PulseHigh() { PORTD |= (1<<7); PORTD &= ~(1<<7); }
+
+  /// Pulses PinD7 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<7); PORTD |= (1<<7); }
 
   /// Reads PinD7  value.
   /// @return Port pin value.
@@ -1147,22 +1243,26 @@ struct PortE {
 };
 
 struct PinE0 {
-  /// Sets PinE0 to HIGH.E.
+  /// Sets PinE0 to HIGH.
   static void Set()       { PORTE |= (1<<0); }
 
-  /// Sets PinE0 to LOW.E.
-  static void Clear()     { PORTE &= (~(1<<0)); }
+  /// Sets PinE0 to LOW.
+  static void Clear()     { PORTE &= ~(1<<0); }
 
-  /// Toggles PinE0 value.E.
+  /// Toggles PinE0 value.
   static void Toggle()    { PINE |= (1<<0); }
 
   /// Configures PinE0  as an output pin.
   static void SetOutput() { DDRE |= (1<<0); }
 
   /// Configures PinE0  as an input pin.
-  static void SetInput()  { DDRE &= (~(1<<0)); }
-  static void PulseHigh() { PORTE |= (1<<0); PORTE &= (~(1<<0)); }
-  static void PulseLow()  { PORTE &= (~(1<<0)); PORTE |= (1<<0); }
+  static void SetInput()  { DDRE &= ~(1<<0); }
+
+  /// Pulses PinE0 with high state first.
+  static void PulseHigh() { PORTE |= (1<<0); PORTE &= ~(1<<0); }
+
+  /// Pulses PinE0 with low state first.
+  static void PulseLow()  { PORTE &= ~(1<<0); PORTE |= (1<<0); }
 
   /// Reads PinE0  value.
   /// @return Port pin value.
@@ -1185,22 +1285,26 @@ struct PinE0 {
 };
 
 struct PinE1 {
-  /// Sets PinE1 to HIGH.E.
+  /// Sets PinE1 to HIGH.
   static void Set()       { PORTE |= (1<<1); }
 
-  /// Sets PinE1 to LOW.E.
-  static void Clear()     { PORTE &= (~(1<<1)); }
+  /// Sets PinE1 to LOW.
+  static void Clear()     { PORTE &= ~(1<<1); }
 
-  /// Toggles PinE1 value.E.
+  /// Toggles PinE1 value.
   static void Toggle()    { PINE |= (1<<1); }
 
   /// Configures PinE1  as an output pin.
   static void SetOutput() { DDRE |= (1<<1); }
 
   /// Configures PinE1  as an input pin.
-  static void SetInput()  { DDRE &= (~(1<<1)); }
-  static void PulseHigh() { PORTE |= (1<<1); PORTE &= (~(1<<1)); }
-  static void PulseLow()  { PORTE &= (~(1<<1)); PORTE |= (1<<1); }
+  static void SetInput()  { DDRE &= ~(1<<1); }
+
+  /// Pulses PinE1 with high state first.
+  static void PulseHigh() { PORTE |= (1<<1); PORTE &= ~(1<<1); }
+
+  /// Pulses PinE1 with low state first.
+  static void PulseLow()  { PORTE &= ~(1<<1); PORTE |= (1<<1); }
 
   /// Reads PinE1  value.
   /// @return Port pin value.
@@ -1223,22 +1327,26 @@ struct PinE1 {
 };
 
 struct PinE2 {
-  /// Sets PinE2 to HIGH.E.
+  /// Sets PinE2 to HIGH.
   static void Set()       { PORTE |= (1<<2); }
 
-  /// Sets PinE2 to LOW.E.
-  static void Clear()     { PORTE &= (~(1<<2)); }
+  /// Sets PinE2 to LOW.
+  static void Clear()     { PORTE &= ~(1<<2); }
 
-  /// Toggles PinE2 value.E.
+  /// Toggles PinE2 value.
   static void Toggle()    { PINE |= (1<<2); }
 
   /// Configures PinE2  as an output pin.
   static void SetOutput() { DDRE |= (1<<2); }
 
   /// Configures PinE2  as an input pin.
-  static void SetInput()  { DDRE &= (~(1<<2)); }
-  static void PulseHigh() { PORTE |= (1<<2); PORTE &= (~(1<<2)); }
-  static void PulseLow()  { PORTE &= (~(1<<2)); PORTE |= (1<<2); }
+  static void SetInput()  { DDRE &= ~(1<<2); }
+
+  /// Pulses PinE2 with high state first.
+  static void PulseHigh() { PORTE |= (1<<2); PORTE &= ~(1<<2); }
+
+  /// Pulses PinE2 with low state first.
+  static void PulseLow()  { PORTE &= ~(1<<2); PORTE |= (1<<2); }
 
   /// Reads PinE2  value.
   /// @return Port pin value.
@@ -1261,22 +1369,26 @@ struct PinE2 {
 };
 
 struct PinE3 {
-  /// Sets PinE3 to HIGH.E.
+  /// Sets PinE3 to HIGH.
   static void Set()       { PORTE |= (1<<3); }
 
-  /// Sets PinE3 to LOW.E.
-  static void Clear()     { PORTE &= (~(1<<3)); }
+  /// Sets PinE3 to LOW.
+  static void Clear()     { PORTE &= ~(1<<3); }
 
-  /// Toggles PinE3 value.E.
+  /// Toggles PinE3 value.
   static void Toggle()    { PINE |= (1<<3); }
 
   /// Configures PinE3  as an output pin.
   static void SetOutput() { DDRE |= (1<<3); }
 
   /// Configures PinE3  as an input pin.
-  static void SetInput()  { DDRE &= (~(1<<3)); }
-  static void PulseHigh() { PORTE |= (1<<3); PORTE &= (~(1<<3)); }
-  static void PulseLow()  { PORTE &= (~(1<<3)); PORTE |= (1<<3); }
+  static void SetInput()  { DDRE &= ~(1<<3); }
+
+  /// Pulses PinE3 with high state first.
+  static void PulseHigh() { PORTE |= (1<<3); PORTE &= ~(1<<3); }
+
+  /// Pulses PinE3 with low state first.
+  static void PulseLow()  { PORTE &= ~(1<<3); PORTE |= (1<<3); }
 
   /// Reads PinE3  value.
   /// @return Port pin value.
@@ -1299,22 +1411,26 @@ struct PinE3 {
 };
 
 struct PinE4 {
-  /// Sets PinE4 to HIGH.E.
+  /// Sets PinE4 to HIGH.
   static void Set()       { PORTE |= (1<<4); }
 
-  /// Sets PinE4 to LOW.E.
-  static void Clear()     { PORTE &= (~(1<<4)); }
+  /// Sets PinE4 to LOW.
+  static void Clear()     { PORTE &= ~(1<<4); }
 
-  /// Toggles PinE4 value.E.
+  /// Toggles PinE4 value.
   static void Toggle()    { PINE |= (1<<4); }
 
   /// Configures PinE4  as an output pin.
   static void SetOutput() { DDRE |= (1<<4); }
 
   /// Configures PinE4  as an input pin.
-  static void SetInput()  { DDRE &= (~(1<<4)); }
-  static void PulseHigh() { PORTE |= (1<<4); PORTE &= (~(1<<4)); }
-  static void PulseLow()  { PORTE &= (~(1<<4)); PORTE |= (1<<4); }
+  static void SetInput()  { DDRE &= ~(1<<4); }
+
+  /// Pulses PinE4 with high state first.
+  static void PulseHigh() { PORTE |= (1<<4); PORTE &= ~(1<<4); }
+
+  /// Pulses PinE4 with low state first.
+  static void PulseLow()  { PORTE &= ~(1<<4); PORTE |= (1<<4); }
 
   /// Reads PinE4  value.
   /// @return Port pin value.
@@ -1337,22 +1453,26 @@ struct PinE4 {
 };
 
 struct PinE5 {
-  /// Sets PinE5 to HIGH.E.
+  /// Sets PinE5 to HIGH.
   static void Set()       { PORTE |= (1<<5); }
 
-  /// Sets PinE5 to LOW.E.
-  static void Clear()     { PORTE &= (~(1<<5)); }
+  /// Sets PinE5 to LOW.
+  static void Clear()     { PORTE &= ~(1<<5); }
 
-  /// Toggles PinE5 value.E.
+  /// Toggles PinE5 value.
   static void Toggle()    { PINE |= (1<<5); }
 
   /// Configures PinE5  as an output pin.
   static void SetOutput() { DDRE |= (1<<5); }
 
   /// Configures PinE5  as an input pin.
-  static void SetInput()  { DDRE &= (~(1<<5)); }
-  static void PulseHigh() { PORTE |= (1<<5); PORTE &= (~(1<<5)); }
-  static void PulseLow()  { PORTE &= (~(1<<5)); PORTE |= (1<<5); }
+  static void SetInput()  { DDRE &= ~(1<<5); }
+
+  /// Pulses PinE5 with high state first.
+  static void PulseHigh() { PORTE |= (1<<5); PORTE &= ~(1<<5); }
+
+  /// Pulses PinE5 with low state first.
+  static void PulseLow()  { PORTE &= ~(1<<5); PORTE |= (1<<5); }
 
   /// Reads PinE5  value.
   /// @return Port pin value.
@@ -1375,22 +1495,26 @@ struct PinE5 {
 };
 
 struct PinE6 {
-  /// Sets PinE6 to HIGH.E.
+  /// Sets PinE6 to HIGH.
   static void Set()       { PORTE |= (1<<6); }
 
-  /// Sets PinE6 to LOW.E.
-  static void Clear()     { PORTE &= (~(1<<6)); }
+  /// Sets PinE6 to LOW.
+  static void Clear()     { PORTE &= ~(1<<6); }
 
-  /// Toggles PinE6 value.E.
+  /// Toggles PinE6 value.
   static void Toggle()    { PINE |= (1<<6); }
 
   /// Configures PinE6  as an output pin.
   static void SetOutput() { DDRE |= (1<<6); }
 
   /// Configures PinE6  as an input pin.
-  static void SetInput()  { DDRE &= (~(1<<6)); }
-  static void PulseHigh() { PORTE |= (1<<6); PORTE &= (~(1<<6)); }
-  static void PulseLow()  { PORTE &= (~(1<<6)); PORTE |= (1<<6); }
+  static void SetInput()  { DDRE &= ~(1<<6); }
+
+  /// Pulses PinE6 with high state first.
+  static void PulseHigh() { PORTE |= (1<<6); PORTE &= ~(1<<6); }
+
+  /// Pulses PinE6 with low state first.
+  static void PulseLow()  { PORTE &= ~(1<<6); PORTE |= (1<<6); }
 
   /// Reads PinE6  value.
   /// @return Port pin value.
@@ -1413,22 +1537,26 @@ struct PinE6 {
 };
 
 struct PinE7 {
-  /// Sets PinE7 to HIGH.E.
+  /// Sets PinE7 to HIGH.
   static void Set()       { PORTE |= (1<<7); }
 
-  /// Sets PinE7 to LOW.E.
-  static void Clear()     { PORTE &= (~(1<<7)); }
+  /// Sets PinE7 to LOW.
+  static void Clear()     { PORTE &= ~(1<<7); }
 
-  /// Toggles PinE7 value.E.
+  /// Toggles PinE7 value.
   static void Toggle()    { PINE |= (1<<7); }
 
   /// Configures PinE7  as an output pin.
   static void SetOutput() { DDRE |= (1<<7); }
 
   /// Configures PinE7  as an input pin.
-  static void SetInput()  { DDRE &= (~(1<<7)); }
-  static void PulseHigh() { PORTE |= (1<<7); PORTE &= (~(1<<7)); }
-  static void PulseLow()  { PORTE &= (~(1<<7)); PORTE |= (1<<7); }
+  static void SetInput()  { DDRE &= ~(1<<7); }
+
+  /// Pulses PinE7 with high state first.
+  static void PulseHigh() { PORTE |= (1<<7); PORTE &= ~(1<<7); }
+
+  /// Pulses PinE7 with low state first.
+  static void PulseLow()  { PORTE &= ~(1<<7); PORTE |= (1<<7); }
 
   /// Reads PinE7  value.
   /// @return Port pin value.
@@ -1501,22 +1629,26 @@ struct PortF {
 };
 
 struct PinF0 {
-  /// Sets PinF0 to HIGH.F.
+  /// Sets PinF0 to HIGH.
   static void Set()       { PORTF |= (1<<0); }
 
-  /// Sets PinF0 to LOW.F.
-  static void Clear()     { PORTF &= (~(1<<0)); }
+  /// Sets PinF0 to LOW.
+  static void Clear()     { PORTF &= ~(1<<0); }
 
-  /// Toggles PinF0 value.F.
+  /// Toggles PinF0 value.
   static void Toggle()    { PINF |= (1<<0); }
 
   /// Configures PinF0  as an output pin.
   static void SetOutput() { DDRF |= (1<<0); }
 
   /// Configures PinF0  as an input pin.
-  static void SetInput()  { DDRF &= (~(1<<0)); }
-  static void PulseHigh() { PORTF |= (1<<0); PORTF &= (~(1<<0)); }
-  static void PulseLow()  { PORTF &= (~(1<<0)); PORTF |= (1<<0); }
+  static void SetInput()  { DDRF &= ~(1<<0); }
+
+  /// Pulses PinF0 with high state first.
+  static void PulseHigh() { PORTF |= (1<<0); PORTF &= ~(1<<0); }
+
+  /// Pulses PinF0 with low state first.
+  static void PulseLow()  { PORTF &= ~(1<<0); PORTF |= (1<<0); }
 
   /// Reads PinF0  value.
   /// @return Port pin value.
@@ -1539,22 +1671,26 @@ struct PinF0 {
 };
 
 struct PinF1 {
-  /// Sets PinF1 to HIGH.F.
+  /// Sets PinF1 to HIGH.
   static void Set()       { PORTF |= (1<<1); }
 
-  /// Sets PinF1 to LOW.F.
-  static void Clear()     { PORTF &= (~(1<<1)); }
+  /// Sets PinF1 to LOW.
+  static void Clear()     { PORTF &= ~(1<<1); }
 
-  /// Toggles PinF1 value.F.
+  /// Toggles PinF1 value.
   static void Toggle()    { PINF |= (1<<1); }
 
   /// Configures PinF1  as an output pin.
   static void SetOutput() { DDRF |= (1<<1); }
 
   /// Configures PinF1  as an input pin.
-  static void SetInput()  { DDRF &= (~(1<<1)); }
-  static void PulseHigh() { PORTF |= (1<<1); PORTF &= (~(1<<1)); }
-  static void PulseLow()  { PORTF &= (~(1<<1)); PORTF |= (1<<1); }
+  static void SetInput()  { DDRF &= ~(1<<1); }
+
+  /// Pulses PinF1 with high state first.
+  static void PulseHigh() { PORTF |= (1<<1); PORTF &= ~(1<<1); }
+
+  /// Pulses PinF1 with low state first.
+  static void PulseLow()  { PORTF &= ~(1<<1); PORTF |= (1<<1); }
 
   /// Reads PinF1  value.
   /// @return Port pin value.
@@ -1577,22 +1713,26 @@ struct PinF1 {
 };
 
 struct PinF2 {
-  /// Sets PinF2 to HIGH.F.
+  /// Sets PinF2 to HIGH.
   static void Set()       { PORTF |= (1<<2); }
 
-  /// Sets PinF2 to LOW.F.
-  static void Clear()     { PORTF &= (~(1<<2)); }
+  /// Sets PinF2 to LOW.
+  static void Clear()     { PORTF &= ~(1<<2); }
 
-  /// Toggles PinF2 value.F.
+  /// Toggles PinF2 value.
   static void Toggle()    { PINF |= (1<<2); }
 
   /// Configures PinF2  as an output pin.
   static void SetOutput() { DDRF |= (1<<2); }
 
   /// Configures PinF2  as an input pin.
-  static void SetInput()  { DDRF &= (~(1<<2)); }
-  static void PulseHigh() { PORTF |= (1<<2); PORTF &= (~(1<<2)); }
-  static void PulseLow()  { PORTF &= (~(1<<2)); PORTF |= (1<<2); }
+  static void SetInput()  { DDRF &= ~(1<<2); }
+
+  /// Pulses PinF2 with high state first.
+  static void PulseHigh() { PORTF |= (1<<2); PORTF &= ~(1<<2); }
+
+  /// Pulses PinF2 with low state first.
+  static void PulseLow()  { PORTF &= ~(1<<2); PORTF |= (1<<2); }
 
   /// Reads PinF2  value.
   /// @return Port pin value.
@@ -1615,22 +1755,26 @@ struct PinF2 {
 };
 
 struct PinF3 {
-  /// Sets PinF3 to HIGH.F.
+  /// Sets PinF3 to HIGH.
   static void Set()       { PORTF |= (1<<3); }
 
-  /// Sets PinF3 to LOW.F.
-  static void Clear()     { PORTF &= (~(1<<3)); }
+  /// Sets PinF3 to LOW.
+  static void Clear()     { PORTF &= ~(1<<3); }
 
-  /// Toggles PinF3 value.F.
+  /// Toggles PinF3 value.
   static void Toggle()    { PINF |= (1<<3); }
 
   /// Configures PinF3  as an output pin.
   static void SetOutput() { DDRF |= (1<<3); }
 
   /// Configures PinF3  as an input pin.
-  static void SetInput()  { DDRF &= (~(1<<3)); }
-  static void PulseHigh() { PORTF |= (1<<3); PORTF &= (~(1<<3)); }
-  static void PulseLow()  { PORTF &= (~(1<<3)); PORTF |= (1<<3); }
+  static void SetInput()  { DDRF &= ~(1<<3); }
+
+  /// Pulses PinF3 with high state first.
+  static void PulseHigh() { PORTF |= (1<<3); PORTF &= ~(1<<3); }
+
+  /// Pulses PinF3 with low state first.
+  static void PulseLow()  { PORTF &= ~(1<<3); PORTF |= (1<<3); }
 
   /// Reads PinF3  value.
   /// @return Port pin value.
@@ -1653,22 +1797,26 @@ struct PinF3 {
 };
 
 struct PinF4 {
-  /// Sets PinF4 to HIGH.F.
+  /// Sets PinF4 to HIGH.
   static void Set()       { PORTF |= (1<<4); }
 
-  /// Sets PinF4 to LOW.F.
-  static void Clear()     { PORTF &= (~(1<<4)); }
+  /// Sets PinF4 to LOW.
+  static void Clear()     { PORTF &= ~(1<<4); }
 
-  /// Toggles PinF4 value.F.
+  /// Toggles PinF4 value.
   static void Toggle()    { PINF |= (1<<4); }
 
   /// Configures PinF4  as an output pin.
   static void SetOutput() { DDRF |= (1<<4); }
 
   /// Configures PinF4  as an input pin.
-  static void SetInput()  { DDRF &= (~(1<<4)); }
-  static void PulseHigh() { PORTF |= (1<<4); PORTF &= (~(1<<4)); }
-  static void PulseLow()  { PORTF &= (~(1<<4)); PORTF |= (1<<4); }
+  static void SetInput()  { DDRF &= ~(1<<4); }
+
+  /// Pulses PinF4 with high state first.
+  static void PulseHigh() { PORTF |= (1<<4); PORTF &= ~(1<<4); }
+
+  /// Pulses PinF4 with low state first.
+  static void PulseLow()  { PORTF &= ~(1<<4); PORTF |= (1<<4); }
 
   /// Reads PinF4  value.
   /// @return Port pin value.
@@ -1691,22 +1839,26 @@ struct PinF4 {
 };
 
 struct PinF5 {
-  /// Sets PinF5 to HIGH.F.
+  /// Sets PinF5 to HIGH.
   static void Set()       { PORTF |= (1<<5); }
 
-  /// Sets PinF5 to LOW.F.
-  static void Clear()     { PORTF &= (~(1<<5)); }
+  /// Sets PinF5 to LOW.
+  static void Clear()     { PORTF &= ~(1<<5); }
 
-  /// Toggles PinF5 value.F.
+  /// Toggles PinF5 value.
   static void Toggle()    { PINF |= (1<<5); }
 
   /// Configures PinF5  as an output pin.
   static void SetOutput() { DDRF |= (1<<5); }
 
   /// Configures PinF5  as an input pin.
-  static void SetInput()  { DDRF &= (~(1<<5)); }
-  static void PulseHigh() { PORTF |= (1<<5); PORTF &= (~(1<<5)); }
-  static void PulseLow()  { PORTF &= (~(1<<5)); PORTF |= (1<<5); }
+  static void SetInput()  { DDRF &= ~(1<<5); }
+
+  /// Pulses PinF5 with high state first.
+  static void PulseHigh() { PORTF |= (1<<5); PORTF &= ~(1<<5); }
+
+  /// Pulses PinF5 with low state first.
+  static void PulseLow()  { PORTF &= ~(1<<5); PORTF |= (1<<5); }
 
   /// Reads PinF5  value.
   /// @return Port pin value.
@@ -1729,22 +1881,26 @@ struct PinF5 {
 };
 
 struct PinF6 {
-  /// Sets PinF6 to HIGH.F.
+  /// Sets PinF6 to HIGH.
   static void Set()       { PORTF |= (1<<6); }
 
-  /// Sets PinF6 to LOW.F.
-  static void Clear()     { PORTF &= (~(1<<6)); }
+  /// Sets PinF6 to LOW.
+  static void Clear()     { PORTF &= ~(1<<6); }
 
-  /// Toggles PinF6 value.F.
+  /// Toggles PinF6 value.
   static void Toggle()    { PINF |= (1<<6); }
 
   /// Configures PinF6  as an output pin.
   static void SetOutput() { DDRF |= (1<<6); }
 
   /// Configures PinF6  as an input pin.
-  static void SetInput()  { DDRF &= (~(1<<6)); }
-  static void PulseHigh() { PORTF |= (1<<6); PORTF &= (~(1<<6)); }
-  static void PulseLow()  { PORTF &= (~(1<<6)); PORTF |= (1<<6); }
+  static void SetInput()  { DDRF &= ~(1<<6); }
+
+  /// Pulses PinF6 with high state first.
+  static void PulseHigh() { PORTF |= (1<<6); PORTF &= ~(1<<6); }
+
+  /// Pulses PinF6 with low state first.
+  static void PulseLow()  { PORTF &= ~(1<<6); PORTF |= (1<<6); }
 
   /// Reads PinF6  value.
   /// @return Port pin value.
@@ -1767,22 +1923,26 @@ struct PinF6 {
 };
 
 struct PinF7 {
-  /// Sets PinF7 to HIGH.F.
+  /// Sets PinF7 to HIGH.
   static void Set()       { PORTF |= (1<<7); }
 
-  /// Sets PinF7 to LOW.F.
-  static void Clear()     { PORTF &= (~(1<<7)); }
+  /// Sets PinF7 to LOW.
+  static void Clear()     { PORTF &= ~(1<<7); }
 
-  /// Toggles PinF7 value.F.
+  /// Toggles PinF7 value.
   static void Toggle()    { PINF |= (1<<7); }
 
   /// Configures PinF7  as an output pin.
   static void SetOutput() { DDRF |= (1<<7); }
 
   /// Configures PinF7  as an input pin.
-  static void SetInput()  { DDRF &= (~(1<<7)); }
-  static void PulseHigh() { PORTF |= (1<<7); PORTF &= (~(1<<7)); }
-  static void PulseLow()  { PORTF &= (~(1<<7)); PORTF |= (1<<7); }
+  static void SetInput()  { DDRF &= ~(1<<7); }
+
+  /// Pulses PinF7 with high state first.
+  static void PulseHigh() { PORTF |= (1<<7); PORTF &= ~(1<<7); }
+
+  /// Pulses PinF7 with low state first.
+  static void PulseLow()  { PORTF &= ~(1<<7); PORTF |= (1<<7); }
 
   /// Reads PinF7  value.
   /// @return Port pin value.
@@ -1855,22 +2015,26 @@ struct PortG {
 };
 
 struct PinG0 {
-  /// Sets PinG0 to HIGH.G.
+  /// Sets PinG0 to HIGH.
   static void Set()       { PORTG |= (1<<0); }
 
-  /// Sets PinG0 to LOW.G.
-  static void Clear()     { PORTG &= (~(1<<0)); }
+  /// Sets PinG0 to LOW.
+  static void Clear()     { PORTG &= ~(1<<0); }
 
-  /// Toggles PinG0 value.G.
+  /// Toggles PinG0 value.
   static void Toggle()    { PING |= (1<<0); }
 
   /// Configures PinG0  as an output pin.
   static void SetOutput() { DDRG |= (1<<0); }
 
   /// Configures PinG0  as an input pin.
-  static void SetInput()  { DDRG &= (~(1<<0)); }
-  static void PulseHigh() { PORTG |= (1<<0); PORTG &= (~(1<<0)); }
-  static void PulseLow()  { PORTG &= (~(1<<0)); PORTG |= (1<<0); }
+  static void SetInput()  { DDRG &= ~(1<<0); }
+
+  /// Pulses PinG0 with high state first.
+  static void PulseHigh() { PORTG |= (1<<0); PORTG &= ~(1<<0); }
+
+  /// Pulses PinG0 with low state first.
+  static void PulseLow()  { PORTG &= ~(1<<0); PORTG |= (1<<0); }
 
   /// Reads PinG0  value.
   /// @return Port pin value.
@@ -1893,22 +2057,26 @@ struct PinG0 {
 };
 
 struct PinG1 {
-  /// Sets PinG1 to HIGH.G.
+  /// Sets PinG1 to HIGH.
   static void Set()       { PORTG |= (1<<1); }
 
-  /// Sets PinG1 to LOW.G.
-  static void Clear()     { PORTG &= (~(1<<1)); }
+  /// Sets PinG1 to LOW.
+  static void Clear()     { PORTG &= ~(1<<1); }
 
-  /// Toggles PinG1 value.G.
+  /// Toggles PinG1 value.
   static void Toggle()    { PING |= (1<<1); }
 
   /// Configures PinG1  as an output pin.
   static void SetOutput() { DDRG |= (1<<1); }
 
   /// Configures PinG1  as an input pin.
-  static void SetInput()  { DDRG &= (~(1<<1)); }
-  static void PulseHigh() { PORTG |= (1<<1); PORTG &= (~(1<<1)); }
-  static void PulseLow()  { PORTG &= (~(1<<1)); PORTG |= (1<<1); }
+  static void SetInput()  { DDRG &= ~(1<<1); }
+
+  /// Pulses PinG1 with high state first.
+  static void PulseHigh() { PORTG |= (1<<1); PORTG &= ~(1<<1); }
+
+  /// Pulses PinG1 with low state first.
+  static void PulseLow()  { PORTG &= ~(1<<1); PORTG |= (1<<1); }
 
   /// Reads PinG1  value.
   /// @return Port pin value.
@@ -1931,22 +2099,26 @@ struct PinG1 {
 };
 
 struct PinG2 {
-  /// Sets PinG2 to HIGH.G.
+  /// Sets PinG2 to HIGH.
   static void Set()       { PORTG |= (1<<2); }
 
-  /// Sets PinG2 to LOW.G.
-  static void Clear()     { PORTG &= (~(1<<2)); }
+  /// Sets PinG2 to LOW.
+  static void Clear()     { PORTG &= ~(1<<2); }
 
-  /// Toggles PinG2 value.G.
+  /// Toggles PinG2 value.
   static void Toggle()    { PING |= (1<<2); }
 
   /// Configures PinG2  as an output pin.
   static void SetOutput() { DDRG |= (1<<2); }
 
   /// Configures PinG2  as an input pin.
-  static void SetInput()  { DDRG &= (~(1<<2)); }
-  static void PulseHigh() { PORTG |= (1<<2); PORTG &= (~(1<<2)); }
-  static void PulseLow()  { PORTG &= (~(1<<2)); PORTG |= (1<<2); }
+  static void SetInput()  { DDRG &= ~(1<<2); }
+
+  /// Pulses PinG2 with high state first.
+  static void PulseHigh() { PORTG |= (1<<2); PORTG &= ~(1<<2); }
+
+  /// Pulses PinG2 with low state first.
+  static void PulseLow()  { PORTG &= ~(1<<2); PORTG |= (1<<2); }
 
   /// Reads PinG2  value.
   /// @return Port pin value.
@@ -1969,22 +2141,26 @@ struct PinG2 {
 };
 
 struct PinG3 {
-  /// Sets PinG3 to HIGH.G.
+  /// Sets PinG3 to HIGH.
   static void Set()       { PORTG |= (1<<3); }
 
-  /// Sets PinG3 to LOW.G.
-  static void Clear()     { PORTG &= (~(1<<3)); }
+  /// Sets PinG3 to LOW.
+  static void Clear()     { PORTG &= ~(1<<3); }
 
-  /// Toggles PinG3 value.G.
+  /// Toggles PinG3 value.
   static void Toggle()    { PING |= (1<<3); }
 
   /// Configures PinG3  as an output pin.
   static void SetOutput() { DDRG |= (1<<3); }
 
   /// Configures PinG3  as an input pin.
-  static void SetInput()  { DDRG &= (~(1<<3)); }
-  static void PulseHigh() { PORTG |= (1<<3); PORTG &= (~(1<<3)); }
-  static void PulseLow()  { PORTG &= (~(1<<3)); PORTG |= (1<<3); }
+  static void SetInput()  { DDRG &= ~(1<<3); }
+
+  /// Pulses PinG3 with high state first.
+  static void PulseHigh() { PORTG |= (1<<3); PORTG &= ~(1<<3); }
+
+  /// Pulses PinG3 with low state first.
+  static void PulseLow()  { PORTG &= ~(1<<3); PORTG |= (1<<3); }
 
   /// Reads PinG3  value.
   /// @return Port pin value.
@@ -2007,22 +2183,26 @@ struct PinG3 {
 };
 
 struct PinG4 {
-  /// Sets PinG4 to HIGH.G.
+  /// Sets PinG4 to HIGH.
   static void Set()       { PORTG |= (1<<4); }
 
-  /// Sets PinG4 to LOW.G.
-  static void Clear()     { PORTG &= (~(1<<4)); }
+  /// Sets PinG4 to LOW.
+  static void Clear()     { PORTG &= ~(1<<4); }
 
-  /// Toggles PinG4 value.G.
+  /// Toggles PinG4 value.
   static void Toggle()    { PING |= (1<<4); }
 
   /// Configures PinG4  as an output pin.
   static void SetOutput() { DDRG |= (1<<4); }
 
   /// Configures PinG4  as an input pin.
-  static void SetInput()  { DDRG &= (~(1<<4)); }
-  static void PulseHigh() { PORTG |= (1<<4); PORTG &= (~(1<<4)); }
-  static void PulseLow()  { PORTG &= (~(1<<4)); PORTG |= (1<<4); }
+  static void SetInput()  { DDRG &= ~(1<<4); }
+
+  /// Pulses PinG4 with high state first.
+  static void PulseHigh() { PORTG |= (1<<4); PORTG &= ~(1<<4); }
+
+  /// Pulses PinG4 with low state first.
+  static void PulseLow()  { PORTG &= ~(1<<4); PORTG |= (1<<4); }
 
   /// Reads PinG4  value.
   /// @return Port pin value.
@@ -2045,22 +2225,26 @@ struct PinG4 {
 };
 
 struct PinG5 {
-  /// Sets PinG5 to HIGH.G.
+  /// Sets PinG5 to HIGH.
   static void Set()       { PORTG |= (1<<5); }
 
-  /// Sets PinG5 to LOW.G.
-  static void Clear()     { PORTG &= (~(1<<5)); }
+  /// Sets PinG5 to LOW.
+  static void Clear()     { PORTG &= ~(1<<5); }
 
-  /// Toggles PinG5 value.G.
+  /// Toggles PinG5 value.
   static void Toggle()    { PING |= (1<<5); }
 
   /// Configures PinG5  as an output pin.
   static void SetOutput() { DDRG |= (1<<5); }
 
   /// Configures PinG5  as an input pin.
-  static void SetInput()  { DDRG &= (~(1<<5)); }
-  static void PulseHigh() { PORTG |= (1<<5); PORTG &= (~(1<<5)); }
-  static void PulseLow()  { PORTG &= (~(1<<5)); PORTG |= (1<<5); }
+  static void SetInput()  { DDRG &= ~(1<<5); }
+
+  /// Pulses PinG5 with high state first.
+  static void PulseHigh() { PORTG |= (1<<5); PORTG &= ~(1<<5); }
+
+  /// Pulses PinG5 with low state first.
+  static void PulseLow()  { PORTG &= ~(1<<5); PORTG |= (1<<5); }
 
   /// Reads PinG5  value.
   /// @return Port pin value.
@@ -2083,22 +2267,26 @@ struct PinG5 {
 };
 
 struct PinG6 {
-  /// Sets PinG6 to HIGH.G.
+  /// Sets PinG6 to HIGH.
   static void Set()       { PORTG |= (1<<6); }
 
-  /// Sets PinG6 to LOW.G.
-  static void Clear()     { PORTG &= (~(1<<6)); }
+  /// Sets PinG6 to LOW.
+  static void Clear()     { PORTG &= ~(1<<6); }
 
-  /// Toggles PinG6 value.G.
+  /// Toggles PinG6 value.
   static void Toggle()    { PING |= (1<<6); }
 
   /// Configures PinG6  as an output pin.
   static void SetOutput() { DDRG |= (1<<6); }
 
   /// Configures PinG6  as an input pin.
-  static void SetInput()  { DDRG &= (~(1<<6)); }
-  static void PulseHigh() { PORTG |= (1<<6); PORTG &= (~(1<<6)); }
-  static void PulseLow()  { PORTG &= (~(1<<6)); PORTG |= (1<<6); }
+  static void SetInput()  { DDRG &= ~(1<<6); }
+
+  /// Pulses PinG6 with high state first.
+  static void PulseHigh() { PORTG |= (1<<6); PORTG &= ~(1<<6); }
+
+  /// Pulses PinG6 with low state first.
+  static void PulseLow()  { PORTG &= ~(1<<6); PORTG |= (1<<6); }
 
   /// Reads PinG6  value.
   /// @return Port pin value.
@@ -2121,22 +2309,26 @@ struct PinG6 {
 };
 
 struct PinG7 {
-  /// Sets PinG7 to HIGH.G.
+  /// Sets PinG7 to HIGH.
   static void Set()       { PORTG |= (1<<7); }
 
-  /// Sets PinG7 to LOW.G.
-  static void Clear()     { PORTG &= (~(1<<7)); }
+  /// Sets PinG7 to LOW.
+  static void Clear()     { PORTG &= ~(1<<7); }
 
-  /// Toggles PinG7 value.G.
+  /// Toggles PinG7 value.
   static void Toggle()    { PING |= (1<<7); }
 
   /// Configures PinG7  as an output pin.
   static void SetOutput() { DDRG |= (1<<7); }
 
   /// Configures PinG7  as an input pin.
-  static void SetInput()  { DDRG &= (~(1<<7)); }
-  static void PulseHigh() { PORTG |= (1<<7); PORTG &= (~(1<<7)); }
-  static void PulseLow()  { PORTG &= (~(1<<7)); PORTG |= (1<<7); }
+  static void SetInput()  { DDRG &= ~(1<<7); }
+
+  /// Pulses PinG7 with high state first.
+  static void PulseHigh() { PORTG |= (1<<7); PORTG &= ~(1<<7); }
+
+  /// Pulses PinG7 with low state first.
+  static void PulseLow()  { PORTG &= ~(1<<7); PORTG |= (1<<7); }
 
   /// Reads PinG7  value.
   /// @return Port pin value.
@@ -2209,22 +2401,26 @@ struct PortH {
 };
 
 struct PinH0 {
-  /// Sets PinH0 to HIGH.H.
+  /// Sets PinH0 to HIGH.
   static void Set()       { PORTH |= (1<<0); }
 
-  /// Sets PinH0 to LOW.H.
-  static void Clear()     { PORTH &= (~(1<<0)); }
+  /// Sets PinH0 to LOW.
+  static void Clear()     { PORTH &= ~(1<<0); }
 
-  /// Toggles PinH0 value.H.
+  /// Toggles PinH0 value.
   static void Toggle()    { PINH |= (1<<0); }
 
   /// Configures PinH0  as an output pin.
   static void SetOutput() { DDRH |= (1<<0); }
 
   /// Configures PinH0  as an input pin.
-  static void SetInput()  { DDRH &= (~(1<<0)); }
-  static void PulseHigh() { PORTH |= (1<<0); PORTH &= (~(1<<0)); }
-  static void PulseLow()  { PORTH &= (~(1<<0)); PORTH |= (1<<0); }
+  static void SetInput()  { DDRH &= ~(1<<0); }
+
+  /// Pulses PinH0 with high state first.
+  static void PulseHigh() { PORTH |= (1<<0); PORTH &= ~(1<<0); }
+
+  /// Pulses PinH0 with low state first.
+  static void PulseLow()  { PORTH &= ~(1<<0); PORTH |= (1<<0); }
 
   /// Reads PinH0  value.
   /// @return Port pin value.
@@ -2247,22 +2443,26 @@ struct PinH0 {
 };
 
 struct PinH1 {
-  /// Sets PinH1 to HIGH.H.
+  /// Sets PinH1 to HIGH.
   static void Set()       { PORTH |= (1<<1); }
 
-  /// Sets PinH1 to LOW.H.
-  static void Clear()     { PORTH &= (~(1<<1)); }
+  /// Sets PinH1 to LOW.
+  static void Clear()     { PORTH &= ~(1<<1); }
 
-  /// Toggles PinH1 value.H.
+  /// Toggles PinH1 value.
   static void Toggle()    { PINH |= (1<<1); }
 
   /// Configures PinH1  as an output pin.
   static void SetOutput() { DDRH |= (1<<1); }
 
   /// Configures PinH1  as an input pin.
-  static void SetInput()  { DDRH &= (~(1<<1)); }
-  static void PulseHigh() { PORTH |= (1<<1); PORTH &= (~(1<<1)); }
-  static void PulseLow()  { PORTH &= (~(1<<1)); PORTH |= (1<<1); }
+  static void SetInput()  { DDRH &= ~(1<<1); }
+
+  /// Pulses PinH1 with high state first.
+  static void PulseHigh() { PORTH |= (1<<1); PORTH &= ~(1<<1); }
+
+  /// Pulses PinH1 with low state first.
+  static void PulseLow()  { PORTH &= ~(1<<1); PORTH |= (1<<1); }
 
   /// Reads PinH1  value.
   /// @return Port pin value.
@@ -2285,22 +2485,26 @@ struct PinH1 {
 };
 
 struct PinH2 {
-  /// Sets PinH2 to HIGH.H.
+  /// Sets PinH2 to HIGH.
   static void Set()       { PORTH |= (1<<2); }
 
-  /// Sets PinH2 to LOW.H.
-  static void Clear()     { PORTH &= (~(1<<2)); }
+  /// Sets PinH2 to LOW.
+  static void Clear()     { PORTH &= ~(1<<2); }
 
-  /// Toggles PinH2 value.H.
+  /// Toggles PinH2 value.
   static void Toggle()    { PINH |= (1<<2); }
 
   /// Configures PinH2  as an output pin.
   static void SetOutput() { DDRH |= (1<<2); }
 
   /// Configures PinH2  as an input pin.
-  static void SetInput()  { DDRH &= (~(1<<2)); }
-  static void PulseHigh() { PORTH |= (1<<2); PORTH &= (~(1<<2)); }
-  static void PulseLow()  { PORTH &= (~(1<<2)); PORTH |= (1<<2); }
+  static void SetInput()  { DDRH &= ~(1<<2); }
+
+  /// Pulses PinH2 with high state first.
+  static void PulseHigh() { PORTH |= (1<<2); PORTH &= ~(1<<2); }
+
+  /// Pulses PinH2 with low state first.
+  static void PulseLow()  { PORTH &= ~(1<<2); PORTH |= (1<<2); }
 
   /// Reads PinH2  value.
   /// @return Port pin value.
@@ -2323,22 +2527,26 @@ struct PinH2 {
 };
 
 struct PinH3 {
-  /// Sets PinH3 to HIGH.H.
+  /// Sets PinH3 to HIGH.
   static void Set()       { PORTH |= (1<<3); }
 
-  /// Sets PinH3 to LOW.H.
-  static void Clear()     { PORTH &= (~(1<<3)); }
+  /// Sets PinH3 to LOW.
+  static void Clear()     { PORTH &= ~(1<<3); }
 
-  /// Toggles PinH3 value.H.
+  /// Toggles PinH3 value.
   static void Toggle()    { PINH |= (1<<3); }
 
   /// Configures PinH3  as an output pin.
   static void SetOutput() { DDRH |= (1<<3); }
 
   /// Configures PinH3  as an input pin.
-  static void SetInput()  { DDRH &= (~(1<<3)); }
-  static void PulseHigh() { PORTH |= (1<<3); PORTH &= (~(1<<3)); }
-  static void PulseLow()  { PORTH &= (~(1<<3)); PORTH |= (1<<3); }
+  static void SetInput()  { DDRH &= ~(1<<3); }
+
+  /// Pulses PinH3 with high state first.
+  static void PulseHigh() { PORTH |= (1<<3); PORTH &= ~(1<<3); }
+
+  /// Pulses PinH3 with low state first.
+  static void PulseLow()  { PORTH &= ~(1<<3); PORTH |= (1<<3); }
 
   /// Reads PinH3  value.
   /// @return Port pin value.
@@ -2361,22 +2569,26 @@ struct PinH3 {
 };
 
 struct PinH4 {
-  /// Sets PinH4 to HIGH.H.
+  /// Sets PinH4 to HIGH.
   static void Set()       { PORTH |= (1<<4); }
 
-  /// Sets PinH4 to LOW.H.
-  static void Clear()     { PORTH &= (~(1<<4)); }
+  /// Sets PinH4 to LOW.
+  static void Clear()     { PORTH &= ~(1<<4); }
 
-  /// Toggles PinH4 value.H.
+  /// Toggles PinH4 value.
   static void Toggle()    { PINH |= (1<<4); }
 
   /// Configures PinH4  as an output pin.
   static void SetOutput() { DDRH |= (1<<4); }
 
   /// Configures PinH4  as an input pin.
-  static void SetInput()  { DDRH &= (~(1<<4)); }
-  static void PulseHigh() { PORTH |= (1<<4); PORTH &= (~(1<<4)); }
-  static void PulseLow()  { PORTH &= (~(1<<4)); PORTH |= (1<<4); }
+  static void SetInput()  { DDRH &= ~(1<<4); }
+
+  /// Pulses PinH4 with high state first.
+  static void PulseHigh() { PORTH |= (1<<4); PORTH &= ~(1<<4); }
+
+  /// Pulses PinH4 with low state first.
+  static void PulseLow()  { PORTH &= ~(1<<4); PORTH |= (1<<4); }
 
   /// Reads PinH4  value.
   /// @return Port pin value.
@@ -2399,22 +2611,26 @@ struct PinH4 {
 };
 
 struct PinH5 {
-  /// Sets PinH5 to HIGH.H.
+  /// Sets PinH5 to HIGH.
   static void Set()       { PORTH |= (1<<5); }
 
-  /// Sets PinH5 to LOW.H.
-  static void Clear()     { PORTH &= (~(1<<5)); }
+  /// Sets PinH5 to LOW.
+  static void Clear()     { PORTH &= ~(1<<5); }
 
-  /// Toggles PinH5 value.H.
+  /// Toggles PinH5 value.
   static void Toggle()    { PINH |= (1<<5); }
 
   /// Configures PinH5  as an output pin.
   static void SetOutput() { DDRH |= (1<<5); }
 
   /// Configures PinH5  as an input pin.
-  static void SetInput()  { DDRH &= (~(1<<5)); }
-  static void PulseHigh() { PORTH |= (1<<5); PORTH &= (~(1<<5)); }
-  static void PulseLow()  { PORTH &= (~(1<<5)); PORTH |= (1<<5); }
+  static void SetInput()  { DDRH &= ~(1<<5); }
+
+  /// Pulses PinH5 with high state first.
+  static void PulseHigh() { PORTH |= (1<<5); PORTH &= ~(1<<5); }
+
+  /// Pulses PinH5 with low state first.
+  static void PulseLow()  { PORTH &= ~(1<<5); PORTH |= (1<<5); }
 
   /// Reads PinH5  value.
   /// @return Port pin value.
@@ -2437,22 +2653,26 @@ struct PinH5 {
 };
 
 struct PinH6 {
-  /// Sets PinH6 to HIGH.H.
+  /// Sets PinH6 to HIGH.
   static void Set()       { PORTH |= (1<<6); }
 
-  /// Sets PinH6 to LOW.H.
-  static void Clear()     { PORTH &= (~(1<<6)); }
+  /// Sets PinH6 to LOW.
+  static void Clear()     { PORTH &= ~(1<<6); }
 
-  /// Toggles PinH6 value.H.
+  /// Toggles PinH6 value.
   static void Toggle()    { PINH |= (1<<6); }
 
   /// Configures PinH6  as an output pin.
   static void SetOutput() { DDRH |= (1<<6); }
 
   /// Configures PinH6  as an input pin.
-  static void SetInput()  { DDRH &= (~(1<<6)); }
-  static void PulseHigh() { PORTH |= (1<<6); PORTH &= (~(1<<6)); }
-  static void PulseLow()  { PORTH &= (~(1<<6)); PORTH |= (1<<6); }
+  static void SetInput()  { DDRH &= ~(1<<6); }
+
+  /// Pulses PinH6 with high state first.
+  static void PulseHigh() { PORTH |= (1<<6); PORTH &= ~(1<<6); }
+
+  /// Pulses PinH6 with low state first.
+  static void PulseLow()  { PORTH &= ~(1<<6); PORTH |= (1<<6); }
 
   /// Reads PinH6  value.
   /// @return Port pin value.
@@ -2475,22 +2695,26 @@ struct PinH6 {
 };
 
 struct PinH7 {
-  /// Sets PinH7 to HIGH.H.
+  /// Sets PinH7 to HIGH.
   static void Set()       { PORTH |= (1<<7); }
 
-  /// Sets PinH7 to LOW.H.
-  static void Clear()     { PORTH &= (~(1<<7)); }
+  /// Sets PinH7 to LOW.
+  static void Clear()     { PORTH &= ~(1<<7); }
 
-  /// Toggles PinH7 value.H.
+  /// Toggles PinH7 value.
   static void Toggle()    { PINH |= (1<<7); }
 
   /// Configures PinH7  as an output pin.
   static void SetOutput() { DDRH |= (1<<7); }
 
   /// Configures PinH7  as an input pin.
-  static void SetInput()  { DDRH &= (~(1<<7)); }
-  static void PulseHigh() { PORTH |= (1<<7); PORTH &= (~(1<<7)); }
-  static void PulseLow()  { PORTH &= (~(1<<7)); PORTH |= (1<<7); }
+  static void SetInput()  { DDRH &= ~(1<<7); }
+
+  /// Pulses PinH7 with high state first.
+  static void PulseHigh() { PORTH |= (1<<7); PORTH &= ~(1<<7); }
+
+  /// Pulses PinH7 with low state first.
+  static void PulseLow()  { PORTH &= ~(1<<7); PORTH |= (1<<7); }
 
   /// Reads PinH7  value.
   /// @return Port pin value.
@@ -2563,22 +2787,26 @@ struct PortI {
 };
 
 struct PinI0 {
-  /// Sets PinI0 to HIGH.I.
+  /// Sets PinI0 to HIGH.
   static void Set()       { PORTI |= (1<<0); }
 
-  /// Sets PinI0 to LOW.I.
-  static void Clear()     { PORTI &= (~(1<<0)); }
+  /// Sets PinI0 to LOW.
+  static void Clear()     { PORTI &= ~(1<<0); }
 
-  /// Toggles PinI0 value.I.
+  /// Toggles PinI0 value.
   static void Toggle()    { PINI |= (1<<0); }
 
   /// Configures PinI0  as an output pin.
   static void SetOutput() { DDRI |= (1<<0); }
 
   /// Configures PinI0  as an input pin.
-  static void SetInput()  { DDRI &= (~(1<<0)); }
-  static void PulseHigh() { PORTI |= (1<<0); PORTI &= (~(1<<0)); }
-  static void PulseLow()  { PORTI &= (~(1<<0)); PORTI |= (1<<0); }
+  static void SetInput()  { DDRI &= ~(1<<0); }
+
+  /// Pulses PinI0 with high state first.
+  static void PulseHigh() { PORTI |= (1<<0); PORTI &= ~(1<<0); }
+
+  /// Pulses PinI0 with low state first.
+  static void PulseLow()  { PORTI &= ~(1<<0); PORTI |= (1<<0); }
 
   /// Reads PinI0  value.
   /// @return Port pin value.
@@ -2601,22 +2829,26 @@ struct PinI0 {
 };
 
 struct PinI1 {
-  /// Sets PinI1 to HIGH.I.
+  /// Sets PinI1 to HIGH.
   static void Set()       { PORTI |= (1<<1); }
 
-  /// Sets PinI1 to LOW.I.
-  static void Clear()     { PORTI &= (~(1<<1)); }
+  /// Sets PinI1 to LOW.
+  static void Clear()     { PORTI &= ~(1<<1); }
 
-  /// Toggles PinI1 value.I.
+  /// Toggles PinI1 value.
   static void Toggle()    { PINI |= (1<<1); }
 
   /// Configures PinI1  as an output pin.
   static void SetOutput() { DDRI |= (1<<1); }
 
   /// Configures PinI1  as an input pin.
-  static void SetInput()  { DDRI &= (~(1<<1)); }
-  static void PulseHigh() { PORTI |= (1<<1); PORTI &= (~(1<<1)); }
-  static void PulseLow()  { PORTI &= (~(1<<1)); PORTI |= (1<<1); }
+  static void SetInput()  { DDRI &= ~(1<<1); }
+
+  /// Pulses PinI1 with high state first.
+  static void PulseHigh() { PORTI |= (1<<1); PORTI &= ~(1<<1); }
+
+  /// Pulses PinI1 with low state first.
+  static void PulseLow()  { PORTI &= ~(1<<1); PORTI |= (1<<1); }
 
   /// Reads PinI1  value.
   /// @return Port pin value.
@@ -2639,22 +2871,26 @@ struct PinI1 {
 };
 
 struct PinI2 {
-  /// Sets PinI2 to HIGH.I.
+  /// Sets PinI2 to HIGH.
   static void Set()       { PORTI |= (1<<2); }
 
-  /// Sets PinI2 to LOW.I.
-  static void Clear()     { PORTI &= (~(1<<2)); }
+  /// Sets PinI2 to LOW.
+  static void Clear()     { PORTI &= ~(1<<2); }
 
-  /// Toggles PinI2 value.I.
+  /// Toggles PinI2 value.
   static void Toggle()    { PINI |= (1<<2); }
 
   /// Configures PinI2  as an output pin.
   static void SetOutput() { DDRI |= (1<<2); }
 
   /// Configures PinI2  as an input pin.
-  static void SetInput()  { DDRI &= (~(1<<2)); }
-  static void PulseHigh() { PORTI |= (1<<2); PORTI &= (~(1<<2)); }
-  static void PulseLow()  { PORTI &= (~(1<<2)); PORTI |= (1<<2); }
+  static void SetInput()  { DDRI &= ~(1<<2); }
+
+  /// Pulses PinI2 with high state first.
+  static void PulseHigh() { PORTI |= (1<<2); PORTI &= ~(1<<2); }
+
+  /// Pulses PinI2 with low state first.
+  static void PulseLow()  { PORTI &= ~(1<<2); PORTI |= (1<<2); }
 
   /// Reads PinI2  value.
   /// @return Port pin value.
@@ -2677,22 +2913,26 @@ struct PinI2 {
 };
 
 struct PinI3 {
-  /// Sets PinI3 to HIGH.I.
+  /// Sets PinI3 to HIGH.
   static void Set()       { PORTI |= (1<<3); }
 
-  /// Sets PinI3 to LOW.I.
-  static void Clear()     { PORTI &= (~(1<<3)); }
+  /// Sets PinI3 to LOW.
+  static void Clear()     { PORTI &= ~(1<<3); }
 
-  /// Toggles PinI3 value.I.
+  /// Toggles PinI3 value.
   static void Toggle()    { PINI |= (1<<3); }
 
   /// Configures PinI3  as an output pin.
   static void SetOutput() { DDRI |= (1<<3); }
 
   /// Configures PinI3  as an input pin.
-  static void SetInput()  { DDRI &= (~(1<<3)); }
-  static void PulseHigh() { PORTI |= (1<<3); PORTI &= (~(1<<3)); }
-  static void PulseLow()  { PORTI &= (~(1<<3)); PORTI |= (1<<3); }
+  static void SetInput()  { DDRI &= ~(1<<3); }
+
+  /// Pulses PinI3 with high state first.
+  static void PulseHigh() { PORTI |= (1<<3); PORTI &= ~(1<<3); }
+
+  /// Pulses PinI3 with low state first.
+  static void PulseLow()  { PORTI &= ~(1<<3); PORTI |= (1<<3); }
 
   /// Reads PinI3  value.
   /// @return Port pin value.
@@ -2715,22 +2955,26 @@ struct PinI3 {
 };
 
 struct PinI4 {
-  /// Sets PinI4 to HIGH.I.
+  /// Sets PinI4 to HIGH.
   static void Set()       { PORTI |= (1<<4); }
 
-  /// Sets PinI4 to LOW.I.
-  static void Clear()     { PORTI &= (~(1<<4)); }
+  /// Sets PinI4 to LOW.
+  static void Clear()     { PORTI &= ~(1<<4); }
 
-  /// Toggles PinI4 value.I.
+  /// Toggles PinI4 value.
   static void Toggle()    { PINI |= (1<<4); }
 
   /// Configures PinI4  as an output pin.
   static void SetOutput() { DDRI |= (1<<4); }
 
   /// Configures PinI4  as an input pin.
-  static void SetInput()  { DDRI &= (~(1<<4)); }
-  static void PulseHigh() { PORTI |= (1<<4); PORTI &= (~(1<<4)); }
-  static void PulseLow()  { PORTI &= (~(1<<4)); PORTI |= (1<<4); }
+  static void SetInput()  { DDRI &= ~(1<<4); }
+
+  /// Pulses PinI4 with high state first.
+  static void PulseHigh() { PORTI |= (1<<4); PORTI &= ~(1<<4); }
+
+  /// Pulses PinI4 with low state first.
+  static void PulseLow()  { PORTI &= ~(1<<4); PORTI |= (1<<4); }
 
   /// Reads PinI4  value.
   /// @return Port pin value.
@@ -2753,22 +2997,26 @@ struct PinI4 {
 };
 
 struct PinI5 {
-  /// Sets PinI5 to HIGH.I.
+  /// Sets PinI5 to HIGH.
   static void Set()       { PORTI |= (1<<5); }
 
-  /// Sets PinI5 to LOW.I.
-  static void Clear()     { PORTI &= (~(1<<5)); }
+  /// Sets PinI5 to LOW.
+  static void Clear()     { PORTI &= ~(1<<5); }
 
-  /// Toggles PinI5 value.I.
+  /// Toggles PinI5 value.
   static void Toggle()    { PINI |= (1<<5); }
 
   /// Configures PinI5  as an output pin.
   static void SetOutput() { DDRI |= (1<<5); }
 
   /// Configures PinI5  as an input pin.
-  static void SetInput()  { DDRI &= (~(1<<5)); }
-  static void PulseHigh() { PORTI |= (1<<5); PORTI &= (~(1<<5)); }
-  static void PulseLow()  { PORTI &= (~(1<<5)); PORTI |= (1<<5); }
+  static void SetInput()  { DDRI &= ~(1<<5); }
+
+  /// Pulses PinI5 with high state first.
+  static void PulseHigh() { PORTI |= (1<<5); PORTI &= ~(1<<5); }
+
+  /// Pulses PinI5 with low state first.
+  static void PulseLow()  { PORTI &= ~(1<<5); PORTI |= (1<<5); }
 
   /// Reads PinI5  value.
   /// @return Port pin value.
@@ -2791,22 +3039,26 @@ struct PinI5 {
 };
 
 struct PinI6 {
-  /// Sets PinI6 to HIGH.I.
+  /// Sets PinI6 to HIGH.
   static void Set()       { PORTI |= (1<<6); }
 
-  /// Sets PinI6 to LOW.I.
-  static void Clear()     { PORTI &= (~(1<<6)); }
+  /// Sets PinI6 to LOW.
+  static void Clear()     { PORTI &= ~(1<<6); }
 
-  /// Toggles PinI6 value.I.
+  /// Toggles PinI6 value.
   static void Toggle()    { PINI |= (1<<6); }
 
   /// Configures PinI6  as an output pin.
   static void SetOutput() { DDRI |= (1<<6); }
 
   /// Configures PinI6  as an input pin.
-  static void SetInput()  { DDRI &= (~(1<<6)); }
-  static void PulseHigh() { PORTI |= (1<<6); PORTI &= (~(1<<6)); }
-  static void PulseLow()  { PORTI &= (~(1<<6)); PORTI |= (1<<6); }
+  static void SetInput()  { DDRI &= ~(1<<6); }
+
+  /// Pulses PinI6 with high state first.
+  static void PulseHigh() { PORTI |= (1<<6); PORTI &= ~(1<<6); }
+
+  /// Pulses PinI6 with low state first.
+  static void PulseLow()  { PORTI &= ~(1<<6); PORTI |= (1<<6); }
 
   /// Reads PinI6  value.
   /// @return Port pin value.
@@ -2829,22 +3081,26 @@ struct PinI6 {
 };
 
 struct PinI7 {
-  /// Sets PinI7 to HIGH.I.
+  /// Sets PinI7 to HIGH.
   static void Set()       { PORTI |= (1<<7); }
 
-  /// Sets PinI7 to LOW.I.
-  static void Clear()     { PORTI &= (~(1<<7)); }
+  /// Sets PinI7 to LOW.
+  static void Clear()     { PORTI &= ~(1<<7); }
 
-  /// Toggles PinI7 value.I.
+  /// Toggles PinI7 value.
   static void Toggle()    { PINI |= (1<<7); }
 
   /// Configures PinI7  as an output pin.
   static void SetOutput() { DDRI |= (1<<7); }
 
   /// Configures PinI7  as an input pin.
-  static void SetInput()  { DDRI &= (~(1<<7)); }
-  static void PulseHigh() { PORTI |= (1<<7); PORTI &= (~(1<<7)); }
-  static void PulseLow()  { PORTI &= (~(1<<7)); PORTI |= (1<<7); }
+  static void SetInput()  { DDRI &= ~(1<<7); }
+
+  /// Pulses PinI7 with high state first.
+  static void PulseHigh() { PORTI |= (1<<7); PORTI &= ~(1<<7); }
+
+  /// Pulses PinI7 with low state first.
+  static void PulseLow()  { PORTI &= ~(1<<7); PORTI |= (1<<7); }
 
   /// Reads PinI7  value.
   /// @return Port pin value.
@@ -2917,22 +3173,26 @@ struct PortJ {
 };
 
 struct PinJ0 {
-  /// Sets PinJ0 to HIGH.J.
+  /// Sets PinJ0 to HIGH.
   static void Set()       { PORTJ |= (1<<0); }
 
-  /// Sets PinJ0 to LOW.J.
-  static void Clear()     { PORTJ &= (~(1<<0)); }
+  /// Sets PinJ0 to LOW.
+  static void Clear()     { PORTJ &= ~(1<<0); }
 
-  /// Toggles PinJ0 value.J.
+  /// Toggles PinJ0 value.
   static void Toggle()    { PINJ |= (1<<0); }
 
   /// Configures PinJ0  as an output pin.
   static void SetOutput() { DDRJ |= (1<<0); }
 
   /// Configures PinJ0  as an input pin.
-  static void SetInput()  { DDRJ &= (~(1<<0)); }
-  static void PulseHigh() { PORTJ |= (1<<0); PORTJ &= (~(1<<0)); }
-  static void PulseLow()  { PORTJ &= (~(1<<0)); PORTJ |= (1<<0); }
+  static void SetInput()  { DDRJ &= ~(1<<0); }
+
+  /// Pulses PinJ0 with high state first.
+  static void PulseHigh() { PORTJ |= (1<<0); PORTJ &= ~(1<<0); }
+
+  /// Pulses PinJ0 with low state first.
+  static void PulseLow()  { PORTJ &= ~(1<<0); PORTJ |= (1<<0); }
 
   /// Reads PinJ0  value.
   /// @return Port pin value.
@@ -2955,22 +3215,26 @@ struct PinJ0 {
 };
 
 struct PinJ1 {
-  /// Sets PinJ1 to HIGH.J.
+  /// Sets PinJ1 to HIGH.
   static void Set()       { PORTJ |= (1<<1); }
 
-  /// Sets PinJ1 to LOW.J.
-  static void Clear()     { PORTJ &= (~(1<<1)); }
+  /// Sets PinJ1 to LOW.
+  static void Clear()     { PORTJ &= ~(1<<1); }
 
-  /// Toggles PinJ1 value.J.
+  /// Toggles PinJ1 value.
   static void Toggle()    { PINJ |= (1<<1); }
 
   /// Configures PinJ1  as an output pin.
   static void SetOutput() { DDRJ |= (1<<1); }
 
   /// Configures PinJ1  as an input pin.
-  static void SetInput()  { DDRJ &= (~(1<<1)); }
-  static void PulseHigh() { PORTJ |= (1<<1); PORTJ &= (~(1<<1)); }
-  static void PulseLow()  { PORTJ &= (~(1<<1)); PORTJ |= (1<<1); }
+  static void SetInput()  { DDRJ &= ~(1<<1); }
+
+  /// Pulses PinJ1 with high state first.
+  static void PulseHigh() { PORTJ |= (1<<1); PORTJ &= ~(1<<1); }
+
+  /// Pulses PinJ1 with low state first.
+  static void PulseLow()  { PORTJ &= ~(1<<1); PORTJ |= (1<<1); }
 
   /// Reads PinJ1  value.
   /// @return Port pin value.
@@ -2993,22 +3257,26 @@ struct PinJ1 {
 };
 
 struct PinJ2 {
-  /// Sets PinJ2 to HIGH.J.
+  /// Sets PinJ2 to HIGH.
   static void Set()       { PORTJ |= (1<<2); }
 
-  /// Sets PinJ2 to LOW.J.
-  static void Clear()     { PORTJ &= (~(1<<2)); }
+  /// Sets PinJ2 to LOW.
+  static void Clear()     { PORTJ &= ~(1<<2); }
 
-  /// Toggles PinJ2 value.J.
+  /// Toggles PinJ2 value.
   static void Toggle()    { PINJ |= (1<<2); }
 
   /// Configures PinJ2  as an output pin.
   static void SetOutput() { DDRJ |= (1<<2); }
 
   /// Configures PinJ2  as an input pin.
-  static void SetInput()  { DDRJ &= (~(1<<2)); }
-  static void PulseHigh() { PORTJ |= (1<<2); PORTJ &= (~(1<<2)); }
-  static void PulseLow()  { PORTJ &= (~(1<<2)); PORTJ |= (1<<2); }
+  static void SetInput()  { DDRJ &= ~(1<<2); }
+
+  /// Pulses PinJ2 with high state first.
+  static void PulseHigh() { PORTJ |= (1<<2); PORTJ &= ~(1<<2); }
+
+  /// Pulses PinJ2 with low state first.
+  static void PulseLow()  { PORTJ &= ~(1<<2); PORTJ |= (1<<2); }
 
   /// Reads PinJ2  value.
   /// @return Port pin value.
@@ -3031,22 +3299,26 @@ struct PinJ2 {
 };
 
 struct PinJ3 {
-  /// Sets PinJ3 to HIGH.J.
+  /// Sets PinJ3 to HIGH.
   static void Set()       { PORTJ |= (1<<3); }
 
-  /// Sets PinJ3 to LOW.J.
-  static void Clear()     { PORTJ &= (~(1<<3)); }
+  /// Sets PinJ3 to LOW.
+  static void Clear()     { PORTJ &= ~(1<<3); }
 
-  /// Toggles PinJ3 value.J.
+  /// Toggles PinJ3 value.
   static void Toggle()    { PINJ |= (1<<3); }
 
   /// Configures PinJ3  as an output pin.
   static void SetOutput() { DDRJ |= (1<<3); }
 
   /// Configures PinJ3  as an input pin.
-  static void SetInput()  { DDRJ &= (~(1<<3)); }
-  static void PulseHigh() { PORTJ |= (1<<3); PORTJ &= (~(1<<3)); }
-  static void PulseLow()  { PORTJ &= (~(1<<3)); PORTJ |= (1<<3); }
+  static void SetInput()  { DDRJ &= ~(1<<3); }
+
+  /// Pulses PinJ3 with high state first.
+  static void PulseHigh() { PORTJ |= (1<<3); PORTJ &= ~(1<<3); }
+
+  /// Pulses PinJ3 with low state first.
+  static void PulseLow()  { PORTJ &= ~(1<<3); PORTJ |= (1<<3); }
 
   /// Reads PinJ3  value.
   /// @return Port pin value.
@@ -3069,22 +3341,26 @@ struct PinJ3 {
 };
 
 struct PinJ4 {
-  /// Sets PinJ4 to HIGH.J.
+  /// Sets PinJ4 to HIGH.
   static void Set()       { PORTJ |= (1<<4); }
 
-  /// Sets PinJ4 to LOW.J.
-  static void Clear()     { PORTJ &= (~(1<<4)); }
+  /// Sets PinJ4 to LOW.
+  static void Clear()     { PORTJ &= ~(1<<4); }
 
-  /// Toggles PinJ4 value.J.
+  /// Toggles PinJ4 value.
   static void Toggle()    { PINJ |= (1<<4); }
 
   /// Configures PinJ4  as an output pin.
   static void SetOutput() { DDRJ |= (1<<4); }
 
   /// Configures PinJ4  as an input pin.
-  static void SetInput()  { DDRJ &= (~(1<<4)); }
-  static void PulseHigh() { PORTJ |= (1<<4); PORTJ &= (~(1<<4)); }
-  static void PulseLow()  { PORTJ &= (~(1<<4)); PORTJ |= (1<<4); }
+  static void SetInput()  { DDRJ &= ~(1<<4); }
+
+  /// Pulses PinJ4 with high state first.
+  static void PulseHigh() { PORTJ |= (1<<4); PORTJ &= ~(1<<4); }
+
+  /// Pulses PinJ4 with low state first.
+  static void PulseLow()  { PORTJ &= ~(1<<4); PORTJ |= (1<<4); }
 
   /// Reads PinJ4  value.
   /// @return Port pin value.
@@ -3107,22 +3383,26 @@ struct PinJ4 {
 };
 
 struct PinJ5 {
-  /// Sets PinJ5 to HIGH.J.
+  /// Sets PinJ5 to HIGH.
   static void Set()       { PORTJ |= (1<<5); }
 
-  /// Sets PinJ5 to LOW.J.
-  static void Clear()     { PORTJ &= (~(1<<5)); }
+  /// Sets PinJ5 to LOW.
+  static void Clear()     { PORTJ &= ~(1<<5); }
 
-  /// Toggles PinJ5 value.J.
+  /// Toggles PinJ5 value.
   static void Toggle()    { PINJ |= (1<<5); }
 
   /// Configures PinJ5  as an output pin.
   static void SetOutput() { DDRJ |= (1<<5); }
 
   /// Configures PinJ5  as an input pin.
-  static void SetInput()  { DDRJ &= (~(1<<5)); }
-  static void PulseHigh() { PORTJ |= (1<<5); PORTJ &= (~(1<<5)); }
-  static void PulseLow()  { PORTJ &= (~(1<<5)); PORTJ |= (1<<5); }
+  static void SetInput()  { DDRJ &= ~(1<<5); }
+
+  /// Pulses PinJ5 with high state first.
+  static void PulseHigh() { PORTJ |= (1<<5); PORTJ &= ~(1<<5); }
+
+  /// Pulses PinJ5 with low state first.
+  static void PulseLow()  { PORTJ &= ~(1<<5); PORTJ |= (1<<5); }
 
   /// Reads PinJ5  value.
   /// @return Port pin value.
@@ -3145,22 +3425,26 @@ struct PinJ5 {
 };
 
 struct PinJ6 {
-  /// Sets PinJ6 to HIGH.J.
+  /// Sets PinJ6 to HIGH.
   static void Set()       { PORTJ |= (1<<6); }
 
-  /// Sets PinJ6 to LOW.J.
-  static void Clear()     { PORTJ &= (~(1<<6)); }
+  /// Sets PinJ6 to LOW.
+  static void Clear()     { PORTJ &= ~(1<<6); }
 
-  /// Toggles PinJ6 value.J.
+  /// Toggles PinJ6 value.
   static void Toggle()    { PINJ |= (1<<6); }
 
   /// Configures PinJ6  as an output pin.
   static void SetOutput() { DDRJ |= (1<<6); }
 
   /// Configures PinJ6  as an input pin.
-  static void SetInput()  { DDRJ &= (~(1<<6)); }
-  static void PulseHigh() { PORTJ |= (1<<6); PORTJ &= (~(1<<6)); }
-  static void PulseLow()  { PORTJ &= (~(1<<6)); PORTJ |= (1<<6); }
+  static void SetInput()  { DDRJ &= ~(1<<6); }
+
+  /// Pulses PinJ6 with high state first.
+  static void PulseHigh() { PORTJ |= (1<<6); PORTJ &= ~(1<<6); }
+
+  /// Pulses PinJ6 with low state first.
+  static void PulseLow()  { PORTJ &= ~(1<<6); PORTJ |= (1<<6); }
 
   /// Reads PinJ6  value.
   /// @return Port pin value.
@@ -3183,22 +3467,26 @@ struct PinJ6 {
 };
 
 struct PinJ7 {
-  /// Sets PinJ7 to HIGH.J.
+  /// Sets PinJ7 to HIGH.
   static void Set()       { PORTJ |= (1<<7); }
 
-  /// Sets PinJ7 to LOW.J.
-  static void Clear()     { PORTJ &= (~(1<<7)); }
+  /// Sets PinJ7 to LOW.
+  static void Clear()     { PORTJ &= ~(1<<7); }
 
-  /// Toggles PinJ7 value.J.
+  /// Toggles PinJ7 value.
   static void Toggle()    { PINJ |= (1<<7); }
 
   /// Configures PinJ7  as an output pin.
   static void SetOutput() { DDRJ |= (1<<7); }
 
   /// Configures PinJ7  as an input pin.
-  static void SetInput()  { DDRJ &= (~(1<<7)); }
-  static void PulseHigh() { PORTJ |= (1<<7); PORTJ &= (~(1<<7)); }
-  static void PulseLow()  { PORTJ &= (~(1<<7)); PORTJ |= (1<<7); }
+  static void SetInput()  { DDRJ &= ~(1<<7); }
+
+  /// Pulses PinJ7 with high state first.
+  static void PulseHigh() { PORTJ |= (1<<7); PORTJ &= ~(1<<7); }
+
+  /// Pulses PinJ7 with low state first.
+  static void PulseLow()  { PORTJ &= ~(1<<7); PORTJ |= (1<<7); }
 
   /// Reads PinJ7  value.
   /// @return Port pin value.
@@ -3271,22 +3559,26 @@ struct PortK {
 };
 
 struct PinK0 {
-  /// Sets PinK0 to HIGH.K.
+  /// Sets PinK0 to HIGH.
   static void Set()       { PORTK |= (1<<0); }
 
-  /// Sets PinK0 to LOW.K.
-  static void Clear()     { PORTK &= (~(1<<0)); }
+  /// Sets PinK0 to LOW.
+  static void Clear()     { PORTK &= ~(1<<0); }
 
-  /// Toggles PinK0 value.K.
+  /// Toggles PinK0 value.
   static void Toggle()    { PINK |= (1<<0); }
 
   /// Configures PinK0  as an output pin.
   static void SetOutput() { DDRK |= (1<<0); }
 
   /// Configures PinK0  as an input pin.
-  static void SetInput()  { DDRK &= (~(1<<0)); }
-  static void PulseHigh() { PORTK |= (1<<0); PORTK &= (~(1<<0)); }
-  static void PulseLow()  { PORTK &= (~(1<<0)); PORTK |= (1<<0); }
+  static void SetInput()  { DDRK &= ~(1<<0); }
+
+  /// Pulses PinK0 with high state first.
+  static void PulseHigh() { PORTK |= (1<<0); PORTK &= ~(1<<0); }
+
+  /// Pulses PinK0 with low state first.
+  static void PulseLow()  { PORTK &= ~(1<<0); PORTK |= (1<<0); }
 
   /// Reads PinK0  value.
   /// @return Port pin value.
@@ -3309,22 +3601,26 @@ struct PinK0 {
 };
 
 struct PinK1 {
-  /// Sets PinK1 to HIGH.K.
+  /// Sets PinK1 to HIGH.
   static void Set()       { PORTK |= (1<<1); }
 
-  /// Sets PinK1 to LOW.K.
-  static void Clear()     { PORTK &= (~(1<<1)); }
+  /// Sets PinK1 to LOW.
+  static void Clear()     { PORTK &= ~(1<<1); }
 
-  /// Toggles PinK1 value.K.
+  /// Toggles PinK1 value.
   static void Toggle()    { PINK |= (1<<1); }
 
   /// Configures PinK1  as an output pin.
   static void SetOutput() { DDRK |= (1<<1); }
 
   /// Configures PinK1  as an input pin.
-  static void SetInput()  { DDRK &= (~(1<<1)); }
-  static void PulseHigh() { PORTK |= (1<<1); PORTK &= (~(1<<1)); }
-  static void PulseLow()  { PORTK &= (~(1<<1)); PORTK |= (1<<1); }
+  static void SetInput()  { DDRK &= ~(1<<1); }
+
+  /// Pulses PinK1 with high state first.
+  static void PulseHigh() { PORTK |= (1<<1); PORTK &= ~(1<<1); }
+
+  /// Pulses PinK1 with low state first.
+  static void PulseLow()  { PORTK &= ~(1<<1); PORTK |= (1<<1); }
 
   /// Reads PinK1  value.
   /// @return Port pin value.
@@ -3347,22 +3643,26 @@ struct PinK1 {
 };
 
 struct PinK2 {
-  /// Sets PinK2 to HIGH.K.
+  /// Sets PinK2 to HIGH.
   static void Set()       { PORTK |= (1<<2); }
 
-  /// Sets PinK2 to LOW.K.
-  static void Clear()     { PORTK &= (~(1<<2)); }
+  /// Sets PinK2 to LOW.
+  static void Clear()     { PORTK &= ~(1<<2); }
 
-  /// Toggles PinK2 value.K.
+  /// Toggles PinK2 value.
   static void Toggle()    { PINK |= (1<<2); }
 
   /// Configures PinK2  as an output pin.
   static void SetOutput() { DDRK |= (1<<2); }
 
   /// Configures PinK2  as an input pin.
-  static void SetInput()  { DDRK &= (~(1<<2)); }
-  static void PulseHigh() { PORTK |= (1<<2); PORTK &= (~(1<<2)); }
-  static void PulseLow()  { PORTK &= (~(1<<2)); PORTK |= (1<<2); }
+  static void SetInput()  { DDRK &= ~(1<<2); }
+
+  /// Pulses PinK2 with high state first.
+  static void PulseHigh() { PORTK |= (1<<2); PORTK &= ~(1<<2); }
+
+  /// Pulses PinK2 with low state first.
+  static void PulseLow()  { PORTK &= ~(1<<2); PORTK |= (1<<2); }
 
   /// Reads PinK2  value.
   /// @return Port pin value.
@@ -3385,22 +3685,26 @@ struct PinK2 {
 };
 
 struct PinK3 {
-  /// Sets PinK3 to HIGH.K.
+  /// Sets PinK3 to HIGH.
   static void Set()       { PORTK |= (1<<3); }
 
-  /// Sets PinK3 to LOW.K.
-  static void Clear()     { PORTK &= (~(1<<3)); }
+  /// Sets PinK3 to LOW.
+  static void Clear()     { PORTK &= ~(1<<3); }
 
-  /// Toggles PinK3 value.K.
+  /// Toggles PinK3 value.
   static void Toggle()    { PINK |= (1<<3); }
 
   /// Configures PinK3  as an output pin.
   static void SetOutput() { DDRK |= (1<<3); }
 
   /// Configures PinK3  as an input pin.
-  static void SetInput()  { DDRK &= (~(1<<3)); }
-  static void PulseHigh() { PORTK |= (1<<3); PORTK &= (~(1<<3)); }
-  static void PulseLow()  { PORTK &= (~(1<<3)); PORTK |= (1<<3); }
+  static void SetInput()  { DDRK &= ~(1<<3); }
+
+  /// Pulses PinK3 with high state first.
+  static void PulseHigh() { PORTK |= (1<<3); PORTK &= ~(1<<3); }
+
+  /// Pulses PinK3 with low state first.
+  static void PulseLow()  { PORTK &= ~(1<<3); PORTK |= (1<<3); }
 
   /// Reads PinK3  value.
   /// @return Port pin value.
@@ -3423,22 +3727,26 @@ struct PinK3 {
 };
 
 struct PinK4 {
-  /// Sets PinK4 to HIGH.K.
+  /// Sets PinK4 to HIGH.
   static void Set()       { PORTK |= (1<<4); }
 
-  /// Sets PinK4 to LOW.K.
-  static void Clear()     { PORTK &= (~(1<<4)); }
+  /// Sets PinK4 to LOW.
+  static void Clear()     { PORTK &= ~(1<<4); }
 
-  /// Toggles PinK4 value.K.
+  /// Toggles PinK4 value.
   static void Toggle()    { PINK |= (1<<4); }
 
   /// Configures PinK4  as an output pin.
   static void SetOutput() { DDRK |= (1<<4); }
 
   /// Configures PinK4  as an input pin.
-  static void SetInput()  { DDRK &= (~(1<<4)); }
-  static void PulseHigh() { PORTK |= (1<<4); PORTK &= (~(1<<4)); }
-  static void PulseLow()  { PORTK &= (~(1<<4)); PORTK |= (1<<4); }
+  static void SetInput()  { DDRK &= ~(1<<4); }
+
+  /// Pulses PinK4 with high state first.
+  static void PulseHigh() { PORTK |= (1<<4); PORTK &= ~(1<<4); }
+
+  /// Pulses PinK4 with low state first.
+  static void PulseLow()  { PORTK &= ~(1<<4); PORTK |= (1<<4); }
 
   /// Reads PinK4  value.
   /// @return Port pin value.
@@ -3461,22 +3769,26 @@ struct PinK4 {
 };
 
 struct PinK5 {
-  /// Sets PinK5 to HIGH.K.
+  /// Sets PinK5 to HIGH.
   static void Set()       { PORTK |= (1<<5); }
 
-  /// Sets PinK5 to LOW.K.
-  static void Clear()     { PORTK &= (~(1<<5)); }
+  /// Sets PinK5 to LOW.
+  static void Clear()     { PORTK &= ~(1<<5); }
 
-  /// Toggles PinK5 value.K.
+  /// Toggles PinK5 value.
   static void Toggle()    { PINK |= (1<<5); }
 
   /// Configures PinK5  as an output pin.
   static void SetOutput() { DDRK |= (1<<5); }
 
   /// Configures PinK5  as an input pin.
-  static void SetInput()  { DDRK &= (~(1<<5)); }
-  static void PulseHigh() { PORTK |= (1<<5); PORTK &= (~(1<<5)); }
-  static void PulseLow()  { PORTK &= (~(1<<5)); PORTK |= (1<<5); }
+  static void SetInput()  { DDRK &= ~(1<<5); }
+
+  /// Pulses PinK5 with high state first.
+  static void PulseHigh() { PORTK |= (1<<5); PORTK &= ~(1<<5); }
+
+  /// Pulses PinK5 with low state first.
+  static void PulseLow()  { PORTK &= ~(1<<5); PORTK |= (1<<5); }
 
   /// Reads PinK5  value.
   /// @return Port pin value.
@@ -3499,22 +3811,26 @@ struct PinK5 {
 };
 
 struct PinK6 {
-  /// Sets PinK6 to HIGH.K.
+  /// Sets PinK6 to HIGH.
   static void Set()       { PORTK |= (1<<6); }
 
-  /// Sets PinK6 to LOW.K.
-  static void Clear()     { PORTK &= (~(1<<6)); }
+  /// Sets PinK6 to LOW.
+  static void Clear()     { PORTK &= ~(1<<6); }
 
-  /// Toggles PinK6 value.K.
+  /// Toggles PinK6 value.
   static void Toggle()    { PINK |= (1<<6); }
 
   /// Configures PinK6  as an output pin.
   static void SetOutput() { DDRK |= (1<<6); }
 
   /// Configures PinK6  as an input pin.
-  static void SetInput()  { DDRK &= (~(1<<6)); }
-  static void PulseHigh() { PORTK |= (1<<6); PORTK &= (~(1<<6)); }
-  static void PulseLow()  { PORTK &= (~(1<<6)); PORTK |= (1<<6); }
+  static void SetInput()  { DDRK &= ~(1<<6); }
+
+  /// Pulses PinK6 with high state first.
+  static void PulseHigh() { PORTK |= (1<<6); PORTK &= ~(1<<6); }
+
+  /// Pulses PinK6 with low state first.
+  static void PulseLow()  { PORTK &= ~(1<<6); PORTK |= (1<<6); }
 
   /// Reads PinK6  value.
   /// @return Port pin value.
@@ -3537,22 +3853,26 @@ struct PinK6 {
 };
 
 struct PinK7 {
-  /// Sets PinK7 to HIGH.K.
+  /// Sets PinK7 to HIGH.
   static void Set()       { PORTK |= (1<<7); }
 
-  /// Sets PinK7 to LOW.K.
-  static void Clear()     { PORTK &= (~(1<<7)); }
+  /// Sets PinK7 to LOW.
+  static void Clear()     { PORTK &= ~(1<<7); }
 
-  /// Toggles PinK7 value.K.
+  /// Toggles PinK7 value.
   static void Toggle()    { PINK |= (1<<7); }
 
   /// Configures PinK7  as an output pin.
   static void SetOutput() { DDRK |= (1<<7); }
 
   /// Configures PinK7  as an input pin.
-  static void SetInput()  { DDRK &= (~(1<<7)); }
-  static void PulseHigh() { PORTK |= (1<<7); PORTK &= (~(1<<7)); }
-  static void PulseLow()  { PORTK &= (~(1<<7)); PORTK |= (1<<7); }
+  static void SetInput()  { DDRK &= ~(1<<7); }
+
+  /// Pulses PinK7 with high state first.
+  static void PulseHigh() { PORTK |= (1<<7); PORTK &= ~(1<<7); }
+
+  /// Pulses PinK7 with low state first.
+  static void PulseLow()  { PORTK &= ~(1<<7); PORTK |= (1<<7); }
 
   /// Reads PinK7  value.
   /// @return Port pin value.
@@ -3625,22 +3945,26 @@ struct PortL {
 };
 
 struct PinL0 {
-  /// Sets PinL0 to HIGH.L.
+  /// Sets PinL0 to HIGH.
   static void Set()       { PORTL |= (1<<0); }
 
-  /// Sets PinL0 to LOW.L.
-  static void Clear()     { PORTL &= (~(1<<0)); }
+  /// Sets PinL0 to LOW.
+  static void Clear()     { PORTL &= ~(1<<0); }
 
-  /// Toggles PinL0 value.L.
+  /// Toggles PinL0 value.
   static void Toggle()    { PINL |= (1<<0); }
 
   /// Configures PinL0  as an output pin.
   static void SetOutput() { DDRL |= (1<<0); }
 
   /// Configures PinL0  as an input pin.
-  static void SetInput()  { DDRL &= (~(1<<0)); }
-  static void PulseHigh() { PORTL |= (1<<0); PORTL &= (~(1<<0)); }
-  static void PulseLow()  { PORTL &= (~(1<<0)); PORTL |= (1<<0); }
+  static void SetInput()  { DDRL &= ~(1<<0); }
+
+  /// Pulses PinL0 with high state first.
+  static void PulseHigh() { PORTL |= (1<<0); PORTL &= ~(1<<0); }
+
+  /// Pulses PinL0 with low state first.
+  static void PulseLow()  { PORTL &= ~(1<<0); PORTL |= (1<<0); }
 
   /// Reads PinL0  value.
   /// @return Port pin value.
@@ -3663,22 +3987,26 @@ struct PinL0 {
 };
 
 struct PinL1 {
-  /// Sets PinL1 to HIGH.L.
+  /// Sets PinL1 to HIGH.
   static void Set()       { PORTL |= (1<<1); }
 
-  /// Sets PinL1 to LOW.L.
-  static void Clear()     { PORTL &= (~(1<<1)); }
+  /// Sets PinL1 to LOW.
+  static void Clear()     { PORTL &= ~(1<<1); }
 
-  /// Toggles PinL1 value.L.
+  /// Toggles PinL1 value.
   static void Toggle()    { PINL |= (1<<1); }
 
   /// Configures PinL1  as an output pin.
   static void SetOutput() { DDRL |= (1<<1); }
 
   /// Configures PinL1  as an input pin.
-  static void SetInput()  { DDRL &= (~(1<<1)); }
-  static void PulseHigh() { PORTL |= (1<<1); PORTL &= (~(1<<1)); }
-  static void PulseLow()  { PORTL &= (~(1<<1)); PORTL |= (1<<1); }
+  static void SetInput()  { DDRL &= ~(1<<1); }
+
+  /// Pulses PinL1 with high state first.
+  static void PulseHigh() { PORTL |= (1<<1); PORTL &= ~(1<<1); }
+
+  /// Pulses PinL1 with low state first.
+  static void PulseLow()  { PORTL &= ~(1<<1); PORTL |= (1<<1); }
 
   /// Reads PinL1  value.
   /// @return Port pin value.
@@ -3701,22 +4029,26 @@ struct PinL1 {
 };
 
 struct PinL2 {
-  /// Sets PinL2 to HIGH.L.
+  /// Sets PinL2 to HIGH.
   static void Set()       { PORTL |= (1<<2); }
 
-  /// Sets PinL2 to LOW.L.
-  static void Clear()     { PORTL &= (~(1<<2)); }
+  /// Sets PinL2 to LOW.
+  static void Clear()     { PORTL &= ~(1<<2); }
 
-  /// Toggles PinL2 value.L.
+  /// Toggles PinL2 value.
   static void Toggle()    { PINL |= (1<<2); }
 
   /// Configures PinL2  as an output pin.
   static void SetOutput() { DDRL |= (1<<2); }
 
   /// Configures PinL2  as an input pin.
-  static void SetInput()  { DDRL &= (~(1<<2)); }
-  static void PulseHigh() { PORTL |= (1<<2); PORTL &= (~(1<<2)); }
-  static void PulseLow()  { PORTL &= (~(1<<2)); PORTL |= (1<<2); }
+  static void SetInput()  { DDRL &= ~(1<<2); }
+
+  /// Pulses PinL2 with high state first.
+  static void PulseHigh() { PORTL |= (1<<2); PORTL &= ~(1<<2); }
+
+  /// Pulses PinL2 with low state first.
+  static void PulseLow()  { PORTL &= ~(1<<2); PORTL |= (1<<2); }
 
   /// Reads PinL2  value.
   /// @return Port pin value.
@@ -3739,22 +4071,26 @@ struct PinL2 {
 };
 
 struct PinL3 {
-  /// Sets PinL3 to HIGH.L.
+  /// Sets PinL3 to HIGH.
   static void Set()       { PORTL |= (1<<3); }
 
-  /// Sets PinL3 to LOW.L.
-  static void Clear()     { PORTL &= (~(1<<3)); }
+  /// Sets PinL3 to LOW.
+  static void Clear()     { PORTL &= ~(1<<3); }
 
-  /// Toggles PinL3 value.L.
+  /// Toggles PinL3 value.
   static void Toggle()    { PINL |= (1<<3); }
 
   /// Configures PinL3  as an output pin.
   static void SetOutput() { DDRL |= (1<<3); }
 
   /// Configures PinL3  as an input pin.
-  static void SetInput()  { DDRL &= (~(1<<3)); }
-  static void PulseHigh() { PORTL |= (1<<3); PORTL &= (~(1<<3)); }
-  static void PulseLow()  { PORTL &= (~(1<<3)); PORTL |= (1<<3); }
+  static void SetInput()  { DDRL &= ~(1<<3); }
+
+  /// Pulses PinL3 with high state first.
+  static void PulseHigh() { PORTL |= (1<<3); PORTL &= ~(1<<3); }
+
+  /// Pulses PinL3 with low state first.
+  static void PulseLow()  { PORTL &= ~(1<<3); PORTL |= (1<<3); }
 
   /// Reads PinL3  value.
   /// @return Port pin value.
@@ -3777,22 +4113,26 @@ struct PinL3 {
 };
 
 struct PinL4 {
-  /// Sets PinL4 to HIGH.L.
+  /// Sets PinL4 to HIGH.
   static void Set()       { PORTL |= (1<<4); }
 
-  /// Sets PinL4 to LOW.L.
-  static void Clear()     { PORTL &= (~(1<<4)); }
+  /// Sets PinL4 to LOW.
+  static void Clear()     { PORTL &= ~(1<<4); }
 
-  /// Toggles PinL4 value.L.
+  /// Toggles PinL4 value.
   static void Toggle()    { PINL |= (1<<4); }
 
   /// Configures PinL4  as an output pin.
   static void SetOutput() { DDRL |= (1<<4); }
 
   /// Configures PinL4  as an input pin.
-  static void SetInput()  { DDRL &= (~(1<<4)); }
-  static void PulseHigh() { PORTL |= (1<<4); PORTL &= (~(1<<4)); }
-  static void PulseLow()  { PORTL &= (~(1<<4)); PORTL |= (1<<4); }
+  static void SetInput()  { DDRL &= ~(1<<4); }
+
+  /// Pulses PinL4 with high state first.
+  static void PulseHigh() { PORTL |= (1<<4); PORTL &= ~(1<<4); }
+
+  /// Pulses PinL4 with low state first.
+  static void PulseLow()  { PORTL &= ~(1<<4); PORTL |= (1<<4); }
 
   /// Reads PinL4  value.
   /// @return Port pin value.
@@ -3815,22 +4155,26 @@ struct PinL4 {
 };
 
 struct PinL5 {
-  /// Sets PinL5 to HIGH.L.
+  /// Sets PinL5 to HIGH.
   static void Set()       { PORTL |= (1<<5); }
 
-  /// Sets PinL5 to LOW.L.
-  static void Clear()     { PORTL &= (~(1<<5)); }
+  /// Sets PinL5 to LOW.
+  static void Clear()     { PORTL &= ~(1<<5); }
 
-  /// Toggles PinL5 value.L.
+  /// Toggles PinL5 value.
   static void Toggle()    { PINL |= (1<<5); }
 
   /// Configures PinL5  as an output pin.
   static void SetOutput() { DDRL |= (1<<5); }
 
   /// Configures PinL5  as an input pin.
-  static void SetInput()  { DDRL &= (~(1<<5)); }
-  static void PulseHigh() { PORTL |= (1<<5); PORTL &= (~(1<<5)); }
-  static void PulseLow()  { PORTL &= (~(1<<5)); PORTL |= (1<<5); }
+  static void SetInput()  { DDRL &= ~(1<<5); }
+
+  /// Pulses PinL5 with high state first.
+  static void PulseHigh() { PORTL |= (1<<5); PORTL &= ~(1<<5); }
+
+  /// Pulses PinL5 with low state first.
+  static void PulseLow()  { PORTL &= ~(1<<5); PORTL |= (1<<5); }
 
   /// Reads PinL5  value.
   /// @return Port pin value.
@@ -3853,22 +4197,26 @@ struct PinL5 {
 };
 
 struct PinL6 {
-  /// Sets PinL6 to HIGH.L.
+  /// Sets PinL6 to HIGH.
   static void Set()       { PORTL |= (1<<6); }
 
-  /// Sets PinL6 to LOW.L.
-  static void Clear()     { PORTL &= (~(1<<6)); }
+  /// Sets PinL6 to LOW.
+  static void Clear()     { PORTL &= ~(1<<6); }
 
-  /// Toggles PinL6 value.L.
+  /// Toggles PinL6 value.
   static void Toggle()    { PINL |= (1<<6); }
 
   /// Configures PinL6  as an output pin.
   static void SetOutput() { DDRL |= (1<<6); }
 
   /// Configures PinL6  as an input pin.
-  static void SetInput()  { DDRL &= (~(1<<6)); }
-  static void PulseHigh() { PORTL |= (1<<6); PORTL &= (~(1<<6)); }
-  static void PulseLow()  { PORTL &= (~(1<<6)); PORTL |= (1<<6); }
+  static void SetInput()  { DDRL &= ~(1<<6); }
+
+  /// Pulses PinL6 with high state first.
+  static void PulseHigh() { PORTL |= (1<<6); PORTL &= ~(1<<6); }
+
+  /// Pulses PinL6 with low state first.
+  static void PulseLow()  { PORTL &= ~(1<<6); PORTL |= (1<<6); }
 
   /// Reads PinL6  value.
   /// @return Port pin value.
@@ -3891,22 +4239,26 @@ struct PinL6 {
 };
 
 struct PinL7 {
-  /// Sets PinL7 to HIGH.L.
+  /// Sets PinL7 to HIGH.
   static void Set()       { PORTL |= (1<<7); }
 
-  /// Sets PinL7 to LOW.L.
-  static void Clear()     { PORTL &= (~(1<<7)); }
+  /// Sets PinL7 to LOW.
+  static void Clear()     { PORTL &= ~(1<<7); }
 
-  /// Toggles PinL7 value.L.
+  /// Toggles PinL7 value.
   static void Toggle()    { PINL |= (1<<7); }
 
   /// Configures PinL7  as an output pin.
   static void SetOutput() { DDRL |= (1<<7); }
 
   /// Configures PinL7  as an input pin.
-  static void SetInput()  { DDRL &= (~(1<<7)); }
-  static void PulseHigh() { PORTL |= (1<<7); PORTL &= (~(1<<7)); }
-  static void PulseLow()  { PORTL &= (~(1<<7)); PORTL |= (1<<7); }
+  static void SetInput()  { DDRL &= ~(1<<7); }
+
+  /// Pulses PinL7 with high state first.
+  static void PulseHigh() { PORTL |= (1<<7); PORTL &= ~(1<<7); }
+
+  /// Pulses PinL7 with low state first.
+  static void PulseLow()  { PORTL &= ~(1<<7); PORTL |= (1<<7); }
 
   /// Reads PinL7  value.
   /// @return Port pin value.
@@ -4074,89 +4426,211 @@ struct UsartUdr0 {
   void operator=(uint8_t value)      { UDR0 = value; }
 };
 
-#ifdef TCNT0
+#define IOPORTS_TO_STRING(name) #name
+#define IOPORTS_IRQ_HANDLER(vector, type) asm(IOPORTS_TO_STRING(vector)) __attribute__ ((type, __INTR_ATTRS))
+#ifdef TIMSK0
 struct Timer0 {
-  typedef uint8_t value_type;
-  
-  static value_type GetValue()            { return TCNT0; }
-  static void SetValue(value_type value)  { TCNT0 = value; }
-  static void AddValue(value_type value)  { TCNT0 += value; }
-  static void SubValue(value_type value)  { TCNT0 -= value; }
-  static void SetCtrlRegA(uint8_t mask)   { TCCR0A |= mask; }
-  static void ClearCtrlRegA(uint8_t mask) { TCCR0A &= ~mask; }
-  static void SetCtrlRegB(uint8_t mask)   { TCCR0B |= mask; }
-  static void ClearCtrlRegB(uint8_t mask) { TCCR0B &= ~mask; }
-    
+  using value_type = uint8_t;
+
   enum Prescaler : uint8_t {
     STOP_TIMER = 0, NO_PRESCALER = (1<<CS00), CLK_DIV_8 = (1<<CS01),
-    CLK_DIV_64 = (1<<CS01)|(1<<CS00), CLK_DIV_256 = (1<<CS02), CLK_DIV_1024 = (1<<CS02)|(1<<CS00),
+    CLK_DIV_64 = (1<<CS01)|(1<<CS00), CLK_DIV_256 = (1<<CS02),
+    CLK_DIV_1024 = (1<<CS02)|(1<<CS00), BITS = (1<<CS02)|(1<<CS01)|(1<<CS00) };
+  enum ClockSource : uint8_t {
     INC_ON_FALLING = (1<<CS02)|(1<<CS01), INC_ON_RISING = (1<<CS02)|(1<<CS01)|(1<<CS00) };
-  enum Constants : uint8_t { ALL_BITS = 0xFF };
-};  
-#endif //TCNT0
 
-#ifdef TCNT1
+  enum Interrupt : uint8_t { 
+    OVERFLOW = (1<<TOIE0), COMPARE_MATCH_A = (1<<OCIE0A), COMPARE_MATCH_B = (1<<OCIE0B) };
+  enum Constants : uint8_t { ALL_BITS = 0xFF };
+  static value_type GetValue()                 { return TCNT0; }
+  static void SetValue(value_type value)       { TCNT0 = value; }
+  static void AddValue(value_type value)       { TCNT0 += value; }
+  static void SubValue(value_type value)       { TCNT0 -= value; }
+  static void SetCtrlRegA(uint8_t mask)        { TCCR0A |= mask; }
+  static void ClearCtrlRegA(uint8_t mask)      { TCCR0A &= ~mask; }
+  static void SetCtrlRegB(uint8_t mask)        { TCCR0B |= mask; }
+  static void ClearCtrlRegB(uint8_t mask)      { TCCR0B &= ~mask; }
+  static void SetInterruptMask(uint8_t mask)   { TIMSK0 |= mask; }
+  static void ClearInterruptMask(uint8_t mask) { TIMSK0 &= ~mask; }
+  static void SetPrescaler(Prescaler val)      { TCCR0B &= ~Prescaler::BITS; TCCR0B |= val; }
+  static void SetExternalClockSource(ClockSource val)  { TCCR0B &= ~Prescaler::BITS; TCCR0B |= val; }
+  static void SetOutputCompareValueA(value_type value) { OCR0A = value; }
+  static value_type GetOutputCompareValueA()           { return OCR0A; }
+  static void SetOutputCompareValueB(value_type value) { OCR0B = value; }
+  static value_type GetOutputCompareValueB()           { return OCR0B; }
+
+  struct ISR {
+    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER0_OVF_vect, signal);
+    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER0_COMPA_vect, signal);
+    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER0_COMPB_vect, signal);
+  };
+
+  struct ISRNoBlock {
+    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER0_OVF_vect, interrupt);
+    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER0_COMPA_vect, interrupt);
+    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER0_COMPB_vect, interrupt);
+  };
+
+  struct ISRNaked {
+    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER0_OVF_vect, naked);
+    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER0_COMPA_vect, naked);
+    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER0_COMPB_vect, naked);
+  };
+};  
+#endif //TIMSK0
+
+#ifdef TIMSK1
 struct Timer1 {
-  typedef uint16_t value_type;
-  
-  static value_type GetValue()            { return TCNT1; }
-  static void SetValue(value_type value)  { TCNT1 = value; }
-  static void AddValue(value_type value)  { TCNT1 += value; }
-  static void SubValue(value_type value)  { TCNT1 -= value; }
-  static void SetCtrlRegA(uint8_t mask)   { TCCR1A |= mask; }
-  static void ClearCtrlRegA(uint8_t mask) { TCCR1A &= ~mask; }
-  static void SetCtrlRegB(uint8_t mask)   { TCCR1B |= mask; }
-  static void ClearCtrlRegB(uint8_t mask) { TCCR1B &= ~mask; }
-    
+  using value_type = uint16_t;
+
   enum Prescaler : uint8_t {
     STOP_TIMER = 0, NO_PRESCALER = (1<<CS10), CLK_DIV_8 = (1<<CS11),
-    CLK_DIV_64 = (1<<CS11)|(1<<CS10), CLK_DIV_256 = (1<<CS12), CLK_DIV_1024 = (1<<CS12)|(1<<CS10),
+    CLK_DIV_64 = (1<<CS11)|(1<<CS10), CLK_DIV_256 = (1<<CS12),
+    CLK_DIV_1024 = (1<<CS12)|(1<<CS10), BITS = (1<<CS12)|(1<<CS11)|(1<<CS10) };
+  enum ClockSource : uint8_t {
     INC_ON_FALLING = (1<<CS12)|(1<<CS11), INC_ON_RISING = (1<<CS12)|(1<<CS11)|(1<<CS10) };
-  enum Constants : uint8_t { ALL_BITS = 0xFF };
-};  
-#endif //TCNT1
 
-#ifdef TCNT2
+  enum Interrupt : uint8_t { 
+    OVERFLOW = (1<<TOIE1), COMPARE_MATCH_A = (1<<OCIE1A), COMPARE_MATCH_B = (1<<OCIE1B) };
+  enum Constants : uint8_t { ALL_BITS = 0xFF };
+  static value_type GetValue()                 { return TCNT1; }
+  static void SetValue(value_type value)       { TCNT1 = value; }
+  static void AddValue(value_type value)       { TCNT1 += value; }
+  static void SubValue(value_type value)       { TCNT1 -= value; }
+  static void SetCtrlRegA(uint8_t mask)        { TCCR1A |= mask; }
+  static void ClearCtrlRegA(uint8_t mask)      { TCCR1A &= ~mask; }
+  static void SetCtrlRegB(uint8_t mask)        { TCCR1B |= mask; }
+  static void ClearCtrlRegB(uint8_t mask)      { TCCR1B &= ~mask; }
+  static void SetInterruptMask(uint8_t mask)   { TIMSK1 |= mask; }
+  static void ClearInterruptMask(uint8_t mask) { TIMSK1 &= ~mask; }
+  static void SetPrescaler(Prescaler val)      { TCCR1B &= ~Prescaler::BITS; TCCR1B |= val; }
+  static void SetExternalClockSource(ClockSource val)  { TCCR1B &= ~Prescaler::BITS; TCCR1B |= val; }
+  static void SetOutputCompareValueA(value_type value) { OCR1A = value; }
+  static value_type GetOutputCompareValueA()           { return OCR1A; }
+  static void SetOutputCompareValueB(value_type value) { OCR1B = value; }
+  static value_type GetOutputCompareValueB()           { return OCR1B; }
+
+  struct ISR {
+    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER1_OVF_vect, signal);
+    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER1_COMPA_vect, signal);
+    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER1_COMPB_vect, signal);
+  };
+
+  struct ISRNoBlock {
+    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER1_OVF_vect, interrupt);
+    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER1_COMPA_vect, interrupt);
+    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER1_COMPB_vect, interrupt);
+  };
+
+  struct ISRNaked {
+    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER1_OVF_vect, naked);
+    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER1_COMPA_vect, naked);
+    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER1_COMPB_vect, naked);
+  };
+};  
+#endif //TIMSK1
+
+#ifdef TIMSK2
 struct Timer2 {
-  typedef uint8_t value_type;
-  
-  static value_type GetValue()            { return TCNT2; }
-  static void SetValue(value_type value)  { TCNT2 = value; }
-  static void AddValue(value_type value)  { TCNT2 += value; }
-  static void SubValue(value_type value)  { TCNT2 -= value; }
-  static void SetCtrlRegA(uint8_t mask)   { TCCR2A |= mask; }
-  static void ClearCtrlRegA(uint8_t mask) { TCCR2A &= ~mask; }
-  static void SetCtrlRegB(uint8_t mask)   { TCCR2B |= mask; }
-  static void ClearCtrlRegB(uint8_t mask) { TCCR2B &= ~mask; }
-    
+  using value_type = uint8_t;
+
   enum Prescaler : uint8_t {
     STOP_TIMER = 0, NO_PRESCALER = (1<<CS20), CLK_DIV_8 = (1<<CS21),
-    CLK_DIV_64 = (1<<CS21)|(1<<CS20), CLK_DIV_256 = (1<<CS22), CLK_DIV_1024 = (1<<CS22)|(1<<CS20),
-    INC_ON_FALLING = (1<<CS22)|(1<<CS21), INC_ON_RISING = (1<<CS22)|(1<<CS21)|(1<<CS20) };
-  enum Constants : uint8_t { ALL_BITS = 0xFF };
-};  
-#endif //TCNT2
+    CLK_DIV_32 = (1<<CS21)|(1<<CS20), CLK_DIV_64 = (1<<CS22),
+    CLK_DIV_128 = (1<<CS22)|(1<<CS20), CLK_DIV_256 = (1<<CS22)|(1<<CS21),
+    CLK_DIV_1024 = (1<<CS22)|(1<<CS21)|(1<<CS20), BITS = (1<<CS22)|(1<<CS21)|(1<<CS20) };
 
-#ifdef TCNT3
+  enum Interrupt : uint8_t { 
+    OVERFLOW = (1<<TOIE2), COMPARE_MATCH_A = (1<<OCIE2A), COMPARE_MATCH_B = (1<<OCIE2B) };
+  enum Constants : uint8_t { ALL_BITS = 0xFF };
+  static value_type GetValue()                 { return TCNT2; }
+  static void SetValue(value_type value)       { TCNT2 = value; }
+  static void AddValue(value_type value)       { TCNT2 += value; }
+  static void SubValue(value_type value)       { TCNT2 -= value; }
+  static void SetCtrlRegA(uint8_t mask)        { TCCR2A |= mask; }
+  static void ClearCtrlRegA(uint8_t mask)      { TCCR2A &= ~mask; }
+  static void SetCtrlRegB(uint8_t mask)        { TCCR2B |= mask; }
+  static void ClearCtrlRegB(uint8_t mask)      { TCCR2B &= ~mask; }
+  static void SetInterruptMask(uint8_t mask)   { TIMSK2 |= mask; }
+  static void ClearInterruptMask(uint8_t mask) { TIMSK2 &= ~mask; }
+  static void SetPrescaler(Prescaler val)      { TCCR2B &= ~Prescaler::BITS; TCCR2B |= val; }
+  static void SetOutputCompareValueA(value_type value) { OCR2A = value; }
+  static value_type GetOutputCompareValueA()           { return OCR2A; }
+  static void SetOutputCompareValueB(value_type value) { OCR2B = value; }
+  static value_type GetOutputCompareValueB()           { return OCR2B; }
+
+  struct ISR {
+    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER2_OVF_vect, signal);
+    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER2_COMPA_vect, signal);
+    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER2_COMPB_vect, signal);
+  };
+
+  struct ISRNoBlock {
+    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER2_OVF_vect, interrupt);
+    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER2_COMPA_vect, interrupt);
+    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER2_COMPB_vect, interrupt);
+  };
+
+  struct ISRNaked {
+    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER2_OVF_vect, naked);
+    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER2_COMPA_vect, naked);
+    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER2_COMPB_vect, naked);
+  };
+};  
+#endif //TIMSK2
+
+#ifdef TIMSK3
 struct Timer3 {
-  typedef uint16_t value_type;
-  
-  static value_type GetValue()            { return TCNT3; }
-  static void SetValue(value_type value)  { TCNT3 = value; }
-  static void AddValue(value_type value)  { TCNT3 += value; }
-  static void SubValue(value_type value)  { TCNT3 -= value; }
-  static void SetCtrlRegA(uint8_t mask)   { TCCR3A |= mask; }
-  static void ClearCtrlRegA(uint8_t mask) { TCCR3A &= ~mask; }
-  static void SetCtrlRegB(uint8_t mask)   { TCCR3B |= mask; }
-  static void ClearCtrlRegB(uint8_t mask) { TCCR3B &= ~mask; }
-    
+  using value_type = uint16_t;
+
   enum Prescaler : uint8_t {
     STOP_TIMER = 0, NO_PRESCALER = (1<<CS30), CLK_DIV_8 = (1<<CS31),
-    CLK_DIV_64 = (1<<CS31)|(1<<CS30), CLK_DIV_256 = (1<<CS32), CLK_DIV_1024 = (1<<CS32)|(1<<CS30),
+    CLK_DIV_64 = (1<<CS31)|(1<<CS30), CLK_DIV_256 = (1<<CS32),
+    CLK_DIV_1024 = (1<<CS32)|(1<<CS30), BITS = (1<<CS32)|(1<<CS31)|(1<<CS30) };
+  enum ClockSource : uint8_t {
     INC_ON_FALLING = (1<<CS32)|(1<<CS31), INC_ON_RISING = (1<<CS32)|(1<<CS31)|(1<<CS30) };
-  enum Constants : uint8_t { ALL_BITS = 0xFF };
-};  
-#endif //TCNT3
 
+  enum Interrupt : uint8_t { 
+    OVERFLOW = (1<<TOIE3), COMPARE_MATCH_A = (1<<OCIE3A), COMPARE_MATCH_B = (1<<OCIE3B) };
+  enum Constants : uint8_t { ALL_BITS = 0xFF };
+  static value_type GetValue()                 { return TCNT3; }
+  static void SetValue(value_type value)       { TCNT3 = value; }
+  static void AddValue(value_type value)       { TCNT3 += value; }
+  static void SubValue(value_type value)       { TCNT3 -= value; }
+  static void SetCtrlRegA(uint8_t mask)        { TCCR3A |= mask; }
+  static void ClearCtrlRegA(uint8_t mask)      { TCCR3A &= ~mask; }
+  static void SetCtrlRegB(uint8_t mask)        { TCCR3B |= mask; }
+  static void ClearCtrlRegB(uint8_t mask)      { TCCR3B &= ~mask; }
+  static void SetInterruptMask(uint8_t mask)   { TIMSK3 |= mask; }
+  static void ClearInterruptMask(uint8_t mask) { TIMSK3 &= ~mask; }
+  static void SetPrescaler(Prescaler val)      { TCCR3B &= ~Prescaler::BITS; TCCR3B |= val; }
+  static void SetExternalClockSource(ClockSource val)  { TCCR3B &= ~Prescaler::BITS; TCCR3B |= val; }
+  static void SetOutputCompareValueA(value_type value) { OCR3A = value; }
+  static value_type GetOutputCompareValueA()           { return OCR3A; }
+  static void SetOutputCompareValueB(value_type value) { OCR3B = value; }
+  static value_type GetOutputCompareValueB()           { return OCR3B; }
+
+  struct ISR {
+    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER3_OVF_vect, signal);
+    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER3_COMPA_vect, signal);
+    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER3_COMPB_vect, signal);
+  };
+
+  struct ISRNoBlock {
+    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER3_OVF_vect, interrupt);
+    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER3_COMPA_vect, interrupt);
+    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER3_COMPB_vect, interrupt);
+  };
+
+  struct ISRNaked {
+    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER3_OVF_vect, naked);
+    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER3_COMPA_vect, naked);
+    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER3_COMPB_vect, naked);
+  };
+};  
+#endif //TIMSK3
+
+#undef IOPORTS_TO_STRING
+#undef IOPORTS_IRQ_HANDLER
 } // namespace etl
 #endif //ETL_IOPORTS_H_

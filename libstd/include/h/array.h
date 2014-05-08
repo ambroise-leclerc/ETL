@@ -34,6 +34,10 @@
 #ifndef ETL_LIBSTD_ARRAY_H_
 #define ETL_LIBSTD_ARRAY_H_
 
+#include <iterator>
+#include <algorithm>
+#include <stdexcept>
+
 namespace std {
 
 template<typename T, std::size_t N>
@@ -52,10 +56,10 @@ struct array {
   
   // Access
   reference operator[](size_type i) noexcept              { return elems_[i]; }
-  const_reference operator[](size_type i) noexcept const  { return elems_[i]; }
+  constexpr const_reference operator[](size_type i) const  { return elems_[i]; }
     
   reference at(size_type i)       { CheckRange(i); return elems_[i]; }
-  const_reference at(size_type i) { CheckRange(i); return elems_[i]; }
+  constexpr const_reference at(size_type i) const { CheckRange(i); return elems_[i]; }
    
   reference front() noexcept                        { return elems_[0]; }
   constexpr const_reference front() const noexcept  { return elems_[0]; }
@@ -83,7 +87,7 @@ struct array {
   const_reverse_iterator rend() const noexcept   { return const_reverse_iterator(begin()); }
    
   const_iterator cbegin() const noexcept { return elems_; }
-  const_iterator cend() const noexcept   { return elems_ + N); }
+  const_iterator cend() const noexcept   { return elems_ + N; }
   
   const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
   const_reverse_iterator crend() const noexcept { return const_reverse_iterator(begin()); }
@@ -98,15 +102,15 @@ struct array {
  private:
   static void CheckRange(size_type i) {
     if (i >= size()) {
-      std::out_of_range exception("std::array : index out of range");
+      std::out_of_range exception("");
       throw(exception);
     }      
   }    
 };
 
 // Zero-sized array specialization
-template<typename T, 0>
-struct array {
+template<typename T>
+struct array<T, 0> {
   using value_type        = T;
   using pointer           = T*;
   using const_pointer     = const T;
@@ -120,16 +124,16 @@ struct array {
   using const_reverse_iterator  = std::reverse_iterator<const_iterator>;
   
   // Access
-  constexpr reference operator[](size_type) noexcept              { RangeError(); return elems_; }
-  constexpr const_reference operator[](size_type) noexcept const  { RangeError(); return elems_; }   
-  constexpr reference at(size_type)                               { RangeError(); return elems_; }
-  constexpr const_reference at(size_type)                         { RangeError(); return elems_; }
-  constexpr reference front() noexcept                            { RangeError(); return elems_; }
-  constexpr const_reference front() const noexcept                { RangeError(); return elems_; }
-  constexpr reference back() noexcept                             { RangeError(); return elems_; }
-  constexpr const_reference back() const noexcept                 { RangeError(); return elems_; }
-  constexpr pointer data() noexcept                               { return null_ptr; }
-  constexpr const_pointer data() const noexcept                   { return null_ptr; }
+  reference operator[](size_type)                       { RangeError(); return elems_; }
+  constexpr const_reference operator[](size_type) const { RangeError(); return elems_; }   
+  reference at(size_type)                               { RangeError(); return elems_; }
+  constexpr const_reference at(size_type)               { RangeError(); return elems_; }
+  reference front()                                     { RangeError(); return elems_; }
+  constexpr const_reference front() const               { RangeError(); return elems_; }
+  reference back()                                      { RangeError(); return elems_; }
+  constexpr const_reference back() const                { RangeError(); return elems_; }
+  pointer data() noexcept                               { return nullptr; }
+  constexpr const_pointer data() const noexcept         { return nullptr; }
     
   // Size
   constexpr size_type size() const noexcept { return 0; }
@@ -164,11 +168,41 @@ struct array {
 
  private:
   static void RangeError() {
-      std::out_of_range exception("zero-sized std::array : index out of range");
-      throw(exception);
-    }      
-  }    
+    std::out_of_range exception("");
+    throw(exception);
+  }      
 };
+
+// non-member functions
+template<typename T, std::size_t N >
+bool operator==(const array<T,N>& x, const array<T,N>& y) {
+  return std::equal( x.cbegin(), x.cend(), y.cbegin());
+}
+  
+template<typename T, std::size_t N >
+bool operator!=(const array<T,N>& x, const array<T,N>& y) {
+  return !(x == y);
+}  
+
+template<typename T, std::size_t N >
+bool operator<(const array<T,N>& x, const array<T,N>& y) {
+  return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
+}  
+
+template<typename T, std::size_t N >
+bool operator<=(const array<T,N>& x, const array<T,N>& y) {
+  return !(y < x);
+}  
+
+template<typename T, std::size_t N >
+bool operator>(const array<T,N>& x, const array<T,N>& y) {
+  return y < x;
+}  
+
+template<typename T, std::size_t N >
+bool operator>=(const array<T,N>& x, const array<T,N>& y) {
+  return !(x < y);
+}  
 
 } // namespace std
 #endif // ETL_LIBSTD_ARRAY_H_

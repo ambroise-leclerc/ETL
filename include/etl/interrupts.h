@@ -1,7 +1,7 @@
-/// @file functional.h
-/// @data 14/03/2014 17:02:55
+/// @file interrupts.h
+/// @data 04/05/2014 18:15:46
 /// @author Ambroise Leclerc
-/// @brief Function objects.
+/// @brief Interrupts handling
 //
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
@@ -31,30 +31,25 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_FUNCTIONAL_H_
-#define ETL_LIBSTD_FUNCTIONAL_H_
+#ifndef ETL_INTERRUPTS_H_
+#define ETL_INTERRUPTS_H_
 
-namespace etlHelper {
-template<typename Arg, typename Result>
-struct unary_function {
-  using argument_type = Arg;
-  using result_type   = Result;
+namespace etl {
+  
+class Interrupts {
+ public:
+  /// Enables interrupts by setting the global interrupt mask.
+  /// This function generates a single 'sei' instruction with
+  /// no overhead.
+  static void Enable() { asm volatile("sei" ::: "memory"); }
+    
+  /// Disables interrupts by clearing the global interrupt mask.
+  /// This function generates a single 'cli' instruction with
+  /// no overhead.
+  static void Disable() { asm volatile("cli" ::: "memory"); }
 };
 
-template<typename Arg1, typename Arg2, typename Result>
-struct binary_function {
-  using first_argument_type   = Arg1;
-  using second_argument_type  = Arg2;
-  using result_type           = Result;
-};
-
-}  
-
-namespace std {
-
   
-  
-} // namespace std  
+} // namespace etl  
 
-
-#endif // ETL_LIBSTD_FUNCTIONAL_H_
+#endif // ETL_INTERRUPTS_H_

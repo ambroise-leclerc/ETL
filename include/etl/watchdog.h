@@ -1,7 +1,7 @@
-/// @file functional.h
-/// @data 14/03/2014 17:02:55
+/// @file watchdog.h
+/// @data 03/05/2014 18:06:55
 /// @author Ambroise Leclerc
-/// @brief Function objects.
+/// @brief Watchdog timer. This file declares the etl::Watchdog class.
 //
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
@@ -31,30 +31,34 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_FUNCTIONAL_H_
-#define ETL_LIBSTD_FUNCTIONAL_H_
+#ifndef ETL_WATCHDOG_H_
+#define ETL_WATCHDOG_H_
 
-namespace etlHelper {
-template<typename Arg, typename Result>
-struct unary_function {
-  using argument_type = Arg;
-  using result_type   = Result;
-};
+#include <avr/wdt.h>  // Watchdog timer handling
 
-template<typename Arg1, typename Arg2, typename Result>
-struct binary_function {
-  using first_argument_type   = Arg1;
-  using second_argument_type  = Arg2;
-  using result_type           = Result;
-};
+namespace etl {
 
-}  
-
-namespace std {
-
+template<uint16_t TIMEOUT_MS>
+class Watchdog {
+ public:
+  static const uint16_t kWdtValue = (TIMEOUT_MS<23)?0:(TIMEOUT_MS<45)?1:(TIMEOUT_MS<90)?
+                                    2:(TIMEOUT_MS<185)?3:(TIMEOUT_MS<375)?4:(TIMEOUT_MS<750)?
+                                    5:(TIMEOUT_MS<1500)?6:(TIMEOUT_MS<3000)?7:(TIMEOUT_MS<6000)?8:9;
+  //static const uint16_t kTimeoutValues[];
+ 
+  Watchdog() { wdt_enable(kWdtValue); }
+  ~Watchdog() { wdt_disable(); }  
+  static void Rearm() { wdt_reset(); }
+    
+  static constexpr uint16_t kTimeoutValues[] = { 15, 30, 60, 120, 250, 500, 1000, 2000, 4000, 8000 };
+  static constexpr uint16_t kActualTimeoutMs = kTimeoutValues[kWdtValue];
   
+
+}; 
+
+//template<uint16_t T> const uint16_t Watchdog<T>::kTimeoutValues[] = { 15, 30, 60, 120, 250, 500, 1000, 2000, 4000, 8000 };
   
-} // namespace std  
+} // namespace etl  
 
 
-#endif // ETL_LIBSTD_FUNCTIONAL_H_
+#endif // ETL_WATCHDOG_H_

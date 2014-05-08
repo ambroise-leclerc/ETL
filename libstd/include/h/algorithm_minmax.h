@@ -34,4 +34,113 @@
 #ifndef ETL_LIBSTD_ALGORITHM_MINMAX_H_
 #define ETL_LIBSTD_ALGORITHM_MINMAX_H_
 
+namespace std {
+  
+template<typename ForwardIt>
+ForwardIt max_element(ForwardIt first, ForwardIt last) {
+  if (first == last) { return last; }
+  ForwardIt largest = first;
+  ++first;
+  for (; first != last; ++first) {
+    if (*largest < *first) { largest = first; }
+  }
+  return largest;
+}
+
+template<typename ForwardIt, typename Compare>
+ForwardIt max_element(ForwardIt first, ForwardIt last, Compare comp) {
+  if (first == last) { return last; }
+  ForwardIt largest = first;
+  ++first;
+  for (; first != last; ++first) {
+    if (comp(*largest, *first)) { largest = first; }
+  }
+  return largest;
+}
+
+template<typename ForwardIt>
+ForwardIt min_element(ForwardIt first, ForwardIt last) {
+  if (first == last) { return last; }
+  ForwardIt smallest = first;
+  ++first;
+  for (; first != last; ++first) {
+      if (*first < *smallest) { smallest = first; }
+  }
+  return smallest;
+}
+
+template<typename ForwardIt, typename Compare>
+ForwardIt min_element(ForwardIt first, ForwardIt last, Compare comp) {
+  if (first == last) { return last; } 
+  ForwardIt smallest = first;
+  ++first;
+  for (; first != last; ++first) {
+    if (comp(*first, *smallest)) { smallest = first; }
+  }
+  return smallest;
+}
+
+template<typename T> 
+constexpr const T& max(const T& a, const T& b ) {
+  return (a < b) ? b : a;
+}
+
+template<typename T, typename Compare>
+constexpr const T& max(const T& a, const T& b, Compare comp) {
+  return (comp(a, b)) ? b : a;
+}  
+
+template<typename T>
+constexpr T max( std::initializer_list<T> ilist ) {
+  return *std::max_element(ilist.begin(), ilist.end());
+}  
+
+template<typename T, typename Compare>
+constexpr T max( std::initializer_list<T> ilist, Compare comp) {
+  return *std::max_element(ilist.begin(), ilist.end(), comp);
+}
+
+template<typename  T> 
+constexpr const T& min(const T& a, const T& b) {
+  return (b < a) ? b : a;
+}
+  
+template<typename  T, typename Compare>
+constexpr const T& min(const T& a, const T& b, Compare comp) {
+  return (comp(b, a)) ? b : a;
+}
+  
+template<typename T>
+constexpr T min(std::initializer_list<T> ilist) {
+  return *std::min_element(ilist.begin(), ilist.end());
+}
+  
+template<typename T, typename Compare>
+constexpr T min(std::initializer_list<T> ilist, Compare comp) {
+  return *std::min_element(ilist.begin(), ilist.end(), comp);
+}  
+
+template<typename InputIt1, typename InputIt2>
+bool lexicographical_compare(InputIt1 first1, InputIt1 last1,
+                             InputIt2 first2, InputIt2 last2) {
+    for (; (first1 != last1) && (first2 != last2); first1++, first2++ ) {
+        if (*first1 < *first2) { return true; }
+        if (*first2 < *first1) { return false; }
+    }
+    return (first1 == last1) && (first2 != last2);
+}
+
+template<typename InputIt1, typename InputIt2, typename Compare>
+bool lexicographical_compare(InputIt1 first1, InputIt1 last1,
+                             InputIt2 first2, InputIt2 last2,
+                             Compare comp) {
+    for ( ; (first1 != last1) && (first2 != last2); first1++, first2++ ) {
+        if (comp(*first1, *first2)) { return true; }
+        if (comp(*first2, *first1)) { return false; }
+    }
+    return (first1 == last1) && (first2 != last2);
+}
+
+} // namespace std  
+
 #endif // ETL_LIBSTD_ALGORITHM_MINMAX_H_

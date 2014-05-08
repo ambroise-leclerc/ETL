@@ -34,62 +34,58 @@
 #ifndef ETL_LIBSTD_STDEXCEPT_
 #define ETL_LIBSTD_STDEXCEPT_
 
+#include <exception>
+
 namespace std {
 
 class logic_error : public exception {
- protected:
-  string mstring;
  public:
   logic_error() throw();
-  explicit logic_error(const string& what_arg);
-  explicit logic_error(const char* what_arg);
-
+  explicit logic_error(const char* /*what_arg*/) {}
   virtual ~logic_error() throw() {}
-  virtual const char* what() const throw() { return buffer; }
+  virtual const char* what() const throw() { return nullptr; }
 };	
 
 class domain_error : public logic_error {
  public:
   domain_error() : logic_error() {}
-  domain_error(const string& what_arg) : logic_error(what_arg) {}
+  explicit domain_error(const char* what_arg) : logic_error(what_arg) {}
   virtual ~domain_error() throw() {}
 };
 
 class invalid_argument : public logic_error {
  public:
   invalid_argument() : logic_error() {}
-  invalid_argument(const string& what_arg) : logic_error(what_arg) {}
+  explicit invalid_argument(const char* what_arg) : logic_error(what_arg) {}
   virtual ~invalid_argument() throw() {}
 };
 
 class length_error : public logic_error {
  public:
   length_error() : logic_error() {}
-  length_error(const string& what_arg) : logic_error(what_arg){}
+  explicit length_error(const char* what_arg) : logic_error(what_arg){}
   virtual ~length_error() throw() {}
 };
 
 class out_of_range : public logic_error{
  public:
   out_of_range();
-  out_of_range(const string & what_arg);
+  explicit out_of_range(const char* what_arg);
   virtual ~out_of_range() throw() {}
 };
 
 class runtime_error : public exception {
- protected:
-  string mstring;
  public:
   runtime_error();
-  runtime_error(const string& what_arg);
+  explicit runtime_error(const char* /*what_arg*/) {}
   virtual ~runtime_error() throw() {}
-  virtual const char* what() const throw();
+  virtual const char* what() const throw() { return nullptr; };
 };
 
 class range_error : public runtime_error {
  public:
   range_error() : runtime_error() {}
-  range_error(const string& what_arg) : runtime_error(what_arg) {}
+  explicit range_error(const char* what_arg) : runtime_error(what_arg) {}
   virtual ~range_error() throw() {}
 };
 
@@ -97,14 +93,14 @@ class range_error : public runtime_error {
 class overflow_error : public runtime_error {
  public:
   overflow_error() : runtime_error() {}
-  overflow_error(const string& what_arg) : runtime_error(what_arg) {}
+  explicit overflow_error(const char* what_arg) : runtime_error(what_arg) {}
   virtual ~overflow_error() throw() {}
 };
 
 class underflow_error : public runtime_error {
  public:
   underflow_error() : runtime_error() {}
-  underflow_error(const string& what_arg) : runtime_error(what_arg) {}
+  explicit underflow_error(const char* what_arg) : runtime_error(what_arg) {}
   virtual ~underflow_error() throw() {}
 };
 

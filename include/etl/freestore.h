@@ -134,15 +134,15 @@ class FreeStore : public FreeStoreTracePolicy {
     uint8_t data;
 
     void SetChunkSize(uint16_t size) { descriptor = (descriptor & 0b1100000000000000) | size; }
-    uint16_t constexpr ChunkSize() const  { return descriptor & 0b1111111111111; }
+    uint16_t ChunkSize() const       { return descriptor & 0b1111111111111; }
 
-    bool constexpr IsAllocated() const    { return (descriptor & AllocatedChunk) == AllocatedChunk; }
-    void SetAllocated()                   { descriptor |= AllocatedChunk; }
-    void ResetAllocated()                 { descriptor &= ~AllocatedChunk; }
+    bool IsAllocated() const         { return (descriptor & AllocatedChunk) == AllocatedChunk; }
+    void SetAllocated()              { descriptor |= AllocatedChunk; }
+    void ResetAllocated()            { descriptor &= ~AllocatedChunk; }
 
-    bool constexpr IsLastChunk() const    { return (descriptor & LastChunk) == LastChunk; }
-    void SetLastChunk()                   { descriptor |= LastChunk; }
-    void ResetLastChunk()                 { descriptor &= ~LastChunk; }
+    bool IsLastChunk() const         { return (descriptor & LastChunk) == LastChunk; }
+    void SetLastChunk()              { descriptor |= LastChunk; }
+    void ResetLastChunk()            { descriptor &= ~LastChunk; }
       
     Chunk* NextChunk() { return reinterpret_cast<Chunk*>((&data) + ChunkSize()); }
 

@@ -1,7 +1,7 @@
-/// @file functional.h
-/// @data 14/03/2014 17:02:55
+/// @file initializer_list
+/// @data 19/04/2014 22:15:53
 /// @author Ambroise Leclerc
-/// @brief Function objects.
+/// @brief Initializer list.
 //
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
@@ -31,30 +31,9 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_FUNCTIONAL_H_
-#define ETL_LIBSTD_FUNCTIONAL_H_
+#ifndef ETL_LIBSTD_INITIALIZER_LIST_
+#define ETL_LIBSTD_INITIALIZER_LIST_
 
-namespace etlHelper {
-template<typename Arg, typename Result>
-struct unary_function {
-  using argument_type = Arg;
-  using result_type   = Result;
-};
+#include <h/initializer_list.h>
 
-template<typename Arg1, typename Arg2, typename Result>
-struct binary_function {
-  using first_argument_type   = Arg1;
-  using second_argument_type  = Arg2;
-  using result_type           = Result;
-};
-
-}  
-
-namespace std {
-
-  
-  
-} // namespace std  
-
-
-#endif // ETL_LIBSTD_FUNCTIONAL_H_
+#endif // ETL_LIBSTD_INITIALIZER_LIST_

@@ -1,9 +1,8 @@
-/// @file memory.h
-/// @data 05/03/2014 18:23:53
+/// @file initializer_list.h
+/// @data 19/04/2014 22:24:53
 /// @author Ambroise Leclerc
-/// @brief
+/// @brief Initializer list.
 //
-// Embedded Template Library
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
 //
@@ -32,72 +31,40 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_MEMORY_H_
-#define ETL_LIBSTD_MEMORY_H_
-#include <type_traits>
-#include <utility>
-
-namespace etlHelper {
-
-// addressof helpers taken from Boost library
-template<class T>
-struct addressof_ref {
-  T & v_; 
-  addressof_ref( T & v ): v_( v ) {}
-  operator T& () const { return v_; }
-
- private:
-  addressof_ref & operator=(const addressof_ref &);
-};
-
-template<class T>
-struct addressof_impl
-{
-  static T * f( T & v, long ) {
-    return reinterpret_cast<T*>(
-      &const_cast<char&>(reinterpret_cast<const volatile char &>(v)));
-  }
-
-  static T * f( T * v, int ) { return v; }
-};
-}  
+#ifndef ETL_LIBSTD_INITIALIZER_LIST_H_
+#define ETL_LIBSTD_INITIALIZER_LIST_H_
 
 namespace std {
-  
 template<typename T>
-class allocator {
+class initializer_list {
  public:
   using value_type      = T;
-  using pointer         = T*;
-  using const_pointer   = const T*;
-  using reference       = T&;
+  using reference       = const T&;
   using const_reference = const T&;
   using size_type       = std::size_t;
-  using difference_type = std::ptrdiff_t;
-  using propagate_on_container_move_assignment = std::true_type;
+  using iterator        = const T*;
+  using const_iterator  = const T*;
   
-  template<typename T2> struct rebind { typedef allocator<T2> other; };
   
-  allocator() noexcept {}
-  allocator(const allocator&) noexcept {};
-  template<typename T2> allocator(const allocator<T2>&) noexcept {};
-  
-  /// Constructs an object of type T in allocated uninitialized storage using placement new.
-  template<typename T2, typename... Args>
-  static void construct(T2* p, Args&&... value) {
-    ::new((void*)p) T2(std::forward<Args>(value)...);
-  }    
+  constexpr initializer_list() noexcept : begin_(nullptr), size_(0) {}
 
-  // destroy helper to invoke destructor explicitly.
-  static void destroy(const_reference t) {
-    t.~T(); // T must support non-throwing destructor
-  }
+  constexpr size_t   size()  const noexcept { return size_; }
+  constexpr const T* begin() const noexcept { return begin_; }
+  constexpr const T* end()   const noexcept { return begin_+size_; }
+    
+ private:
+  iterator begin_;
+  size_type size_;
 };
 
+template<typename T> 
+constexpr const T* begin(initializer_list<T> list) noexcept { return list.begin(); }
+  
 template<typename T>
-T* addressof(T& arg) {
-  return ::etlHelper::addressof_impl<T>::f(::etlHelper::addressof_ref<T>(arg), 0);
-}  
+constexpr const T* end(initializer_list<T> list) noexcept { return list.end(); }
 
-} // namespace std
-#endif // ETL_LIBSTD_MEMORY_H_
+
+  
+} // namespace std  
+
+#endif // ETL_LIBSTD_INITIALIZER_LIST_H_

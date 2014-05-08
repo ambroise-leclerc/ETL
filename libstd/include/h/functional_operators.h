@@ -294,6 +294,19 @@ template<> struct less_equal<void> {
   }    
 };
 
+template<typename T = void>
+struct bit_not {
+  using result_type   = T;
+  using argument_type = T;
+  constexpr T operator()(const T& arg) const { return ~arg; }
+};
+
+template<> struct bit_not<void> {
+  template<typename T>
+  constexpr auto operator()(T&& arg) const -> decltype(~std::forward<T>(arg));
+  typedef ::etlHelper::unspecified is_transparent  __attribute__((__unused__));
+};  
+
 } // namespace std
 
 #endif // ETL_LIBSTD_FUNCTIONAL_OPERATORS_H_

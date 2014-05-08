@@ -34,6 +34,8 @@
 #ifndef ETL_LIBSTD_ITERATOR_REVERSE_H_
 #define ETL_LIBSTD_ITERATOR_REVERSE_H_
 
+#include <initializer_list>
+
 namespace std {
   
 template<typename Iterator>
@@ -104,6 +106,13 @@ bool operator>(const reverse_iterator<Iterator1>& lhs,
 template<typename Iterator1, typename Iterator2>
 bool operator>=(const reverse_iterator<Iterator1>& lhs,
                 const reverse_iterator<Iterator2>& rhs) { return lhs.base() <= rhs.base(); }  
+                  
+// Specializations
+template<typename T> 
+constexpr const T* rbegin(initializer_list<T> list) noexcept { return std::reverse_iterator<const T*>(list.end()); }
+  
+template<typename T>
+constexpr const T* rend(initializer_list<T> list) noexcept { return std::reverse_iterator<const T*>(list.begin()); }
   
 }; // namespace std
 

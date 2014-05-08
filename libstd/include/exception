@@ -40,16 +40,16 @@ class exception {
  public:
   exception() noexcept {}
   exception(const exception&) noexcept {}
-  exception& operator=(const exception&) noexcept {}
-  virtual ~exception();
-  virtual const char* what() const noexcept;
+  exception& operator=(const exception&) noexcept { return *this;}
+  virtual ~exception() {}
+  virtual const char* what() const noexcept { return nullptr; }
 };
 
 class bad_exception : public exception {
  public:
   bad_exception() noexcept {}
-  virtual ~bad_exception() noexcept;
-  virtual const char* what() const noexcept;
+  virtual ~bad_exception() noexcept {}
+  virtual const char* what() const noexcept { return nullptr; }
 };
 
 using terminate_handler = void(*)();

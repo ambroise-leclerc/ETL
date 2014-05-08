@@ -49,15 +49,16 @@ typename remove_reference<T>::type&& move(T&& arg) noexcept {
 /// Forwards arg to another function exactly as it was passed to the calling function
 /// @param arg object to be forwarded
 template<typename T>
-constexpr T&& forward( typename std::remove_reference<T>::type& arg ) noexcept {
+constexpr T&& forward(typename std::remove_reference<T>::type& arg) noexcept {
   return static_cast<T&&>(arg);
 }
 
 /// Forwards arg to another function exactly as it was passed to the calling function
 /// @param arg object to be forwarded
 template<typename T>
-constexpr T&& forward( typename std::remove_reference<T>::type&& t ) noexcept {
-  return static_cast<T&&>(t);
+constexpr T&& forward(typename std::remove_reference<T>::type&& arg) noexcept {
+  static_assert(!std::is_lvalue_reference<T>::value, "not a rvalue reference");
+  return static_cast<T&&>(arg);
 }
 
 
