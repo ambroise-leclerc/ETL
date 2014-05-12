@@ -41,37 +41,16 @@ template<typename ParentPort>
 struct Pin {
   /// Port is defined as the Port object to which this pin belongs.
   using Port = ParentPort;
-  using PinChangeIRQ = typename ParentPort::PinChangeIRQ;
+  using PCInt = ParentPort::PCInt;
 };
-
-} // namespace etl
 
 #define IOPORTS_TO_STRING(name) #name
 #define IOPORTS_IRQ_HANDLER(vector, type) asm(IOPORTS_TO_STRING(vector)) __attribute__ ((type, __INTR_ATTRS))
-
-#if defined (__AVR_Dummy__)
-#elif defined (__AVR_ATmega48A__)
-#include "architecture/ioports_ATmega48A.h"
-#elif defined (__AVR_ATmega48PA__)
-#include "architecture/ioports_ATmega48PA.h"
-#elif defined (__AVR_ATmega88A__)
-#include "architecture/ioports_ATmega88A.h"
-#elif defined (__AVR_ATmega88PA__)
-#include "architecture/ioports_ATmega88PA.h"
-#elif defined (__AVR_ATmega168A__)
-#include "architecture/ioports_ATmega168A.h"
-#elif defined (__AVR_ATmega168PA__)
-#include "architecture/ioports_ATmega168PA.h"
-#elif defined (__AVR_ATmega168P__)
-#include "architecture/ioports_ATmega168P.h"
-#elif defined (__AVR_ATmega328__)
-#include "architecture/ioports_ATmega328.h"
+#if define (__AVR_Dummy__)
 #elif defined (__AVR_ATmega328P__)
 #include "architecture/ioports_ATmega328P.h"
-#elif defined (__AVR_ATmega32U4__)
-#include "architecture/ioports_ATmega32U4.h"
 #endif
-
 #undef IOPORTS_TO_STRING
 #undef IOPORTS_IRQ_HANDLER
+} // namespace etl
 #endif //ETL_IOPORTS_H_
