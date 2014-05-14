@@ -50,6 +50,8 @@ struct Pin {
 #define IOPORTS_IRQ_HANDLER(vector, type) asm(IOPORTS_TO_STRING(vector)) __attribute__ ((type, __INTR_ATTRS))
 
 #if defined (__AVR_Dummy__)
+#elif defined (__AVR_ATmega32U4__)
+#include "architecture/ioports_ATmega32U4.h"
 #elif defined (__AVR_ATmega48A__)
 #include "architecture/ioports_ATmega48A.h"
 #elif defined (__AVR_ATmega48PA__)
@@ -68,8 +70,6 @@ struct Pin {
 #include "architecture/ioports_ATmega328.h"
 #elif defined (__AVR_ATmega328P__)
 #include "architecture/ioports_ATmega328P.h"
-#elif defined (__AVR_ATmega32U4__)
-#include "architecture/ioports_ATmega32U4.h"
 #endif
 
 #undef IOPORTS_TO_STRING

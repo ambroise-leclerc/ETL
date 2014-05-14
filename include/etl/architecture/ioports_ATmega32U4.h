@@ -60,6 +60,11 @@ struct PortB {
   /// @param[in] mask bits to clear
   static void ClearBits(uint8_t mask) { PORTB &= ~mask;} 
 
+  /// Changes values of masked bits in PORTB.
+  /// @param[in] mask bits to change
+  /// @param[in] value new bits values
+  static void ChangeBits(uint8_t mask, uint8_t value) { uint8_t tmp = PORTB & ~mask; PORTB = tmp | value; } 
+
   /// Toggles masked bits in PORTB.
   /// @param[in] mask bits to toggle
   static void ToggleBits(uint8_t mask) { PORTB ^= mask;} 
@@ -99,214 +104,39 @@ struct PortB {
 
 };
 
-struct PinB0 : public Pin<PortB> {
-  /// Sets PinB0 to HIGH.
-  static void Set()       { PORTB |= (1<<0); }
+struct PinB7 : public Pin<PortB> {
+  /// Sets PinB7 to HIGH.
+  static void Set()       { PORTB |= (1<<7); }
 
-  /// Sets PinB0 to LOW.
-  static void Clear()     { PORTB &= ~(1<<0); }
+  /// Sets PinB7 to LOW.
+  static void Clear()     { PORTB &= ~(1<<7); }
 
-  /// Toggles PinB0 value.
-  static void Toggle()    { PINB |= (1<<0); }
+  /// Toggles PinB7 value.
+  static void Toggle()    { PINB |= (1<<7); }
 
-  /// Configures PinB0  as an output pin.
-  static void SetOutput() { DDRB |= (1<<0); }
+  /// Configures PinB7  as an output pin.
+  static void SetOutput() { DDRB |= (1<<7); }
 
-  /// Configures PinB0  as an input pin.
-  static void SetInput()  { DDRB &= ~(1<<0); }
+  /// Configures PinB7  as an input pin.
+  static void SetInput()  { DDRB &= ~(1<<7); }
 
-  /// Pulses PinB0 with high state first.
-  static void PulseHigh() { PORTB |= (1<<0); PORTB &= ~(1<<0); }
+  /// Pulses PinB7 with high state first.
+  static void PulseHigh() { PORTB |= (1<<7); PORTB &= ~(1<<7); }
 
-  /// Pulses PinB0 with low state first.
-  static void PulseLow()  { PORTB &= ~(1<<0); PORTB |= (1<<0); }
+  /// Pulses PinB7 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<7); PORTB |= (1<<7); }
 
-  /// Reads PinB0  value.
+  /// Reads PinB7  value.
   /// @return Port pin value.
-  static bool Test()      { return PINB & (1<<0); }
+  static bool Test()      { return PINB & (1<<7); }
 
   /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<0)
-  static constexpr uint8_t bitmask()               { return (1<<0); }
+  /// @return (1<<7)
+  static constexpr uint8_t bitmask()               { return (1<<7); }
 
   /// Returns the bit corresponding to this pin.
-  /// @return 0
-  static constexpr uint8_t bit()                   { return 0; }
-};
-
-struct PinB1 : public Pin<PortB> {
-  /// Sets PinB1 to HIGH.
-  static void Set()       { PORTB |= (1<<1); }
-
-  /// Sets PinB1 to LOW.
-  static void Clear()     { PORTB &= ~(1<<1); }
-
-  /// Toggles PinB1 value.
-  static void Toggle()    { PINB |= (1<<1); }
-
-  /// Configures PinB1  as an output pin.
-  static void SetOutput() { DDRB |= (1<<1); }
-
-  /// Configures PinB1  as an input pin.
-  static void SetInput()  { DDRB &= ~(1<<1); }
-
-  /// Pulses PinB1 with high state first.
-  static void PulseHigh() { PORTB |= (1<<1); PORTB &= ~(1<<1); }
-
-  /// Pulses PinB1 with low state first.
-  static void PulseLow()  { PORTB &= ~(1<<1); PORTB |= (1<<1); }
-
-  /// Reads PinB1  value.
-  /// @return Port pin value.
-  static bool Test()      { return PINB & (1<<1); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<1)
-  static constexpr uint8_t bitmask()               { return (1<<1); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 1
-  static constexpr uint8_t bit()                   { return 1; }
-};
-
-struct PinB2 : public Pin<PortB> {
-  /// Sets PinB2 to HIGH.
-  static void Set()       { PORTB |= (1<<2); }
-
-  /// Sets PinB2 to LOW.
-  static void Clear()     { PORTB &= ~(1<<2); }
-
-  /// Toggles PinB2 value.
-  static void Toggle()    { PINB |= (1<<2); }
-
-  /// Configures PinB2  as an output pin.
-  static void SetOutput() { DDRB |= (1<<2); }
-
-  /// Configures PinB2  as an input pin.
-  static void SetInput()  { DDRB &= ~(1<<2); }
-
-  /// Pulses PinB2 with high state first.
-  static void PulseHigh() { PORTB |= (1<<2); PORTB &= ~(1<<2); }
-
-  /// Pulses PinB2 with low state first.
-  static void PulseLow()  { PORTB &= ~(1<<2); PORTB |= (1<<2); }
-
-  /// Reads PinB2  value.
-  /// @return Port pin value.
-  static bool Test()      { return PINB & (1<<2); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<2)
-  static constexpr uint8_t bitmask()               { return (1<<2); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 2
-  static constexpr uint8_t bit()                   { return 2; }
-};
-
-struct PinB3 : public Pin<PortB> {
-  /// Sets PinB3 to HIGH.
-  static void Set()       { PORTB |= (1<<3); }
-
-  /// Sets PinB3 to LOW.
-  static void Clear()     { PORTB &= ~(1<<3); }
-
-  /// Toggles PinB3 value.
-  static void Toggle()    { PINB |= (1<<3); }
-
-  /// Configures PinB3  as an output pin.
-  static void SetOutput() { DDRB |= (1<<3); }
-
-  /// Configures PinB3  as an input pin.
-  static void SetInput()  { DDRB &= ~(1<<3); }
-
-  /// Pulses PinB3 with high state first.
-  static void PulseHigh() { PORTB |= (1<<3); PORTB &= ~(1<<3); }
-
-  /// Pulses PinB3 with low state first.
-  static void PulseLow()  { PORTB &= ~(1<<3); PORTB |= (1<<3); }
-
-  /// Reads PinB3  value.
-  /// @return Port pin value.
-  static bool Test()      { return PINB & (1<<3); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<3)
-  static constexpr uint8_t bitmask()               { return (1<<3); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 3
-  static constexpr uint8_t bit()                   { return 3; }
-};
-
-struct PinB4 : public Pin<PortB> {
-  /// Sets PinB4 to HIGH.
-  static void Set()       { PORTB |= (1<<4); }
-
-  /// Sets PinB4 to LOW.
-  static void Clear()     { PORTB &= ~(1<<4); }
-
-  /// Toggles PinB4 value.
-  static void Toggle()    { PINB |= (1<<4); }
-
-  /// Configures PinB4  as an output pin.
-  static void SetOutput() { DDRB |= (1<<4); }
-
-  /// Configures PinB4  as an input pin.
-  static void SetInput()  { DDRB &= ~(1<<4); }
-
-  /// Pulses PinB4 with high state first.
-  static void PulseHigh() { PORTB |= (1<<4); PORTB &= ~(1<<4); }
-
-  /// Pulses PinB4 with low state first.
-  static void PulseLow()  { PORTB &= ~(1<<4); PORTB |= (1<<4); }
-
-  /// Reads PinB4  value.
-  /// @return Port pin value.
-  static bool Test()      { return PINB & (1<<4); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<4)
-  static constexpr uint8_t bitmask()               { return (1<<4); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 4
-  static constexpr uint8_t bit()                   { return 4; }
-};
-
-struct PinB5 : public Pin<PortB> {
-  /// Sets PinB5 to HIGH.
-  static void Set()       { PORTB |= (1<<5); }
-
-  /// Sets PinB5 to LOW.
-  static void Clear()     { PORTB &= ~(1<<5); }
-
-  /// Toggles PinB5 value.
-  static void Toggle()    { PINB |= (1<<5); }
-
-  /// Configures PinB5  as an output pin.
-  static void SetOutput() { DDRB |= (1<<5); }
-
-  /// Configures PinB5  as an input pin.
-  static void SetInput()  { DDRB &= ~(1<<5); }
-
-  /// Pulses PinB5 with high state first.
-  static void PulseHigh() { PORTB |= (1<<5); PORTB &= ~(1<<5); }
-
-  /// Pulses PinB5 with low state first.
-  static void PulseLow()  { PORTB &= ~(1<<5); PORTB |= (1<<5); }
-
-  /// Reads PinB5  value.
-  /// @return Port pin value.
-  static bool Test()      { return PINB & (1<<5); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<5)
-  static constexpr uint8_t bitmask()               { return (1<<5); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 5
-  static constexpr uint8_t bit()                   { return 5; }
+  /// @return 7
+  static constexpr uint8_t bit()                   { return 7; }
 };
 
 struct PinB6 : public Pin<PortB> {
@@ -344,39 +174,214 @@ struct PinB6 : public Pin<PortB> {
   static constexpr uint8_t bit()                   { return 6; }
 };
 
-struct PinB7 : public Pin<PortB> {
-  /// Sets PinB7 to HIGH.
-  static void Set()       { PORTB |= (1<<7); }
+struct PinB5 : public Pin<PortB> {
+  /// Sets PinB5 to HIGH.
+  static void Set()       { PORTB |= (1<<5); }
 
-  /// Sets PinB7 to LOW.
-  static void Clear()     { PORTB &= ~(1<<7); }
+  /// Sets PinB5 to LOW.
+  static void Clear()     { PORTB &= ~(1<<5); }
 
-  /// Toggles PinB7 value.
-  static void Toggle()    { PINB |= (1<<7); }
+  /// Toggles PinB5 value.
+  static void Toggle()    { PINB |= (1<<5); }
 
-  /// Configures PinB7  as an output pin.
-  static void SetOutput() { DDRB |= (1<<7); }
+  /// Configures PinB5  as an output pin.
+  static void SetOutput() { DDRB |= (1<<5); }
 
-  /// Configures PinB7  as an input pin.
-  static void SetInput()  { DDRB &= ~(1<<7); }
+  /// Configures PinB5  as an input pin.
+  static void SetInput()  { DDRB &= ~(1<<5); }
 
-  /// Pulses PinB7 with high state first.
-  static void PulseHigh() { PORTB |= (1<<7); PORTB &= ~(1<<7); }
+  /// Pulses PinB5 with high state first.
+  static void PulseHigh() { PORTB |= (1<<5); PORTB &= ~(1<<5); }
 
-  /// Pulses PinB7 with low state first.
-  static void PulseLow()  { PORTB &= ~(1<<7); PORTB |= (1<<7); }
+  /// Pulses PinB5 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<5); PORTB |= (1<<5); }
 
-  /// Reads PinB7  value.
+  /// Reads PinB5  value.
   /// @return Port pin value.
-  static bool Test()      { return PINB & (1<<7); }
+  static bool Test()      { return PINB & (1<<5); }
 
   /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<7)
-  static constexpr uint8_t bitmask()               { return (1<<7); }
+  /// @return (1<<5)
+  static constexpr uint8_t bitmask()               { return (1<<5); }
 
   /// Returns the bit corresponding to this pin.
-  /// @return 7
-  static constexpr uint8_t bit()                   { return 7; }
+  /// @return 5
+  static constexpr uint8_t bit()                   { return 5; }
+};
+
+struct PinB4 : public Pin<PortB> {
+  /// Sets PinB4 to HIGH.
+  static void Set()       { PORTB |= (1<<4); }
+
+  /// Sets PinB4 to LOW.
+  static void Clear()     { PORTB &= ~(1<<4); }
+
+  /// Toggles PinB4 value.
+  static void Toggle()    { PINB |= (1<<4); }
+
+  /// Configures PinB4  as an output pin.
+  static void SetOutput() { DDRB |= (1<<4); }
+
+  /// Configures PinB4  as an input pin.
+  static void SetInput()  { DDRB &= ~(1<<4); }
+
+  /// Pulses PinB4 with high state first.
+  static void PulseHigh() { PORTB |= (1<<4); PORTB &= ~(1<<4); }
+
+  /// Pulses PinB4 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<4); PORTB |= (1<<4); }
+
+  /// Reads PinB4  value.
+  /// @return Port pin value.
+  static bool Test()      { return PINB & (1<<4); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<4)
+  static constexpr uint8_t bitmask()               { return (1<<4); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 4
+  static constexpr uint8_t bit()                   { return 4; }
+};
+
+struct PinB3 : public Pin<PortB> {
+  /// Sets PinB3 to HIGH.
+  static void Set()       { PORTB |= (1<<3); }
+
+  /// Sets PinB3 to LOW.
+  static void Clear()     { PORTB &= ~(1<<3); }
+
+  /// Toggles PinB3 value.
+  static void Toggle()    { PINB |= (1<<3); }
+
+  /// Configures PinB3  as an output pin.
+  static void SetOutput() { DDRB |= (1<<3); }
+
+  /// Configures PinB3  as an input pin.
+  static void SetInput()  { DDRB &= ~(1<<3); }
+
+  /// Pulses PinB3 with high state first.
+  static void PulseHigh() { PORTB |= (1<<3); PORTB &= ~(1<<3); }
+
+  /// Pulses PinB3 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<3); PORTB |= (1<<3); }
+
+  /// Reads PinB3  value.
+  /// @return Port pin value.
+  static bool Test()      { return PINB & (1<<3); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<3)
+  static constexpr uint8_t bitmask()               { return (1<<3); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 3
+  static constexpr uint8_t bit()                   { return 3; }
+};
+
+struct PinB2 : public Pin<PortB> {
+  /// Sets PinB2 to HIGH.
+  static void Set()       { PORTB |= (1<<2); }
+
+  /// Sets PinB2 to LOW.
+  static void Clear()     { PORTB &= ~(1<<2); }
+
+  /// Toggles PinB2 value.
+  static void Toggle()    { PINB |= (1<<2); }
+
+  /// Configures PinB2  as an output pin.
+  static void SetOutput() { DDRB |= (1<<2); }
+
+  /// Configures PinB2  as an input pin.
+  static void SetInput()  { DDRB &= ~(1<<2); }
+
+  /// Pulses PinB2 with high state first.
+  static void PulseHigh() { PORTB |= (1<<2); PORTB &= ~(1<<2); }
+
+  /// Pulses PinB2 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<2); PORTB |= (1<<2); }
+
+  /// Reads PinB2  value.
+  /// @return Port pin value.
+  static bool Test()      { return PINB & (1<<2); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<2)
+  static constexpr uint8_t bitmask()               { return (1<<2); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 2
+  static constexpr uint8_t bit()                   { return 2; }
+};
+
+struct PinB1 : public Pin<PortB> {
+  /// Sets PinB1 to HIGH.
+  static void Set()       { PORTB |= (1<<1); }
+
+  /// Sets PinB1 to LOW.
+  static void Clear()     { PORTB &= ~(1<<1); }
+
+  /// Toggles PinB1 value.
+  static void Toggle()    { PINB |= (1<<1); }
+
+  /// Configures PinB1  as an output pin.
+  static void SetOutput() { DDRB |= (1<<1); }
+
+  /// Configures PinB1  as an input pin.
+  static void SetInput()  { DDRB &= ~(1<<1); }
+
+  /// Pulses PinB1 with high state first.
+  static void PulseHigh() { PORTB |= (1<<1); PORTB &= ~(1<<1); }
+
+  /// Pulses PinB1 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<1); PORTB |= (1<<1); }
+
+  /// Reads PinB1  value.
+  /// @return Port pin value.
+  static bool Test()      { return PINB & (1<<1); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<1)
+  static constexpr uint8_t bitmask()               { return (1<<1); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 1
+  static constexpr uint8_t bit()                   { return 1; }
+};
+
+struct PinB0 : public Pin<PortB> {
+  /// Sets PinB0 to HIGH.
+  static void Set()       { PORTB |= (1<<0); }
+
+  /// Sets PinB0 to LOW.
+  static void Clear()     { PORTB &= ~(1<<0); }
+
+  /// Toggles PinB0 value.
+  static void Toggle()    { PINB |= (1<<0); }
+
+  /// Configures PinB0  as an output pin.
+  static void SetOutput() { DDRB |= (1<<0); }
+
+  /// Configures PinB0  as an input pin.
+  static void SetInput()  { DDRB &= ~(1<<0); }
+
+  /// Pulses PinB0 with high state first.
+  static void PulseHigh() { PORTB |= (1<<0); PORTB &= ~(1<<0); }
+
+  /// Pulses PinB0 with low state first.
+  static void PulseLow()  { PORTB &= ~(1<<0); PORTB |= (1<<0); }
+
+  /// Reads PinB0  value.
+  /// @return Port pin value.
+  static bool Test()      { return PINB & (1<<0); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<0)
+  static constexpr uint8_t bitmask()               { return (1<<0); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 0
+  static constexpr uint8_t bit()                   { return 0; }
 };
 
 
@@ -393,6 +398,11 @@ struct PortC {
   /// Clears masked bits in PORTC.
   /// @param[in] mask bits to clear
   static void ClearBits(uint8_t mask) { PORTC &= ~mask;} 
+
+  /// Changes values of masked bits in PORTC.
+  /// @param[in] mask bits to change
+  /// @param[in] value new bits values
+  static void ChangeBits(uint8_t mask, uint8_t value) { uint8_t tmp = PORTC & ~mask; PORTC = tmp | value; } 
 
   /// Toggles masked bits in PORTC.
   /// @param[in] mask bits to toggle
@@ -433,214 +443,39 @@ struct PortC {
 
 };
 
-struct PinC0 : public Pin<PortC> {
-  /// Sets PinC0 to HIGH.
-  static void Set()       { PORTC |= (1<<0); }
+struct PinC7 : public Pin<PortC> {
+  /// Sets PinC7 to HIGH.
+  static void Set()       { PORTC |= (1<<7); }
 
-  /// Sets PinC0 to LOW.
-  static void Clear()     { PORTC &= ~(1<<0); }
+  /// Sets PinC7 to LOW.
+  static void Clear()     { PORTC &= ~(1<<7); }
 
-  /// Toggles PinC0 value.
-  static void Toggle()    { PINC |= (1<<0); }
+  /// Toggles PinC7 value.
+  static void Toggle()    { PINC |= (1<<7); }
 
-  /// Configures PinC0  as an output pin.
-  static void SetOutput() { DDRC |= (1<<0); }
+  /// Configures PinC7  as an output pin.
+  static void SetOutput() { DDRC |= (1<<7); }
 
-  /// Configures PinC0  as an input pin.
-  static void SetInput()  { DDRC &= ~(1<<0); }
+  /// Configures PinC7  as an input pin.
+  static void SetInput()  { DDRC &= ~(1<<7); }
 
-  /// Pulses PinC0 with high state first.
-  static void PulseHigh() { PORTC |= (1<<0); PORTC &= ~(1<<0); }
+  /// Pulses PinC7 with high state first.
+  static void PulseHigh() { PORTC |= (1<<7); PORTC &= ~(1<<7); }
 
-  /// Pulses PinC0 with low state first.
-  static void PulseLow()  { PORTC &= ~(1<<0); PORTC |= (1<<0); }
+  /// Pulses PinC7 with low state first.
+  static void PulseLow()  { PORTC &= ~(1<<7); PORTC |= (1<<7); }
 
-  /// Reads PinC0  value.
+  /// Reads PinC7  value.
   /// @return Port pin value.
-  static bool Test()      { return PINC & (1<<0); }
+  static bool Test()      { return PINC & (1<<7); }
 
   /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<0)
-  static constexpr uint8_t bitmask()               { return (1<<0); }
+  /// @return (1<<7)
+  static constexpr uint8_t bitmask()               { return (1<<7); }
 
   /// Returns the bit corresponding to this pin.
-  /// @return 0
-  static constexpr uint8_t bit()                   { return 0; }
-};
-
-struct PinC1 : public Pin<PortC> {
-  /// Sets PinC1 to HIGH.
-  static void Set()       { PORTC |= (1<<1); }
-
-  /// Sets PinC1 to LOW.
-  static void Clear()     { PORTC &= ~(1<<1); }
-
-  /// Toggles PinC1 value.
-  static void Toggle()    { PINC |= (1<<1); }
-
-  /// Configures PinC1  as an output pin.
-  static void SetOutput() { DDRC |= (1<<1); }
-
-  /// Configures PinC1  as an input pin.
-  static void SetInput()  { DDRC &= ~(1<<1); }
-
-  /// Pulses PinC1 with high state first.
-  static void PulseHigh() { PORTC |= (1<<1); PORTC &= ~(1<<1); }
-
-  /// Pulses PinC1 with low state first.
-  static void PulseLow()  { PORTC &= ~(1<<1); PORTC |= (1<<1); }
-
-  /// Reads PinC1  value.
-  /// @return Port pin value.
-  static bool Test()      { return PINC & (1<<1); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<1)
-  static constexpr uint8_t bitmask()               { return (1<<1); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 1
-  static constexpr uint8_t bit()                   { return 1; }
-};
-
-struct PinC2 : public Pin<PortC> {
-  /// Sets PinC2 to HIGH.
-  static void Set()       { PORTC |= (1<<2); }
-
-  /// Sets PinC2 to LOW.
-  static void Clear()     { PORTC &= ~(1<<2); }
-
-  /// Toggles PinC2 value.
-  static void Toggle()    { PINC |= (1<<2); }
-
-  /// Configures PinC2  as an output pin.
-  static void SetOutput() { DDRC |= (1<<2); }
-
-  /// Configures PinC2  as an input pin.
-  static void SetInput()  { DDRC &= ~(1<<2); }
-
-  /// Pulses PinC2 with high state first.
-  static void PulseHigh() { PORTC |= (1<<2); PORTC &= ~(1<<2); }
-
-  /// Pulses PinC2 with low state first.
-  static void PulseLow()  { PORTC &= ~(1<<2); PORTC |= (1<<2); }
-
-  /// Reads PinC2  value.
-  /// @return Port pin value.
-  static bool Test()      { return PINC & (1<<2); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<2)
-  static constexpr uint8_t bitmask()               { return (1<<2); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 2
-  static constexpr uint8_t bit()                   { return 2; }
-};
-
-struct PinC3 : public Pin<PortC> {
-  /// Sets PinC3 to HIGH.
-  static void Set()       { PORTC |= (1<<3); }
-
-  /// Sets PinC3 to LOW.
-  static void Clear()     { PORTC &= ~(1<<3); }
-
-  /// Toggles PinC3 value.
-  static void Toggle()    { PINC |= (1<<3); }
-
-  /// Configures PinC3  as an output pin.
-  static void SetOutput() { DDRC |= (1<<3); }
-
-  /// Configures PinC3  as an input pin.
-  static void SetInput()  { DDRC &= ~(1<<3); }
-
-  /// Pulses PinC3 with high state first.
-  static void PulseHigh() { PORTC |= (1<<3); PORTC &= ~(1<<3); }
-
-  /// Pulses PinC3 with low state first.
-  static void PulseLow()  { PORTC &= ~(1<<3); PORTC |= (1<<3); }
-
-  /// Reads PinC3  value.
-  /// @return Port pin value.
-  static bool Test()      { return PINC & (1<<3); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<3)
-  static constexpr uint8_t bitmask()               { return (1<<3); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 3
-  static constexpr uint8_t bit()                   { return 3; }
-};
-
-struct PinC4 : public Pin<PortC> {
-  /// Sets PinC4 to HIGH.
-  static void Set()       { PORTC |= (1<<4); }
-
-  /// Sets PinC4 to LOW.
-  static void Clear()     { PORTC &= ~(1<<4); }
-
-  /// Toggles PinC4 value.
-  static void Toggle()    { PINC |= (1<<4); }
-
-  /// Configures PinC4  as an output pin.
-  static void SetOutput() { DDRC |= (1<<4); }
-
-  /// Configures PinC4  as an input pin.
-  static void SetInput()  { DDRC &= ~(1<<4); }
-
-  /// Pulses PinC4 with high state first.
-  static void PulseHigh() { PORTC |= (1<<4); PORTC &= ~(1<<4); }
-
-  /// Pulses PinC4 with low state first.
-  static void PulseLow()  { PORTC &= ~(1<<4); PORTC |= (1<<4); }
-
-  /// Reads PinC4  value.
-  /// @return Port pin value.
-  static bool Test()      { return PINC & (1<<4); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<4)
-  static constexpr uint8_t bitmask()               { return (1<<4); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 4
-  static constexpr uint8_t bit()                   { return 4; }
-};
-
-struct PinC5 : public Pin<PortC> {
-  /// Sets PinC5 to HIGH.
-  static void Set()       { PORTC |= (1<<5); }
-
-  /// Sets PinC5 to LOW.
-  static void Clear()     { PORTC &= ~(1<<5); }
-
-  /// Toggles PinC5 value.
-  static void Toggle()    { PINC |= (1<<5); }
-
-  /// Configures PinC5  as an output pin.
-  static void SetOutput() { DDRC |= (1<<5); }
-
-  /// Configures PinC5  as an input pin.
-  static void SetInput()  { DDRC &= ~(1<<5); }
-
-  /// Pulses PinC5 with high state first.
-  static void PulseHigh() { PORTC |= (1<<5); PORTC &= ~(1<<5); }
-
-  /// Pulses PinC5 with low state first.
-  static void PulseLow()  { PORTC &= ~(1<<5); PORTC |= (1<<5); }
-
-  /// Reads PinC5  value.
-  /// @return Port pin value.
-  static bool Test()      { return PINC & (1<<5); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<5)
-  static constexpr uint8_t bitmask()               { return (1<<5); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 5
-  static constexpr uint8_t bit()                   { return 5; }
+  /// @return 7
+  static constexpr uint8_t bit()                   { return 7; }
 };
 
 struct PinC6 : public Pin<PortC> {
@@ -678,41 +513,6 @@ struct PinC6 : public Pin<PortC> {
   static constexpr uint8_t bit()                   { return 6; }
 };
 
-struct PinC7 : public Pin<PortC> {
-  /// Sets PinC7 to HIGH.
-  static void Set()       { PORTC |= (1<<7); }
-
-  /// Sets PinC7 to LOW.
-  static void Clear()     { PORTC &= ~(1<<7); }
-
-  /// Toggles PinC7 value.
-  static void Toggle()    { PINC |= (1<<7); }
-
-  /// Configures PinC7  as an output pin.
-  static void SetOutput() { DDRC |= (1<<7); }
-
-  /// Configures PinC7  as an input pin.
-  static void SetInput()  { DDRC &= ~(1<<7); }
-
-  /// Pulses PinC7 with high state first.
-  static void PulseHigh() { PORTC |= (1<<7); PORTC &= ~(1<<7); }
-
-  /// Pulses PinC7 with low state first.
-  static void PulseLow()  { PORTC &= ~(1<<7); PORTC |= (1<<7); }
-
-  /// Reads PinC7  value.
-  /// @return Port pin value.
-  static bool Test()      { return PINC & (1<<7); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<7)
-  static constexpr uint8_t bitmask()               { return (1<<7); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 7
-  static constexpr uint8_t bit()                   { return 7; }
-};
-
 
 struct PortD {
 
@@ -727,6 +527,11 @@ struct PortD {
   /// Clears masked bits in PORTD.
   /// @param[in] mask bits to clear
   static void ClearBits(uint8_t mask) { PORTD &= ~mask;} 
+
+  /// Changes values of masked bits in PORTD.
+  /// @param[in] mask bits to change
+  /// @param[in] value new bits values
+  static void ChangeBits(uint8_t mask, uint8_t value) { uint8_t tmp = PORTD & ~mask; PORTD = tmp | value; } 
 
   /// Toggles masked bits in PORTD.
   /// @param[in] mask bits to toggle
@@ -767,214 +572,39 @@ struct PortD {
 
 };
 
-struct PinD0 : public Pin<PortD> {
-  /// Sets PinD0 to HIGH.
-  static void Set()       { PORTD |= (1<<0); }
+struct PinD7 : public Pin<PortD> {
+  /// Sets PinD7 to HIGH.
+  static void Set()       { PORTD |= (1<<7); }
 
-  /// Sets PinD0 to LOW.
-  static void Clear()     { PORTD &= ~(1<<0); }
+  /// Sets PinD7 to LOW.
+  static void Clear()     { PORTD &= ~(1<<7); }
 
-  /// Toggles PinD0 value.
-  static void Toggle()    { PIND |= (1<<0); }
+  /// Toggles PinD7 value.
+  static void Toggle()    { PIND |= (1<<7); }
 
-  /// Configures PinD0  as an output pin.
-  static void SetOutput() { DDRD |= (1<<0); }
+  /// Configures PinD7  as an output pin.
+  static void SetOutput() { DDRD |= (1<<7); }
 
-  /// Configures PinD0  as an input pin.
-  static void SetInput()  { DDRD &= ~(1<<0); }
+  /// Configures PinD7  as an input pin.
+  static void SetInput()  { DDRD &= ~(1<<7); }
 
-  /// Pulses PinD0 with high state first.
-  static void PulseHigh() { PORTD |= (1<<0); PORTD &= ~(1<<0); }
+  /// Pulses PinD7 with high state first.
+  static void PulseHigh() { PORTD |= (1<<7); PORTD &= ~(1<<7); }
 
-  /// Pulses PinD0 with low state first.
-  static void PulseLow()  { PORTD &= ~(1<<0); PORTD |= (1<<0); }
+  /// Pulses PinD7 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<7); PORTD |= (1<<7); }
 
-  /// Reads PinD0  value.
+  /// Reads PinD7  value.
   /// @return Port pin value.
-  static bool Test()      { return PIND & (1<<0); }
+  static bool Test()      { return PIND & (1<<7); }
 
   /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<0)
-  static constexpr uint8_t bitmask()               { return (1<<0); }
+  /// @return (1<<7)
+  static constexpr uint8_t bitmask()               { return (1<<7); }
 
   /// Returns the bit corresponding to this pin.
-  /// @return 0
-  static constexpr uint8_t bit()                   { return 0; }
-};
-
-struct PinD1 : public Pin<PortD> {
-  /// Sets PinD1 to HIGH.
-  static void Set()       { PORTD |= (1<<1); }
-
-  /// Sets PinD1 to LOW.
-  static void Clear()     { PORTD &= ~(1<<1); }
-
-  /// Toggles PinD1 value.
-  static void Toggle()    { PIND |= (1<<1); }
-
-  /// Configures PinD1  as an output pin.
-  static void SetOutput() { DDRD |= (1<<1); }
-
-  /// Configures PinD1  as an input pin.
-  static void SetInput()  { DDRD &= ~(1<<1); }
-
-  /// Pulses PinD1 with high state first.
-  static void PulseHigh() { PORTD |= (1<<1); PORTD &= ~(1<<1); }
-
-  /// Pulses PinD1 with low state first.
-  static void PulseLow()  { PORTD &= ~(1<<1); PORTD |= (1<<1); }
-
-  /// Reads PinD1  value.
-  /// @return Port pin value.
-  static bool Test()      { return PIND & (1<<1); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<1)
-  static constexpr uint8_t bitmask()               { return (1<<1); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 1
-  static constexpr uint8_t bit()                   { return 1; }
-};
-
-struct PinD2 : public Pin<PortD> {
-  /// Sets PinD2 to HIGH.
-  static void Set()       { PORTD |= (1<<2); }
-
-  /// Sets PinD2 to LOW.
-  static void Clear()     { PORTD &= ~(1<<2); }
-
-  /// Toggles PinD2 value.
-  static void Toggle()    { PIND |= (1<<2); }
-
-  /// Configures PinD2  as an output pin.
-  static void SetOutput() { DDRD |= (1<<2); }
-
-  /// Configures PinD2  as an input pin.
-  static void SetInput()  { DDRD &= ~(1<<2); }
-
-  /// Pulses PinD2 with high state first.
-  static void PulseHigh() { PORTD |= (1<<2); PORTD &= ~(1<<2); }
-
-  /// Pulses PinD2 with low state first.
-  static void PulseLow()  { PORTD &= ~(1<<2); PORTD |= (1<<2); }
-
-  /// Reads PinD2  value.
-  /// @return Port pin value.
-  static bool Test()      { return PIND & (1<<2); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<2)
-  static constexpr uint8_t bitmask()               { return (1<<2); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 2
-  static constexpr uint8_t bit()                   { return 2; }
-};
-
-struct PinD3 : public Pin<PortD> {
-  /// Sets PinD3 to HIGH.
-  static void Set()       { PORTD |= (1<<3); }
-
-  /// Sets PinD3 to LOW.
-  static void Clear()     { PORTD &= ~(1<<3); }
-
-  /// Toggles PinD3 value.
-  static void Toggle()    { PIND |= (1<<3); }
-
-  /// Configures PinD3  as an output pin.
-  static void SetOutput() { DDRD |= (1<<3); }
-
-  /// Configures PinD3  as an input pin.
-  static void SetInput()  { DDRD &= ~(1<<3); }
-
-  /// Pulses PinD3 with high state first.
-  static void PulseHigh() { PORTD |= (1<<3); PORTD &= ~(1<<3); }
-
-  /// Pulses PinD3 with low state first.
-  static void PulseLow()  { PORTD &= ~(1<<3); PORTD |= (1<<3); }
-
-  /// Reads PinD3  value.
-  /// @return Port pin value.
-  static bool Test()      { return PIND & (1<<3); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<3)
-  static constexpr uint8_t bitmask()               { return (1<<3); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 3
-  static constexpr uint8_t bit()                   { return 3; }
-};
-
-struct PinD4 : public Pin<PortD> {
-  /// Sets PinD4 to HIGH.
-  static void Set()       { PORTD |= (1<<4); }
-
-  /// Sets PinD4 to LOW.
-  static void Clear()     { PORTD &= ~(1<<4); }
-
-  /// Toggles PinD4 value.
-  static void Toggle()    { PIND |= (1<<4); }
-
-  /// Configures PinD4  as an output pin.
-  static void SetOutput() { DDRD |= (1<<4); }
-
-  /// Configures PinD4  as an input pin.
-  static void SetInput()  { DDRD &= ~(1<<4); }
-
-  /// Pulses PinD4 with high state first.
-  static void PulseHigh() { PORTD |= (1<<4); PORTD &= ~(1<<4); }
-
-  /// Pulses PinD4 with low state first.
-  static void PulseLow()  { PORTD &= ~(1<<4); PORTD |= (1<<4); }
-
-  /// Reads PinD4  value.
-  /// @return Port pin value.
-  static bool Test()      { return PIND & (1<<4); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<4)
-  static constexpr uint8_t bitmask()               { return (1<<4); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 4
-  static constexpr uint8_t bit()                   { return 4; }
-};
-
-struct PinD5 : public Pin<PortD> {
-  /// Sets PinD5 to HIGH.
-  static void Set()       { PORTD |= (1<<5); }
-
-  /// Sets PinD5 to LOW.
-  static void Clear()     { PORTD &= ~(1<<5); }
-
-  /// Toggles PinD5 value.
-  static void Toggle()    { PIND |= (1<<5); }
-
-  /// Configures PinD5  as an output pin.
-  static void SetOutput() { DDRD |= (1<<5); }
-
-  /// Configures PinD5  as an input pin.
-  static void SetInput()  { DDRD &= ~(1<<5); }
-
-  /// Pulses PinD5 with high state first.
-  static void PulseHigh() { PORTD |= (1<<5); PORTD &= ~(1<<5); }
-
-  /// Pulses PinD5 with low state first.
-  static void PulseLow()  { PORTD &= ~(1<<5); PORTD |= (1<<5); }
-
-  /// Reads PinD5  value.
-  /// @return Port pin value.
-  static bool Test()      { return PIND & (1<<5); }
-
-  /// Returns the bitmask corresponding to this pin.
-  /// @return (1<<5)
-  static constexpr uint8_t bitmask()               { return (1<<5); }
-
-  /// Returns the bit corresponding to this pin.
-  /// @return 5
-  static constexpr uint8_t bit()                   { return 5; }
+  /// @return 7
+  static constexpr uint8_t bit()                   { return 7; }
 };
 
 struct PinD6 : public Pin<PortD> {
@@ -1012,31 +642,429 @@ struct PinD6 : public Pin<PortD> {
   static constexpr uint8_t bit()                   { return 6; }
 };
 
-struct PinD7 : public Pin<PortD> {
-  /// Sets PinD7 to HIGH.
-  static void Set()       { PORTD |= (1<<7); }
+struct PinD5 : public Pin<PortD> {
+  /// Sets PinD5 to HIGH.
+  static void Set()       { PORTD |= (1<<5); }
 
-  /// Sets PinD7 to LOW.
-  static void Clear()     { PORTD &= ~(1<<7); }
+  /// Sets PinD5 to LOW.
+  static void Clear()     { PORTD &= ~(1<<5); }
 
-  /// Toggles PinD7 value.
-  static void Toggle()    { PIND |= (1<<7); }
+  /// Toggles PinD5 value.
+  static void Toggle()    { PIND |= (1<<5); }
 
-  /// Configures PinD7  as an output pin.
-  static void SetOutput() { DDRD |= (1<<7); }
+  /// Configures PinD5  as an output pin.
+  static void SetOutput() { DDRD |= (1<<5); }
 
-  /// Configures PinD7  as an input pin.
-  static void SetInput()  { DDRD &= ~(1<<7); }
+  /// Configures PinD5  as an input pin.
+  static void SetInput()  { DDRD &= ~(1<<5); }
 
-  /// Pulses PinD7 with high state first.
-  static void PulseHigh() { PORTD |= (1<<7); PORTD &= ~(1<<7); }
+  /// Pulses PinD5 with high state first.
+  static void PulseHigh() { PORTD |= (1<<5); PORTD &= ~(1<<5); }
 
-  /// Pulses PinD7 with low state first.
-  static void PulseLow()  { PORTD &= ~(1<<7); PORTD |= (1<<7); }
+  /// Pulses PinD5 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<5); PORTD |= (1<<5); }
 
-  /// Reads PinD7  value.
+  /// Reads PinD5  value.
   /// @return Port pin value.
-  static bool Test()      { return PIND & (1<<7); }
+  static bool Test()      { return PIND & (1<<5); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<5)
+  static constexpr uint8_t bitmask()               { return (1<<5); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 5
+  static constexpr uint8_t bit()                   { return 5; }
+};
+
+struct PinD4 : public Pin<PortD> {
+  /// Sets PinD4 to HIGH.
+  static void Set()       { PORTD |= (1<<4); }
+
+  /// Sets PinD4 to LOW.
+  static void Clear()     { PORTD &= ~(1<<4); }
+
+  /// Toggles PinD4 value.
+  static void Toggle()    { PIND |= (1<<4); }
+
+  /// Configures PinD4  as an output pin.
+  static void SetOutput() { DDRD |= (1<<4); }
+
+  /// Configures PinD4  as an input pin.
+  static void SetInput()  { DDRD &= ~(1<<4); }
+
+  /// Pulses PinD4 with high state first.
+  static void PulseHigh() { PORTD |= (1<<4); PORTD &= ~(1<<4); }
+
+  /// Pulses PinD4 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<4); PORTD |= (1<<4); }
+
+  /// Reads PinD4  value.
+  /// @return Port pin value.
+  static bool Test()      { return PIND & (1<<4); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<4)
+  static constexpr uint8_t bitmask()               { return (1<<4); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 4
+  static constexpr uint8_t bit()                   { return 4; }
+};
+
+struct PinD3 : public Pin<PortD> {
+  /// Sets PinD3 to HIGH.
+  static void Set()       { PORTD |= (1<<3); }
+
+  /// Sets PinD3 to LOW.
+  static void Clear()     { PORTD &= ~(1<<3); }
+
+  /// Toggles PinD3 value.
+  static void Toggle()    { PIND |= (1<<3); }
+
+  /// Configures PinD3  as an output pin.
+  static void SetOutput() { DDRD |= (1<<3); }
+
+  /// Configures PinD3  as an input pin.
+  static void SetInput()  { DDRD &= ~(1<<3); }
+
+  /// Pulses PinD3 with high state first.
+  static void PulseHigh() { PORTD |= (1<<3); PORTD &= ~(1<<3); }
+
+  /// Pulses PinD3 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<3); PORTD |= (1<<3); }
+
+  /// Reads PinD3  value.
+  /// @return Port pin value.
+  static bool Test()      { return PIND & (1<<3); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<3)
+  static constexpr uint8_t bitmask()               { return (1<<3); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 3
+  static constexpr uint8_t bit()                   { return 3; }
+};
+
+struct PinD2 : public Pin<PortD> {
+  /// Sets PinD2 to HIGH.
+  static void Set()       { PORTD |= (1<<2); }
+
+  /// Sets PinD2 to LOW.
+  static void Clear()     { PORTD &= ~(1<<2); }
+
+  /// Toggles PinD2 value.
+  static void Toggle()    { PIND |= (1<<2); }
+
+  /// Configures PinD2  as an output pin.
+  static void SetOutput() { DDRD |= (1<<2); }
+
+  /// Configures PinD2  as an input pin.
+  static void SetInput()  { DDRD &= ~(1<<2); }
+
+  /// Pulses PinD2 with high state first.
+  static void PulseHigh() { PORTD |= (1<<2); PORTD &= ~(1<<2); }
+
+  /// Pulses PinD2 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<2); PORTD |= (1<<2); }
+
+  /// Reads PinD2  value.
+  /// @return Port pin value.
+  static bool Test()      { return PIND & (1<<2); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<2)
+  static constexpr uint8_t bitmask()               { return (1<<2); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 2
+  static constexpr uint8_t bit()                   { return 2; }
+};
+
+struct PinD1 : public Pin<PortD> {
+  /// Sets PinD1 to HIGH.
+  static void Set()       { PORTD |= (1<<1); }
+
+  /// Sets PinD1 to LOW.
+  static void Clear()     { PORTD &= ~(1<<1); }
+
+  /// Toggles PinD1 value.
+  static void Toggle()    { PIND |= (1<<1); }
+
+  /// Configures PinD1  as an output pin.
+  static void SetOutput() { DDRD |= (1<<1); }
+
+  /// Configures PinD1  as an input pin.
+  static void SetInput()  { DDRD &= ~(1<<1); }
+
+  /// Pulses PinD1 with high state first.
+  static void PulseHigh() { PORTD |= (1<<1); PORTD &= ~(1<<1); }
+
+  /// Pulses PinD1 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<1); PORTD |= (1<<1); }
+
+  /// Reads PinD1  value.
+  /// @return Port pin value.
+  static bool Test()      { return PIND & (1<<1); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<1)
+  static constexpr uint8_t bitmask()               { return (1<<1); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 1
+  static constexpr uint8_t bit()                   { return 1; }
+};
+
+struct PinD0 : public Pin<PortD> {
+  /// Sets PinD0 to HIGH.
+  static void Set()       { PORTD |= (1<<0); }
+
+  /// Sets PinD0 to LOW.
+  static void Clear()     { PORTD &= ~(1<<0); }
+
+  /// Toggles PinD0 value.
+  static void Toggle()    { PIND |= (1<<0); }
+
+  /// Configures PinD0  as an output pin.
+  static void SetOutput() { DDRD |= (1<<0); }
+
+  /// Configures PinD0  as an input pin.
+  static void SetInput()  { DDRD &= ~(1<<0); }
+
+  /// Pulses PinD0 with high state first.
+  static void PulseHigh() { PORTD |= (1<<0); PORTD &= ~(1<<0); }
+
+  /// Pulses PinD0 with low state first.
+  static void PulseLow()  { PORTD &= ~(1<<0); PORTD |= (1<<0); }
+
+  /// Reads PinD0  value.
+  /// @return Port pin value.
+  static bool Test()      { return PIND & (1<<0); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<0)
+  static constexpr uint8_t bitmask()               { return (1<<0); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 0
+  static constexpr uint8_t bit()                   { return 0; }
+};
+
+
+struct PortE {
+
+  /// Assigns a value to PORTE.
+  /// @param[in] value value affected to PORTE
+  static void Assign(uint8_t value)   { PORTE = value; }
+
+  /// Sets masked bits in PORTE.
+  /// @param[in] mask bits to set
+  static void SetBits(uint8_t mask)   { PORTE |= mask;}
+
+  /// Clears masked bits in PORTE.
+  /// @param[in] mask bits to clear
+  static void ClearBits(uint8_t mask) { PORTE &= ~mask;} 
+
+  /// Changes values of masked bits in PORTE.
+  /// @param[in] mask bits to change
+  /// @param[in] value new bits values
+  static void ChangeBits(uint8_t mask, uint8_t value) { uint8_t tmp = PORTE & ~mask; PORTE = tmp | value; } 
+
+  /// Toggles masked bits in PORTE.
+  /// @param[in] mask bits to toggle
+  static void ToggleBits(uint8_t mask) { PORTE ^= mask;} 
+
+  /// Pulses masked bits in PORTE with high state first.
+  /// @param[in] mask bits to pulse
+  static void PulseHigh(uint8_t mask) { PORTE |= mask; PORTE &= ~mask; }
+
+  /// Pulses masked bits in PORTE with low state first.
+  /// @param[in] mask bits to pulse
+  static void PulseLow(uint8_t mask)  { PORTE &= ~mask; PORTE |= mask; }
+
+  /// Set corresponding masked bits of PORTE to output direction.
+  /// @param[in] mask bits
+  static void SetDDR(uint8_t mask)    { DDRE |= mask; }
+
+  /// Set corresponding masked bits of PORTE to input direction.
+  /// @param[in] mask bits
+  static void ClearDDR(uint8_t mask)  { DDRE &= ~mask; }
+
+  /// Returns PINE register.
+  static uint8_t GetPIN()             { return PINE; }
+
+  /// Tests masked bits of PORTE
+  /// @param[in] mask bits
+  /// @param[in] true if the corresponding bits are all set, false otherwise.
+  static bool TestBits(uint8_t mask)  { return (PINE & mask) == mask; }
+
+  /// Returns the value of the bit at the position pos.
+  /// @param[in] position of the bit to return
+  /// @return true if the requested bit is set, false otherwise.
+  static bool Test(uint8_t pos) { return PINE & (1<<pos); }
+
+  /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
+  /// @return PORTE
+  static constexpr decltype(PORTE) GetNativePort() { return PORTE; }
+
+};
+
+struct PinE6 : public Pin<PortE> {
+  /// Sets PinE6 to HIGH.
+  static void Set()       { PORTE |= (1<<6); }
+
+  /// Sets PinE6 to LOW.
+  static void Clear()     { PORTE &= ~(1<<6); }
+
+  /// Toggles PinE6 value.
+  static void Toggle()    { PINE |= (1<<6); }
+
+  /// Configures PinE6  as an output pin.
+  static void SetOutput() { DDRE |= (1<<6); }
+
+  /// Configures PinE6  as an input pin.
+  static void SetInput()  { DDRE &= ~(1<<6); }
+
+  /// Pulses PinE6 with high state first.
+  static void PulseHigh() { PORTE |= (1<<6); PORTE &= ~(1<<6); }
+
+  /// Pulses PinE6 with low state first.
+  static void PulseLow()  { PORTE &= ~(1<<6); PORTE |= (1<<6); }
+
+  /// Reads PinE6  value.
+  /// @return Port pin value.
+  static bool Test()      { return PINE & (1<<6); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<6)
+  static constexpr uint8_t bitmask()               { return (1<<6); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 6
+  static constexpr uint8_t bit()                   { return 6; }
+};
+
+struct PinE2 : public Pin<PortE> {
+  /// Sets PinE2 to HIGH.
+  static void Set()       { PORTE |= (1<<2); }
+
+  /// Sets PinE2 to LOW.
+  static void Clear()     { PORTE &= ~(1<<2); }
+
+  /// Toggles PinE2 value.
+  static void Toggle()    { PINE |= (1<<2); }
+
+  /// Configures PinE2  as an output pin.
+  static void SetOutput() { DDRE |= (1<<2); }
+
+  /// Configures PinE2  as an input pin.
+  static void SetInput()  { DDRE &= ~(1<<2); }
+
+  /// Pulses PinE2 with high state first.
+  static void PulseHigh() { PORTE |= (1<<2); PORTE &= ~(1<<2); }
+
+  /// Pulses PinE2 with low state first.
+  static void PulseLow()  { PORTE &= ~(1<<2); PORTE |= (1<<2); }
+
+  /// Reads PinE2  value.
+  /// @return Port pin value.
+  static bool Test()      { return PINE & (1<<2); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<2)
+  static constexpr uint8_t bitmask()               { return (1<<2); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 2
+  static constexpr uint8_t bit()                   { return 2; }
+};
+
+
+struct PortF {
+
+  /// Assigns a value to PORTF.
+  /// @param[in] value value affected to PORTF
+  static void Assign(uint8_t value)   { PORTF = value; }
+
+  /// Sets masked bits in PORTF.
+  /// @param[in] mask bits to set
+  static void SetBits(uint8_t mask)   { PORTF |= mask;}
+
+  /// Clears masked bits in PORTF.
+  /// @param[in] mask bits to clear
+  static void ClearBits(uint8_t mask) { PORTF &= ~mask;} 
+
+  /// Changes values of masked bits in PORTF.
+  /// @param[in] mask bits to change
+  /// @param[in] value new bits values
+  static void ChangeBits(uint8_t mask, uint8_t value) { uint8_t tmp = PORTF & ~mask; PORTF = tmp | value; } 
+
+  /// Toggles masked bits in PORTF.
+  /// @param[in] mask bits to toggle
+  static void ToggleBits(uint8_t mask) { PORTF ^= mask;} 
+
+  /// Pulses masked bits in PORTF with high state first.
+  /// @param[in] mask bits to pulse
+  static void PulseHigh(uint8_t mask) { PORTF |= mask; PORTF &= ~mask; }
+
+  /// Pulses masked bits in PORTF with low state first.
+  /// @param[in] mask bits to pulse
+  static void PulseLow(uint8_t mask)  { PORTF &= ~mask; PORTF |= mask; }
+
+  /// Set corresponding masked bits of PORTF to output direction.
+  /// @param[in] mask bits
+  static void SetDDR(uint8_t mask)    { DDRF |= mask; }
+
+  /// Set corresponding masked bits of PORTF to input direction.
+  /// @param[in] mask bits
+  static void ClearDDR(uint8_t mask)  { DDRF &= ~mask; }
+
+  /// Returns PINF register.
+  static uint8_t GetPIN()             { return PINF; }
+
+  /// Tests masked bits of PORTF
+  /// @param[in] mask bits
+  /// @param[in] true if the corresponding bits are all set, false otherwise.
+  static bool TestBits(uint8_t mask)  { return (PINF & mask) == mask; }
+
+  /// Returns the value of the bit at the position pos.
+  /// @param[in] position of the bit to return
+  /// @return true if the requested bit is set, false otherwise.
+  static bool Test(uint8_t pos) { return PINF & (1<<pos); }
+
+  /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
+  /// @return PORTF
+  static constexpr decltype(PORTF) GetNativePort() { return PORTF; }
+
+};
+
+struct PinF7 : public Pin<PortF> {
+  /// Sets PinF7 to HIGH.
+  static void Set()       { PORTF |= (1<<7); }
+
+  /// Sets PinF7 to LOW.
+  static void Clear()     { PORTF &= ~(1<<7); }
+
+  /// Toggles PinF7 value.
+  static void Toggle()    { PINF |= (1<<7); }
+
+  /// Configures PinF7  as an output pin.
+  static void SetOutput() { DDRF |= (1<<7); }
+
+  /// Configures PinF7  as an input pin.
+  static void SetInput()  { DDRF &= ~(1<<7); }
+
+  /// Pulses PinF7 with high state first.
+  static void PulseHigh() { PORTF |= (1<<7); PORTF &= ~(1<<7); }
+
+  /// Pulses PinF7 with low state first.
+  static void PulseLow()  { PORTF &= ~(1<<7); PORTF |= (1<<7); }
+
+  /// Reads PinF7  value.
+  /// @return Port pin value.
+  static bool Test()      { return PINF & (1<<7); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<7)
@@ -1045,6 +1073,181 @@ struct PinD7 : public Pin<PortD> {
   /// Returns the bit corresponding to this pin.
   /// @return 7
   static constexpr uint8_t bit()                   { return 7; }
+};
+
+struct PinF6 : public Pin<PortF> {
+  /// Sets PinF6 to HIGH.
+  static void Set()       { PORTF |= (1<<6); }
+
+  /// Sets PinF6 to LOW.
+  static void Clear()     { PORTF &= ~(1<<6); }
+
+  /// Toggles PinF6 value.
+  static void Toggle()    { PINF |= (1<<6); }
+
+  /// Configures PinF6  as an output pin.
+  static void SetOutput() { DDRF |= (1<<6); }
+
+  /// Configures PinF6  as an input pin.
+  static void SetInput()  { DDRF &= ~(1<<6); }
+
+  /// Pulses PinF6 with high state first.
+  static void PulseHigh() { PORTF |= (1<<6); PORTF &= ~(1<<6); }
+
+  /// Pulses PinF6 with low state first.
+  static void PulseLow()  { PORTF &= ~(1<<6); PORTF |= (1<<6); }
+
+  /// Reads PinF6  value.
+  /// @return Port pin value.
+  static bool Test()      { return PINF & (1<<6); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<6)
+  static constexpr uint8_t bitmask()               { return (1<<6); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 6
+  static constexpr uint8_t bit()                   { return 6; }
+};
+
+struct PinF5 : public Pin<PortF> {
+  /// Sets PinF5 to HIGH.
+  static void Set()       { PORTF |= (1<<5); }
+
+  /// Sets PinF5 to LOW.
+  static void Clear()     { PORTF &= ~(1<<5); }
+
+  /// Toggles PinF5 value.
+  static void Toggle()    { PINF |= (1<<5); }
+
+  /// Configures PinF5  as an output pin.
+  static void SetOutput() { DDRF |= (1<<5); }
+
+  /// Configures PinF5  as an input pin.
+  static void SetInput()  { DDRF &= ~(1<<5); }
+
+  /// Pulses PinF5 with high state first.
+  static void PulseHigh() { PORTF |= (1<<5); PORTF &= ~(1<<5); }
+
+  /// Pulses PinF5 with low state first.
+  static void PulseLow()  { PORTF &= ~(1<<5); PORTF |= (1<<5); }
+
+  /// Reads PinF5  value.
+  /// @return Port pin value.
+  static bool Test()      { return PINF & (1<<5); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<5)
+  static constexpr uint8_t bitmask()               { return (1<<5); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 5
+  static constexpr uint8_t bit()                   { return 5; }
+};
+
+struct PinF4 : public Pin<PortF> {
+  /// Sets PinF4 to HIGH.
+  static void Set()       { PORTF |= (1<<4); }
+
+  /// Sets PinF4 to LOW.
+  static void Clear()     { PORTF &= ~(1<<4); }
+
+  /// Toggles PinF4 value.
+  static void Toggle()    { PINF |= (1<<4); }
+
+  /// Configures PinF4  as an output pin.
+  static void SetOutput() { DDRF |= (1<<4); }
+
+  /// Configures PinF4  as an input pin.
+  static void SetInput()  { DDRF &= ~(1<<4); }
+
+  /// Pulses PinF4 with high state first.
+  static void PulseHigh() { PORTF |= (1<<4); PORTF &= ~(1<<4); }
+
+  /// Pulses PinF4 with low state first.
+  static void PulseLow()  { PORTF &= ~(1<<4); PORTF |= (1<<4); }
+
+  /// Reads PinF4  value.
+  /// @return Port pin value.
+  static bool Test()      { return PINF & (1<<4); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<4)
+  static constexpr uint8_t bitmask()               { return (1<<4); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 4
+  static constexpr uint8_t bit()                   { return 4; }
+};
+
+struct PinF1 : public Pin<PortF> {
+  /// Sets PinF1 to HIGH.
+  static void Set()       { PORTF |= (1<<1); }
+
+  /// Sets PinF1 to LOW.
+  static void Clear()     { PORTF &= ~(1<<1); }
+
+  /// Toggles PinF1 value.
+  static void Toggle()    { PINF |= (1<<1); }
+
+  /// Configures PinF1  as an output pin.
+  static void SetOutput() { DDRF |= (1<<1); }
+
+  /// Configures PinF1  as an input pin.
+  static void SetInput()  { DDRF &= ~(1<<1); }
+
+  /// Pulses PinF1 with high state first.
+  static void PulseHigh() { PORTF |= (1<<1); PORTF &= ~(1<<1); }
+
+  /// Pulses PinF1 with low state first.
+  static void PulseLow()  { PORTF &= ~(1<<1); PORTF |= (1<<1); }
+
+  /// Reads PinF1  value.
+  /// @return Port pin value.
+  static bool Test()      { return PINF & (1<<1); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<1)
+  static constexpr uint8_t bitmask()               { return (1<<1); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 1
+  static constexpr uint8_t bit()                   { return 1; }
+};
+
+struct PinF0 : public Pin<PortF> {
+  /// Sets PinF0 to HIGH.
+  static void Set()       { PORTF |= (1<<0); }
+
+  /// Sets PinF0 to LOW.
+  static void Clear()     { PORTF &= ~(1<<0); }
+
+  /// Toggles PinF0 value.
+  static void Toggle()    { PINF |= (1<<0); }
+
+  /// Configures PinF0  as an output pin.
+  static void SetOutput() { DDRF |= (1<<0); }
+
+  /// Configures PinF0  as an input pin.
+  static void SetInput()  { DDRF &= ~(1<<0); }
+
+  /// Pulses PinF0 with high state first.
+  static void PulseHigh() { PORTF |= (1<<0); PORTF &= ~(1<<0); }
+
+  /// Pulses PinF0 with low state first.
+  static void PulseLow()  { PORTF &= ~(1<<0); PORTF |= (1<<0); }
+
+  /// Reads PinF0  value.
+  /// @return Port pin value.
+  static bool Test()      { return PINF & (1<<0); }
+
+  /// Returns the bitmask corresponding to this pin.
+  /// @return (1<<0)
+  static constexpr uint8_t bitmask()               { return (1<<0); }
+
+  /// Returns the bit corresponding to this pin.
+  /// @return 0
+  static constexpr uint8_t bit()                   { return 0; }
 };
 
 
