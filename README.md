@@ -46,7 +46,7 @@ C++(11/14) Embedded Template Library for AVR 8-bit microcontrollers.
   
 ```
   uint8_t etl::FreeStore::FreeStoreDebugTrace::log_counter;       // number of logged operations
-  Operation etl::FreeStore::FreeStoreDebugTrace::log_operation[]  // logged operation
-  void* etl::FreeStore::FreeStoreDebugTrace::log_address[]        // logged address
+  Operation etl::FreeStore::FreeStoreDebugTrace::log_operation[]  // logged operations
+  void* etl::FreeStore::FreeStoreDebugTrace::log_address[]        // logged addresses
 ```
   
