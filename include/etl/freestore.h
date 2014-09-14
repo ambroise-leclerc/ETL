@@ -46,7 +46,7 @@ class FreeStore : public FreeStoreTracePolicy {
   static void* Allocate(std::size_t size) noexcept {
     auto chunk_parser = free_chunk_;
       
-    // 0 Setup the start of allocatable area (data_) to the first unallocated block
+    // 0) Setup the start of allocatable area (data_) to the first unallocated block
     while (chunk_parser->IsAllocated()) {
       chunk_parser = chunk_parser->NextChunk();
       free_chunk_ = chunk_parser;
@@ -54,7 +54,7 @@ class FreeStore : public FreeStoreTracePolicy {
     auto second_choice = chunk_parser;
     uint16_t second_choice_size = 0b1111111111111u;
       
-    // 1 Find a free chunk with the same size as the requested allocation size.
+    // 1) Find a free chunk with the same size as the requested allocation size.
     while (!chunk_parser->IsLastChunk()) {
       if (!chunk_parser->IsAllocated()) {
         if (chunk_parser->ChunkSize() == size) {
@@ -70,7 +70,7 @@ class FreeStore : public FreeStoreTracePolicy {
       chunk_parser = chunk_parser->NextChunk();
     }
 
-    // 2 Free chunk with exact same size has not been found : We allocate the second choice
+    // 2) Free chunk with exact same size has not been found : We allocate the second choice
     if (second_choice->ChunkSize() < (size+2)) {
       second_choice = chunk_parser;
     }
@@ -85,10 +85,10 @@ class FreeStore : public FreeStoreTracePolicy {
   /// @return
   static void Deallocate(void* ptr) noexcept {
     auto deallocatable = reinterpret_cast<Chunk*>(
-                           reinterpret_cast<decltype(Chunk::descriptor)*>(ptr)-1);// Point to chunk beginning
+      reinterpret_cast<decltype(Chunk::descriptor)*>(ptr)-1);     // Point to chunk beginning
     FreeStoreTracePolicy::Log(FreeStoreTracePolicy::DeallocationRequest, ptr);
     if (deallocatable < free_chunk_) {                            // if chunk to deallocate is before the current first free chunk
-      free_chunk_ = deallocatable;    // then we define it's address as the new first free chunk
+      free_chunk_ = deallocatable;                                // then we define it's address as the new first free chunk
     }
     deallocatable->Deallocate();
   }

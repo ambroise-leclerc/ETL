@@ -1,7 +1,7 @@
-/// @file <functional>
-/// @data 14/03/2014 17:02:55
+/// @file functional.h
+/// @data 06/06/2014 18:36:55
 /// @author Ambroise Leclerc
-/// @brief Function objects.
+/// @brief reference_wrapper : wraps a reference in an assignable and copyable object..
 //
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
@@ -31,11 +31,40 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_FUNCTIONAL_
-#define ETL_LIBSTD_FUNCTIONAL_
+#ifndef ETL_LIBSTD_FUNCTIONAL_REFERENCE_WRAPPER_H_
+#define ETL_LIBSTD_FUNCTIONAL_REFERENCE_WRAPPER_H_
 
-#include "h/functional.h"
-#include "h/functional_operators.h"
-#include "h/functional_reference_wrapper.h"
+#include <type_traits>
+#include <memory>
 
-#endif // ETL_LIBSTD_FUNCTIONAL_
+namespace etlHelper {
+  
+template<typename T>
+struct reference_wrapper_base { };
+  
+} // namespace etlHelper
+
+namespace std {
+
+template<typename T>
+class reference_wrapper /*: public etlHelper::reference_wrapper_base<typename std::remove_cv<T>::type> */{
+ public:
+  using type = T;
+  
+  /// Constructor : stores a reference to x.
+  reference_wrapper(T& x) noexcept : data_(std::addressof(x)) {}
+  
+  /// Move constructor : deleted, construction from a temporary object is not allowed.
+  reference_wrapper(T&&) = delete;
+  
+  /// Copy constructor : stores a reference to other.get().
+  reference_wrapper(const std::reference_wrapper<T>& other) noexcept : data_(std::addressof(other.get())) {}
+ private:
+  T* data_;  
+};  
+  
+  
+} // namespace std  
+
+
+#endif // ETL_LIBSTD_FUNCTIONAL_REFERENCE_WRAPPER_H_

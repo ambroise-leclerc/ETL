@@ -36,8 +36,8 @@
 #define ETL_LIBSTD_TRAITS_ADD_H
 
 namespace etlHelper {
-  template<typename T, bool b> struct rvalue_reference_type { typedef T type; };
-  template<typename T> struct rvalue_reference_type<T, true> { typedef T&& type; }; 
+  template<typename T, bool b> struct rvalue_reference_type { using type = T; };
+  template<typename T> struct rvalue_reference_type<T, true> { using type = T&&; }; 
 }
 
 namespace std {
@@ -52,7 +52,7 @@ template<typename T> struct add_rvalue_reference {
   typedef typename etlHelper::rvalue_reference_type< 
     T, (std::is_void<T>::value == false && std::is_reference<T>::value == false)>::type type;
 };
-template<typename T> struct add_lvalue_reference   { typedef T type; };
+template<typename T> struct add_lvalue_reference   { using type = T; };
     
 template<typename T> using add_rvalue_reference_t = typename add_rvalue_reference<T>::type;
 template<typename T> using add_lvalue_reference_t = typename add_lvalue_reference<T>::type;
@@ -73,6 +73,10 @@ template<typename T> struct decay {
 
 template<typename T> using decay_t = typename std::decay<T>::type;
 template<typename T> using add_pointer_t = typename add_pointer<T>::type;
+
+template<typename T> struct add_const     { using type = const T; };
+template<typename T> struct add_volatile  { using type = volatile T; };
+template<typename T> struct add_cv        { using type = typename std::add_volatile<typename std::add_const<T>::type>::type; };
 
 }  
 

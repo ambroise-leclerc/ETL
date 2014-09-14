@@ -60,7 +60,7 @@ struct addressof_impl
 
   static T * f( T * v, int ) { return v; }
 };
-}  
+} // namespace etlHelper 
 
 namespace std {
   
