@@ -38,6 +38,8 @@
 
 
 #include <stdlib.h>
+#include <cstddef>
+#include <cstdint>
 #include <etl/debug_policies.h>
 #include <etl/metautils.h>
 #include <memory>
@@ -46,12 +48,12 @@
 namespace etl {
   
 class HardwareInitializer {
-  static bool freestore_initialized_;
+  static bool FreestoreInitialized;
 };
-bool HardwareInitializer::freestore_initialized_ = FreeStore::Initialize();
+bool HardwareInitializer::FreestoreInitialized = FreeStore::Initialize();
 
 struct Architecture {
-  constexpr static uint16_t kDefaultBufferSize = 10;
+  constexpr static uint16_t DefaultBufferSize = 10;
   using off_type = uint16_t;
 };  
 

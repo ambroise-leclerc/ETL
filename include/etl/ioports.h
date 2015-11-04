@@ -34,6 +34,7 @@
 #ifndef ETL_IOPORTS_H_
 #define ETL_IOPORTS_H_
 
+#include <avr/io.h>
 
 namespace etl {
 

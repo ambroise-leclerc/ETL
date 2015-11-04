@@ -38,14 +38,14 @@
 namespace etlHelper {
   template<typename> struct is_type_entier         : std::false_type { };
   template <> struct is_type_entier<bool>          : std::true_type { };
-  template <> struct is_type_entier<int8_t>        : std::true_type { };
-  template <> struct is_type_entier<uint8_t>       : std::true_type { };
-  template <> struct is_type_entier<int16_t>       : std::true_type { };
-  template <> struct is_type_entier<uint16_t>      : std::true_type { };
-  template <> struct is_type_entier<int32_t>       : std::true_type { };
-  template <> struct is_type_entier<uint32_t>      : std::true_type { };
-  template <> struct is_type_entier<int64_t>       : std::true_type { };
-  template <> struct is_type_entier<uint64_t>      : std::true_type { };
+  template <> struct is_type_entier<std::int8_t>   : std::true_type { };
+  template <> struct is_type_entier<std::uint8_t>  : std::true_type { };
+  template <> struct is_type_entier<std::int16_t>  : std::true_type { };
+  template <> struct is_type_entier<std::uint16_t> : std::true_type { };
+  template <> struct is_type_entier<std::int32_t>  : std::true_type { };
+  template <> struct is_type_entier<std::uint32_t> : std::true_type { };
+  template <> struct is_type_entier<std::int64_t>  : std::true_type { };
+  template <> struct is_type_entier<std::uint64_t> : std::true_type { };
   template<typename> struct is_type_flottant       : std::false_type { };
   template <> struct is_type_flottant<float>       : std::true_type { };
   template <> struct is_type_flottant<double>      : std::true_type { };

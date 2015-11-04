@@ -34,8 +34,12 @@
 #ifndef ETL_FREESTORE_H_
 #define ETL_FREESTORE_H_
 #include <cstddef>
+#include <stdint.h>
 
 namespace etl {
+
+//using std::uint_16t;
+//using std::uint_8t;
 
 class FreeStore : public FreeStoreTracePolicy {
  public:

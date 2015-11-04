@@ -102,7 +102,7 @@ struct PortB {
 
   /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
   /// @return PORTB
-  static constexpr decltype(PORTB) GetNativePort() { return PORTB; }
+  static auto GetNativePort() { return PORTB; }
 
 };
 
@@ -442,7 +442,7 @@ struct PortC {
 
   /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
   /// @return PORTC
-  static constexpr decltype(PORTC) GetNativePort() { return PORTC; }
+  static auto GetNativePort() { return PORTC; }
 
 };
 
@@ -747,7 +747,7 @@ struct PortD {
 
   /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
   /// @return PORTD
-  static constexpr decltype(PORTD) GetNativePort() { return PORTD; }
+  static auto GetNativePort() { return PORTD; }
 
 };
 

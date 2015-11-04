@@ -34,6 +34,7 @@
 #ifndef ETL_IOPORTS_ATMEGA32U4_H_
 #define ETL_IOPORTS_ATMEGA32U4_H_
 
+#include <avr/io.h>
 
 namespace etl {
 
@@ -100,7 +101,7 @@ struct PortB {
 
   /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
   /// @return PORTB
-  static constexpr decltype(PORTB) GetNativePort() { return PORTB; }
+  //static constexpr decltype(PORTB) GetNativePort() { return PORTB; }
 
 };
 
@@ -386,7 +387,7 @@ struct PinB0 : public Pin<PortB> {
 
 
 struct PortC {
-
+  using PinChangeIRQ = PinChangeIRQ0;
   /// Assigns a value to PORTC.
   /// @param[in] value value affected to PORTC
   static void Assign(uint8_t value)   { PORTC = value; }
@@ -439,7 +440,7 @@ struct PortC {
 
   /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
   /// @return PORTC
-  static constexpr decltype(PORTC) GetNativePort() { return PORTC; }
+  //static constexpr decltype(PORTC) GetNativePort() { return PORTC; }
 
 };
 
@@ -515,7 +516,7 @@ struct PinC6 : public Pin<PortC> {
 
 
 struct PortD {
-
+  using PinChangeIRQ = PinChangeIRQ0;
   /// Assigns a value to PORTD.
   /// @param[in] value value affected to PORTD
   static void Assign(uint8_t value)   { PORTD = value; }
@@ -568,7 +569,7 @@ struct PortD {
 
   /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
   /// @return PORTD
-  static constexpr decltype(PORTD) GetNativePort() { return PORTD; }
+  //static constexpr decltype(PORTD) GetNativePort() { return PORTD; }
 
 };
 
@@ -854,7 +855,7 @@ struct PinD0 : public Pin<PortD> {
 
 
 struct PortE {
-
+  using PinChangeIRQ = PinChangeIRQ0;
   /// Assigns a value to PORTE.
   /// @param[in] value value affected to PORTE
   static void Assign(uint8_t value)   { PORTE = value; }
@@ -907,7 +908,7 @@ struct PortE {
 
   /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
   /// @return PORTE
-  static constexpr decltype(PORTE) GetNativePort() { return PORTE; }
+  //static constexpr decltype(PORTE) GetNativePort() { return PORTE; }
 
 };
 
@@ -983,7 +984,7 @@ struct PinE2 : public Pin<PortE> {
 
 
 struct PortF {
-
+  using PinChangeIRQ = PinChangeIRQ0;
   /// Assigns a value to PORTF.
   /// @param[in] value value affected to PORTF
   static void Assign(uint8_t value)   { PORTF = value; }
@@ -1036,7 +1037,7 @@ struct PortF {
 
   /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
   /// @return PORTF
-  static constexpr decltype(PORTF) GetNativePort() { return PORTF; }
+  //static constexpr decltype(PORTF) GetNativePort() { return PORTF; }
 
 };
 
@@ -1305,96 +1306,6 @@ struct SpiSpsr {
   void operator=(uint8_t value)      { SPSR = value; }
 };
 
-struct UsartUbrr0 {
-
-  /// Assigns a value to UBRR0
-  /// @param[in] value value affected to UBRR0
-  static void Assign(uint16_t value)  { UBRR0 = value; }
-
-  /// Sets masked bits in UBRR0
-  /// @param[in] mask bits to set
-  static void Set(uint16_t mask)      { UBRR0 |= mask; }
-
-  /// Clears masked bits in UBRR0
-  /// @param[in] mask bits to clear
-  static void Clear(uint16_t mask)    { UBRR0 &= ~mask; }
-  static uint8_t Get()               { return UBRR0; }
-  static bool TestBits(uint16_t mask) { return UBRR0 & mask; }
-  void operator=(uint8_t value)      { UBRR0 = value; }
-};
-
-struct UsartUcsr0a {
-
-  /// Assigns a value to UCSR0A
-  /// @param[in] value value affected to UCSR0A
-  static void Assign(uint8_t value)  { UCSR0A = value; }
-
-  /// Sets masked bits in UCSR0A
-  /// @param[in] mask bits to set
-  static void Set(uint8_t mask)      { UCSR0A |= mask; }
-
-  /// Clears masked bits in UCSR0A
-  /// @param[in] mask bits to clear
-  static void Clear(uint8_t mask)    { UCSR0A &= ~mask; }
-  static uint8_t Get()               { return UCSR0A; }
-  static bool TestBits(uint8_t mask) { return UCSR0A & mask; }
-  void operator=(uint8_t value)      { UCSR0A = value; }
-};
-
-struct UsartUcsr0b {
-
-  /// Assigns a value to UCSR0B
-  /// @param[in] value value affected to UCSR0B
-  static void Assign(uint8_t value)  { UCSR0B = value; }
-
-  /// Sets masked bits in UCSR0B
-  /// @param[in] mask bits to set
-  static void Set(uint8_t mask)      { UCSR0B |= mask; }
-
-  /// Clears masked bits in UCSR0B
-  /// @param[in] mask bits to clear
-  static void Clear(uint8_t mask)    { UCSR0B &= ~mask; }
-  static uint8_t Get()               { return UCSR0B; }
-  static bool TestBits(uint8_t mask) { return UCSR0B & mask; }
-  void operator=(uint8_t value)      { UCSR0B = value; }
-};
-
-struct UsartUcsr0c {
-
-  /// Assigns a value to UCSR0C
-  /// @param[in] value value affected to UCSR0C
-  static void Assign(uint8_t value)  { UCSR0C = value; }
-
-  /// Sets masked bits in UCSR0C
-  /// @param[in] mask bits to set
-  static void Set(uint8_t mask)      { UCSR0C |= mask; }
-
-  /// Clears masked bits in UCSR0C
-  /// @param[in] mask bits to clear
-  static void Clear(uint8_t mask)    { UCSR0C &= ~mask; }
-  static uint8_t Get()               { return UCSR0C; }
-  static bool TestBits(uint8_t mask) { return UCSR0C & mask; }
-  void operator=(uint8_t value)      { UCSR0C = value; }
-};
-
-struct UsartUdr0 {
-
-  /// Assigns a value to UDR0
-  /// @param[in] value value affected to UDR0
-  static void Assign(uint8_t value)  { UDR0 = value; }
-
-  /// Sets masked bits in UDR0
-  /// @param[in] mask bits to set
-  static void Set(uint8_t mask)      { UDR0 |= mask; }
-
-  /// Clears masked bits in UDR0
-  /// @param[in] mask bits to clear
-  static void Clear(uint8_t mask)    { UDR0 &= ~mask; }
-  static uint8_t Get()               { return UDR0; }
-  static bool TestBits(uint8_t mask) { return UDR0 & mask; }
-  void operator=(uint8_t value)      { UDR0 = value; }
-};
-
 struct Timer0 {
   using value_type = uint8_t;
   static const uint8_t timer_width = 8;
@@ -1644,70 +1555,7 @@ struct PinChangeIRQ0 {
 
 };
 
-struct PinChangeMask1 {
-  static void SetBits(uint8_t mask)   { PCMSK1 |= mask; }
-  static void ClearBits(uint8_t mask) { PCMSK1 &= ~mask; }
-  static uint8_t Get()                { return PCMSK1; }
-};
 
-struct PinChangeIRQ1 {
-  static void EnableSource(uint8_t PCINT) {
-    PinChangeControlRegister::SetBits(1<<PCIE1);
-    PinChangeMask1::SetBits(1<<PCINT);
-  }
 
-  static void DisableSource(uint8_t PCINT) {
-    PinChangeMask1::ClearBits(1<<PCINT);
-    if (0 == PinChangeMask1::Get()) {
-      PinChangeControlRegister::ClearBits(1<<PCIE1);
-    }
-  }
-
-  struct ISR {
-    static void Trigger() IOPORTS_IRQ_HANDLER(PCINT1_vect, signal);
-  };
-
-  struct ISRNoBlock {
-    static void Trigger() IOPORTS_IRQ_HANDLER(PCINT1_vect, interrupt);
-  };
-
-  struct ISRNaked {
-    static void Trigger() IOPORTS_IRQ_HANDLER(PCINT1_vect, naked);
-  };
-
-};
-
-struct PinChangeMask2 {
-  static void SetBits(uint8_t mask)   { PCMSK2 |= mask; }
-  static void ClearBits(uint8_t mask) { PCMSK2 &= ~mask; }
-  static uint8_t Get()                { return PCMSK2; }
-};
-
-struct PinChangeIRQ2 {
-  static void EnableSource(uint8_t PCINT) {
-    PinChangeControlRegister::SetBits(1<<PCIE2);
-    PinChangeMask2::SetBits(1<<PCINT);
-  }
-
-  static void DisableSource(uint8_t PCINT) {
-    PinChangeMask2::ClearBits(1<<PCINT);
-    if (0 == PinChangeMask2::Get()) {
-      PinChangeControlRegister::ClearBits(1<<PCIE2);
-    }
-  }
-
-  struct ISR {
-    static void Trigger() IOPORTS_IRQ_HANDLER(PCINT2_vect, signal);
-  };
-
-  struct ISRNoBlock {
-    static void Trigger() IOPORTS_IRQ_HANDLER(PCINT2_vect, interrupt);
-  };
-
-  struct ISRNaked {
-    static void Trigger() IOPORTS_IRQ_HANDLER(PCINT2_vect, naked);
-  };
-
-};
 } // namespace etl
 #endif //ETL_IOPORTS_ATMEGA32U4_H_

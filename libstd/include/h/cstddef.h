@@ -35,6 +35,8 @@
 #ifndef ETL_LIBSTD_CSTDDEF_H_
 #define ETL_LIBSTD_CSTDDEF_H_
 
+#include <stddef.h>
+
 namespace std {
 
 typedef decltype(nullptr) nullptr_t;
