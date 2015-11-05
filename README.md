@@ -10,7 +10,7 @@ Its main objective is to take advantage of the efficiency of generic programming
 
 For example, type information about the PORT to which belongs a given PIN make compile-time optimization of PORT manipulation possible.
 
-```
+```C++
 template <typename PinRed, typename PinGreen, typename PinBlue>
 class RGBLed {
   enum bitColor : uint8_t { Red=1<<0, Green=1<<1, Blue=1<<2 };
@@ -23,34 +23,39 @@ public:
 };
 ```
 If we create an RGBLed object connected to pins D7, B0 and B1 and call SetColor :
-```
+
+```C++
 RGBLed<PinD7, PinB0, PinB1> myLed;
 
 myLed.SetColor(0b101);
 ```
 the compiler will produce the following assembly code :
-```
+
+```Assembly
 5f 9a    sbi 0x0b, 7         // 2 cycles
 28 98    cbi 0x05, 0         // 2 cycles
 29 9a    sbi 0x05, 1         // 2 cycles
 ```
 
 And if another RGBLed is connected to pins B2, B3 and B4 :
-```
+
+```C++
 RGBLed<PinB2, PinB3, PinB4> myLed2;
 
 myLed2.SetColor(0b101);
 ```
 almost the same output will be produced :
-```
+
+```Assembly
 sbi 0x05, 2         // 2 cycles
 cbi 0x05, 3         // 2 cycles
 sbi 0x05, 4         // 2 cycles
 ```
 
+For this second RGBLed, a good hand-optimization would have used a global PORTB manipulation considering the fact that all pins belong to the same PORTB.
 
 
-```
+```C++
 template <typename PinRed, typename PinGreen, typename PinBlue>
 class RGBLed {
 public:
@@ -73,7 +78,7 @@ public:
 
 which produces
 
-```
+```Assembly
 85 b1    in r24, 0x05        // 1 cycle
 8c 77    andi r24, 0x7c      // 1 cycle
 86 60    ori r24, 0x06       // 1 cycle 
