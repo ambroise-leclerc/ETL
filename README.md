@@ -8,7 +8,7 @@ Its main objective is to take advantage of the efficiency of generic programming
 
 **ETL** provides compile-time abstractions whose strongly typed definitions can leverage high-level information and relations about the mcu's peripherals.
 
-For example, type information about the PORT to which belongs a given PIN make compile-time optimization of PORT manipulation possible.
+For example, type information about the PORT to which belongs a given PIN makes compile-time optimization of PORT manipulation possible.
 
 ```C++
 template <typename PinRed, typename PinGreen, typename PinBlue>
@@ -53,7 +53,7 @@ sbi 0x05, 4         ; 2 cycles
 ```
 
 For this second RGBLed, a good hand-optimization would have used a global PORTB manipulation considering the fact that all pins belong to the same PORTB.
-This optimization can easily be done by testing at compile-time if the pins belong to a same port, using the std::is_same traits class.
+This optimization can easily be performed programmatically by testing at compile-time if the pins belong to a same port, using the std::is_same traits class.
 
 
 ```C++
