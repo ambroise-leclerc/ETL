@@ -1,7 +1,7 @@
 ETL
 ===
 
-C++14 Embedded Template Library for AVR 8-bit microcontrollers.
+C++14 Embedded Template Library for AVR 8-bit microcontroller.
 
 **ETL** is a header only template library geared towards the size and performance constraints of embedded applications.
 Its main objective is to take advantage of the efficiency of generic programming to produce the fastest possible binaries from an elegant and expressive code.
