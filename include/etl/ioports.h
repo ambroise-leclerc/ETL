@@ -1,9 +1,9 @@
-/// @file ioports.h
-/// @date 19/01/2014 22:28:16
-/// @author Ambroise Leclerc
-/// @brief AVR 8-bit microcontrollers ports handling classes
+/// @file ioports_ATmega328P.h
+/// @date 12/05/2014 09:34:16
+/// @author Ambroise Leclerc and Cécile Gomes
+/// @brief Microcontrollers peripherals handling classes
 //
-// Copyright (c) 2014, Ambroise Leclerc
+// Copyright (c) 2016, Ambroise Leclerc and Cécile Gomes
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -31,8 +31,8 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_IOPORTS_H_
-#define ETL_IOPORTS_H_
+#pragma once
+
 
 
 namespace etl {
@@ -44,34 +44,33 @@ struct Pin {
   using PinChangeIRQ = typename ParentPort::PinChangeIRQ;
 };
 
-} // namespace etl
-
-#define IOPORTS_TO_STRING(name) #name
-#define IOPORTS_IRQ_HANDLER(vector, type) asm(IOPORTS_TO_STRING(vector)) __attribute__ ((type, __INTR_ATTRS))
 
 #if defined (__AVR_Dummy__)
+#elif defined (__ESP_ESP8266__)
+#include "architecture\ioports_ESP8266.h"
+#elif defined (__ESP_ESP-07__)
+#include "architecture\ioports_ESP-07.h"
+#elif defined (__Mock_Mock__)
+#include "architecture\ioports_Mock.h"
 #elif defined (__AVR_ATmega32U4__)
-#include "architecture/ioports_ATmega32U4.h"
+#include "architecture\ioports_ATmega32U4.h"
 #elif defined (__AVR_ATmega48A__)
-#include "architecture/ioports_ATmega48A.h"
+#include "architecture\ioports_ATmega48A.h"
 #elif defined (__AVR_ATmega48PA__)
-#include "architecture/ioports_ATmega48PA.h"
+#include "architecture\ioports_ATmega48PA.h"
 #elif defined (__AVR_ATmega88A__)
-#include "architecture/ioports_ATmega88A.h"
+#include "architecture\ioports_ATmega88A.h"
 #elif defined (__AVR_ATmega88PA__)
-#include "architecture/ioports_ATmega88PA.h"
+#include "architecture\ioports_ATmega88PA.h"
 #elif defined (__AVR_ATmega168A__)
-#include "architecture/ioports_ATmega168A.h"
+#include "architecture\ioports_ATmega168A.h"
 #elif defined (__AVR_ATmega168PA__)
-#include "architecture/ioports_ATmega168PA.h"
+#include "architecture\ioports_ATmega168PA.h"
 #elif defined (__AVR_ATmega168P__)
-#include "architecture/ioports_ATmega168P.h"
+#include "architecture\ioports_ATmega168P.h"
 #elif defined (__AVR_ATmega328__)
-#include "architecture/ioports_ATmega328.h"
+#include "architecture\ioports_ATmega328.h"
 #elif defined (__AVR_ATmega328P__)
-#include "architecture/ioports_ATmega328P.h"
+#include "architecture\ioports_ATmega328P.h"
 #endif
 
-#undef IOPORTS_TO_STRING
-#undef IOPORTS_IRQ_HANDLER
-#endif //ETL_IOPORTS_H_

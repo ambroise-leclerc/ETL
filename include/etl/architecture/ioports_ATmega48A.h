@@ -1,9 +1,9 @@
 /// @file ioports_ATmega48A.h
 /// @date 11/05/2014 19:19:16
-/// @author Ambroise Leclerc
-/// @brief AVR 8-bit microcontrollers ports handling classes
+/// @author Ambroise Leclerc and Cécile Gomes
+/// @brief Atmel AVR 8-bit microcontrollers peripherals handling classes
 //
-// Copyright (c) 2014, Ambroise Leclerc
+// Copyright (c) 2016, Ambroise Leclerc and Cécile Gomes
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,14 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_IOPORTS_ATMEGA48A_H_
-#define ETL_IOPORTS_ATMEGA48A_H_
+#pragma once
+
 
 
 namespace etl {
+
+#define IOPORTS_TO_STRING(name) #name
+#define IOPORTS_IRQ_HANDLER(vector, type) asm(IOPORTS_TO_STRING(vector)) __attribute__ ((type, __INTR_ATTRS))
 
 struct AVRDevice {
   static const uint32_t flash_size = 4096;
@@ -1187,7 +1190,7 @@ struct Timer0 {
     CLK_DIV_1024 = (1<<CS02)|(1<<CS01)|(1<<CS00), BITS = (1<<CS02)|(1<<CS01)|(1<<CS00) };
 
   enum Interrupt : uint8_t { 
-    OVERFLOW = (1<<TOIE0), COMPARE_MATCH_A = (1<<OCIE0A), COMPARE_MATCH_B = (1<<OCIE0B)};
+    OVERFLOW = (1<<TOIE0), COMPAREMATCHA = (1<<OCIE0A), COMPAREMATCHB = (1<<OCIE0B)};
   enum Constants : uint8_t { ALL_BITS = 0xFF };
   static value_type GetValue()                 { return TCNT0; }
   static void SetValue(value_type value)       { TCNT0 = value; }
@@ -1235,7 +1238,7 @@ struct Timer1 {
     CLK_DIV_1024 = (1<<CS12)|(1<<CS11)|(1<<CS10), BITS = (1<<CS12)|(1<<CS11)|(1<<CS10) };
 
   enum Interrupt : uint8_t { 
-    OVERFLOW = (1<<TOIE1), CAPTURE = (1<<ICIE1), COMPARE_MATCH_A = (1<<OCIE1A), COMPARE_MATCH_B = (1<<OCIE1B)};
+    OVERFLOW = (1<<TOIE1), CAPTURE = (1<<ICIE1), COMPAREMATCHA = (1<<OCIE1A), COMPAREMATCHB = (1<<OCIE1B)};
   enum Constants : uint8_t { ALL_BITS = 0xFF };
   static value_type GetValue()                 { return TCNT1; }
   static void SetValue(value_type value)       { TCNT1 = value; }
@@ -1287,7 +1290,7 @@ struct Timer2 {
     INC_ON_FALLING = (1<<CS22)|(1<<CS21), INC_ON_RISING = (1<<CS22)|(1<<CS21)|(1<<CS20) };
 
   enum Interrupt : uint8_t { 
-    OVERFLOW = (1<<TOIE2), COMPARE_MATCH_A = (1<<OCIE2A), COMPARE_MATCH_B = (1<<OCIE2B)};
+    OVERFLOW = (1<<TOIE2), COMPAREMATCHA = (1<<OCIE2A), COMPAREMATCHB = (1<<OCIE2B)};
   enum Constants : uint8_t { ALL_BITS = 0xFF };
   static value_type GetValue()                 { return TCNT2; }
   static void SetValue(value_type value)       { TCNT2 = value; }
@@ -1430,5 +1433,7 @@ struct PinChangeIRQ2 {
   };
 
 };
-} // namespace etl
-#endif //ETL_IOPORTS_ATMEGA48A_H_
+
+#undef IOPORTS_TO_STRING
+#undef IOPORTS_IRQ_HANDLER
+}

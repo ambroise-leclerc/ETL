@@ -1,235 +1,253 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<AVR8Devices>
-  <device id="ATmega48A" date="11/05/2014 19:19:16">
-    <memory flash="4096" eeprom="256" ram="512"/>
-    <port id="B" PCI="0"/>
-    <port id="C" PCI="1"/>
-    <port id="D" PCI="2"/>
-    <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
-      <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
-      <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
-      <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
-    </timer>
-    <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
-      <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
-      <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
-      <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
-      <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
-    </timer>
-    <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
-      <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
-      <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
-      <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
-    </timer>
-  </device>
-  <device id="ATmega48PA" date="11/05/2014 19:23:16">
-    <memory flash="4096" eeprom="256" ram="512"/>
-    <port id="B" PCI="0"/>
-    <port id="C" PCI="1"/>
-    <port id="D" PCI="2"/>
-    <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
-      <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
-      <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
-      <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
-    </timer>
-    <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
-      <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
-      <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
-      <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
-      <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
-    </timer>
-    <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
-      <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
-      <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
-      <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
-    </timer>
-  </device>
-  <device id="ATmega88A" date="11/05/2014 19:24:16">
-    <memory flash="8192" eeprom="512" ram="1024"/>
-    <port id="B" PCI="0"/>
-    <port id="C" PCI="1"/>
-    <port id="D" PCI="2"/>
-    <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
-      <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
-      <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
-      <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
-    </timer>
-    <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
-      <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
-      <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
-      <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
-      <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
-    </timer>
-    <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
-      <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
-      <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
-      <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
-    </timer>
-  </device>
-  <device id="ATmega88PA" date="11/05/2014 19:25:16">
-    <memory flash="8192" eeprom="512" ram="1024"/>
-    <port id="B" PCI="0"/>
-    <port id="C" PCI="1"/>
-    <port id="D" PCI="2"/>
-    <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
-      <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
-      <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
-      <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
-    </timer>
-    <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
-      <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
-      <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
-      <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
-      <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
-    </timer>
-    <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
-      <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
-      <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
-      <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
-    </timer>
-  </device>
-  <device id="ATmega168A" date="11/05/2014 19:26:16">
-    <memory flash="16384" eeprom="512" ram="1024"/>
-    <port id="B" PCI="0"/>
-    <port id="C" PCI="1"/>
-    <port id="D" PCI="2"/>
-    <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
-      <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
-      <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
-      <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
-    </timer>
-    <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
-      <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
-      <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
-      <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
-      <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
-    </timer>
-    <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
-      <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
-      <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
-      <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
-    </timer>
-  </device>
-  <device id="ATmega168PA" date="11/05/2014 19:27:16">
-    <memory flash="16384" eeprom="512" ram="1024"/>
-    <port id="B" PCI="0"/>
-    <port id="C" PCI="1"/>
-    <port id="D" PCI="2"/>
-    <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
-      <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
-      <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
-      <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
-    </timer>
-    <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
-      <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
-      <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
-      <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
-      <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
-    </timer>
-    <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
-      <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
-      <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
-      <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
-    </timer>
-  </device>
-  <device id="ATmega168P" date="11/05/2014 19:28:16">
-    <memory flash="16384" eeprom="512" ram="2048"/>
-    <port id="B" PCI="0"/>
-    <port id="C" PCI="1"/>
-    <port id="D" PCI="2"/>
-    <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
-      <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
-      <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
-      <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
-    </timer>
-    <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
-      <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
-      <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
-      <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
-      <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
-    </timer>
-    <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
-      <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
-      <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
-      <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
-    </timer>
-  </device>
-  <device id="ATmega328" date="11/05/2014 19:29:16">
-    <memory flash="32768" eeprom="1024" ram="2048"/>
-    <port id="B" PCI="0"/>
-    <port id="C" PCI="1"/>
-    <port id="D" PCI="2"/>
-    <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
-      <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
-      <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
-      <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
-    </timer>
-    <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
-      <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
-      <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
-      <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
-      <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
-    </timer>
-    <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
-      <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
-      <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
-      <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
-    </timer>
-  </device>
-  <device id="ATmega328P" date="12/05/2014 09:34:16">
-    <memory flash="32768" eeprom="1024" ram="2048"/>
-    <port id="B" PCI="0"/>
-    <port id="C" PCI="1"/>
-    <port id="D" PCI="2"/>
-    <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
-      <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
-      <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
-      <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
-    </timer>
-    <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
-      <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
-      <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
-      <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
-      <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
-    </timer>
-    <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
-      <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
-      <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
-      <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
-    </timer>
-  </device>
-  <device id="ATmega32U4" date="11/05/2014 19:28:16">
-    <memory flash="32768" eeprom="1024" ram="2560"/>
-    <features fasttoggle="true"/>
-    <port id="B" pins="76543210" PCI="0"/>
-    <port id="C" pins="76"/>
-    <port id="D" pins="76543210"/>
-    <port id="E" pins="62"/>
-    <port id="F" pins="765410"/>
-    <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
-      <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
-      <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
-      <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
-    </timer>
-    <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
-      <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
-      <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
-      <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
-      <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
-      <interrupt id="OCIE1C" handler="CompareMatchC" vector="TIMER1_COMPC_vect"/>
-    </timer>
-    <timer id="3" width="16" intmask="TIMSK3" extclksrc="false">
-      <interrupt id="TOIE3" handler="Overflow" vector="TIMER3_OVF_vect"/>
-      <interrupt id="ICIE3" handler="Capture" vector="TIMER3_CAPT_vect"/>
-      <interrupt id="OCIE3A" handler="CompareMatchA" vector="TIMER3_COMPA_vect"/>
-      <interrupt id="OCIE3B" handler="CompareMatchB" vector="TIMER3_COMPB_vect"/>
-      <interrupt id="OCIE3C" handler="CompareMatchC" vector="TIMER3_COMPC_vect"/>
-    </timer>
-    <timer id="4" width="10" intmask="TIMSK4" extclksrc="true">
-      <interrupt id="TOIE4" handler="Overflow" vector="TIMER4_OVF_vect"/>
-      <interrupt id="OCIE4A" handler="CompareMatchA" vector="TIMER4_COMPA_vect"/>
-      <interrupt id="OCIE4B" handler="CompareMatchB" vector="TIMER4_COMPB_vect"/>
-      <interrupt id="OCIE4D" handler="CompareMatchD" vector="TIMER4_COMPD_vect"/>
-    </timer>
-  </device>
-</AVR8Devices>
+<deviceFamilies>
+    <deviceFamily name="ESP">
+        <device id="ESP8266">
+            <port id="0" pins="15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0"/>
+            <port id="1" pins="16"/>
+        </device>
+        <device id="ESP-07">
+            <port id="0" pins="15 14 13 12 5 4 2 0"/>
+            <port id="1" pins="16"/>
+        </device>
+    </deviceFamily>
+    <deviceFamily name="Mock" initialRevision="01/04/2016 01:04:16">
+        <device id="Mock">
+            <port id="0" pins="0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15"/>
+            <port id="1" pins="16 17 18 19 20 21 22 23 24"/>
+        </device>
+    </deviceFamily>
+    <deviceFamily name="AVR">
+        <device id="ATmega32U4" initialRevision="11/05/2014 19:28:16">
+            <memory flash="32768" eeprom="1024" ram="2560"/>
+            <features fasttoggle="true"/>
+            <port id="B" pins="7 6 5 4 3 2 1 0" PCI="0"/>
+            <port id="C" pins="7 6"/>
+            <port id="D" pins="7 6 5 4 3 2 1 0"/>
+            <port id="E" pins="6 2"/>
+            <port id="F" pins="7 6 5 4 1 0"/>
+            <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
+                <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
+                <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
+                <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
+            </timer>
+            <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
+                <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
+                <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
+                <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
+                <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
+                <interrupt id="OCIE1C" handler="CompareMatchC" vector="TIMER1_COMPC_vect"/>
+            </timer>
+            <timer id="3" width="16" intmask="TIMSK3" extclksrc="false">
+                <interrupt id="TOIE3" handler="Overflow" vector="TIMER3_OVF_vect"/>
+                <interrupt id="ICIE3" handler="Capture" vector="TIMER3_CAPT_vect"/>
+                <interrupt id="OCIE3A" handler="CompareMatchA" vector="TIMER3_COMPA_vect"/>
+                <interrupt id="OCIE3B" handler="CompareMatchB" vector="TIMER3_COMPB_vect"/>
+                <interrupt id="OCIE3C" handler="CompareMatchC" vector="TIMER3_COMPC_vect"/>
+            </timer>
+            <timer id="4" width="10" intmask="TIMSK4" extclksrc="true">
+                <interrupt id="TOIE4" handler="Overflow" vector="TIMER4_OVF_vect"/>
+                <interrupt id="OCIE4A" handler="CompareMatchA" vector="TIMER4_COMPA_vect"/>
+                <interrupt id="OCIE4B" handler="CompareMatchB" vector="TIMER4_COMPB_vect"/>
+                <interrupt id="OCIE4D" handler="CompareMatchD" vector="TIMER4_COMPD_vect"/>
+            </timer>
+        </device>
+        <device id="ATmega48A" initialRevision="11/05/2014 19:19:16">
+            <memory flash="4096" eeprom="256" ram="512"/>
+            <port id="B" pins="7 6 5 4 3 2 1 0" PCI="0"/>
+            <port id="C" pins="6 5 4 3 2 1 0" PCI="1"/>
+            <port id="D" pins="7 6 5 4 3 2 1 0" PCI="2"/>
+            <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
+                <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
+                <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
+                <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
+            </timer>
+            <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
+                <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
+                <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
+                <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
+                <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
+            </timer>
+            <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
+                <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
+                <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
+                <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
+            </timer>
+        </device>
+        <device id="ATmega48PA" initialRevision="11/05/2014 19:23:16">
+            <memory flash="4096" eeprom="256" ram="512"/>
+            <port id="B" pins="7 6 5 4 3 2 1 0" PCI="0"/>
+            <port id="C" pins="6 5 4 3 2 1 0" PCI="1"/>
+            <port id="D" pins="7 6 5 4 3 2 1 0" PCI="2"/>
+            <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
+                <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
+                <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
+                <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
+            </timer>
+            <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
+                <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
+                <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
+                <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
+                <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
+            </timer>
+            <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
+                <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
+                <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
+                <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
+            </timer>
+        </device>
+        <device id="ATmega88A" initialRevision="11/05/2014 19:24:16">
+            <memory flash="8192" eeprom="512" ram="1024"/>
+            <port id="B" pins="7 6 5 4 3 2 1 0" PCI="0"/>
+            <port id="C" pins="6 5 4 3 2 1 0" PCI="1"/>
+            <port id="D" pins="7 6 5 4 3 2 1 0" PCI="2"/>
+            <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
+                <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
+                <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
+                <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
+            </timer>
+            <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
+                <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
+                <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
+                <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
+                <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
+            </timer>
+            <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
+                <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
+                <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
+                <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
+            </timer>
+        </device>
+        <device id="ATmega88PA" initialRevision="11/05/2014 19:25:16">
+            <memory flash="8192" eeprom="512" ram="1024"/>
+            <port id="B" pins="7 6 5 4 3 2 1 0" PCI="0"/>
+            <port id="C" pins="6 5 4 3 2 1 0" PCI="1"/>
+            <port id="D" pins="7 6 5 4 3 2 1 0" PCI="2"/>
+            <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
+                <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
+                <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
+                <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
+            </timer>
+            <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
+                <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
+                <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
+                <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
+                <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
+            </timer>
+            <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
+                <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
+                <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
+                <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
+            </timer>
+        </device>
+        <device id="ATmega168A" initialRevision="11/05/2014 19:26:16">
+            <memory flash="16384" eeprom="512" ram="1024"/>
+            <port id="B" pins="7 6 5 4 3 2 1 0" PCI="0"/>
+            <port id="C" pins="6 5 4 3 2 1 0" PCI="1"/>
+            <port id="D" pins="7 6 5 4 3 2 1 0" PCI="2"/>
+            <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
+                <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
+                <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
+                <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
+            </timer>
+            <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
+                <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
+                <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
+                <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
+                <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
+            </timer>
+            <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
+                <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
+                <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
+                <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
+            </timer>
+        </device>
+        <device id="ATmega168PA" initialRevision="11/05/2014 19:27:16">
+            <memory flash="16384" eeprom="512" ram="1024"/>
+            <port id="B" pins="7 6 5 4 3 2 1 0" PCI="0"/>
+            <port id="C" pins="6 5 4 3 2 1 0" PCI="1"/>
+            <port id="D" pins="7 6 5 4 3 2 1 0" PCI="2"/>
+            <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
+                <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
+                <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
+                <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
+            </timer>
+            <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
+                <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
+                <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
+                <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
+                <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
+            </timer>
+            <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
+                <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
+                <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
+                <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
+            </timer>
+        </device>
+        <device id="ATmega168P" initialRevision="11/05/2014 19:28:16">
+            <memory flash="16384" eeprom="512" ram="2048"/>
+            <port id="B" pins="7 6 5 4 3 2 1 0" PCI="0"/>
+            <port id="C" pins="6 5 4 3 2 1 0" PCI="1"/>
+            <port id="D" pins="7 6 5 4 3 2 1 0" PCI="2"/>
+            <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
+                <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
+                <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
+                <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
+            </timer>
+            <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
+                <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
+                <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
+                <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
+                <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
+            </timer>
+            <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
+                <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
+                <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
+                <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
+            </timer>
+        </device>
+        <device id="ATmega328" initialRevision="11/05/2014 19:29:16">
+            <memory flash="32768" eeprom="1024" ram="2048"/>
+            <port id="B" pins="7 6 5 4 3 2 1 0" PCI="0"/>
+            <port id="C" pins="6 5 4 3 2 1 0" PCI="1"/>
+            <port id="D" pins="7 6 5 4 3 2 1 0" PCI="2"/>
+            <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
+                <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
+                <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
+                <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
+            </timer>
+            <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
+                <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
+                <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
+                <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
+                <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
+            </timer>
+            <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
+                <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
+                <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
+                <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
+            </timer>
+        </device>
+        <device id="ATmega328P" initialRevision="12/05/2014 09:34:16">
+            <memory flash="32768" eeprom="1024" ram="2048"/>
+            <port id="B" pins="7 6 5 4 3 2 1 0" PCI="0"/>
+            <port id="C" pins="6 5 4 3 2 1 0" PCI="1"/>
+            <port id="D" pins="7 6 5 4 3 2 1 0" PCI="2"/>
+            <timer id="0" width="8" intmask="TIMSK0" extclksrc="false">
+                <interrupt id="TOIE0" handler="Overflow" vector="TIMER0_OVF_vect"/>
+                <interrupt id="OCIE0A" handler="CompareMatchA" vector="TIMER0_COMPA_vect"/>
+                <interrupt id="OCIE0B" handler="CompareMatchB" vector="TIMER0_COMPB_vect"/>
+            </timer>
+            <timer id="1" width="16" intmask="TIMSK1" extclksrc="false">
+                <interrupt id="TOIE1" handler="Overflow" vector="TIMER1_OVF_vect"/>
+                <interrupt id="ICIE1" handler="Capture" vector="TIMER1_CAPT_vect"/>
+                <interrupt id="OCIE1A" handler="CompareMatchA" vector="TIMER1_COMPA_vect"/>
+                <interrupt id="OCIE1B" handler="CompareMatchB" vector="TIMER1_COMPB_vect"/>
+            </timer>
+            <timer id="2" width="8" intmask="TIMSK2" extclksrc="true">
+                <interrupt id="TOIE2" handler="Overflow" vector="TIMER2_OVF_vect"/>
+                <interrupt id="OCIE2A" handler="CompareMatchA" vector="TIMER2_COMPA_vect"/>
+                <interrupt id="OCIE2B" handler="CompareMatchB" vector="TIMER2_COMPB_vect"/>
+            </timer>
+        </device>
+    </deviceFamily>
+</deviceFamilies>
