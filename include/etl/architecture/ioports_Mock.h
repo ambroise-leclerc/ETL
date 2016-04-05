@@ -1,9 +1,9 @@
 /// @file ioports_Mock.h
-/// @date 05/04/16 11:26
-/// @author Ambroise Leclerc and Cécile Gomes
+/// @date 05/04/16 23:53
+/// @author Ambroise Leclerc and CÃ©cile Gomes
 /// @brief Mock microcontroller peripherals handling classes
 //
-// Copyright (c) 2016, Ambroise Leclerc and Cécile Gomes
+// Copyright (c) 2016, Ambroise Leclerc and CÃ©cile Gomes
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -38,9 +38,11 @@
 
 namespace etl {
 
+struct PinChangeIRQ0;
+struct PinChangeIRQ1;
 
 struct Port0 {
-  using PinChangeIRQ = PinChangeIRQ;
+  using PinChangeIRQ = PinChangeIRQ0;
 
   /// Assigns a value to PORT0.
   /// @param[in] value value affected to PORT0
@@ -73,21 +75,21 @@ struct Port0 {
 
   /// Set corresponding masked bits of PORT0 to output direction.
   /// @param[in] mask bits
-  static void SetDDR(uint16_t mask)    {  }
+  static void SetOutput(uint16_t mask)    {  }
 
   /// Set corresponding masked bits of PORT0 to input direction.
   /// @param[in] mask bits
-  static void ClearDDR(uint16_t mask)  {  }
+  static void SetInput(uint16_t mask)  {  }
 
   /// Tests masked bits of PORT0
   /// @param[in] mask bits
   /// @param[in] true if the corresponding bits are all set, false otherwise.
-  static bool TestBits(uint16_t mask)  { return MockDevice::Instance().ReadPort(0) & mask == mask; }
+  static bool TestBits(uint16_t mask)  { return (MockDevice::Instance().ReadPort(0) & mask) == mask; }
 
   /// Returns the value of the bit at the position pos.
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
-  static bool Test(uint16_t pos) { return MockDevice::Instance().ReadPort(0) & (1<<pos); }
+  static bool Test(uint16_t pos) { return (MockDevice::Instance().ReadPort(0) & (1<<pos)) != 0; }
 
 };
 
@@ -119,11 +121,11 @@ struct Pin0 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<0)
-  static constexpr uint8_t bitmask()               { return (1<<0); }
+  static constexpr uint16_t bitmask()               { return (1<<0); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 0
-  static constexpr uint8_t bit()                   { return 0; }
+  static constexpr uint16_t bit()                   { return 0; }
 };
 
 struct Pin1 : public Pin<Port0> {
@@ -154,11 +156,11 @@ struct Pin1 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<1)
-  static constexpr uint8_t bitmask()               { return (1<<1); }
+  static constexpr uint16_t bitmask()               { return (1<<1); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 1
-  static constexpr uint8_t bit()                   { return 1; }
+  static constexpr uint16_t bit()                   { return 1; }
 };
 
 struct Pin2 : public Pin<Port0> {
@@ -189,11 +191,11 @@ struct Pin2 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<2)
-  static constexpr uint8_t bitmask()               { return (1<<2); }
+  static constexpr uint16_t bitmask()               { return (1<<2); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 2
-  static constexpr uint8_t bit()                   { return 2; }
+  static constexpr uint16_t bit()                   { return 2; }
 };
 
 struct Pin3 : public Pin<Port0> {
@@ -224,11 +226,11 @@ struct Pin3 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<3)
-  static constexpr uint8_t bitmask()               { return (1<<3); }
+  static constexpr uint16_t bitmask()               { return (1<<3); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 3
-  static constexpr uint8_t bit()                   { return 3; }
+  static constexpr uint16_t bit()                   { return 3; }
 };
 
 struct Pin4 : public Pin<Port0> {
@@ -259,11 +261,11 @@ struct Pin4 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<4)
-  static constexpr uint8_t bitmask()               { return (1<<4); }
+  static constexpr uint16_t bitmask()               { return (1<<4); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 4
-  static constexpr uint8_t bit()                   { return 4; }
+  static constexpr uint16_t bit()                   { return 4; }
 };
 
 struct Pin5 : public Pin<Port0> {
@@ -294,11 +296,11 @@ struct Pin5 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<5)
-  static constexpr uint8_t bitmask()               { return (1<<5); }
+  static constexpr uint16_t bitmask()               { return (1<<5); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 5
-  static constexpr uint8_t bit()                   { return 5; }
+  static constexpr uint16_t bit()                   { return 5; }
 };
 
 struct Pin6 : public Pin<Port0> {
@@ -329,11 +331,11 @@ struct Pin6 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<6)
-  static constexpr uint8_t bitmask()               { return (1<<6); }
+  static constexpr uint16_t bitmask()               { return (1<<6); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 6
-  static constexpr uint8_t bit()                   { return 6; }
+  static constexpr uint16_t bit()                   { return 6; }
 };
 
 struct Pin7 : public Pin<Port0> {
@@ -364,11 +366,11 @@ struct Pin7 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<7)
-  static constexpr uint8_t bitmask()               { return (1<<7); }
+  static constexpr uint16_t bitmask()               { return (1<<7); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 7
-  static constexpr uint8_t bit()                   { return 7; }
+  static constexpr uint16_t bit()                   { return 7; }
 };
 
 struct Pin8 : public Pin<Port0> {
@@ -399,11 +401,11 @@ struct Pin8 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<8)
-  static constexpr uint8_t bitmask()               { return (1<<8); }
+  static constexpr uint16_t bitmask()               { return (1<<8); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 8
-  static constexpr uint8_t bit()                   { return 8; }
+  static constexpr uint16_t bit()                   { return 8; }
 };
 
 struct Pin9 : public Pin<Port0> {
@@ -434,11 +436,11 @@ struct Pin9 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<9)
-  static constexpr uint8_t bitmask()               { return (1<<9); }
+  static constexpr uint16_t bitmask()               { return (1<<9); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 9
-  static constexpr uint8_t bit()                   { return 9; }
+  static constexpr uint16_t bit()                   { return 9; }
 };
 
 struct Pin10 : public Pin<Port0> {
@@ -469,11 +471,11 @@ struct Pin10 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<10)
-  static constexpr uint8_t bitmask()               { return (1<<10); }
+  static constexpr uint16_t bitmask()               { return (1<<10); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 10
-  static constexpr uint8_t bit()                   { return 10; }
+  static constexpr uint16_t bit()                   { return 10; }
 };
 
 struct Pin11 : public Pin<Port0> {
@@ -504,11 +506,11 @@ struct Pin11 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<11)
-  static constexpr uint8_t bitmask()               { return (1<<11); }
+  static constexpr uint16_t bitmask()               { return (1<<11); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 11
-  static constexpr uint8_t bit()                   { return 11; }
+  static constexpr uint16_t bit()                   { return 11; }
 };
 
 struct Pin12 : public Pin<Port0> {
@@ -539,11 +541,11 @@ struct Pin12 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<12)
-  static constexpr uint8_t bitmask()               { return (1<<12); }
+  static constexpr uint16_t bitmask()               { return (1<<12); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 12
-  static constexpr uint8_t bit()                   { return 12; }
+  static constexpr uint16_t bit()                   { return 12; }
 };
 
 struct Pin13 : public Pin<Port0> {
@@ -574,11 +576,11 @@ struct Pin13 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<13)
-  static constexpr uint8_t bitmask()               { return (1<<13); }
+  static constexpr uint16_t bitmask()               { return (1<<13); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 13
-  static constexpr uint8_t bit()                   { return 13; }
+  static constexpr uint16_t bit()                   { return 13; }
 };
 
 struct Pin14 : public Pin<Port0> {
@@ -609,11 +611,11 @@ struct Pin14 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<14)
-  static constexpr uint8_t bitmask()               { return (1<<14); }
+  static constexpr uint16_t bitmask()               { return (1<<14); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 14
-  static constexpr uint8_t bit()                   { return 14; }
+  static constexpr uint16_t bit()                   { return 14; }
 };
 
 struct Pin15 : public Pin<Port0> {
@@ -644,16 +646,16 @@ struct Pin15 : public Pin<Port0> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<15)
-  static constexpr uint8_t bitmask()               { return (1<<15); }
+  static constexpr uint16_t bitmask()               { return (1<<15); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 15
-  static constexpr uint8_t bit()                   { return 15; }
+  static constexpr uint16_t bit()                   { return 15; }
 };
 
 
 struct Port1 {
-  using PinChangeIRQ = PinChangeIRQ;
+  using PinChangeIRQ = PinChangeIRQ1;
 
   /// Assigns a value to PORT1.
   /// @param[in] value value affected to PORT1
@@ -686,21 +688,21 @@ struct Port1 {
 
   /// Set corresponding masked bits of PORT1 to output direction.
   /// @param[in] mask bits
-  static void SetDDR(uint16_t mask)    {  }
+  static void SetOutput(uint16_t mask)    {  }
 
   /// Set corresponding masked bits of PORT1 to input direction.
   /// @param[in] mask bits
-  static void ClearDDR(uint16_t mask)  {  }
+  static void SetInput(uint16_t mask)  {  }
 
   /// Tests masked bits of PORT1
   /// @param[in] mask bits
   /// @param[in] true if the corresponding bits are all set, false otherwise.
-  static bool TestBits(uint16_t mask)  { return MockDevice::Instance().ReadPort(1) & mask == mask; }
+  static bool TestBits(uint16_t mask)  { return (MockDevice::Instance().ReadPort(1) & mask) == mask; }
 
   /// Returns the value of the bit at the position pos.
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
-  static bool Test(uint16_t pos) { return MockDevice::Instance().ReadPort(1) & (1<<pos); }
+  static bool Test(uint16_t pos) { return (MockDevice::Instance().ReadPort(1) & (1<<pos)) != 0; }
 
 };
 
@@ -732,11 +734,11 @@ struct Pin16 : public Pin<Port1> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<0)
-  static constexpr uint8_t bitmask()               { return (1<<0); }
+  static constexpr uint16_t bitmask()               { return (1<<0); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 0
-  static constexpr uint8_t bit()                   { return 0; }
+  static constexpr uint16_t bit()                   { return 0; }
 };
 
 struct Pin17 : public Pin<Port1> {
@@ -767,11 +769,11 @@ struct Pin17 : public Pin<Port1> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<1)
-  static constexpr uint8_t bitmask()               { return (1<<1); }
+  static constexpr uint16_t bitmask()               { return (1<<1); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 1
-  static constexpr uint8_t bit()                   { return 1; }
+  static constexpr uint16_t bit()                   { return 1; }
 };
 
 struct Pin18 : public Pin<Port1> {
@@ -802,11 +804,11 @@ struct Pin18 : public Pin<Port1> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<2)
-  static constexpr uint8_t bitmask()               { return (1<<2); }
+  static constexpr uint16_t bitmask()               { return (1<<2); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 2
-  static constexpr uint8_t bit()                   { return 2; }
+  static constexpr uint16_t bit()                   { return 2; }
 };
 
 struct Pin19 : public Pin<Port1> {
@@ -837,11 +839,11 @@ struct Pin19 : public Pin<Port1> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<3)
-  static constexpr uint8_t bitmask()               { return (1<<3); }
+  static constexpr uint16_t bitmask()               { return (1<<3); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 3
-  static constexpr uint8_t bit()                   { return 3; }
+  static constexpr uint16_t bit()                   { return 3; }
 };
 
 struct Pin20 : public Pin<Port1> {
@@ -872,11 +874,11 @@ struct Pin20 : public Pin<Port1> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<4)
-  static constexpr uint8_t bitmask()               { return (1<<4); }
+  static constexpr uint16_t bitmask()               { return (1<<4); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 4
-  static constexpr uint8_t bit()                   { return 4; }
+  static constexpr uint16_t bit()                   { return 4; }
 };
 
 struct Pin21 : public Pin<Port1> {
@@ -907,11 +909,11 @@ struct Pin21 : public Pin<Port1> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<5)
-  static constexpr uint8_t bitmask()               { return (1<<5); }
+  static constexpr uint16_t bitmask()               { return (1<<5); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 5
-  static constexpr uint8_t bit()                   { return 5; }
+  static constexpr uint16_t bit()                   { return 5; }
 };
 
 struct Pin22 : public Pin<Port1> {
@@ -942,11 +944,11 @@ struct Pin22 : public Pin<Port1> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<6)
-  static constexpr uint8_t bitmask()               { return (1<<6); }
+  static constexpr uint16_t bitmask()               { return (1<<6); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 6
-  static constexpr uint8_t bit()                   { return 6; }
+  static constexpr uint16_t bit()                   { return 6; }
 };
 
 struct Pin23 : public Pin<Port1> {
@@ -977,11 +979,11 @@ struct Pin23 : public Pin<Port1> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<7)
-  static constexpr uint8_t bitmask()               { return (1<<7); }
+  static constexpr uint16_t bitmask()               { return (1<<7); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 7
-  static constexpr uint8_t bit()                   { return 7; }
+  static constexpr uint16_t bit()                   { return 7; }
 };
 
 struct Pin24 : public Pin<Port1> {
@@ -1012,12 +1014,12 @@ struct Pin24 : public Pin<Port1> {
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<8)
-  static constexpr uint8_t bitmask()               { return (1<<8); }
+  static constexpr uint16_t bitmask()               { return (1<<8); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 8
-  static constexpr uint8_t bit()                   { return 8; }
+  static constexpr uint16_t bit()                   { return 8; }
 };
 
 
-}
+} // namespace etl

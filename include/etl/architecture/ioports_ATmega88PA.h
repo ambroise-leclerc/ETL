@@ -1,9 +1,9 @@
 /// @file ioports_ATmega88PA.h
 /// @date 11/05/2014 19:25:16
-/// @author Ambroise Leclerc and Cécile Gomes
+/// @author Ambroise Leclerc and CÃ©cile Gomes
 /// @brief Atmel AVR 8-bit microcontrollers peripherals handling classes
 //
-// Copyright (c) 2016, Ambroise Leclerc and Cécile Gomes
+// Copyright (c) 2016, Ambroise Leclerc and CÃ©cile Gomes
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -1436,4 +1436,4 @@ struct PinChangeIRQ2 {
 
 #undef IOPORTS_TO_STRING
 #undef IOPORTS_IRQ_HANDLER
-}
+} // namespace etl

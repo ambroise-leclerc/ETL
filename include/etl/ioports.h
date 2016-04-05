@@ -1,9 +1,9 @@
 /// @file ioports_ATmega328P.h
 /// @date 12/05/2014 09:34:16
-/// @author Ambroise Leclerc and Cécile Gomes
+/// @author Ambroise Leclerc and CÃ©cile Gomes
 /// @brief Microcontrollers peripherals handling classes
 //
-// Copyright (c) 2016, Ambroise Leclerc and Cécile Gomes
+// Copyright (c) 2016, Ambroise Leclerc and CÃ©cile Gomes
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -48,8 +48,8 @@ struct Pin {
 #if defined (__AVR_Dummy__)
 #elif defined (__ESP_ESP8266__)
 #include "architecture\ioports_ESP8266.h"
-#elif defined (__ESP_ESP-07__)
-#include "architecture\ioports_ESP-07.h"
+#elif defined (__ESP_ESP07__)
+#include "architecture\ioports_ESP07.h"
 #elif defined (__Mock_Mock__)
 #include "architecture\ioports_Mock.h"
 #elif defined (__AVR_ATmega32U4__)
@@ -74,3 +74,4 @@ struct Pin {
 #include "architecture\ioports_ATmega328P.h"
 #endif
 
+} // namespace etl

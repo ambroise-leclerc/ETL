@@ -1,9 +1,9 @@
-/// @file ioports_ESP-07.h
-/// @date 05/04/16 11:26
-/// @author Ambroise Leclerc and Cécile Gomes
+/// @file ioports_ESP07.h
+/// @date 05/04/16 23:53
+/// @author Ambroise Leclerc and CÃ©cile Gomes
 /// @brief Espressif ESP 32-bit microcontrollers peripherals handling classes
 //
-// Copyright (c) 2016, Ambroise Leclerc and Cécile Gomes
+// Copyright (c) 2016, Ambroise Leclerc and CÃ©cile Gomes
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -430,4 +430,4 @@ namespace etl {
               AbstractPin<0>::Interrupt();
          }
     };
-}
+} // namespace etl
