@@ -1413,7 +1413,7 @@ struct Timer0 {
     CLK_DIV_1024 = (1<<CS02)|(1<<CS01)|(1<<CS00), BITS = (1<<CS02)|(1<<CS01)|(1<<CS00) };
 
   enum Interrupt : uint8_t { 
-    OVERFLOW = (1<<TOIE0), COMPAREMATCHA = (1<<OCIE0A), COMPAREMATCHB = (1<<OCIE0B)};
+    OVERFLOW = (1<<TOIE0), COMPARE_MATCH_A = (1<<OCIE0A), COMPARE_MATCH_B = (1<<OCIE0B)};
   enum Constants : uint8_t { ALL_BITS = 0xFF };
   static value_type GetValue()                 { return TCNT0; }
   static void SetValue(value_type value)       { TCNT0 = value; }
@@ -1461,7 +1461,7 @@ struct Timer1 {
     CLK_DIV_1024 = (1<<CS12)|(1<<CS11)|(1<<CS10), BITS = (1<<CS12)|(1<<CS11)|(1<<CS10) };
 
   enum Interrupt : uint8_t { 
-    OVERFLOW = (1<<TOIE1), CAPTURE = (1<<ICIE1), COMPAREMATCHA = (1<<OCIE1A), COMPAREMATCHB = (1<<OCIE1B), COMPAREMATCHC = (1<<OCIE1C)};
+    OVERFLOW = (1<<TOIE1), CAPTURE = (1<<ICIE1), COMPARE_MATCH_A = (1<<OCIE1A), COMPARE_MATCH_B = (1<<OCIE1B), COMPARE_MATCH_C = (1<<OCIE1C)};
   enum Constants : uint8_t { ALL_BITS = 0xFF };
   static value_type GetValue()                 { return TCNT1; }
   static void SetValue(value_type value)       { TCNT1 = value; }
@@ -1515,7 +1515,7 @@ struct Timer3 {
     CLK_DIV_1024 = (1<<CS32)|(1<<CS31)|(1<<CS30), BITS = (1<<CS32)|(1<<CS31)|(1<<CS30) };
 
   enum Interrupt : uint8_t { 
-    OVERFLOW = (1<<TOIE3), CAPTURE = (1<<ICIE3), COMPAREMATCHA = (1<<OCIE3A), COMPAREMATCHB = (1<<OCIE3B), COMPAREMATCHC = (1<<OCIE3C)};
+    OVERFLOW = (1<<TOIE3), CAPTURE = (1<<ICIE3), COMPARE_MATCH_A = (1<<OCIE3A), COMPARE_MATCH_B = (1<<OCIE3B), COMPARE_MATCH_C = (1<<OCIE3C)};
   enum Constants : uint8_t { ALL_BITS = 0xFF };
   static value_type GetValue()                 { return TCNT3; }
   static void SetValue(value_type value)       { TCNT3 = value; }
@@ -1570,7 +1570,7 @@ struct Timer4 {
     INC_ON_FALLING = (1<<CS42)|(1<<CS41), INC_ON_RISING = (1<<CS42)|(1<<CS41)|(1<<CS40) };
 
   enum Interrupt : uint8_t { 
-    OVERFLOW = (1<<TOIE4), COMPAREMATCHA = (1<<OCIE4A), COMPAREMATCHB = (1<<OCIE4B), COMPAREMATCHD = (1<<OCIE4D)};
+    OVERFLOW = (1<<TOIE4), COMPARE_MATCH_A = (1<<OCIE4A), COMPARE_MATCH_B = (1<<OCIE4B), COMPARE_MATCH_D = (1<<OCIE4D)};
   enum Constants : uint8_t { ALL_BITS = 0xFF };
   static value_type GetValue()                 { return TCNT4; }
   static void SetValue(value_type value)       { TCNT4 = value; }
