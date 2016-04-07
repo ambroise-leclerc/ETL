@@ -1190,7 +1190,7 @@ struct Timer0 {
     CLK_DIV_1024 = (1<<CS02)|(1<<CS01)|(1<<CS00), BITS = (1<<CS02)|(1<<CS01)|(1<<CS00) };
 
   enum Interrupt : uint8_t { 
-    OVERFLOW = (1<<TOIE0), COMPAREMATCHA = (1<<OCIE0A), COMPAREMATCHB = (1<<OCIE0B)};
+    OVERFLOW = (1<<TOIE0), COMPARE_MATCH_A = (1<<OCIE0A), COMPARE_MATCH_B = (1<<OCIE0B)};
   enum Constants : uint8_t { ALL_BITS = 0xFF };
   static value_type GetValue()                 { return TCNT0; }
   static void SetValue(value_type value)       { TCNT0 = value; }
@@ -1238,7 +1238,7 @@ struct Timer1 {
     CLK_DIV_1024 = (1<<CS12)|(1<<CS11)|(1<<CS10), BITS = (1<<CS12)|(1<<CS11)|(1<<CS10) };
 
   enum Interrupt : uint8_t { 
-    OVERFLOW = (1<<TOIE1), CAPTURE = (1<<ICIE1), COMPAREMATCHA = (1<<OCIE1A), COMPAREMATCHB = (1<<OCIE1B)};
+    OVERFLOW = (1<<TOIE1), CAPTURE = (1<<ICIE1), COMPARE_MATCH_A = (1<<OCIE1A), COMPARE_MATCH_B = (1<<OCIE1B)};
   enum Constants : uint8_t { ALL_BITS = 0xFF };
   static value_type GetValue()                 { return TCNT1; }
   static void SetValue(value_type value)       { TCNT1 = value; }
@@ -1290,7 +1290,7 @@ struct Timer2 {
     INC_ON_FALLING = (1<<CS22)|(1<<CS21), INC_ON_RISING = (1<<CS22)|(1<<CS21)|(1<<CS20) };
 
   enum Interrupt : uint8_t { 
-    OVERFLOW = (1<<TOIE2), COMPAREMATCHA = (1<<OCIE2A), COMPAREMATCHB = (1<<OCIE2B)};
+    OVERFLOW = (1<<TOIE2), COMPARE_MATCH_A = (1<<OCIE2A), COMPARE_MATCH_B = (1<<OCIE2B)};
   enum Constants : uint8_t { ALL_BITS = 0xFF };
   static value_type GetValue()                 { return TCNT2; }
   static void SetValue(value_type value)       { TCNT2 = value; }

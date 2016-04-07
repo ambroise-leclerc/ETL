@@ -35,8 +35,6 @@
 
 
 
-namespace etl {
-
 template<typename ParentPort>
 struct Pin {
   /// Port is defined as the Port object to which this pin belongs.
@@ -74,4 +72,3 @@ struct Pin {
 #include "architecture\ioports_ATmega328P.h"
 #endif
 
-} // namespace etl
