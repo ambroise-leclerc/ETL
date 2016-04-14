@@ -1,5 +1,5 @@
 /// @file ioports_Mock.h
-/// @date 07/04/16 19:26
+/// @date 4/14/16 1:03 PM
 /// @author Ambroise Leclerc and Cécile Gomes
 /// @brief Mock microcontroller peripherals handling classes
 //
@@ -37,63 +37,71 @@
 #include <MockDevice.h>
 
 namespace etl {
+class Device {
+public:
+    static void Initialize() {
+        MockDevice::Instance().Configure(2);
+    }
+};
 
 struct PinChangeIRQ0;
 struct PinChangeIRQ1;
 
-struct Port0 {
+class Port0 {
+public:
   using PinChangeIRQ = PinChangeIRQ0;
 
   /// Assigns a value to PORT0.
   /// @param[in] value value affected to PORT0
-  static void Assign(uint16_t value)   { MockDevice::Instance().WritePort(0, value); }
+  static void Assign(uint32_t value)    { MockDevice::Instance().WritePort(0, value); }
 
   /// Sets masked bits in PORT0.
   /// @param[in] mask bits to set
-  static void SetBits(uint16_t mask)   { MockDevice::Instance().WritePort(0, MockDevice::Instance().ReadPort(0) | mask); }
+  static void SetBits(uint32_t mask)    { MockDevice::Instance().WritePort(0, MockDevice::Instance().ReadPort(0) | mask); }
 
   /// Clears masked bits in PORT0.
   /// @param[in] mask bits to clear
-  static void ClearBits(uint16_t mask) { MockDevice::Instance().WritePort(0, MockDevice::Instance().ReadPort(0) & ~mask); } 
+  static void ClearBits(uint32_t mask)  { MockDevice::Instance().WritePort(0, MockDevice::Instance().ReadPort(0) & ~mask); } 
 
   /// Changes values of masked bits in PORT0.
   /// @param[in] mask bits to change
   /// @param[in] value new bits values
-  static void ChangeBits(uint16_t mask, uint8_t value) { MockDevice::Instance().WritePort(0, (MockDevice::Instance().ReadPort(0) & ~mask) | value); } 
+  static void ChangeBits(uint32_t mask, uint32_t value) { MockDevice::Instance().WritePort(0, (MockDevice::Instance().ReadPort(0) & ~mask) | value); } 
 
   /// Toggles masked bits in PORT0.
   /// @param[in] mask bits to toggle
-  static void ToggleBits(uint16_t mask) { MockDevice::Instance().WritePort(0, MockDevice::Instance().ReadPort(0) ^ mask); } 
+  static void ToggleBits(uint32_t mask) { MockDevice::Instance().WritePort(0, MockDevice::Instance().ReadPort(0) ^ mask); } 
 
   /// Pulses masked bits in PORT0 with high state first.
   /// @param[in] mask bits to pulse
-  static void PulseHigh(uint16_t mask) { SetBits(mask); ClearBits(mask); }
+  static void PulseHigh(uint32_t mask)  { SetBits(mask); ClearBits(mask); }
 
   /// Pulses masked bits in PORT0 with low state first.
   /// @param[in] mask bits to pulse
-  static void PulseLow(uint16_t mask)  { ClearBits(mask); SetBits(mask); }
+  static void PulseLow(uint32_t mask)   { ClearBits(mask); SetBits(mask); }
 
   /// Set corresponding masked bits of PORT0 to output direction.
   /// @param[in] mask bits
-  static void SetOutput(uint16_t mask)    {  }
+  static void SetOutput(uint32_t mask)  { MockDevice::Instance().WriteDirection(0, MockDevice::Instance().ReadDirection(0) | mask); }
 
   /// Set corresponding masked bits of PORT0 to input direction.
   /// @param[in] mask bits
-  static void SetInput(uint16_t mask)  {  }
+  static void SetInput(uint32_t mask)   { MockDevice::Instance().WriteDirection(0, MockDevice::Instance().ReadDirection(0) & ~mask); }
 
   /// Tests masked bits of PORT0
   /// @param[in] mask bits
   /// @param[in] true if the corresponding bits are all set, false otherwise.
-  static bool TestBits(uint16_t mask)  { return (MockDevice::Instance().ReadPort(0) & mask) == mask; }
+  static bool TestBits(uint32_t mask)   { return (MockDevice::Instance().ReadPort(0) & mask) == mask; }
 
   /// Returns the value of the bit at the position pos.
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
-  static bool Test(uint16_t pos) { return (MockDevice::Instance().ReadPort(0) & (1<<pos)) != 0; }
+  static bool Test(uint8_t pos)        { return (MockDevice::Instance().ReadPort(0) & (1<<pos)) != 0; }
 
 };
 
-struct Pin0 : public Pin<Port0> {
+class Pin0 : public Pin<Port0> {
+public:
   /// Sets Pin0 to HIGH.
   static void Set()       { Port0::SetBits(1<<0); }
 
@@ -117,18 +125,19 @@ struct Pin0 : public Pin<Port0> {
 
   /// Reads Pin0  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<0); }
+  static bool Test()      { return Port0::Test(0); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<0)
-  static constexpr uint16_t bitmask()               { return (1<<0); }
+  static constexpr uint32_t bitmask()               { return (1<<0); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 0
-  static constexpr uint16_t bit()                   { return 0; }
+  static constexpr uint8_t bit()                   { return 0; }
 };
 
-struct Pin1 : public Pin<Port0> {
+class Pin1 : public Pin<Port0> {
+public:
   /// Sets Pin1 to HIGH.
   static void Set()       { Port0::SetBits(1<<1); }
 
@@ -152,18 +161,19 @@ struct Pin1 : public Pin<Port0> {
 
   /// Reads Pin1  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<1); }
+  static bool Test()      { return Port0::Test(1); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<1)
-  static constexpr uint16_t bitmask()               { return (1<<1); }
+  static constexpr uint32_t bitmask()               { return (1<<1); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 1
-  static constexpr uint16_t bit()                   { return 1; }
+  static constexpr uint8_t bit()                   { return 1; }
 };
 
-struct Pin2 : public Pin<Port0> {
+class Pin2 : public Pin<Port0> {
+public:
   /// Sets Pin2 to HIGH.
   static void Set()       { Port0::SetBits(1<<2); }
 
@@ -187,18 +197,19 @@ struct Pin2 : public Pin<Port0> {
 
   /// Reads Pin2  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<2); }
+  static bool Test()      { return Port0::Test(2); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<2)
-  static constexpr uint16_t bitmask()               { return (1<<2); }
+  static constexpr uint32_t bitmask()               { return (1<<2); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 2
-  static constexpr uint16_t bit()                   { return 2; }
+  static constexpr uint8_t bit()                   { return 2; }
 };
 
-struct Pin3 : public Pin<Port0> {
+class Pin3 : public Pin<Port0> {
+public:
   /// Sets Pin3 to HIGH.
   static void Set()       { Port0::SetBits(1<<3); }
 
@@ -222,18 +233,19 @@ struct Pin3 : public Pin<Port0> {
 
   /// Reads Pin3  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<3); }
+  static bool Test()      { return Port0::Test(3); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<3)
-  static constexpr uint16_t bitmask()               { return (1<<3); }
+  static constexpr uint32_t bitmask()               { return (1<<3); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 3
-  static constexpr uint16_t bit()                   { return 3; }
+  static constexpr uint8_t bit()                   { return 3; }
 };
 
-struct Pin4 : public Pin<Port0> {
+class Pin4 : public Pin<Port0> {
+public:
   /// Sets Pin4 to HIGH.
   static void Set()       { Port0::SetBits(1<<4); }
 
@@ -257,18 +269,19 @@ struct Pin4 : public Pin<Port0> {
 
   /// Reads Pin4  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<4); }
+  static bool Test()      { return Port0::Test(4); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<4)
-  static constexpr uint16_t bitmask()               { return (1<<4); }
+  static constexpr uint32_t bitmask()               { return (1<<4); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 4
-  static constexpr uint16_t bit()                   { return 4; }
+  static constexpr uint8_t bit()                   { return 4; }
 };
 
-struct Pin5 : public Pin<Port0> {
+class Pin5 : public Pin<Port0> {
+public:
   /// Sets Pin5 to HIGH.
   static void Set()       { Port0::SetBits(1<<5); }
 
@@ -292,18 +305,19 @@ struct Pin5 : public Pin<Port0> {
 
   /// Reads Pin5  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<5); }
+  static bool Test()      { return Port0::Test(5); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<5)
-  static constexpr uint16_t bitmask()               { return (1<<5); }
+  static constexpr uint32_t bitmask()               { return (1<<5); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 5
-  static constexpr uint16_t bit()                   { return 5; }
+  static constexpr uint8_t bit()                   { return 5; }
 };
 
-struct Pin6 : public Pin<Port0> {
+class Pin6 : public Pin<Port0> {
+public:
   /// Sets Pin6 to HIGH.
   static void Set()       { Port0::SetBits(1<<6); }
 
@@ -327,18 +341,19 @@ struct Pin6 : public Pin<Port0> {
 
   /// Reads Pin6  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<6); }
+  static bool Test()      { return Port0::Test(6); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<6)
-  static constexpr uint16_t bitmask()               { return (1<<6); }
+  static constexpr uint32_t bitmask()               { return (1<<6); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 6
-  static constexpr uint16_t bit()                   { return 6; }
+  static constexpr uint8_t bit()                   { return 6; }
 };
 
-struct Pin7 : public Pin<Port0> {
+class Pin7 : public Pin<Port0> {
+public:
   /// Sets Pin7 to HIGH.
   static void Set()       { Port0::SetBits(1<<7); }
 
@@ -362,18 +377,19 @@ struct Pin7 : public Pin<Port0> {
 
   /// Reads Pin7  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<7); }
+  static bool Test()      { return Port0::Test(7); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<7)
-  static constexpr uint16_t bitmask()               { return (1<<7); }
+  static constexpr uint32_t bitmask()               { return (1<<7); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 7
-  static constexpr uint16_t bit()                   { return 7; }
+  static constexpr uint8_t bit()                   { return 7; }
 };
 
-struct Pin8 : public Pin<Port0> {
+class Pin8 : public Pin<Port0> {
+public:
   /// Sets Pin8 to HIGH.
   static void Set()       { Port0::SetBits(1<<8); }
 
@@ -397,18 +413,19 @@ struct Pin8 : public Pin<Port0> {
 
   /// Reads Pin8  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<8); }
+  static bool Test()      { return Port0::Test(8); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<8)
-  static constexpr uint16_t bitmask()               { return (1<<8); }
+  static constexpr uint32_t bitmask()               { return (1<<8); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 8
-  static constexpr uint16_t bit()                   { return 8; }
+  static constexpr uint8_t bit()                   { return 8; }
 };
 
-struct Pin9 : public Pin<Port0> {
+class Pin9 : public Pin<Port0> {
+public:
   /// Sets Pin9 to HIGH.
   static void Set()       { Port0::SetBits(1<<9); }
 
@@ -432,18 +449,19 @@ struct Pin9 : public Pin<Port0> {
 
   /// Reads Pin9  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<9); }
+  static bool Test()      { return Port0::Test(9); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<9)
-  static constexpr uint16_t bitmask()               { return (1<<9); }
+  static constexpr uint32_t bitmask()               { return (1<<9); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 9
-  static constexpr uint16_t bit()                   { return 9; }
+  static constexpr uint8_t bit()                   { return 9; }
 };
 
-struct Pin10 : public Pin<Port0> {
+class Pin10 : public Pin<Port0> {
+public:
   /// Sets Pin10 to HIGH.
   static void Set()       { Port0::SetBits(1<<10); }
 
@@ -467,18 +485,19 @@ struct Pin10 : public Pin<Port0> {
 
   /// Reads Pin10  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<10); }
+  static bool Test()      { return Port0::Test(10); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<10)
-  static constexpr uint16_t bitmask()               { return (1<<10); }
+  static constexpr uint32_t bitmask()               { return (1<<10); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 10
-  static constexpr uint16_t bit()                   { return 10; }
+  static constexpr uint8_t bit()                   { return 10; }
 };
 
-struct Pin11 : public Pin<Port0> {
+class Pin11 : public Pin<Port0> {
+public:
   /// Sets Pin11 to HIGH.
   static void Set()       { Port0::SetBits(1<<11); }
 
@@ -502,18 +521,19 @@ struct Pin11 : public Pin<Port0> {
 
   /// Reads Pin11  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<11); }
+  static bool Test()      { return Port0::Test(11); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<11)
-  static constexpr uint16_t bitmask()               { return (1<<11); }
+  static constexpr uint32_t bitmask()               { return (1<<11); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 11
-  static constexpr uint16_t bit()                   { return 11; }
+  static constexpr uint8_t bit()                   { return 11; }
 };
 
-struct Pin12 : public Pin<Port0> {
+class Pin12 : public Pin<Port0> {
+public:
   /// Sets Pin12 to HIGH.
   static void Set()       { Port0::SetBits(1<<12); }
 
@@ -537,18 +557,19 @@ struct Pin12 : public Pin<Port0> {
 
   /// Reads Pin12  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<12); }
+  static bool Test()      { return Port0::Test(12); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<12)
-  static constexpr uint16_t bitmask()               { return (1<<12); }
+  static constexpr uint32_t bitmask()               { return (1<<12); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 12
-  static constexpr uint16_t bit()                   { return 12; }
+  static constexpr uint8_t bit()                   { return 12; }
 };
 
-struct Pin13 : public Pin<Port0> {
+class Pin13 : public Pin<Port0> {
+public:
   /// Sets Pin13 to HIGH.
   static void Set()       { Port0::SetBits(1<<13); }
 
@@ -572,18 +593,19 @@ struct Pin13 : public Pin<Port0> {
 
   /// Reads Pin13  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<13); }
+  static bool Test()      { return Port0::Test(13); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<13)
-  static constexpr uint16_t bitmask()               { return (1<<13); }
+  static constexpr uint32_t bitmask()               { return (1<<13); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 13
-  static constexpr uint16_t bit()                   { return 13; }
+  static constexpr uint8_t bit()                   { return 13; }
 };
 
-struct Pin14 : public Pin<Port0> {
+class Pin14 : public Pin<Port0> {
+public:
   /// Sets Pin14 to HIGH.
   static void Set()       { Port0::SetBits(1<<14); }
 
@@ -607,18 +629,19 @@ struct Pin14 : public Pin<Port0> {
 
   /// Reads Pin14  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<14); }
+  static bool Test()      { return Port0::Test(14); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<14)
-  static constexpr uint16_t bitmask()               { return (1<<14); }
+  static constexpr uint32_t bitmask()               { return (1<<14); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 14
-  static constexpr uint16_t bit()                   { return 14; }
+  static constexpr uint8_t bit()                   { return 14; }
 };
 
-struct Pin15 : public Pin<Port0> {
+class Pin15 : public Pin<Port0> {
+public:
   /// Sets Pin15 to HIGH.
   static void Set()       { Port0::SetBits(1<<15); }
 
@@ -642,71 +665,73 @@ struct Pin15 : public Pin<Port0> {
 
   /// Reads Pin15  value.
   /// @return Port pin value.
-  static bool Test()      { return Port0::Test(1<<15); }
+  static bool Test()      { return Port0::Test(15); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<15)
-  static constexpr uint16_t bitmask()               { return (1<<15); }
+  static constexpr uint32_t bitmask()               { return (1<<15); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 15
-  static constexpr uint16_t bit()                   { return 15; }
+  static constexpr uint8_t bit()                   { return 15; }
 };
 
 
-struct Port1 {
+class Port1 {
+public:
   using PinChangeIRQ = PinChangeIRQ1;
 
   /// Assigns a value to PORT1.
   /// @param[in] value value affected to PORT1
-  static void Assign(uint16_t value)   { MockDevice::Instance().WritePort(1, value); }
+  static void Assign(uint32_t value)    { MockDevice::Instance().WritePort(1, value); }
 
   /// Sets masked bits in PORT1.
   /// @param[in] mask bits to set
-  static void SetBits(uint16_t mask)   { MockDevice::Instance().WritePort(1, MockDevice::Instance().ReadPort(1) | mask); }
+  static void SetBits(uint32_t mask)    { MockDevice::Instance().WritePort(1, MockDevice::Instance().ReadPort(1) | mask); }
 
   /// Clears masked bits in PORT1.
   /// @param[in] mask bits to clear
-  static void ClearBits(uint16_t mask) { MockDevice::Instance().WritePort(1, MockDevice::Instance().ReadPort(1) & ~mask); } 
+  static void ClearBits(uint32_t mask)  { MockDevice::Instance().WritePort(1, MockDevice::Instance().ReadPort(1) & ~mask); } 
 
   /// Changes values of masked bits in PORT1.
   /// @param[in] mask bits to change
   /// @param[in] value new bits values
-  static void ChangeBits(uint16_t mask, uint8_t value) { MockDevice::Instance().WritePort(1, (MockDevice::Instance().ReadPort(1) & ~mask) | value); } 
+  static void ChangeBits(uint32_t mask, uint32_t value) { MockDevice::Instance().WritePort(1, (MockDevice::Instance().ReadPort(1) & ~mask) | value); } 
 
   /// Toggles masked bits in PORT1.
   /// @param[in] mask bits to toggle
-  static void ToggleBits(uint16_t mask) { MockDevice::Instance().WritePort(1, MockDevice::Instance().ReadPort(1) ^ mask); } 
+  static void ToggleBits(uint32_t mask) { MockDevice::Instance().WritePort(1, MockDevice::Instance().ReadPort(1) ^ mask); } 
 
   /// Pulses masked bits in PORT1 with high state first.
   /// @param[in] mask bits to pulse
-  static void PulseHigh(uint16_t mask) { SetBits(mask); ClearBits(mask); }
+  static void PulseHigh(uint32_t mask)  { SetBits(mask); ClearBits(mask); }
 
   /// Pulses masked bits in PORT1 with low state first.
   /// @param[in] mask bits to pulse
-  static void PulseLow(uint16_t mask)  { ClearBits(mask); SetBits(mask); }
+  static void PulseLow(uint32_t mask)   { ClearBits(mask); SetBits(mask); }
 
   /// Set corresponding masked bits of PORT1 to output direction.
   /// @param[in] mask bits
-  static void SetOutput(uint16_t mask)    {  }
+  static void SetOutput(uint32_t mask)  { MockDevice::Instance().WriteDirection(1, MockDevice::Instance().ReadDirection(1) | mask); }
 
   /// Set corresponding masked bits of PORT1 to input direction.
   /// @param[in] mask bits
-  static void SetInput(uint16_t mask)  {  }
+  static void SetInput(uint32_t mask)   { MockDevice::Instance().WriteDirection(1, MockDevice::Instance().ReadDirection(1) & ~mask); }
 
   /// Tests masked bits of PORT1
   /// @param[in] mask bits
   /// @param[in] true if the corresponding bits are all set, false otherwise.
-  static bool TestBits(uint16_t mask)  { return (MockDevice::Instance().ReadPort(1) & mask) == mask; }
+  static bool TestBits(uint32_t mask)   { return (MockDevice::Instance().ReadPort(1) & mask) == mask; }
 
   /// Returns the value of the bit at the position pos.
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
-  static bool Test(uint16_t pos) { return (MockDevice::Instance().ReadPort(1) & (1<<pos)) != 0; }
+  static bool Test(uint8_t pos)        { return (MockDevice::Instance().ReadPort(1) & (1<<pos)) != 0; }
 
 };
 
-struct Pin16 : public Pin<Port1> {
+class Pin16 : public Pin<Port1> {
+public:
   /// Sets Pin16 to HIGH.
   static void Set()       { Port1::SetBits(1<<0); }
 
@@ -730,18 +755,19 @@ struct Pin16 : public Pin<Port1> {
 
   /// Reads Pin16  value.
   /// @return Port pin value.
-  static bool Test()      { return Port1::Test(1<<0); }
+  static bool Test()      { return Port1::Test(0); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<0)
-  static constexpr uint16_t bitmask()               { return (1<<0); }
+  static constexpr uint32_t bitmask()               { return (1<<0); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 0
-  static constexpr uint16_t bit()                   { return 0; }
+  static constexpr uint8_t bit()                   { return 0; }
 };
 
-struct Pin17 : public Pin<Port1> {
+class Pin17 : public Pin<Port1> {
+public:
   /// Sets Pin17 to HIGH.
   static void Set()       { Port1::SetBits(1<<1); }
 
@@ -765,18 +791,19 @@ struct Pin17 : public Pin<Port1> {
 
   /// Reads Pin17  value.
   /// @return Port pin value.
-  static bool Test()      { return Port1::Test(1<<1); }
+  static bool Test()      { return Port1::Test(1); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<1)
-  static constexpr uint16_t bitmask()               { return (1<<1); }
+  static constexpr uint32_t bitmask()               { return (1<<1); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 1
-  static constexpr uint16_t bit()                   { return 1; }
+  static constexpr uint8_t bit()                   { return 1; }
 };
 
-struct Pin18 : public Pin<Port1> {
+class Pin18 : public Pin<Port1> {
+public:
   /// Sets Pin18 to HIGH.
   static void Set()       { Port1::SetBits(1<<2); }
 
@@ -800,18 +827,19 @@ struct Pin18 : public Pin<Port1> {
 
   /// Reads Pin18  value.
   /// @return Port pin value.
-  static bool Test()      { return Port1::Test(1<<2); }
+  static bool Test()      { return Port1::Test(2); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<2)
-  static constexpr uint16_t bitmask()               { return (1<<2); }
+  static constexpr uint32_t bitmask()               { return (1<<2); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 2
-  static constexpr uint16_t bit()                   { return 2; }
+  static constexpr uint8_t bit()                   { return 2; }
 };
 
-struct Pin19 : public Pin<Port1> {
+class Pin19 : public Pin<Port1> {
+public:
   /// Sets Pin19 to HIGH.
   static void Set()       { Port1::SetBits(1<<3); }
 
@@ -835,18 +863,19 @@ struct Pin19 : public Pin<Port1> {
 
   /// Reads Pin19  value.
   /// @return Port pin value.
-  static bool Test()      { return Port1::Test(1<<3); }
+  static bool Test()      { return Port1::Test(3); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<3)
-  static constexpr uint16_t bitmask()               { return (1<<3); }
+  static constexpr uint32_t bitmask()               { return (1<<3); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 3
-  static constexpr uint16_t bit()                   { return 3; }
+  static constexpr uint8_t bit()                   { return 3; }
 };
 
-struct Pin20 : public Pin<Port1> {
+class Pin20 : public Pin<Port1> {
+public:
   /// Sets Pin20 to HIGH.
   static void Set()       { Port1::SetBits(1<<4); }
 
@@ -870,18 +899,19 @@ struct Pin20 : public Pin<Port1> {
 
   /// Reads Pin20  value.
   /// @return Port pin value.
-  static bool Test()      { return Port1::Test(1<<4); }
+  static bool Test()      { return Port1::Test(4); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<4)
-  static constexpr uint16_t bitmask()               { return (1<<4); }
+  static constexpr uint32_t bitmask()               { return (1<<4); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 4
-  static constexpr uint16_t bit()                   { return 4; }
+  static constexpr uint8_t bit()                   { return 4; }
 };
 
-struct Pin21 : public Pin<Port1> {
+class Pin21 : public Pin<Port1> {
+public:
   /// Sets Pin21 to HIGH.
   static void Set()       { Port1::SetBits(1<<5); }
 
@@ -905,18 +935,19 @@ struct Pin21 : public Pin<Port1> {
 
   /// Reads Pin21  value.
   /// @return Port pin value.
-  static bool Test()      { return Port1::Test(1<<5); }
+  static bool Test()      { return Port1::Test(5); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<5)
-  static constexpr uint16_t bitmask()               { return (1<<5); }
+  static constexpr uint32_t bitmask()               { return (1<<5); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 5
-  static constexpr uint16_t bit()                   { return 5; }
+  static constexpr uint8_t bit()                   { return 5; }
 };
 
-struct Pin22 : public Pin<Port1> {
+class Pin22 : public Pin<Port1> {
+public:
   /// Sets Pin22 to HIGH.
   static void Set()       { Port1::SetBits(1<<6); }
 
@@ -940,18 +971,19 @@ struct Pin22 : public Pin<Port1> {
 
   /// Reads Pin22  value.
   /// @return Port pin value.
-  static bool Test()      { return Port1::Test(1<<6); }
+  static bool Test()      { return Port1::Test(6); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<6)
-  static constexpr uint16_t bitmask()               { return (1<<6); }
+  static constexpr uint32_t bitmask()               { return (1<<6); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 6
-  static constexpr uint16_t bit()                   { return 6; }
+  static constexpr uint8_t bit()                   { return 6; }
 };
 
-struct Pin23 : public Pin<Port1> {
+class Pin23 : public Pin<Port1> {
+public:
   /// Sets Pin23 to HIGH.
   static void Set()       { Port1::SetBits(1<<7); }
 
@@ -975,18 +1007,19 @@ struct Pin23 : public Pin<Port1> {
 
   /// Reads Pin23  value.
   /// @return Port pin value.
-  static bool Test()      { return Port1::Test(1<<7); }
+  static bool Test()      { return Port1::Test(7); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<7)
-  static constexpr uint16_t bitmask()               { return (1<<7); }
+  static constexpr uint32_t bitmask()               { return (1<<7); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 7
-  static constexpr uint16_t bit()                   { return 7; }
+  static constexpr uint8_t bit()                   { return 7; }
 };
 
-struct Pin24 : public Pin<Port1> {
+class Pin24 : public Pin<Port1> {
+public:
   /// Sets Pin24 to HIGH.
   static void Set()       { Port1::SetBits(1<<8); }
 
@@ -1010,15 +1043,15 @@ struct Pin24 : public Pin<Port1> {
 
   /// Reads Pin24  value.
   /// @return Port pin value.
-  static bool Test()      { return Port1::Test(1<<8); }
+  static bool Test()      { return Port1::Test(8); }
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<8)
-  static constexpr uint16_t bitmask()               { return (1<<8); }
+  static constexpr uint32_t bitmask()               { return (1<<8); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 8
-  static constexpr uint16_t bit()                   { return 8; }
+  static constexpr uint8_t bit()                   { return 8; }
 };
 
 

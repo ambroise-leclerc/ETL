@@ -1,5 +1,5 @@
 /// @file ioports_ESP8266.h
-/// @date 07/04/16 19:26
+/// @date 4/14/16 1:03 PM
 /// @author Ambroise Leclerc and Cécile Gomes
 /// @brief Espressif ESP 32-bit microcontrollers peripherals handling classes
 //
@@ -37,7 +37,6 @@
 #include <ioports_esp.h>
 
 namespace etl {
-
 
     struct Pin15 : public Pin<Port0> {
 
