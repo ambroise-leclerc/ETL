@@ -1,5 +1,5 @@
 /// @file ioports_Mock.h
-/// @date 4/14/16 1:03 PM
+/// @date 4/14/16 4:15 PM
 /// @author Ambroise Leclerc and Cécile Gomes
 /// @brief Mock microcontroller peripherals handling classes
 //
@@ -39,9 +39,8 @@
 namespace etl {
 class Device {
 public:
-    static void Initialize() {
-        MockDevice::Instance().Configure(2);
-    }
+    static void Initialize() { MockDevice::Instance().Configure(2); }
+    template<typename T> static void Pragma(T pragma) { MockDevice::Instance().Pragma(pragma); }
 };
 
 struct PinChangeIRQ0;
