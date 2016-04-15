@@ -1,5 +1,5 @@
 /// @file ioports_Mock.h
-/// @date 4/15/16 1:13 PM
+/// @date 4/15/16 10:58 PM
 /// @author Ambroise Leclerc and Cécile Gomes
 /// @brief Mock microcontroller peripherals handling classes
 //
@@ -41,7 +41,7 @@ class Device {
 public:
     enum Register : MockDevice::Register { PORT0 ,PORT1 ,DDR0 ,DDR1 , };
     static void Initialize() { MockDevice::Instance().Configure(2); }
-    template<typename T> static void Pragma(T pragma) { MockDevice::Instance().Pragma(pragma); }
+    template<typename T> static int64_t Pragma(T pragma) { return MockDevice::Instance().Pragma(pragma); }
 };
 
 struct PinChangeIRQ0;
