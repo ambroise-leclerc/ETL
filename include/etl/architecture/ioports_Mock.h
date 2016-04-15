@@ -1,5 +1,5 @@
 /// @file ioports_Mock.h
-/// @date 4/14/16 4:15 PM
+/// @date 4/15/16 1:13 PM
 /// @author Ambroise Leclerc and Cécile Gomes
 /// @brief Mock microcontroller peripherals handling classes
 //
@@ -39,6 +39,7 @@
 namespace etl {
 class Device {
 public:
+    enum Register : MockDevice::Register { PORT0 ,PORT1 ,DDR0 ,DDR1 , };
     static void Initialize() { MockDevice::Instance().Configure(2); }
     template<typename T> static void Pragma(T pragma) { MockDevice::Instance().Pragma(pragma); }
 };
@@ -52,24 +53,24 @@ public:
 
   /// Assigns a value to PORT0.
   /// @param[in] value value affected to PORT0
-  static void Assign(uint32_t value)    { MockDevice::Instance().WritePort(0, value); }
+  static void Assign(uint32_t value)    { MockDevice::Instance().WriteRegister(Device::PORT0, value); }
 
   /// Sets masked bits in PORT0.
   /// @param[in] mask bits to set
-  static void SetBits(uint32_t mask)    { MockDevice::Instance().WritePort(0, MockDevice::Instance().ReadPort(0) | mask); }
+  static void SetBits(uint32_t mask)    { MockDevice::Instance().WriteRegister(Device::PORT0, MockDevice::Instance().ReadRegister(Device::PORT0) | mask); }
 
   /// Clears masked bits in PORT0.
   /// @param[in] mask bits to clear
-  static void ClearBits(uint32_t mask)  { MockDevice::Instance().WritePort(0, MockDevice::Instance().ReadPort(0) & ~mask); } 
+  static void ClearBits(uint32_t mask)  { MockDevice::Instance().WriteRegister(Device::PORT0, MockDevice::Instance().ReadRegister(Device::PORT0) & ~mask); } 
 
   /// Changes values of masked bits in PORT0.
   /// @param[in] mask bits to change
   /// @param[in] value new bits values
-  static void ChangeBits(uint32_t mask, uint32_t value) { MockDevice::Instance().WritePort(0, (MockDevice::Instance().ReadPort(0) & ~mask) | value); } 
+  static void ChangeBits(uint32_t mask, uint32_t value) { MockDevice::Instance().WriteRegister(Device::PORT0, (MockDevice::Instance().ReadRegister(Device::PORT0) & ~mask) | value); } 
 
   /// Toggles masked bits in PORT0.
   /// @param[in] mask bits to toggle
-  static void ToggleBits(uint32_t mask) { MockDevice::Instance().WritePort(0, MockDevice::Instance().ReadPort(0) ^ mask); } 
+  static void ToggleBits(uint32_t mask) { MockDevice::Instance().WriteRegister(Device::PORT0, MockDevice::Instance().ReadRegister(Device::PORT0) ^ mask); } 
 
   /// Pulses masked bits in PORT0 with high state first.
   /// @param[in] mask bits to pulse
@@ -81,21 +82,21 @@ public:
 
   /// Set corresponding masked bits of PORT0 to output direction.
   /// @param[in] mask bits
-  static void SetOutput(uint32_t mask)  { MockDevice::Instance().WriteDirection(0, MockDevice::Instance().ReadDirection(0) | mask); }
+  static void SetOutput(uint32_t mask)  { MockDevice::Instance().WriteRegister(Device::DDR0, MockDevice::Instance().ReadRegister(Device::DDR0) | mask); }
 
   /// Set corresponding masked bits of PORT0 to input direction.
   /// @param[in] mask bits
-  static void SetInput(uint32_t mask)   { MockDevice::Instance().WriteDirection(0, MockDevice::Instance().ReadDirection(0) & ~mask); }
+  static void SetInput(uint32_t mask)   { MockDevice::Instance().WriteRegister(Device::DDR0, MockDevice::Instance().ReadRegister(Device::DDR0) & ~mask); }
 
   /// Tests masked bits of PORT0
   /// @param[in] mask bits
   /// @param[in] true if the corresponding bits are all set, false otherwise.
-  static bool TestBits(uint32_t mask)   { return (MockDevice::Instance().ReadPort(0) & mask) == mask; }
+  static bool TestBits(uint32_t mask)   { return (MockDevice::Instance().ReadRegister(Device::PORT0) & mask) == mask; }
 
   /// Returns the value of the bit at the position pos.
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
-  static bool Test(uint8_t pos)        { return (MockDevice::Instance().ReadPort(0) & (1<<pos)) != 0; }
+  static bool Test(uint8_t pos)        { return (MockDevice::Instance().ReadRegister(Device::PORT0) & (1<<pos)) != 0; }
 
 };
 
@@ -682,24 +683,24 @@ public:
 
   /// Assigns a value to PORT1.
   /// @param[in] value value affected to PORT1
-  static void Assign(uint32_t value)    { MockDevice::Instance().WritePort(1, value); }
+  static void Assign(uint32_t value)    { MockDevice::Instance().WriteRegister(Device::PORT1, value); }
 
   /// Sets masked bits in PORT1.
   /// @param[in] mask bits to set
-  static void SetBits(uint32_t mask)    { MockDevice::Instance().WritePort(1, MockDevice::Instance().ReadPort(1) | mask); }
+  static void SetBits(uint32_t mask)    { MockDevice::Instance().WriteRegister(Device::PORT1, MockDevice::Instance().ReadRegister(Device::PORT1) | mask); }
 
   /// Clears masked bits in PORT1.
   /// @param[in] mask bits to clear
-  static void ClearBits(uint32_t mask)  { MockDevice::Instance().WritePort(1, MockDevice::Instance().ReadPort(1) & ~mask); } 
+  static void ClearBits(uint32_t mask)  { MockDevice::Instance().WriteRegister(Device::PORT1, MockDevice::Instance().ReadRegister(Device::PORT1) & ~mask); } 
 
   /// Changes values of masked bits in PORT1.
   /// @param[in] mask bits to change
   /// @param[in] value new bits values
-  static void ChangeBits(uint32_t mask, uint32_t value) { MockDevice::Instance().WritePort(1, (MockDevice::Instance().ReadPort(1) & ~mask) | value); } 
+  static void ChangeBits(uint32_t mask, uint32_t value) { MockDevice::Instance().WriteRegister(Device::PORT1, (MockDevice::Instance().ReadRegister(Device::PORT1) & ~mask) | value); } 
 
   /// Toggles masked bits in PORT1.
   /// @param[in] mask bits to toggle
-  static void ToggleBits(uint32_t mask) { MockDevice::Instance().WritePort(1, MockDevice::Instance().ReadPort(1) ^ mask); } 
+  static void ToggleBits(uint32_t mask) { MockDevice::Instance().WriteRegister(Device::PORT1, MockDevice::Instance().ReadRegister(Device::PORT1) ^ mask); } 
 
   /// Pulses masked bits in PORT1 with high state first.
   /// @param[in] mask bits to pulse
@@ -711,21 +712,21 @@ public:
 
   /// Set corresponding masked bits of PORT1 to output direction.
   /// @param[in] mask bits
-  static void SetOutput(uint32_t mask)  { MockDevice::Instance().WriteDirection(1, MockDevice::Instance().ReadDirection(1) | mask); }
+  static void SetOutput(uint32_t mask)  { MockDevice::Instance().WriteRegister(Device::DDR1, MockDevice::Instance().ReadRegister(Device::DDR1) | mask); }
 
   /// Set corresponding masked bits of PORT1 to input direction.
   /// @param[in] mask bits
-  static void SetInput(uint32_t mask)   { MockDevice::Instance().WriteDirection(1, MockDevice::Instance().ReadDirection(1) & ~mask); }
+  static void SetInput(uint32_t mask)   { MockDevice::Instance().WriteRegister(Device::DDR1, MockDevice::Instance().ReadRegister(Device::DDR1) & ~mask); }
 
   /// Tests masked bits of PORT1
   /// @param[in] mask bits
   /// @param[in] true if the corresponding bits are all set, false otherwise.
-  static bool TestBits(uint32_t mask)   { return (MockDevice::Instance().ReadPort(1) & mask) == mask; }
+  static bool TestBits(uint32_t mask)   { return (MockDevice::Instance().ReadRegister(Device::PORT1) & mask) == mask; }
 
   /// Returns the value of the bit at the position pos.
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
-  static bool Test(uint8_t pos)        { return (MockDevice::Instance().ReadPort(1) & (1<<pos)) != 0; }
+  static bool Test(uint8_t pos)        { return (MockDevice::Instance().ReadRegister(Device::PORT1) & (1<<pos)) != 0; }
 
 };
 
