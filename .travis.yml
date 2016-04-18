@@ -1,8 +1,12 @@
 language: cpp
-script: cmake
 compiler:
-- clang
-- gcc
-os:
-- linux
+  - gcc
+before_script:
+  - mkdir build
+  - cd build
+  - cmake ..
+script:
+  - make
+  - ../etlTest
+
 
