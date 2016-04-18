@@ -2,6 +2,7 @@ language: cpp
 script: cmake
 compiler:
 - clang
+- gcc
 os:
 - linux
 
