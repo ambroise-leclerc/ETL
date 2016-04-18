@@ -5,11 +5,11 @@ addons:
   apt:
     sources: ['ubuntu-toolchain-r-test']
     packages: ['g++-5']
-    env: SCRIPT=cmake CMAKE_CXX_COMPILER=g++-5
+    env: COMPILER=g++-5
 before_script:
   - mkdir build
   - cd build
-  - cmake ..
+  - cmake -DCMAKE_CXX_COMPILER=$COMPILER ..
 script:
   - make
   - ../etlTest
