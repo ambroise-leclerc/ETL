@@ -9,7 +9,7 @@ addons:
 before_script:
   - mkdir build
   - cd build
-  - cmake -DCMAKE_CXX_COMPILER=$COMPILER ..
+  - cmake -DCMAKE_CXX_COMPILER=g++-5 ..
 script:
   - make
   - ../etlTest
