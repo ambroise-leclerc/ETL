@@ -12,6 +12,8 @@ before_script:
   - cmake -DCMAKE_CXX_COMPILER=g++-5 ..
 script:
   - make
+  - pwd
+  - ls
   - ./etlTest
 
 
