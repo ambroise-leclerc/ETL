@@ -45,30 +45,30 @@ struct Pin {
 
 #if defined (__AVR_Dummy__)
 #elif defined (__ESP_ESP8266__)
-#include "architecture\ioports_ESP8266.h"
+#include "architecture/ioports_ESP8266.h"
 #elif defined (__ESP_ESP07__)
-#include "architecture\ioports_ESP07.h"
+#include "architecture/ioports_ESP07.h"
 #elif defined (__Mock_Mock__)
-#include "architecture\ioports_Mock.h"
+#include "architecture/ioports_Mock.h"
 #elif defined (__AVR_ATmega32U4__)
-#include "architecture\ioports_ATmega32U4.h"
+#include "architecture/ioports_ATmega32U4.h"
 #elif defined (__AVR_ATmega48A__)
-#include "architecture\ioports_ATmega48A.h"
+#include "architecture/ioports_ATmega48A.h"
 #elif defined (__AVR_ATmega48PA__)
-#include "architecture\ioports_ATmega48PA.h"
+#include "architecture/ioports_ATmega48PA.h"
 #elif defined (__AVR_ATmega88A__)
-#include "architecture\ioports_ATmega88A.h"
+#include "architecture/ioports_ATmega88A.h"
 #elif defined (__AVR_ATmega88PA__)
-#include "architecture\ioports_ATmega88PA.h"
+#include "architecture/ioports_ATmega88PA.h"
 #elif defined (__AVR_ATmega168A__)
-#include "architecture\ioports_ATmega168A.h"
+#include "architecture/ioports_ATmega168A.h"
 #elif defined (__AVR_ATmega168PA__)
-#include "architecture\ioports_ATmega168PA.h"
+#include "architecture/ioports_ATmega168PA.h"
 #elif defined (__AVR_ATmega168P__)
-#include "architecture\ioports_ATmega168P.h"
+#include "architecture/ioports_ATmega168P.h"
 #elif defined (__AVR_ATmega328__)
-#include "architecture\ioports_ATmega328.h"
+#include "architecture/ioports_ATmega328.h"
 #elif defined (__AVR_ATmega328P__)
-#include "architecture\ioports_ATmega328P.h"
+#include "architecture/ioports_ATmega328P.h"
 #endif
 

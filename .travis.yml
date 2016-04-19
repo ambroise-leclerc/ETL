@@ -1,0 +1,17 @@
+language: cpp
+compiler:
+  - gcc
+addons:
+  apt:
+    sources: ['ubuntu-toolchain-r-test']
+    packages: ['g++-5']
+    env: COMPILER=g++-5
+before_script:
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_CXX_COMPILER=g++-5 ..
+script:
+  - make
+  - ./etltest
+
+

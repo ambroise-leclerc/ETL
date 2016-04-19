@@ -40,6 +40,7 @@
 #include <stdlib.h>
 #include <etl/debug_policies.h>
 #include <etl/metautils.h>
+#include <etl/ioports.h>
 #include <memory>
 #include <new>
 
