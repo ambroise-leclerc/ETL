@@ -1,6 +1,8 @@
 ETL
 ===
 
+[![Build Status](https://api.travis-ci.org/ambroise-leclerc/ETL.svg)]
+
 C++14 Embedded Template Library for Atmel AVR 8-bit and Espressif ESP 32-bit microcontrollers.
 
 **ETL** is a header only template library geared towards the size and performance constraints of embedded applications.
