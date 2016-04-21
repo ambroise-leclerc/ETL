@@ -9,14 +9,14 @@ using namespace etl;
 SCENARIO("GPIO directions", "[DDR]") {
     GIVEN("an MCU with default output gpios") {
 
-        Device::Initialize();
-        Port0::SetOutput(0b1111111111111111);
-        REQUIRE(MockDevice::Instance().ReadRegister(Device::DDR0) == 0b1111111111111111);
+        Device::initialize();
+        Port0::setOutput(0b1111111111111111);
+        REQUIRE(MockDevice::getInstance().readRegister(Device::DDR0) == 0b1111111111111111);
         WHEN("ports are set to input") {
-            Pin0::SetInput();
-            Pin2::SetInput();
+            Pin0::setInput();
+            Pin2::setInput();
             THEN("the direction register changes") {
-                REQUIRE(MockDevice::Instance().ReadRegister(Device::DDR0) == 0b1111111111111010);
+                REQUIRE(MockDevice::getInstance().readRegister(Device::DDR0) == 0b1111111111111010);
             }
         }
     }

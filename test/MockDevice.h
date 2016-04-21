@@ -7,7 +7,7 @@ class MockDevice {
 public:
     using Register = uint8_t;
 
-    static MockDevice& Instance() {
+    static MockDevice& getInstance() {
         static MockDevice instance;
         return instance;
     }
@@ -17,11 +17,11 @@ public:
     MockDevice& operator=(MockDevice const&) = delete;
     MockDevice& operator=(MockDevice &&) = delete;
 
-    void Configure(uint8_t portsNumber) { }
+    void configure(uint8_t portsNumber) { }
 
-    void WriteRegister(Register reg, uint32_t value) { internalRegister[reg] = value; }
-    uint32_t ReadRegister(Register reg) { return internalRegister[reg]; }
-    int64_t Pragma(std::string pragma) { }
+    void writeRegister(Register reg, uint32_t value) { internalRegister[reg] = value; }
+    uint32_t readRegister(Register reg) { return internalRegister[reg]; }
+    int64_t pragma(std::string pragma) { }
 
 private:
     MockDevice() {
