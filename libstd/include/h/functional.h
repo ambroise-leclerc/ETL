@@ -1,5 +1,5 @@
 /// @file functional.h
-/// @data 14/03/2014 17:02:55
+/// @date 14/03/2014 17:02:55
 /// @author Ambroise Leclerc
 /// @brief Function objects.
 //
@@ -35,7 +35,60 @@
 #define ETL_LIBSTD_FUNCTIONAL_H_
 
 namespace std {
+    
+/// Invoke the Callable object f with the parameters args.
+/// @param[in] f Callable to be invoked
+/// @param[in] args arguments to pass to f
+template <typename F, typename... ArgTypes>
+auto invoke(F&& f, ArgTypes&&... args) noexcept(noexcept(etlHelper::invoke(std::forward<F>(f), std::forward<ArgTypes>(args)...))) {
+    return etlHelper::invoke(std::forward<F>(f), std::forward<ArgTypes>(args)...);
+}
+    
+namespace etlHelper {
+template<typename Base, typename T, typename Derived, typename... Args>
+auto invoke(T Base::*pmf, Derived&& ref, Args&&... args) noexcept(noexcept((std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...)))
+ -> std::enable_if_t<std::is_function_v<T> && std::is_base_of_v<Base, std::decay_t<Derived>>, decltype((std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...))> {
+      return (std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...);
+}
  
+template <typename Base, typename T, typename RefWrap, typename... Args>
+auto invoke(T Base::*pmf, RefWrap&& ref, Args&&... args) noexcept(noexcept((ref.get().*pmf)(std::forward<Args>(args)...)))
+ -> std::enable_if_t<std::is_function_v<T> && is_reference_wrapper_v<std::decay_t<RefWrap>>, decltype((ref.get().*pmf)(std::forward<Args>(args)...))> {
+      return (ref.get().*pmf)(std::forward<Args>(args)...);
+}
+ 
+template <typename Base, typename T, typename Pointer, typename... Args>
+auto invoke(T Base::*pmf, Pointer&& ptr, Args&&... args) noexcept(noexcept(((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...)))
+ -> std::enable_if_t<std::is_function_v<T> && !is_reference_wrapper_v<std::decay_t<Pointer>> && !std::is_base_of_v<Base, std::decay_t<Pointer>>, decltype(((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...))> {
+      return ((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...);
+}
+ 
+template <typename Base, typename T, typename Derived>
+auto invoke(T Base::*pmd, Derived&& ref) noexcept(noexcept(std::forward<Derived>(ref).*pmd))
+ -> std::enable_if_t<!std::is_function_v<T> && std::is_base_of_v<Base, std::decay_t<Derived>>, decltype(std::forward<Derived>(ref).*pmd)> {
+      return std::forward<Derived>(ref).*pmd;
+}
+ 
+template <typename Base, typename T, typename RefWrap>
+auto invoke(T Base::*pmd, RefWrap&& ref) noexcept(noexcept(ref.get().*pmd))
+ -> std::enable_if_t<!std::is_function_v<T> && is_reference_wrapper_v<std::decay_t<RefWrap>>, decltype(ref.get().*pmd)> {
+      return ref.get().*pmd;
+}
+ 
+template <typename Base, typename T, typename Pointer>
+auto invoke(T Base::*pmd, Pointer&& ptr)
+    noexcept(noexcept((*std::forward<Pointer>(ptr)).*pmd))
+ -> std::enable_if_t<!std::is_function_v<T> && !is_reference_wrapper_v<std::decay_t<Pointer>> && !std::is_base_of_v<Base, std::decay_t<Pointer>>, decltype((*std::forward<Pointer>(ptr)).*pmd)> {
+      return (*std::forward<Pointer>(ptr)).*pmd;
+}
+ 
+template <typename F, typename... Args>
+auto invoke(F&& f, Args&&... args) noexcept(noexcept(std::forward<F>(f)(std::forward<Args>(args)...)))
+ -> std::enable_if_t<!std::is_member_pointer_v<std::decay_t<F>>, decltype(std::forward<F>(f)(std::forward<Args>(args)...))> {
+      return std::forward<F>(f)(std::forward<Args>(args)...);
+}
+
+} // namespace etlHelper
 } // namespace std  
 
 

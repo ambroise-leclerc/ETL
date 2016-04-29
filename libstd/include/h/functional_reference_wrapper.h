@@ -37,13 +37,6 @@
 #include <type_traits>
 #include <memory>
 
-namespace etlHelper {
-  
-template<typename T>
-struct reference_wrapper_base { };
-  
-} // namespace etlHelper
-
 namespace std {
 
 template<typename T>

@@ -21,4 +21,19 @@ SCENARIO("GPIO directions", "[DDR]") {
         }
     }
 }
+/*
+template<typename Timer>
+class TimerDutyCycle {
+public:
+    static void Init(uint8_t dutyCyclePercent) {
+        Interrupts::Disable();
+        Timer::
+        Interrupts::Enable();
+    }
+}
 
+SCENARIO("Timers") {
+    
+}
+
+*/

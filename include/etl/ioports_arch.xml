@@ -10,8 +10,9 @@
             <port id="1" pins="16"/>
         </device>
     </deviceFamily>
-    <deviceFamily name="Mock" initialRevision="01/04/2016 01:04:16">
-        <device id="Mock">
+    <deviceFamily name="Mock">
+        <device id="Mock" initialRevision="01/04/2016 01:04:16">
+            <memory ram="10000" registerSize="16"/>
             <port id="0" pins="0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15" PCI="0"/>
             <port id="1" pins="16 17 18 19 20 21 22 23 24" PCI="1"/>
         </device>

@@ -1,5 +1,5 @@
 /// @file ioports_Mock.h
-/// @date 4/21/16 4:05 PM
+/// @date 01/04/2016 01:04:16
 /// @author Ambroise Leclerc and Cécile Gomes
 /// @brief Mock microcontroller peripherals handling classes
 //
@@ -39,10 +39,28 @@
 namespace etl {
 class Device {
 public:
-    enum Register : MockDevice::Register { PORT0 ,PORT1 ,DDR0 ,DDR1 , };
-    static void initialize() { MockDevice::getInstance().configure(2); }
-    template<typename T> static int64_t pragma(T pragma) { return MockDevice::getInstance().pragma(pragma); }
+    template<typename T>
+    static int64_t pragma(T pragma) { return MockDevice::getInstance().pragma(pragma); }
+    static void initialize()        { MockDevice::getInstance().configure(2); }
+    static void yield()             { MockDevice::getInstance().yield(); }
+    static const size_t sramSize = 10000;
+    using RegisterType = uint16_t;
 };
+
+static MockDevice::RegisterType& GP0_OUT     = MockDevice::getInstance().registers[0];
+static MockDevice::RegisterType& GP1_OUT     = MockDevice::getInstance().registers[1];
+static MockDevice::RegisterType& GP0_IN      = MockDevice::getInstance().registers[2];
+static MockDevice::RegisterType& GP1_IN      = MockDevice::getInstance().registers[3];
+static MockDevice::RegisterType& GP0_DIR     = MockDevice::getInstance().registers[4];
+static MockDevice::RegisterType& GP1_DIR     = MockDevice::getInstance().registers[5];
+static MockDevice::RegisterType& GP0_OUT_SET = MockDevice::getInstance().registers[6];
+static MockDevice::RegisterType& GP1_OUT_SET = MockDevice::getInstance().registers[7];
+static MockDevice::RegisterType& GP0_OUT_CLR = MockDevice::getInstance().registers[8];
+static MockDevice::RegisterType& GP1_OUT_CLR = MockDevice::getInstance().registers[9];
+static MockDevice::RegisterType& GP0_DIR_SET = MockDevice::getInstance().registers[10];
+static MockDevice::RegisterType& GP1_DIR_SET = MockDevice::getInstance().registers[11];
+static MockDevice::RegisterType& GP0_DIR_CLR = MockDevice::getInstance().registers[12];
+static MockDevice::RegisterType& GP1_DIR_CLR = MockDevice::getInstance().registers[13];
 
 struct PinChangeIRQ0;
 struct PinChangeIRQ1;
@@ -53,50 +71,50 @@ public:
 
   /// Assigns a value to PORT0.
   /// @param[in] value value affected to PORT0
-  static void assign(uint32_t value)    { MockDevice::getInstance().writeRegister(Device::PORT0, value); }
+  static void assign(uint16_t value)    { GP0_OUT = value; }
 
   /// Sets masked bits in PORT0.
   /// @param[in] mask bits to set
-  static void setBits(uint32_t mask)    { MockDevice::getInstance().writeRegister(Device::PORT0, MockDevice::getInstance().readRegister(Device::PORT0) | mask); }
+  static void setBits(uint16_t mask)    { GP0_OUT |= mask; }
 
   /// Clears masked bits in PORT0.
   /// @param[in] mask bits to clear
-  static void clearBits(uint32_t mask)  { MockDevice::getInstance().writeRegister(Device::PORT0, MockDevice::getInstance().readRegister(Device::PORT0) & ~mask); } 
+  static void clearBits(uint16_t mask)  { GP0_OUT &= ~mask; } 
 
   /// Changes values of masked bits in PORT0.
   /// @param[in] mask bits to change
   /// @param[in] value new bits values
-  static void changeBits(uint32_t mask, uint32_t value) { MockDevice::getInstance().writeRegister(Device::PORT0, (MockDevice::getInstance().readRegister(Device::PORT0) & ~mask) | value); } 
+  static void changeBits(uint16_t mask, uint16_t value) { auto tmp = GP0_OUT & ~mask; GP0_OUT = tmp | value; }
 
   /// Toggles masked bits in PORT0.
   /// @param[in] mask bits to toggle
-  static void toggleBits(uint32_t mask) { MockDevice::getInstance().writeRegister(Device::PORT0, MockDevice::getInstance().readRegister(Device::PORT0) ^ mask); } 
+  static void toggleBits(uint16_t mask) { GP0_OUT ^= mask; } 
 
   /// Pulses masked bits in PORT0 with high state first.
   /// @param[in] mask bits to pulse
-  static void pulseHigh(uint32_t mask)  { setBits(mask); clearBits(mask); }
+  static void pulseHigh(uint16_t mask)  { setBits(mask); clearBits(mask); }
 
   /// Pulses masked bits in PORT0 with low state first.
   /// @param[in] mask bits to pulse
-  static void pulseLow(uint32_t mask)   { clearBits(mask); setBits(mask); }
+  static void pulseLow(uint16_t mask)   { clearBits(mask); setBits(mask); }
 
   /// Set corresponding masked bits of PORT0 to output direction.
   /// @param[in] mask bits
-  static void setOutput(uint32_t mask)  { MockDevice::getInstance().writeRegister(Device::DDR0, MockDevice::getInstance().readRegister(Device::DDR0) | mask); }
+  static void setOutput(uint16_t mask)  { GP0_DIR |= mask; }
 
   /// Set corresponding masked bits of PORT0 to input direction.
   /// @param[in] mask bits
-  static void setInput(uint32_t mask)   { MockDevice::getInstance().writeRegister(Device::DDR0, MockDevice::getInstance().readRegister(Device::DDR0) & ~mask); }
+  static void setInput(uint16_t mask)   { GP0_DIR &= ~mask; }
 
   /// Tests masked bits of PORT0
   /// @param[in] mask bits
   /// @param[in] true if the corresponding bits are all set, false otherwise.
-  static bool testBits(uint32_t mask)   { return (MockDevice::getInstance().readRegister(Device::PORT0) & mask) == mask; }
+  static bool testBits(uint16_t mask)   { return (GP0_IN & mask) == mask; }
 
   /// Returns the value of the bit at the position pos.
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
-  static bool test(uint8_t pos)        { return (MockDevice::getInstance().readRegister(Device::PORT0) & (1<<pos)) != 0; }
+  static bool test(uint8_t pos)        { return (GP0_IN & (1<<pos)) != 0; }
 
 };
 
@@ -133,7 +151,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<0)
-  static constexpr uint32_t bitmask() { return (1<<0); }
+  static constexpr uint16_t bitmask() { return (1<<0); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 0
@@ -173,7 +191,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<1)
-  static constexpr uint32_t bitmask() { return (1<<1); }
+  static constexpr uint16_t bitmask() { return (1<<1); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 1
@@ -213,7 +231,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<2)
-  static constexpr uint32_t bitmask() { return (1<<2); }
+  static constexpr uint16_t bitmask() { return (1<<2); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 2
@@ -253,7 +271,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<3)
-  static constexpr uint32_t bitmask() { return (1<<3); }
+  static constexpr uint16_t bitmask() { return (1<<3); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 3
@@ -293,7 +311,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<4)
-  static constexpr uint32_t bitmask() { return (1<<4); }
+  static constexpr uint16_t bitmask() { return (1<<4); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 4
@@ -333,7 +351,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<5)
-  static constexpr uint32_t bitmask() { return (1<<5); }
+  static constexpr uint16_t bitmask() { return (1<<5); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 5
@@ -373,7 +391,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<6)
-  static constexpr uint32_t bitmask() { return (1<<6); }
+  static constexpr uint16_t bitmask() { return (1<<6); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 6
@@ -413,7 +431,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<7)
-  static constexpr uint32_t bitmask() { return (1<<7); }
+  static constexpr uint16_t bitmask() { return (1<<7); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 7
@@ -453,7 +471,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<8)
-  static constexpr uint32_t bitmask() { return (1<<8); }
+  static constexpr uint16_t bitmask() { return (1<<8); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 8
@@ -493,7 +511,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<9)
-  static constexpr uint32_t bitmask() { return (1<<9); }
+  static constexpr uint16_t bitmask() { return (1<<9); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 9
@@ -533,7 +551,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<10)
-  static constexpr uint32_t bitmask() { return (1<<10); }
+  static constexpr uint16_t bitmask() { return (1<<10); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 10
@@ -573,7 +591,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<11)
-  static constexpr uint32_t bitmask() { return (1<<11); }
+  static constexpr uint16_t bitmask() { return (1<<11); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 11
@@ -613,7 +631,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<12)
-  static constexpr uint32_t bitmask() { return (1<<12); }
+  static constexpr uint16_t bitmask() { return (1<<12); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 12
@@ -653,7 +671,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<13)
-  static constexpr uint32_t bitmask() { return (1<<13); }
+  static constexpr uint16_t bitmask() { return (1<<13); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 13
@@ -693,7 +711,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<14)
-  static constexpr uint32_t bitmask() { return (1<<14); }
+  static constexpr uint16_t bitmask() { return (1<<14); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 14
@@ -733,7 +751,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<15)
-  static constexpr uint32_t bitmask() { return (1<<15); }
+  static constexpr uint16_t bitmask() { return (1<<15); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 15
@@ -747,50 +765,50 @@ public:
 
   /// Assigns a value to PORT1.
   /// @param[in] value value affected to PORT1
-  static void assign(uint32_t value)    { MockDevice::getInstance().writeRegister(Device::PORT1, value); }
+  static void assign(uint16_t value)    { GP1_OUT = value; }
 
   /// Sets masked bits in PORT1.
   /// @param[in] mask bits to set
-  static void setBits(uint32_t mask)    { MockDevice::getInstance().writeRegister(Device::PORT1, MockDevice::getInstance().readRegister(Device::PORT1) | mask); }
+  static void setBits(uint16_t mask)    { GP1_OUT |= mask; }
 
   /// Clears masked bits in PORT1.
   /// @param[in] mask bits to clear
-  static void clearBits(uint32_t mask)  { MockDevice::getInstance().writeRegister(Device::PORT1, MockDevice::getInstance().readRegister(Device::PORT1) & ~mask); } 
+  static void clearBits(uint16_t mask)  { GP1_OUT &= ~mask; } 
 
   /// Changes values of masked bits in PORT1.
   /// @param[in] mask bits to change
   /// @param[in] value new bits values
-  static void changeBits(uint32_t mask, uint32_t value) { MockDevice::getInstance().writeRegister(Device::PORT1, (MockDevice::getInstance().readRegister(Device::PORT1) & ~mask) | value); } 
+  static void changeBits(uint16_t mask, uint16_t value) { auto tmp = GP1_OUT & ~mask; GP1_OUT = tmp | value; }
 
   /// Toggles masked bits in PORT1.
   /// @param[in] mask bits to toggle
-  static void toggleBits(uint32_t mask) { MockDevice::getInstance().writeRegister(Device::PORT1, MockDevice::getInstance().readRegister(Device::PORT1) ^ mask); } 
+  static void toggleBits(uint16_t mask) { GP1_OUT ^= mask; } 
 
   /// Pulses masked bits in PORT1 with high state first.
   /// @param[in] mask bits to pulse
-  static void pulseHigh(uint32_t mask)  { setBits(mask); clearBits(mask); }
+  static void pulseHigh(uint16_t mask)  { setBits(mask); clearBits(mask); }
 
   /// Pulses masked bits in PORT1 with low state first.
   /// @param[in] mask bits to pulse
-  static void pulseLow(uint32_t mask)   { clearBits(mask); setBits(mask); }
+  static void pulseLow(uint16_t mask)   { clearBits(mask); setBits(mask); }
 
   /// Set corresponding masked bits of PORT1 to output direction.
   /// @param[in] mask bits
-  static void setOutput(uint32_t mask)  { MockDevice::getInstance().writeRegister(Device::DDR1, MockDevice::getInstance().readRegister(Device::DDR1) | mask); }
+  static void setOutput(uint16_t mask)  { GP1_DIR |= mask; }
 
   /// Set corresponding masked bits of PORT1 to input direction.
   /// @param[in] mask bits
-  static void setInput(uint32_t mask)   { MockDevice::getInstance().writeRegister(Device::DDR1, MockDevice::getInstance().readRegister(Device::DDR1) & ~mask); }
+  static void setInput(uint16_t mask)   { GP1_DIR &= ~mask; }
 
   /// Tests masked bits of PORT1
   /// @param[in] mask bits
   /// @param[in] true if the corresponding bits are all set, false otherwise.
-  static bool testBits(uint32_t mask)   { return (MockDevice::getInstance().readRegister(Device::PORT1) & mask) == mask; }
+  static bool testBits(uint16_t mask)   { return (GP1_IN & mask) == mask; }
 
   /// Returns the value of the bit at the position pos.
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
-  static bool test(uint8_t pos)        { return (MockDevice::getInstance().readRegister(Device::PORT1) & (1<<pos)) != 0; }
+  static bool test(uint8_t pos)        { return (GP1_IN & (1<<pos)) != 0; }
 
 };
 
@@ -827,7 +845,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<0)
-  static constexpr uint32_t bitmask() { return (1<<0); }
+  static constexpr uint16_t bitmask() { return (1<<0); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 0
@@ -867,7 +885,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<1)
-  static constexpr uint32_t bitmask() { return (1<<1); }
+  static constexpr uint16_t bitmask() { return (1<<1); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 1
@@ -907,7 +925,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<2)
-  static constexpr uint32_t bitmask() { return (1<<2); }
+  static constexpr uint16_t bitmask() { return (1<<2); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 2
@@ -947,7 +965,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<3)
-  static constexpr uint32_t bitmask() { return (1<<3); }
+  static constexpr uint16_t bitmask() { return (1<<3); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 3
@@ -987,7 +1005,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<4)
-  static constexpr uint32_t bitmask() { return (1<<4); }
+  static constexpr uint16_t bitmask() { return (1<<4); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 4
@@ -1027,7 +1045,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<5)
-  static constexpr uint32_t bitmask() { return (1<<5); }
+  static constexpr uint16_t bitmask() { return (1<<5); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 5
@@ -1067,7 +1085,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<6)
-  static constexpr uint32_t bitmask() { return (1<<6); }
+  static constexpr uint16_t bitmask() { return (1<<6); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 6
@@ -1107,7 +1125,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<7)
-  static constexpr uint32_t bitmask() { return (1<<7); }
+  static constexpr uint16_t bitmask() { return (1<<7); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 7
@@ -1147,7 +1165,7 @@ public:
 
   /// Returns the bitmask corresponding to this pin.
   /// @return (1<<8)
-  static constexpr uint32_t bitmask() { return (1<<8); }
+  static constexpr uint16_t bitmask() { return (1<<8); }
 
   /// Returns the bit corresponding to this pin.
   /// @return 8

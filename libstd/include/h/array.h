@@ -1,5 +1,5 @@
 /// @file array.h
-/// @data 15/04/2014 22:30:53
+/// @date 15/04/2014 22:30:53
 /// @author Ambroise Leclerc
 /// @brief Array standard container for storing a fixed size sequence of elements.
 //

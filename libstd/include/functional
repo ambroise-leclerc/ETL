@@ -34,6 +34,24 @@
 #ifndef ETL_LIBSTD_FUNCTIONAL_
 #define ETL_LIBSTD_FUNCTIONAL_
 
+namespace etlHelper {
+  
+template<typename T>
+struct reference_wrapper_base { };
+
+template<typename T>
+struct is_reference_wrapper : std::false_type {};
+
+template<typename U>
+struct is_reference_wrapper<std::reference_wrapper<U>> : std::true_type {};
+
+template<typename T>
+constexpr bool is_reference_wrapper_v = is_reference_wrapper<T>::value;
+ 
+  
+} // namespace etlHelper
+
+
 #include "h/functional.h"
 #include "h/functional_operators.h"
 #include "h/functional_reference_wrapper.h"
