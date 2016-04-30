@@ -47,20 +47,20 @@ public:
     using RegisterType = uint16_t;
 };
 
-static MockDevice::RegisterType& GP0_OUT     = MockDevice::getInstance().registers[0];
-static MockDevice::RegisterType& GP1_OUT     = MockDevice::getInstance().registers[1];
-static MockDevice::RegisterType& GP0_IN      = MockDevice::getInstance().registers[2];
-static MockDevice::RegisterType& GP1_IN      = MockDevice::getInstance().registers[3];
-static MockDevice::RegisterType& GP0_DIR     = MockDevice::getInstance().registers[4];
-static MockDevice::RegisterType& GP1_DIR     = MockDevice::getInstance().registers[5];
-static MockDevice::RegisterType& GP0_OUT_SET = MockDevice::getInstance().registers[6];
-static MockDevice::RegisterType& GP1_OUT_SET = MockDevice::getInstance().registers[7];
-static MockDevice::RegisterType& GP0_OUT_CLR = MockDevice::getInstance().registers[8];
-static MockDevice::RegisterType& GP1_OUT_CLR = MockDevice::getInstance().registers[9];
-static MockDevice::RegisterType& GP0_DIR_SET = MockDevice::getInstance().registers[10];
-static MockDevice::RegisterType& GP1_DIR_SET = MockDevice::getInstance().registers[11];
-static MockDevice::RegisterType& GP0_DIR_CLR = MockDevice::getInstance().registers[12];
-static MockDevice::RegisterType& GP1_DIR_CLR = MockDevice::getInstance().registers[13];
+static uint16_t& GP0_OUT     = MockDevice::getInstance().registers[0];
+static uint16_t& GP1_OUT     = MockDevice::getInstance().registers[1];
+static uint16_t& GP0_IN      = MockDevice::getInstance().registers[2];
+static uint16_t& GP1_IN      = MockDevice::getInstance().registers[3];
+static uint16_t& GP0_DIR     = MockDevice::getInstance().registers[4];
+static uint16_t& GP1_DIR     = MockDevice::getInstance().registers[5];
+static uint16_t& GP0_OUT_SET = MockDevice::getInstance().registers[6];
+static uint16_t& GP1_OUT_SET = MockDevice::getInstance().registers[7];
+static uint16_t& GP0_OUT_CLR = MockDevice::getInstance().registers[8];
+static uint16_t& GP1_OUT_CLR = MockDevice::getInstance().registers[9];
+static uint16_t& GP0_DIR_SET = MockDevice::getInstance().registers[10];
+static uint16_t& GP1_DIR_SET = MockDevice::getInstance().registers[11];
+static uint16_t& GP0_DIR_CLR = MockDevice::getInstance().registers[12];
+static uint16_t& GP1_DIR_CLR = MockDevice::getInstance().registers[13];
 
 struct PinChangeIRQ0;
 struct PinChangeIRQ1;
@@ -114,7 +114,7 @@ public:
   /// Returns the value of the bit at the position pos.
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
-  static bool test(uint8_t pos)        { return (GP0_IN & (1<<pos)) != 0; }
+  static bool test(uint8_t pos)         { return (GP0_IN & (1<<pos)) != 0; }
 
 };
 
@@ -808,7 +808,7 @@ public:
   /// Returns the value of the bit at the position pos.
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
-  static bool test(uint8_t pos)        { return (GP1_IN & (1<<pos)) != 0; }
+  static bool test(uint8_t pos)         { return (GP1_IN & (1<<pos)) != 0; }
 
 };
 

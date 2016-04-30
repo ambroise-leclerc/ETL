@@ -3,12 +3,14 @@
 
 #define __Mock_Mock__
 #include <etl/ioports.h>
+#include <algorithm>
+
+
 
 using namespace etl;
 
 SCENARIO("GPIO directions", "[DDR]") {
     GIVEN("an MCU with default output gpios") {
-
         Device::initialize();
         Port0::setOutput(0b1111111111111111);
 //        REQUIRE(MockDevice::getInstance().readRegister(Device::DDR0) == 0b1111111111111111);
