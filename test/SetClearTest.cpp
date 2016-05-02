@@ -7,20 +7,23 @@
 
 
 using namespace etl;
-/*
+
 SCENARIO("GPIO basic tests", "[GPIO]") {
     GIVEN("an MCU with default output gpios") {
         Device::initialize();
         Port0::setOutput(0b1111111111111111);
         Port0::assign(0b0000000000000000);
-        REQUIRE()
-        WHEN("ports are set to input") {
-            Pin0::setInput();
-            Pin2::setInput();
-            THEN("the direction register changes") {
-                //REQUIRE(MockDevice::getInstance().readRegister(Device::DDR0) == 0b1111111111111010);
+        WHEN("Pins output value change") {
+            Pin0::set();
+            Pin2::set();
+            REQUIRE(Port0::test(0b101));
+            Pin1::set(Pin0::test());
+            REQUIRE(Port0::test(0b111));
+            Pin0::clear();
+            Pin2::set(Pin0::test());
+            REQUIRE(Port0::test(0b10));
+            THEN("") {
             }
         }
     }
 }
-*/

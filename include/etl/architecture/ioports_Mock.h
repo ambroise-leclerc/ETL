@@ -71,45 +71,45 @@ public:
 
   /// Assigns a value to PORT0.
   /// @param[in] value value affected to PORT0
-  static void assign(uint16_t value)    { GP0_OUT = value; }
+  static void assign(uint16_t value)    { GP0_OUT = value; Device::yield(); }
 
   /// Sets masked bits in PORT0.
   /// @param[in] mask bits to set
-  static void setBits(uint16_t mask)    { GP0_OUT |= mask; }
+  static void setBits(uint16_t mask)    { GP0_OUT |= mask; Device::yield(); }
 
   /// Clears masked bits in PORT0.
   /// @param[in] mask bits to clear
-  static void clearBits(uint16_t mask)  { GP0_OUT &= ~mask; } 
+  static void clearBits(uint16_t mask)  { GP0_OUT &= ~mask; Device::yield(); } 
 
   /// Changes values of masked bits in PORT0.
   /// @param[in] mask bits to change
   /// @param[in] value new bits values
-  static void changeBits(uint16_t mask, uint16_t value) { auto tmp = GP0_OUT & ~mask; GP0_OUT = tmp | value; }
+  static void changeBits(uint16_t mask, uint16_t value) { auto tmp = GP0_OUT & ~mask; GP0_OUT = tmp | value; Device::yield(); }
 
   /// Toggles masked bits in PORT0.
   /// @param[in] mask bits to toggle
-  static void toggleBits(uint16_t mask) { GP0_OUT ^= mask; } 
+  static void toggleBits(uint16_t mask) { GP0_OUT ^= mask; Device::yield(); } 
 
   /// Pulses masked bits in PORT0 with high state first.
   /// @param[in] mask bits to pulse
-  static void pulseHigh(uint16_t mask)  { setBits(mask); clearBits(mask); }
+  static void pulseHigh(uint16_t mask)  { setBits(mask); clearBits(mask); Device::yield(); }
 
   /// Pulses masked bits in PORT0 with low state first.
   /// @param[in] mask bits to pulse
-  static void pulseLow(uint16_t mask)   { clearBits(mask); setBits(mask); }
+  static void pulseLow(uint16_t mask)   { clearBits(mask); setBits(mask); Device::yield(); }
 
   /// Set corresponding masked bits of PORT0 to output direction.
   /// @param[in] mask bits
-  static void setOutput(uint16_t mask)  { GP0_DIR |= mask; }
+  static void setOutput(uint16_t mask)  { GP0_DIR |= mask; Device::yield(); }
 
   /// Set corresponding masked bits of PORT0 to input direction.
   /// @param[in] mask bits
-  static void setInput(uint16_t mask)   { GP0_DIR &= ~mask; }
+  static void setInput(uint16_t mask)   { GP0_DIR &= ~mask; Device::yield(); }
 
   /// Tests masked bits of PORT0
   /// @param[in] mask bits
   /// @param[in] true if the corresponding bits are all set, false otherwise.
-  static bool testBits(uint16_t mask)   { return (GP0_IN & mask) == mask; }
+  static bool testBits(uint16_t mask)   { return (GP0_IN & mask) == mask;}
 
   /// Returns the value of the bit at the position pos.
   /// @param[in] position of the bit to return
@@ -765,45 +765,45 @@ public:
 
   /// Assigns a value to PORT1.
   /// @param[in] value value affected to PORT1
-  static void assign(uint16_t value)    { GP1_OUT = value; }
+  static void assign(uint16_t value)    { GP1_OUT = value; Device::yield(); }
 
   /// Sets masked bits in PORT1.
   /// @param[in] mask bits to set
-  static void setBits(uint16_t mask)    { GP1_OUT |= mask; }
+  static void setBits(uint16_t mask)    { GP1_OUT |= mask; Device::yield(); }
 
   /// Clears masked bits in PORT1.
   /// @param[in] mask bits to clear
-  static void clearBits(uint16_t mask)  { GP1_OUT &= ~mask; } 
+  static void clearBits(uint16_t mask)  { GP1_OUT &= ~mask; Device::yield(); } 
 
   /// Changes values of masked bits in PORT1.
   /// @param[in] mask bits to change
   /// @param[in] value new bits values
-  static void changeBits(uint16_t mask, uint16_t value) { auto tmp = GP1_OUT & ~mask; GP1_OUT = tmp | value; }
+  static void changeBits(uint16_t mask, uint16_t value) { auto tmp = GP1_OUT & ~mask; GP1_OUT = tmp | value; Device::yield(); }
 
   /// Toggles masked bits in PORT1.
   /// @param[in] mask bits to toggle
-  static void toggleBits(uint16_t mask) { GP1_OUT ^= mask; } 
+  static void toggleBits(uint16_t mask) { GP1_OUT ^= mask; Device::yield(); } 
 
   /// Pulses masked bits in PORT1 with high state first.
   /// @param[in] mask bits to pulse
-  static void pulseHigh(uint16_t mask)  { setBits(mask); clearBits(mask); }
+  static void pulseHigh(uint16_t mask)  { setBits(mask); clearBits(mask); Device::yield(); }
 
   /// Pulses masked bits in PORT1 with low state first.
   /// @param[in] mask bits to pulse
-  static void pulseLow(uint16_t mask)   { clearBits(mask); setBits(mask); }
+  static void pulseLow(uint16_t mask)   { clearBits(mask); setBits(mask); Device::yield(); }
 
   /// Set corresponding masked bits of PORT1 to output direction.
   /// @param[in] mask bits
-  static void setOutput(uint16_t mask)  { GP1_DIR |= mask; }
+  static void setOutput(uint16_t mask)  { GP1_DIR |= mask; Device::yield(); }
 
   /// Set corresponding masked bits of PORT1 to input direction.
   /// @param[in] mask bits
-  static void setInput(uint16_t mask)   { GP1_DIR &= ~mask; }
+  static void setInput(uint16_t mask)   { GP1_DIR &= ~mask; Device::yield(); }
 
   /// Tests masked bits of PORT1
   /// @param[in] mask bits
   /// @param[in] true if the corresponding bits are all set, false otherwise.
-  static bool testBits(uint16_t mask)   { return (GP1_IN & mask) == mask; }
+  static bool testBits(uint16_t mask)   { return (GP1_IN & mask) == mask;}
 
   /// Returns the value of the bit at the position pos.
   /// @param[in] position of the bit to return

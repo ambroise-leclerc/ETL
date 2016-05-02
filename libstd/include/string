@@ -34,8 +34,8 @@
 #ifndef ETL_LIBSTD_STRING_
 #define ETL_LIBSTD_STRING_
 
-#include <h/char_traits.h>
-#include <h/basic_string.h>
+#include "h/char_traits.h"
+#include "h/basic_string.h"
 
 namespace std {
 

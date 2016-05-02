@@ -9,6 +9,14 @@ public:
         return instance;
     }
 
+    void yield() {
+        MockCore::yield();
+
+    }
+
+    int64_t pragma(std::string pragma) {
+    }
+
 private:
     MockDevice() {}
 };
