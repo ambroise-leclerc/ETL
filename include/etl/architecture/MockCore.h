@@ -28,6 +28,14 @@ public:
     void configure(uint8_t numberOfPorts) { };
 
     void yield() {
+        consume1TRegisters();
+        applyBitLogic();
+        generateInterrupts();
+
+    }
+
+private:
+    void consume1TRegisters() {
         for (auto portId = 0; portId < NbPorts; ++portId) {
             gpOut[portId] |= gpOutSet[portId];
             gpOutSet[portId] = 0;
@@ -42,6 +50,14 @@ public:
             gpDirClr[portId] = 0;
 
         }
+    }
+
+    void applyBitLogic() {
+        
+    }
+
+    void generateInterrupts() {
+        
     }
 
 };
