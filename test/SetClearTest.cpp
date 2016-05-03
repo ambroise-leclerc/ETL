@@ -19,12 +19,12 @@ SCENARIO("GPIO basic tests", "[GPIO]") {
         WHEN("Pins output value change") {
             Pin0::set();
             Pin2::set();
-            REQUIRE(Port0::test(0b101));
+            REQUIRE(Port0::testBits(0b101));
             Pin1::set(Pin0::test());
-            REQUIRE(Port0::test(0b111));
+            REQUIRE(Port0::testBits(0b111));
             Pin0::clear();
             Pin2::set(Pin0::test());
-            REQUIRE(Port0::test(0b10));
+            REQUIRE(Port0::testBits(0b10));
             THEN("") {
             }
         }
