@@ -42,28 +42,23 @@
 namespace etl {
     class StringHash {
     public:
-        static std::uint64_t calc(char const* zStr) {
-            std::uint64_t ret{ basis };
-            while (*zStr) {
-                ret ^= *zStr;
-                ret *= prime;
-                zStr++;
+        static uint32_t calc(const char* s, uint32_t seed = 0) {
+            while (*s) {
+                seed = seed * 101 + *s++;
             }
-            return ret;
+            return seed;
         }
+
     private:
-        static constexpr std::uint64_t compileTime(char const* zStr, std::uint64_t lastValue = basis) {
-            return *zStr ? compileTime(zStr + 1, (*zStr ^ lastValue) * prime) : lastValue;
+        static constexpr uint32_t compileTime(const char* zStr, uint32_t seed = 0) {
+            return *zStr ? (compileTime(zStr + 1, (seed * 101ull) + *zStr)) : seed;
         }
 
-        static const auto basis = 14'695'981'039'346'656'037ull;
-        static const auto prime = 1'099'511'628'211ull;
-
-        friend constexpr std::uint64_t operator""_hash(char const* zStr, size_t);
+        friend constexpr uint32_t operator""_hash(char const* zStr, size_t);
     };
 
-    constexpr std::uint64_t operator""_hash(char const* zStr, size_t) {
-        return etl::StringHash::compileTime(zStr);
+    constexpr uint32_t operator""_hash(char const* zStr, size_t) {
+        return StringHash::compileTime(zStr);
     }
 
 
@@ -111,7 +106,6 @@ private:
 
             gpDir[portId] &= ~gpDirClr[portId];
             gpDirClr[portId] = 0;
-
         }
     }
 
@@ -129,19 +123,15 @@ private:
     class BitLogicLink : public BitLogic {
     public:
         BitLogicLink(MockCore& mock, Register inputReg, RegisterType inputMask, Register outputReg, RegisterType outputMask)
-            : BitLogic(mock, inputReg, inputMask, outputReg, outputMask) {
-            std::cout << "BitLink " << inputReg << ", " << ", " << inputMask << ", " << outputReg << ", " << outputMask << "\n"; 
-        }
+            : BitLogic(mock, inputReg, inputMask, outputReg, outputMask) {}
+
         void apply() {
-            std::cout << "reg[" << (int)inputReg << "] = " << mock.registers[inputReg] << " (" << inputMask << ")  ->  ";
-            if ((mock.registers[inputReg] & inputMask) == inputMask) {
-                
+            if ((mock.registers[inputReg] & inputMask) == inputMask) {                
                 mock.registers[outputReg] |= outputMask;
             }
             else {
                 mock.registers[outputReg] &= ~outputMask;
             }
-            std::cout << "reg[" << (int)outputReg << "] = " << mock.registers[outputReg] << "\n";
         }
     };
 
@@ -151,9 +141,7 @@ private:
         }
     }
 
-    void generateInterrupts() {
-        
-    }
+    void generateInterrupts() { }
 
     std::list<BitLogicLink> bitLogicLinkOps;
 
@@ -163,25 +151,11 @@ protected:
         istringstream ss(pragma);
         vector<string> tokens(istream_iterator<string>{ss}, istream_iterator<string>{});
 
-        switch (etl::StringHash::calc(tokens[0].c_str())) {
-        case "BitLink"_hash: {
-            cout << "text pragma '" << tokens[1] << "', '" << tokens[2] << "', '" << tokens[3] << "', '" << tokens[4] << "'\n";
-            Register i1 = stoi(tokens[1]), i3 = stoi(tokens[3]);
-            RegisterType i2 = stoi(tokens[2]), i4 = stoi(tokens[4]);
-            bitLogicLinkOps.emplace_back(*this, i1, i2, i3, i4);
-
+        switch (StringHash::calc(tokens[0].c_str())) {
+        case "BitLink"_hash:
+            bitLogicLinkOps.emplace_back(*this, stoi(tokens[1]), stoi(tokens[2]), stoi(tokens[3]), stoi(tokens[4]));
             return 0;
         }
-
-        case "TestSwitch"_hash:
-            cout << "TestSwitch" << "\n";
-            return 0;
-
-        case "TestPragma"_hash:
-            cout << "TestPragma" << "\n";
-            return 0;
-        }
-
         return -1;
     }
 };

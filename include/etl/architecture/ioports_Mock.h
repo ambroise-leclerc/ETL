@@ -36,12 +36,12 @@
 
 namespace etl {
 
-static uint16_t& GP0_OUT = MockDevice::getInstance().registers[0];
-static uint16_t& GP1_OUT = MockDevice::getInstance().registers[1];
-static uint16_t& GP0_IN = MockDevice::getInstance().registers[2];
-static uint16_t& GP1_IN = MockDevice::getInstance().registers[3];
-static uint16_t& GP0_DIR = MockDevice::getInstance().registers[4];
-static uint16_t& GP1_DIR = MockDevice::getInstance().registers[5];
+static uint16_t& GP0_OUT     = MockDevice::getInstance().registers[0];
+static uint16_t& GP1_OUT     = MockDevice::getInstance().registers[1];
+static uint16_t& GP0_IN      = MockDevice::getInstance().registers[2];
+static uint16_t& GP1_IN      = MockDevice::getInstance().registers[3];
+static uint16_t& GP0_DIR     = MockDevice::getInstance().registers[4];
+static uint16_t& GP1_DIR     = MockDevice::getInstance().registers[5];
 static uint16_t& GP0_OUT_SET = MockDevice::getInstance().registers[6];
 static uint16_t& GP1_OUT_SET = MockDevice::getInstance().registers[7];
 static uint16_t& GP0_OUT_CLR = MockDevice::getInstance().registers[8];
@@ -54,22 +54,20 @@ static uint16_t& GP1_DIR_CLR = MockDevice::getInstance().registers[13];
 struct Pragma {
     Pragma(const std::string command) : paramsList(command) {}
     Pragma& reg(const uint16_t& r)          { paramsList += " " + std::to_string(&r - &GP0_OUT); return *this; }
-    Pragma& bit(const uint8_t bitNumber)    { paramsList += " " + std::to_string(bitNumber); return *this; }
+    Pragma& bit(const uint8_t bitNumber)    { paramsList += " " + std::to_string(1<<bitNumber); return *this; }
     Pragma& bitmask(const uint16_t bitmask) { paramsList += " " + std::to_string(bitmask); return *this; }
-    
+
     std::string paramsList;
 };
-
 class Device {
 public:
-    static int64_t pragma(const Pragma& param) { std::cout << "Pragma(" << param.paramsList << ")\n"; return MockDevice::getInstance().pragma(param.paramsList); }
-    static int64_t pragma(std::string pragma) { return MockDevice::getInstance().pragma(pragma); }
-    static void initialize()        { MockDevice::getInstance().configure(2); }
-    static void yield()             { MockDevice::getInstance().yield(); }
+    static int64_t pragma(const Pragma& param) { return MockDevice::getInstance().pragma(param.paramsList); }
+    static int64_t pragma(std::string pragma)  { return MockDevice::getInstance().pragma(pragma); }
+    static void initialize()                   { MockDevice::getInstance().configure(2); }
+    static void yield()                        { MockDevice::getInstance().yield(); }
     static const size_t sramSize = 10000;
     using RegisterType = uint16_t;
 };
-
 
 struct PinChangeIRQ0;
 struct PinChangeIRQ1;
@@ -829,13 +827,13 @@ public:
   static bool test(uint8_t pos)          { return (GP1_IN & (1<<pos)) != 0; }
 
   /// Returns the native output register associated to Port1.
-  static uint16_t GetOutputRegister()    { return GP1_OUT; }
+  static uint16_t& GetOutputRegister()    { return GP1_OUT; }
 
   /// Returns the native input register associated to Port1.
-  static uint16_t GetInputRegister()     { return GP1_IN; }
+  static uint16_t& GetInputRegister()     { return GP1_IN; }
 
   /// Returns the native direction register associated to Port1.
-  static uint16_t GetDirectionRegister() { return GP1_DIR; }
+  static uint16_t& GetDirectionRegister() { return GP1_DIR; }
 
 };
 
