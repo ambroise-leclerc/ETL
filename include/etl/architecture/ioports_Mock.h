@@ -67,6 +67,9 @@ public:
     static void yield()                        { MockDevice::getInstance().yield(); }
     static const size_t sramSize = 10000;
     using RegisterType = uint16_t;
+    static const uint8_t OUT_REG_CYCLES = 3;
+    static const uint8_t OUTCLR_REG_CYCLES = 1;
+    static const uint8_t OUTSET_REG_CYCLES = 1;
 };
 
 struct PinChangeIRQ0;
@@ -78,7 +81,16 @@ public:
 
   /// Assigns a value to Port0.
   /// @param[in] value value to affect to port0
-  static void assign(uint16_t value)     { GP0_OUT = value; Device::yield(); }
+  static void assign(uint16_t value)     {
+      if (Device::OUT_REG_CYCLES < (Device::OUTSET_REG_CYCLES + Device::OUTCLR_REG_CYCLES)) {
+          GP0_OUT = value;
+      }
+      else {
+          GP0_OUT_CLR = 0b1111111111111111;
+          GP0_OUT_SET = value;
+      }
+      Device::yield();
+  }
 
   /// Sets masked bits in PORT0.
   /// @param[in] mask bits to set
@@ -781,7 +793,16 @@ public:
 
   /// Assigns a value to Port1.
   /// @param[in] value value to affect to port1
-  static void assign(uint16_t value)     { GP1_OUT = value; Device::yield(); }
+  static void assign(uint16_t value)     {
+      if (Device::OUT_REG_CYCLES < (Device::OUTSET_REG_CYCLES + Device::OUTCLR_REG_CYCLES)) {
+          GP1_OUT = value;
+      }
+      else {
+          GP1_OUT_CLR = 0b1111111111111111;
+          GP1_OUT_SET = value;
+      }
+      Device::yield();
+  }
 
   /// Sets masked bits in PORT1.
   /// @param[in] mask bits to set
