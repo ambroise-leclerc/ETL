@@ -13,9 +13,9 @@ SCENARIO("GPIO basic tests", "[GPIO]") {
         Device::initialize();
         Port0::setOutput(0b1111111111111111);
         Port0::assign(0b0000000000000000);
-        Device::pragma("TestPragma");
-        Device::pragma("TestSwitch");
-        Device::pragma("BitLink");
+        Device::pragma(Pragma("BitLink").reg(Port0::GetOutputRegister()).bit(Pin0::bit()).reg(Port0::GetInputRegister()).bit(Pin0::bit()));
+        Device::pragma(Pragma("BitLink").reg(Port0::GetOutputRegister()).bit(Pin1::bit()).reg(Port0::GetInputRegister()).bit(Pin1::bit()));
+        Device::pragma(Pragma("BitLink").reg(Port0::GetOutputRegister()).bit(Pin2::bit()).reg(Port0::GetInputRegister()).bit(Pin2::bit()));
         WHEN("Pins output value change") {
             Pin0::set();
             Pin2::set();

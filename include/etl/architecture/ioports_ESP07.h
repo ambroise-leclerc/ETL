@@ -1,5 +1,5 @@
 /// @file ioports_ESP07.h
-/// @date 5/2/16 5:40 PM
+/// @date 5/4/16 1:53 PM
 /// @author Ambroise Leclerc and Cécile Gomes
 /// @brief Espressif ESP 32-bit microcontrollers peripherals handling classes
 //
@@ -30,9 +30,7 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
 #pragma once
-
 
 #include <ioports_esp.h>
 

@@ -30,29 +30,18 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
 #pragma once
-
 
 #include <MockDevice.h>
 
 namespace etl {
-class Device {
-public:
-    template<typename T>
-    static int64_t pragma(T pragma) { return MockDevice::getInstance().pragma(pragma); }
-    static void initialize()        { MockDevice::getInstance().configure(2); }
-    static void yield()             { MockDevice::getInstance().yield(); }
-    static const size_t sramSize = 10000;
-    using RegisterType = uint16_t;
-};
 
-static uint16_t& GP0_OUT     = MockDevice::getInstance().registers[0];
-static uint16_t& GP1_OUT     = MockDevice::getInstance().registers[1];
-static uint16_t& GP0_IN      = MockDevice::getInstance().registers[2];
-static uint16_t& GP1_IN      = MockDevice::getInstance().registers[3];
-static uint16_t& GP0_DIR     = MockDevice::getInstance().registers[4];
-static uint16_t& GP1_DIR     = MockDevice::getInstance().registers[5];
+static uint16_t& GP0_OUT = MockDevice::getInstance().registers[0];
+static uint16_t& GP1_OUT = MockDevice::getInstance().registers[1];
+static uint16_t& GP0_IN = MockDevice::getInstance().registers[2];
+static uint16_t& GP1_IN = MockDevice::getInstance().registers[3];
+static uint16_t& GP0_DIR = MockDevice::getInstance().registers[4];
+static uint16_t& GP1_DIR = MockDevice::getInstance().registers[5];
 static uint16_t& GP0_OUT_SET = MockDevice::getInstance().registers[6];
 static uint16_t& GP1_OUT_SET = MockDevice::getInstance().registers[7];
 static uint16_t& GP0_OUT_CLR = MockDevice::getInstance().registers[8];
@@ -62,6 +51,26 @@ static uint16_t& GP1_DIR_SET = MockDevice::getInstance().registers[11];
 static uint16_t& GP0_DIR_CLR = MockDevice::getInstance().registers[12];
 static uint16_t& GP1_DIR_CLR = MockDevice::getInstance().registers[13];
 
+struct Pragma {
+    Pragma(const std::string command) : paramsList(command) {}
+    Pragma& reg(const uint16_t& r)          { paramsList += " " + std::to_string(&r - &GP0_OUT); return *this; }
+    Pragma& bit(const uint8_t bitNumber)    { paramsList += " " + std::to_string(bitNumber); return *this; }
+    Pragma& bitmask(const uint16_t bitmask) { paramsList += " " + std::to_string(bitmask); return *this; }
+    
+    std::string paramsList;
+};
+
+class Device {
+public:
+    static int64_t pragma(const Pragma& param) { std::cout << "Pragma(" << param.paramsList << ")\n"; return MockDevice::getInstance().pragma(param.paramsList); }
+    static int64_t pragma(std::string pragma) { return MockDevice::getInstance().pragma(pragma); }
+    static void initialize()        { MockDevice::getInstance().configure(2); }
+    static void yield()             { MockDevice::getInstance().yield(); }
+    static const size_t sramSize = 10000;
+    using RegisterType = uint16_t;
+};
+
+
 struct PinChangeIRQ0;
 struct PinChangeIRQ1;
 
@@ -69,17 +78,17 @@ class Port0 {
 public:
   using PinChangeIRQ = PinChangeIRQ0;
 
-  /// Assigns a value to PORT0.
-  /// @param[in] value value affected to PORT0
-  static void assign(uint16_t value)    { GP0_OUT = value; Device::yield(); }
+  /// Assigns a value to Port0.
+  /// @param[in] value value to affect to port0
+  static void assign(uint16_t value)     { GP0_OUT = value; Device::yield(); }
 
   /// Sets masked bits in PORT0.
   /// @param[in] mask bits to set
-  static void setBits(uint16_t mask)    { GP0_OUT |= mask; Device::yield(); }
+  static void setBits(uint16_t mask)     { GP0_OUT |= mask; Device::yield(); }
 
   /// Clears masked bits in PORT0.
   /// @param[in] mask bits to clear
-  static void clearBits(uint16_t mask)  { GP0_OUT &= ~mask; Device::yield(); } 
+  static void clearBits(uint16_t mask)   { GP0_OUT &= ~mask; Device::yield(); } 
 
   /// Changes values of masked bits in PORT0.
   /// @param[in] mask bits to change
@@ -88,33 +97,42 @@ public:
 
   /// Toggles masked bits in PORT0.
   /// @param[in] mask bits to toggle
-  static void toggleBits(uint16_t mask) { GP0_OUT ^= mask; Device::yield(); } 
+  static void toggleBits(uint16_t mask)  { GP0_OUT ^= mask; Device::yield(); } 
 
   /// Pulses masked bits in PORT0 with high state first.
   /// @param[in] mask bits to pulse
-  static void pulseHigh(uint16_t mask)  { setBits(mask); clearBits(mask); Device::yield(); }
+  static void pulseHigh(uint16_t mask)   { setBits(mask); clearBits(mask); Device::yield(); }
 
   /// Pulses masked bits in PORT0 with low state first.
   /// @param[in] mask bits to pulse
-  static void pulseLow(uint16_t mask)   { clearBits(mask); setBits(mask); Device::yield(); }
+  static void pulseLow(uint16_t mask)    { clearBits(mask); setBits(mask); Device::yield(); }
 
   /// Set corresponding masked bits of PORT0 to output direction.
   /// @param[in] mask bits
-  static void setOutput(uint16_t mask)  { GP0_DIR |= mask; Device::yield(); }
+  static void setOutput(uint16_t mask)   { GP0_DIR |= mask; Device::yield(); }
 
   /// Set corresponding masked bits of PORT0 to input direction.
   /// @param[in] mask bits
-  static void setInput(uint16_t mask)   { GP0_DIR &= ~mask; Device::yield(); }
+  static void setInput(uint16_t mask)    { GP0_DIR &= ~mask; Device::yield(); }
 
   /// Tests masked bits of PORT0
   /// @param[in] mask bits
   /// @param[in] true if the corresponding bits are all set, false otherwise.
-  static bool testBits(uint16_t mask)   { return (GP0_IN & mask) == mask;}
+  static bool testBits(uint16_t mask)    { return (GP0_IN & mask) == mask;}
 
   /// Returns the value of the bit at the position pos.
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
-  static bool test(uint8_t pos)         { return (GP0_IN & (1<<pos)) != 0; }
+  static bool test(uint8_t pos)          { return (GP0_IN & (1<<pos)) != 0; }
+
+  /// Returns the native output register associated to Port0.
+  static uint16_t& GetOutputRegister()    { return GP0_OUT; }
+
+  /// Returns the native input register associated to Port0.
+  static uint16_t& GetInputRegister()     { return GP0_IN; }
+
+  /// Returns the native direction register associated to Port0.
+  static uint16_t& GetDirectionRegister() { return GP0_DIR; }
 
 };
 
@@ -149,11 +167,11 @@ public:
   /// @return true if Pin0 is high, false otherwise.
   static bool test()      { return Port0::test(0); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<0)
   static constexpr uint16_t bitmask() { return (1<<0); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 0
   static constexpr uint8_t bit()      { return 0; }
 };
@@ -189,11 +207,11 @@ public:
   /// @return true if Pin1 is high, false otherwise.
   static bool test()      { return Port0::test(1); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<1)
   static constexpr uint16_t bitmask() { return (1<<1); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 1
   static constexpr uint8_t bit()      { return 1; }
 };
@@ -229,11 +247,11 @@ public:
   /// @return true if Pin2 is high, false otherwise.
   static bool test()      { return Port0::test(2); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<2)
   static constexpr uint16_t bitmask() { return (1<<2); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 2
   static constexpr uint8_t bit()      { return 2; }
 };
@@ -269,11 +287,11 @@ public:
   /// @return true if Pin3 is high, false otherwise.
   static bool test()      { return Port0::test(3); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<3)
   static constexpr uint16_t bitmask() { return (1<<3); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 3
   static constexpr uint8_t bit()      { return 3; }
 };
@@ -309,11 +327,11 @@ public:
   /// @return true if Pin4 is high, false otherwise.
   static bool test()      { return Port0::test(4); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<4)
   static constexpr uint16_t bitmask() { return (1<<4); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 4
   static constexpr uint8_t bit()      { return 4; }
 };
@@ -349,11 +367,11 @@ public:
   /// @return true if Pin5 is high, false otherwise.
   static bool test()      { return Port0::test(5); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<5)
   static constexpr uint16_t bitmask() { return (1<<5); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 5
   static constexpr uint8_t bit()      { return 5; }
 };
@@ -389,11 +407,11 @@ public:
   /// @return true if Pin6 is high, false otherwise.
   static bool test()      { return Port0::test(6); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<6)
   static constexpr uint16_t bitmask() { return (1<<6); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 6
   static constexpr uint8_t bit()      { return 6; }
 };
@@ -429,11 +447,11 @@ public:
   /// @return true if Pin7 is high, false otherwise.
   static bool test()      { return Port0::test(7); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<7)
   static constexpr uint16_t bitmask() { return (1<<7); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 7
   static constexpr uint8_t bit()      { return 7; }
 };
@@ -469,11 +487,11 @@ public:
   /// @return true if Pin8 is high, false otherwise.
   static bool test()      { return Port0::test(8); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<8)
   static constexpr uint16_t bitmask() { return (1<<8); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 8
   static constexpr uint8_t bit()      { return 8; }
 };
@@ -509,11 +527,11 @@ public:
   /// @return true if Pin9 is high, false otherwise.
   static bool test()      { return Port0::test(9); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<9)
   static constexpr uint16_t bitmask() { return (1<<9); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 9
   static constexpr uint8_t bit()      { return 9; }
 };
@@ -549,11 +567,11 @@ public:
   /// @return true if Pin10 is high, false otherwise.
   static bool test()      { return Port0::test(10); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<10)
   static constexpr uint16_t bitmask() { return (1<<10); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 10
   static constexpr uint8_t bit()      { return 10; }
 };
@@ -589,11 +607,11 @@ public:
   /// @return true if Pin11 is high, false otherwise.
   static bool test()      { return Port0::test(11); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<11)
   static constexpr uint16_t bitmask() { return (1<<11); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 11
   static constexpr uint8_t bit()      { return 11; }
 };
@@ -629,11 +647,11 @@ public:
   /// @return true if Pin12 is high, false otherwise.
   static bool test()      { return Port0::test(12); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<12)
   static constexpr uint16_t bitmask() { return (1<<12); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 12
   static constexpr uint8_t bit()      { return 12; }
 };
@@ -669,11 +687,11 @@ public:
   /// @return true if Pin13 is high, false otherwise.
   static bool test()      { return Port0::test(13); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<13)
   static constexpr uint16_t bitmask() { return (1<<13); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 13
   static constexpr uint8_t bit()      { return 13; }
 };
@@ -709,11 +727,11 @@ public:
   /// @return true if Pin14 is high, false otherwise.
   static bool test()      { return Port0::test(14); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<14)
   static constexpr uint16_t bitmask() { return (1<<14); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 14
   static constexpr uint8_t bit()      { return 14; }
 };
@@ -749,11 +767,11 @@ public:
   /// @return true if Pin15 is high, false otherwise.
   static bool test()      { return Port0::test(15); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<15)
   static constexpr uint16_t bitmask() { return (1<<15); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 15
   static constexpr uint8_t bit()      { return 15; }
 };
@@ -763,17 +781,17 @@ class Port1 {
 public:
   using PinChangeIRQ = PinChangeIRQ1;
 
-  /// Assigns a value to PORT1.
-  /// @param[in] value value affected to PORT1
-  static void assign(uint16_t value)    { GP1_OUT = value; Device::yield(); }
+  /// Assigns a value to Port1.
+  /// @param[in] value value to affect to port1
+  static void assign(uint16_t value)     { GP1_OUT = value; Device::yield(); }
 
   /// Sets masked bits in PORT1.
   /// @param[in] mask bits to set
-  static void setBits(uint16_t mask)    { GP1_OUT |= mask; Device::yield(); }
+  static void setBits(uint16_t mask)     { GP1_OUT |= mask; Device::yield(); }
 
   /// Clears masked bits in PORT1.
   /// @param[in] mask bits to clear
-  static void clearBits(uint16_t mask)  { GP1_OUT &= ~mask; Device::yield(); } 
+  static void clearBits(uint16_t mask)   { GP1_OUT &= ~mask; Device::yield(); } 
 
   /// Changes values of masked bits in PORT1.
   /// @param[in] mask bits to change
@@ -782,33 +800,42 @@ public:
 
   /// Toggles masked bits in PORT1.
   /// @param[in] mask bits to toggle
-  static void toggleBits(uint16_t mask) { GP1_OUT ^= mask; Device::yield(); } 
+  static void toggleBits(uint16_t mask)  { GP1_OUT ^= mask; Device::yield(); } 
 
   /// Pulses masked bits in PORT1 with high state first.
   /// @param[in] mask bits to pulse
-  static void pulseHigh(uint16_t mask)  { setBits(mask); clearBits(mask); Device::yield(); }
+  static void pulseHigh(uint16_t mask)   { setBits(mask); clearBits(mask); Device::yield(); }
 
   /// Pulses masked bits in PORT1 with low state first.
   /// @param[in] mask bits to pulse
-  static void pulseLow(uint16_t mask)   { clearBits(mask); setBits(mask); Device::yield(); }
+  static void pulseLow(uint16_t mask)    { clearBits(mask); setBits(mask); Device::yield(); }
 
   /// Set corresponding masked bits of PORT1 to output direction.
   /// @param[in] mask bits
-  static void setOutput(uint16_t mask)  { GP1_DIR |= mask; Device::yield(); }
+  static void setOutput(uint16_t mask)   { GP1_DIR |= mask; Device::yield(); }
 
   /// Set corresponding masked bits of PORT1 to input direction.
   /// @param[in] mask bits
-  static void setInput(uint16_t mask)   { GP1_DIR &= ~mask; Device::yield(); }
+  static void setInput(uint16_t mask)    { GP1_DIR &= ~mask; Device::yield(); }
 
   /// Tests masked bits of PORT1
   /// @param[in] mask bits
   /// @param[in] true if the corresponding bits are all set, false otherwise.
-  static bool testBits(uint16_t mask)   { return (GP1_IN & mask) == mask;}
+  static bool testBits(uint16_t mask)    { return (GP1_IN & mask) == mask;}
 
   /// Returns the value of the bit at the position pos.
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
-  static bool test(uint8_t pos)         { return (GP1_IN & (1<<pos)) != 0; }
+  static bool test(uint8_t pos)          { return (GP1_IN & (1<<pos)) != 0; }
+
+  /// Returns the native output register associated to Port1.
+  static uint16_t GetOutputRegister()    { return GP1_OUT; }
+
+  /// Returns the native input register associated to Port1.
+  static uint16_t GetInputRegister()     { return GP1_IN; }
+
+  /// Returns the native direction register associated to Port1.
+  static uint16_t GetDirectionRegister() { return GP1_DIR; }
 
 };
 
@@ -843,11 +870,11 @@ public:
   /// @return true if Pin16 is high, false otherwise.
   static bool test()      { return Port1::test(0); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<0)
   static constexpr uint16_t bitmask() { return (1<<0); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 0
   static constexpr uint8_t bit()      { return 0; }
 };
@@ -883,11 +910,11 @@ public:
   /// @return true if Pin17 is high, false otherwise.
   static bool test()      { return Port1::test(1); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<1)
   static constexpr uint16_t bitmask() { return (1<<1); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 1
   static constexpr uint8_t bit()      { return 1; }
 };
@@ -923,11 +950,11 @@ public:
   /// @return true if Pin18 is high, false otherwise.
   static bool test()      { return Port1::test(2); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<2)
   static constexpr uint16_t bitmask() { return (1<<2); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 2
   static constexpr uint8_t bit()      { return 2; }
 };
@@ -963,11 +990,11 @@ public:
   /// @return true if Pin19 is high, false otherwise.
   static bool test()      { return Port1::test(3); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<3)
   static constexpr uint16_t bitmask() { return (1<<3); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 3
   static constexpr uint8_t bit()      { return 3; }
 };
@@ -1003,11 +1030,11 @@ public:
   /// @return true if Pin20 is high, false otherwise.
   static bool test()      { return Port1::test(4); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<4)
   static constexpr uint16_t bitmask() { return (1<<4); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 4
   static constexpr uint8_t bit()      { return 4; }
 };
@@ -1043,11 +1070,11 @@ public:
   /// @return true if Pin21 is high, false otherwise.
   static bool test()      { return Port1::test(5); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<5)
   static constexpr uint16_t bitmask() { return (1<<5); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 5
   static constexpr uint8_t bit()      { return 5; }
 };
@@ -1083,11 +1110,11 @@ public:
   /// @return true if Pin22 is high, false otherwise.
   static bool test()      { return Port1::test(6); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<6)
   static constexpr uint16_t bitmask() { return (1<<6); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 6
   static constexpr uint8_t bit()      { return 6; }
 };
@@ -1123,11 +1150,11 @@ public:
   /// @return true if Pin23 is high, false otherwise.
   static bool test()      { return Port1::test(7); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<7)
   static constexpr uint16_t bitmask() { return (1<<7); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 7
   static constexpr uint8_t bit()      { return 7; }
 };
@@ -1163,11 +1190,11 @@ public:
   /// @return true if Pin24 is high, false otherwise.
   static bool test()      { return Port1::test(8); }
 
-  /// Returns the bitmask corresponding to this pin.
+  /// Returns the bitmask corresponding to this pin in the associated Port.
   /// @return (1<<8)
   static constexpr uint16_t bitmask() { return (1<<8); }
 
-  /// Returns the bit corresponding to this pin.
+  /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 8
   static constexpr uint8_t bit()      { return 8; }
 };
