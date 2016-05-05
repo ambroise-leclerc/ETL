@@ -8,10 +8,47 @@
 
 #ifndef ETL_METAUTILS_H_
 #define ETL_METAUTILS_H_
-#include <cstddef>
+#include <cstdint>
+
+
 
 namespace etl {
-  
+
+/// Produces an uint32_t hashcode of ztrings. Compile-time version of the algorithm can be
+/// used to generate hashcodes from litterals using the "_hash" suffix.
+/// Example with switch on strings :
+///
+/// void switchOnStrings(std::string command) {
+///     switch (StringHash.calc(command.c_str())) {
+///     case "Start"_hash:
+///        ...
+///     case "Stop"_hash:
+///        ...
+///     case "DoSomething"_hash:
+///        ...
+///     }
+/// }
+class StringHash {
+public:
+    static uint32_t calc(const char* zStr, uint32_t seed = 0) {
+        while (*zStr) {
+            seed = seed * 101 + *zStr++;
+        }
+        return seed;
+    }
+
+private:
+    static constexpr uint32_t compileTime(const char* zStr, uint32_t seed = 0) {
+        return *zStr ? (compileTime(zStr + 1, (seed * 101ull) + *zStr)) : seed;
+    }
+
+    friend constexpr uint32_t operator""_hash(char const* zStr, size_t);
+};
+
+constexpr uint32_t operator""_hash(char const* zStr, size_t) {
+    return etl::StringHash::compileTime(zStr);
+}
+
 class EmptyType {};
   
 // Comparison of two types :

@@ -36,31 +36,11 @@
 #include <list>
 #include <vector>
 #include <sstream>
+#include <etl/metautils.h>
 
 
 namespace etl {
-    class StringHash {
-    public:
-        static uint32_t calc(const char* s, uint32_t seed = 0) {
-            while (*s) {
-                seed = seed * 101 + *s++;
-            }
-            return seed;
-        }
-
-    private:
-        static constexpr uint32_t compileTime(const char* zStr, uint32_t seed = 0) {
-            return *zStr ? (compileTime(zStr + 1, (seed * 101ull) + *zStr)) : seed;
-        }
-
-        friend constexpr uint32_t operator""_hash(char const* zStr, size_t);
-    };
-
-    constexpr uint32_t operator""_hash(char const* zStr, size_t) {
-        return StringHash::compileTime(zStr);
-    }
-
-
+    
 class MockCore {
 public:
     using Register = uint8_t;
@@ -118,7 +98,7 @@ private:
         RegisterType inputMask, outputMask;
     };
 
-    /// Transmit status of masked input bits to masked output bits
+    /// Transmits status of masked input bits to masked output bits
     class BitLogicLink : public BitLogic {
     public:
         BitLogicLink(MockCore& mock, Register inputReg, RegisterType inputMask, Register outputReg, RegisterType outputMask)
@@ -158,5 +138,7 @@ protected:
         return -1;
     }
 };
+
+
 
 } // namespace etl

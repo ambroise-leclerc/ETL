@@ -2,8 +2,14 @@ cmake_minimum_required(VERSION 2.8.7)
 
 project(ETL)
 
-set(HEADERS include/etl.h test/MockDevice.h  
+set(ETL_HEADERS include/etl/debug_policies.h include/etl/freestore.h include/etl/interrupts.h include/etl/ioports.h
+                include/etl/metautils.h include/etl/watchdog.h)
+                
+set(ETL_ARCHITECTURE include/etl/architecture/MockCore.h)
+
+set(HEADERS ${ETL_HEADERS} ${ETL_ARCHITECTURE} test/MockDevice.h
             include/etl/architecture/MockCore.h )
+            
 add_executable( Tests test/test.cpp test/SetClearTest.cpp
                 ${HEADERS} )
 
