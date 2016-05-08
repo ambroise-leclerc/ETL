@@ -9,8 +9,8 @@ class Client {
 public:
     bool currentBit;
 
-    void init() : currentBit(false) {
-        
+    void init() {
+        currentBit = false;
     }
 
     void strobeChangedISR() {
@@ -54,8 +54,8 @@ SCENARIO("Test leds") {
         Device::pragma(Pragma("BitLink").reg(Data::Port::GetOutputRegister()).bit(Data::bit())
                                         .reg(ClientData::Port::GetInputRegister()).bit(ClientData::bit()));
 
-        ClientClk::setInterruptOnChange([simu]() { simu.clockChangedISR(); });
-        ClientStrobe::setInterruptOnChange([simu]() { simu.strobeChangedISR(); });
+        ClientClk::setInterruptOnChange([&]() -> void { simu.clockChangedISR(); });
+      //  ClientStrobe::setInterruptOnChange([simu]()-> void { simu.strobeChangedISR(); });
 
 
         WHEN("Issueing clock signals") {
