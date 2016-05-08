@@ -33,6 +33,7 @@
 #pragma once
 
 #include <MockDevice.h>
+#include <functional>
 
 namespace etl {
 
@@ -79,6 +80,7 @@ public:
     static int64_t pragma(std::string pragma)  { return MockDevice::getInstance().pragma(pragma); }
     static void initialize()                   { MockDevice::getInstance().configure(4); }
     static void yield()                        { MockDevice::getInstance().yield(); }
+    static void registerInterrupt();
     static const size_t sramSize = 10000;
     using RegisterType = uint16_t;
 
@@ -361,6 +363,9 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 4
   static constexpr uint8_t bit()      { return 4; }
+
+  static void setInterruptOnChange(std::function<void()> ISR) {}
+
 };
 
 class Pin5 : public Pin<Port0> {
