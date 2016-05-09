@@ -34,6 +34,46 @@ public:
 
 };
 
+static std::string testString;
+
+
+struct TestInterrupt {
+   
+    static void work()
+    {
+        testString.append("I");
+       std::cout << testString << '\n';
+    }
+};
+
+
+SCENARIO("TEST InterruptManager") {
+    std::cout << "TEST InterruptManager" << '\n';
+    using Register = uint8_t;
+    using RegisterType = uint16_t;
+    std::array<uint8_t, 4> fakeRegister;
+    std::function<void(void)> myFunction = TestInterrupt::work;
+
+    etl::InterruptsManager<Register, RegisterType, decltype(fakeRegister)> myManager(fakeRegister);
+    fakeRegister[0] = 0;
+    myManager.setInterrupt(myFunction, fakeRegister[0], (uint8_t)0b00000001);
+    myManager.enable();
+    std::cout << "1" << '\n';
+    myManager.generateInterrupts();
+    REQUIRE(testString.length() == 0);
+    fakeRegister[0] = 0b00000001;
+    std::cout << "2" << '\n';
+    myManager.generateInterrupts();
+    REQUIRE(testString.length() == 1);
+    fakeRegister[0] = 0b00000000;
+    std::cout << "3" << '\n';
+    myManager.generateInterrupts();
+    REQUIRE(testString.length() == 2);
+    std::cout << "4" << '\n';
+    myManager.generateInterrupts();
+    REQUIRE(testString.length() == 2);
+}
+
 
 SCENARIO("Test leds") {
     using namespace etl;
