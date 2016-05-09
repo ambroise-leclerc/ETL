@@ -66,7 +66,10 @@ public:
     static int64_t pragma(std::string pragma)  { return MockDevice::getInstance().pragma(pragma); }
     static void initialize()                   { MockDevice::getInstance().configure(2); }
     static void yield()                        { MockDevice::getInstance().yield(); }
-    static void registerInterrupt();
+    static void SetInterruptOnChange(const std::function<void()> handler, uint16_t& triggerRegister, uint16_t mask) {
+        auto index = &triggerRegister - MockDevice::getInstance().registers.data();
+        MockDevice::getInstance().setInterrupt(handler, index, mask);
+    }
     static const size_t sramSize = 10000;
     using RegisterType = uint16_t;
     static const uint8_t OUT_REG_CYCLES = 3;
@@ -145,6 +148,10 @@ public:
 
   /// Returns the native direction register associated to Port0.
   static uint16_t& GetDirectionRegister() { return GP0_DIR; }
+
+  static void setInterruptOnChange(const std::function<void()>& ISR, uint16_t mask) {
+      Device::SetInterruptOnChange(ISR, GetInputRegister(), mask);
+  }
 
 };
 
@@ -347,7 +354,7 @@ public:
   /// @return 4
   static constexpr uint8_t bit()      { return 4; }
 
-  static void setInterruptOnChange(std::function<void()> ISR) {}
+  static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 
 };
 

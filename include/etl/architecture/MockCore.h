@@ -37,15 +37,80 @@
 #include <vector>
 #include <sstream>
 #include <etl/metautils.h>
-
+#include <functional>
 
 namespace etl {
+
+template <typename Register, typename RegisterType, typename RegistersFile>
+class InterruptsManager {
+
+    bool enabled;                       ///< Are interrupts enabled ?
+    RegistersFile& registers;
+    RegistersFile registersFileCopy;
+
+    enum InterruptTriggerFields { InterruptHandler, RegisterId, TriggerMask };
+    using InterruptTrigger = std::tuple < std::function<void()>, Register, RegisterType>;
+    std::vector<InterruptTrigger> interruptVectors;
+
+public:
+    InterruptsManager(RegistersFile& registers) : enabled(false), registers(registers) {
+        std::copy(registers.cbegin(), registers.cend(), registersFileCopy.begin());
+        interruptVectors.resize(1);
+    }
+
+    void enable() {
+        enabled = true;
+    }
+
+    void disable() {
+        enabled = false;
+    }
+
+    void setInterrupt(std::function<void()> handler, Register regId, RegisterType triggerMask) {
+        interruptVectors[0] = std::tie(handler, regId, triggerMask);
+    }
+
+
+
+    void generateInterrupts() {
+        if (!enabled) {
+            return;
+        }
+
+        std::list<std::tuple_element<InterruptHandler, InterruptTrigger>::type> interruptRoutines;
+
+        for (auto index = 0; index <= 0; ++index) {
+            auto xnor = ~(registers[index] ^ registersFileCopy[index]);     // which bits have been flipped ?
+            if (xnor != 0) {                                                // if at least one has been flipped, 
+                for (const auto& trigger : interruptVectors) {
+                    if (index == std::get<RegisterId>(trigger)) {
+                        if ((xnor & std::get<TriggerMask>(trigger)) != 0) {
+                            interruptRoutines.push_back(std::get<InterruptHandler>(trigger));
+                        }
+                    }
+                }
+
+            }
+        }
+
+        std::copy(registers.cbegin(), registers.cend(), registersFileCopy.begin());
+
+        disable();
+        for (const auto& handler : interruptRoutines) {
+            handler();
+        }
+        enable();
+    }
+
+private:
+
+};
     
 class MockCore {
 public:
     using Register = uint8_t;
     using RegisterType = uint16_t;
-    static const Register NbPorts = 2;
+    static const Register NbPorts = 2; 
     std::array<RegisterType, 7 * NbPorts> registers;
     RegisterType *gpOut, *gpIn, *gpDir, *gpOutSet, *gpOutClr, *gpDirSet, *gpDirClr;
 
@@ -55,7 +120,8 @@ public:
         gpOutSet(&registers[3 * NbPorts]),
         gpOutClr(&registers[4 * NbPorts]),
         gpDirSet(&registers[5 * NbPorts]),
-        gpDirClr(&registers[6 * NbPorts]) {
+        gpDirClr(&registers[6 * NbPorts]),
+        interruptsManager(registers) {
     }
 
     MockCore(MockCore const&) = delete;
@@ -68,8 +134,16 @@ public:
     void yield() {
         consume1TRegisters();
         applyBitLogicOps();
-        generateInterrupts();
+        interruptsManager.generateInterrupts();
     }
+
+    void setInterrupt(const std::function<void()>& handler, Register regId, RegisterType triggerMask) {
+        interruptsManager.setInterrupt(handler, regId, triggerMask);
+    }
+
+private:
+    InterruptsManager<Register, RegisterType, decltype(registers)> interruptsManager;
+
 
 private:
     void consume1TRegisters() {
@@ -120,8 +194,7 @@ private:
         }
     }
 
-    void generateInterrupts() { }
-
+    
     std::list<BitLogicLink> bitLogicLinkOps;
 
 protected:
