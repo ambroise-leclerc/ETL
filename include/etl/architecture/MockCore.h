@@ -53,7 +53,7 @@ class InterruptsManager {
     std::vector<InterruptTrigger> interruptVectors;
 
 public:
-    InterruptsManager(RegistersFile& registers) : enabled(false), registers(registers) {
+    InterruptsManager(RegistersFile& registers) : enabled(true), registers(registers) {
         std::copy(registers.cbegin(), registers.cend(), registersFileCopy.begin());
         interruptVectors.resize(1);
     }
@@ -79,12 +79,12 @@ public:
 
         std::list<std::tuple_element<InterruptHandler, InterruptTrigger>::type> interruptRoutines;
 
-        for (auto index = 0; index <= 0; ++index) {
-            auto xnor = ~(registers[index] ^ registersFileCopy[index]);     // which bits have been flipped ?
-            if (xnor != 0) {                                                // if at least one has been flipped, 
+        for (auto index = 0; index < registers.size(); ++index) {
+            auto xor = registers[index] ^ registersFileCopy[index];     // which bits have been flipped ?
+            if (xor != 0) {                                                // if at least one has been flipped, 
                 for (const auto& trigger : interruptVectors) {
                     if (index == std::get<RegisterId>(trigger)) {
-                        if ((xnor & std::get<TriggerMask>(trigger)) != 0) {
+                        if ((xor & std::get<TriggerMask>(trigger)) != 0) {
                             interruptRoutines.push_back(std::get<InterruptHandler>(trigger));
                         }
                     }
