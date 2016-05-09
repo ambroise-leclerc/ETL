@@ -38,180 +38,179 @@
 #include <sstream>
 #include <etl/metautils.h>
 #include <functional>
+#include <cassert>
 
 namespace etl {
 
-template <typename Register, typename RegisterType, typename RegistersFile>
-class InterruptsManager {
+    template <typename Register, typename RegisterType, typename RegistersFile>
+    class InterruptsManager {
 
-    bool enabled;                       ///< Are interrupts enabled ?
-    RegistersFile& registers;
-    RegistersFile registersFileCopy;
+        bool enabled; ///< Are interrupts enabled ?
+        RegistersFile& registers;
+        RegistersFile registersFileCopy;
 
-    enum InterruptTriggerFields { InterruptHandler, RegisterId, TriggerMask };
-    using InterruptTrigger = std::tuple < std::function<void()>, Register, RegisterType>;
-    std::vector<InterruptTrigger> interruptVectors;
+        enum InterruptTriggerFields { InterruptHandler, RegisterId, TriggerMask };
 
-public:
-    InterruptsManager(RegistersFile& registers) : enabled(true), registers(registers) {
-        std::copy(registers.cbegin(), registers.cend(), registersFileCopy.begin());
-        interruptVectors.resize(1);
-    }
+        using InterruptTrigger = std::tuple<std::function<void()>, Register, RegisterType>;
+        std::array<InterruptTrigger, 1> interruptVectors;
 
-    void enable() {
-        enabled = true;
-    }
-
-    void disable() {
-        enabled = false;
-    }
-
-    void setInterrupt(std::function<void()> handler, Register regId, RegisterType triggerMask) {
-        interruptVectors[0] = std::tie(handler, regId, triggerMask);
-    }
-
-
-
-    void generateInterrupts() {
-        if (!enabled) {
-            return;
+    public:
+        InterruptsManager(RegistersFile& registers) : enabled(true), registers(registers) {
+            std::copy(registers.cbegin(), registers.cend(), registersFileCopy.begin());
         }
 
-        std::list<std::tuple_element<InterruptHandler, InterruptTrigger>::type> interruptRoutines;
+        void enable() {
+            enabled = true;
+        }
 
-        for (auto index = 0; index < registers.size(); ++index) {
-            auto xor = registers[index] ^ registersFileCopy[index];     // which bits have been flipped ?
-            if (xor != 0) {                                                // if at least one has been flipped, 
-                for (const auto& trigger : interruptVectors) {
-                    if (index == std::get<RegisterId>(trigger)) {
-                        if ((xor & std::get<TriggerMask>(trigger)) != 0) {
-                            interruptRoutines.push_back(std::get<InterruptHandler>(trigger));
+        void disable() {
+            enabled = false;
+        }
+
+        void setInterrupt(std::function<void()> handler, Register regId, RegisterType triggerMask) {
+            interruptVectors[0] = std::tie(handler, regId, triggerMask);
+        }
+
+        void generateInterrupts() {
+            if (!enabled) {
+                return;
+            }
+
+            std::list<std::tuple_element<InterruptHandler, InterruptTrigger>::type> interruptRoutines;
+
+            for (auto index = 0; index < registers.size(); ++index) {
+                auto xor = registers[index] ^ registersFileCopy[index]; // which bits have been flipped ?
+                if (xor != 0) { // if at least one has been flipped, 
+                    for (const auto& trigger : interruptVectors) {
+                        if (index == std::get<RegisterId>(trigger)) {
+                            if ((xor & std::get<TriggerMask>(trigger)) != 0) {
+                                interruptRoutines.push_back(std::get<InterruptHandler>(trigger));
+                            }
                         }
                     }
                 }
+            }
 
+            std::copy(registers.cbegin(), registers.cend(), registersFileCopy.begin());
+
+            disable();
+            for (const auto& handler : interruptRoutines) {
+                handler();
+            }
+            enable();
+        }
+
+    private:
+
+    };
+
+    class MockCore {
+    public:
+        using Register = uint8_t;
+        using RegisterType = uint16_t;
+        static const Register NbPorts = 4;
+        std::array<RegisterType, 7 * NbPorts> registers;
+        RegisterType *gpOut, *gpIn, *gpDir, *gpOutSet, *gpOutClr, *gpDirSet, *gpDirClr;
+
+        MockCore() : gpOut(&registers[0 * NbPorts]), gpIn(&registers[1 * NbPorts]), gpDir(&registers[2 * NbPorts]),
+                     gpOutSet(&registers[3 * NbPorts]), gpOutClr(&registers[4 * NbPorts]), gpDirSet(&registers[5 * NbPorts]),
+                     gpDirClr(&registers[6 * NbPorts]), interruptsManager(registers) {
+        }
+
+        MockCore(MockCore const&) = delete;
+        MockCore(MockCore&&) = delete;
+        MockCore& operator=(MockCore const&) = delete;
+        MockCore& operator=(MockCore&&) = delete;
+
+        void configure(uint8_t numberOfPorts) {
+            assert(NbPorts == numberOfPorts);
+        };
+
+        void yield() {
+            consume1TRegisters();
+            applyBitLogicOps();
+            interruptsManager.generateInterrupts();
+        }
+
+        void setInterrupt(const std::function<void()>& handler, Register regId, RegisterType triggerMask) {
+            interruptsManager.setInterrupt(handler, regId, triggerMask);
+        }
+
+    private:
+        InterruptsManager<Register, RegisterType, decltype(registers)> interruptsManager;
+
+
+    private:
+        void consume1TRegisters() {
+            for (auto portId = 0; portId < NbPorts; ++portId) {
+                gpOut[portId] |= gpOutSet[portId];
+                gpOutSet[portId] = 0;
+
+                gpOut[portId] &= ~gpOutClr[portId];
+                gpOutClr[portId] = 0;
+
+                gpDir[portId] |= gpDirSet[portId];
+                gpDirSet[portId] = 0;
+
+                gpDir[portId] &= ~gpDirClr[portId];
+                gpDirClr[portId] = 0;
             }
         }
 
-        std::copy(registers.cbegin(), registers.cend(), registersFileCopy.begin());
+        class BitLogic {
+        public:
+            BitLogic(MockCore& mock, Register inputReg, RegisterType inputMask, Register outputReg, RegisterType outputMask)
+                : mock(mock), inputReg(inputReg), outputReg(outputReg), inputMask(inputMask), outputMask(outputMask) {
+            }
 
-        disable();
-        for (const auto& handler : interruptRoutines) {
-            handler();
+        protected:
+            MockCore& mock;
+            Register inputReg, outputReg;
+            RegisterType inputMask, outputMask;
+        };
+
+        /// Transmits status of masked input bits to masked output bits
+        class BitLogicLink : public BitLogic {
+        public:
+            BitLogicLink(MockCore& mock, Register inputReg, RegisterType inputMask, Register outputReg, RegisterType outputMask)
+                : BitLogic(mock, inputReg, inputMask, outputReg, outputMask) {
+            }
+
+            void apply() {
+                if ((mock.registers[inputReg] & inputMask) == inputMask) {
+                    mock.registers[outputReg] |= outputMask;
+                }
+                else {
+                    mock.registers[outputReg] &= ~outputMask;
+                }
+            }
+        };
+
+        void applyBitLogicOps() {
+            for (auto& logicOp : bitLogicLinkOps) {
+                logicOp.apply();
+            }
         }
-        enable();
-    }
-
-private:
-
-};
-    
-class MockCore {
-public:
-    using Register = uint8_t;
-    using RegisterType = uint16_t;
-    static const Register NbPorts = 2; 
-    std::array<RegisterType, 7 * NbPorts> registers;
-    RegisterType *gpOut, *gpIn, *gpDir, *gpOutSet, *gpOutClr, *gpDirSet, *gpDirClr;
-
-    MockCore() : gpOut(&registers[0 * NbPorts]),
-        gpIn(&registers[1 * NbPorts]),
-        gpDir(&registers[2 * NbPorts]),
-        gpOutSet(&registers[3 * NbPorts]),
-        gpOutClr(&registers[4 * NbPorts]),
-        gpDirSet(&registers[5 * NbPorts]),
-        gpDirClr(&registers[6 * NbPorts]),
-        interruptsManager(registers) {
-    }
-
-    MockCore(MockCore const&) = delete;
-    MockCore(MockCore&&) = delete;
-    MockCore& operator=(MockCore const&) = delete;
-    MockCore& operator=(MockCore&&) = delete;
-
-    void configure(uint8_t numberOfPorts) { };
-
-    void yield() {
-        consume1TRegisters();
-        applyBitLogicOps();
-        interruptsManager.generateInterrupts();
-    }
-
-    void setInterrupt(const std::function<void()>& handler, Register regId, RegisterType triggerMask) {
-        interruptsManager.setInterrupt(handler, regId, triggerMask);
-    }
-
-private:
-    InterruptsManager<Register, RegisterType, decltype(registers)> interruptsManager;
 
 
-private:
-    void consume1TRegisters() {
-        for (auto portId = 0; portId < NbPorts; ++portId) {
-            gpOut[portId] |= gpOutSet[portId];
-            gpOutSet[portId] = 0;
+        std::list<BitLogicLink> bitLogicLinkOps;
 
-            gpOut[portId] &= ~gpOutClr[portId];
-            gpOutClr[portId] = 0;
-
-            gpDir[portId] |= gpDirSet[portId];
-            gpDirSet[portId] = 0;
-
-            gpDir[portId] &= ~gpDirClr[portId];
-            gpDirClr[portId] = 0;
-        }
-    }
-
-    class BitLogic {
-    public:
-        BitLogic(MockCore& mock, Register inputReg, RegisterType inputMask, Register outputReg, RegisterType outputMask)
-            : mock(mock), inputReg(inputReg), outputReg(outputReg), inputMask(inputMask), outputMask(outputMask) {}
     protected:
-        MockCore& mock;
-        Register inputReg, outputReg;
-        RegisterType inputMask, outputMask;
-    };
+        int64_t pragma(std::string pragma) {
+            using namespace std;
+            istringstream ss(pragma);
+            vector<string> tokens(istream_iterator<string>{ss}, istream_iterator<string>{});
 
-    /// Transmits status of masked input bits to masked output bits
-    class BitLogicLink : public BitLogic {
-    public:
-        BitLogicLink(MockCore& mock, Register inputReg, RegisterType inputMask, Register outputReg, RegisterType outputMask)
-            : BitLogic(mock, inputReg, inputMask, outputReg, outputMask) {}
-
-        void apply() {
-            if ((mock.registers[inputReg] & inputMask) == inputMask) {                
-                mock.registers[outputReg] |= outputMask;
-            }
-            else {
-                mock.registers[outputReg] &= ~outputMask;
-            }
-        }
-    };
-
-    void applyBitLogicOps() {
-        for (auto& logicOp : bitLogicLinkOps) {
-            logicOp.apply();
-        }
-    }
-
-    
-    std::list<BitLogicLink> bitLogicLinkOps;
-
-protected:
-    int64_t pragma(std::string pragma) {
-        using namespace std;
-        istringstream ss(pragma);
-        vector<string> tokens(istream_iterator<string>{ss}, istream_iterator<string>{});
-
-        switch (StringHash::calc(tokens[0].c_str())) {
-        case "BitLink"_hash:
+            switch (StringHash::calc(tokens[0].c_str())) {
+            case "BitLink"_hash:
             bitLogicLinkOps.emplace_back(*this, stoi(tokens[1]), stoi(tokens[2]), stoi(tokens[3]), stoi(tokens[4]));
-            return 0;
+                return 0;
+            }
+            return -1;
         }
-        return -1;
-    }
-};
-
+    };
 
 
 } // namespace etl
+
+

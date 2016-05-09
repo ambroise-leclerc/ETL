@@ -81,9 +81,9 @@ SCENARIO("Test leds") {
         using Strobe = Pin0;
         using Clk = Pin1;
         using Data = Pin2;
-        using ClientStrobe = Pin3;
-        using ClientClk = Pin4;
-        using ClientData = Pin5;
+        using ClientStrobe = PinS0;
+        using ClientClk = PinS1;
+        using ClientData = PinS2;
 
         Client<ClientStrobe, ClientClk, ClientData> simu;
 
@@ -94,16 +94,17 @@ SCENARIO("Test leds") {
         Device::pragma(Pragma("BitLink").reg(Data::Port::GetOutputRegister()).bit(Data::bit())
                                         .reg(ClientData::Port::GetInputRegister()).bit(ClientData::bit()));
 
-        ClientClk::setInterruptOnChange([&]() -> void { simu.clockChangedISR(); });
-      //  ClientStrobe::setInterruptOnChange([simu]()-> void { simu.strobeChangedISR(); });
+        ClientClk::setInterruptOnChange([&simu]() -> void { simu.clockChangedISR(); });
+        //ClientClk::setInterruptOnChange(std::bind(&decltype(simu)::clockChangedISR, simu));
+       // ClientStrobe::setInterruptOnChange([&simu]()-> void { simu.strobeChangedISR(); });
 
 
         WHEN("Issueing clock signals") {
             simu.init();
             REQUIRE(simu.currentBit == false);
 
-            Clk::set();
-            Data::pulseHigh();
+            Data::set();
+            Clk::pulseHigh();
             THEN("client is notified of a new data") {
                 REQUIRE(simu.currentBit == true);
             }
