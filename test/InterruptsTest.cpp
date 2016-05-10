@@ -3,6 +3,40 @@
 #define __Mock_Mock__
 #include <etl/ioports.h>
 
+static std::string testString;
+
+struct TestInterrupt {
+
+    static void work()
+    {
+        testString.append("I");
+       std::cout << testString << '\n';
+    }
+};
+
+SCENARIO("TEST InterruptManager") {
+    using namespace etl;
+
+    std::cout << "TEST InterruptManager" << '\n';
+    std::function<void(void)> myFunction = TestInterrupt::work;
+
+    PortSimuA::setInterruptOnChange(myFunction, 0b00000001);
+    std::cout << "1" << '\n';
+    Device::yield();
+    REQUIRE(testString.length() == 0);
+    GPSimuA_IN = 0b00000001;
+    std::cout << "2" << '\n';
+    Device::yield();
+    REQUIRE(testString.length() == 1);
+    GPSimuA_IN = 0b00000000;
+    std::cout << "3" << '\n';
+    Device::yield();
+    REQUIRE(testString.length() == 2);
+    std::cout << "4" << '\n';
+    Device::yield();
+    REQUIRE(testString.length() == 2);
+}
+
 
 template <typename Strobe, typename Clk, typename Data>
 class Client {
@@ -31,51 +65,9 @@ public:
             std::cout << "Clock interrupt received : FALLING EDGE\n";
         }
     }
-
 };
 
-static std::string testString;
-
-
-struct TestInterrupt {
-   
-    static void work()
-    {
-        testString.append("I");
-       std::cout << testString << '\n';
-    }
-};
-
-
-SCENARIO("TEST InterruptManager") {
-    std::cout << "TEST InterruptManager" << '\n';
-    using Register = uint8_t;
-    using RegisterType = uint16_t;
-    std::array<uint8_t, 4> fakeRegister;
-    std::function<void(void)> myFunction = TestInterrupt::work;
-
-    etl::InterruptsManager<Register, RegisterType, decltype(fakeRegister)> myManager(fakeRegister);
-    fakeRegister[0] = 0;
-    myManager.setInterrupt(myFunction, fakeRegister[0], (uint8_t)0b00000001);
-    myManager.enable();
-    std::cout << "1" << '\n';
-    myManager.generateInterrupts();
-    REQUIRE(testString.length() == 0);
-    fakeRegister[0] = 0b00000001;
-    std::cout << "2" << '\n';
-    myManager.generateInterrupts();
-    REQUIRE(testString.length() == 1);
-    fakeRegister[0] = 0b00000000;
-    std::cout << "3" << '\n';
-    myManager.generateInterrupts();
-    REQUIRE(testString.length() == 2);
-    std::cout << "4" << '\n';
-    myManager.generateInterrupts();
-    REQUIRE(testString.length() == 2);
-}
-
-
-SCENARIO("Test leds") {
+SCENARIO("Test dual interruptions on strobe and clock") {
     using namespace etl;
     GIVEN("MCU with output pins 0, 1, 2 linked to input pins 3, 4, 5 with interrupt enables on change for pins 3, 4, 5") {
         using Strobe = Pin0;
@@ -95,8 +87,8 @@ SCENARIO("Test leds") {
                                         .reg(ClientData::Port::GetInputRegister()).bit(ClientData::bit()));
 
         ClientClk::setInterruptOnChange([&simu]() -> void { simu.clockChangedISR(); });
-        //ClientClk::setInterruptOnChange(std::bind(&decltype(simu)::clockChangedISR, simu));
-       // ClientStrobe::setInterruptOnChange([&simu]()-> void { simu.strobeChangedISR(); });
+        //TODO : implémenter l'ajout de nouveaux bits de mask pour que setInterruptOnChange n'écrase pas le précédent appel
+        ClientStrobe::setInterruptOnChange([&simu]()-> void { simu.strobeChangedISR(); });  
 
 
         WHEN("Issueing clock signals") {
