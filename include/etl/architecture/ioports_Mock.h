@@ -77,10 +77,16 @@ class Device {
 public:
     static int64_t pragma(const Pragma& param) { return MockDevice::getInstance().pragma(param.paramsList); }
     static int64_t pragma(std::string pragma)  { return MockDevice::getInstance().pragma(pragma); }
-    static void initialize()                   { MockDevice::getInstance().configure(4); }
+    static void initialize()                   { MockDevice::getInstance().configure(NB_PORTS); }
     static void yield()                        { MockDevice::getInstance().yield(); }
+static void SetInterruptOnChange(const std::function<void()> handler, uint16_t& triggerRegister, uint16_t mask) {
+    auto index = &triggerRegister - MockDevice::getInstance().registers.data();
+    MockDevice::getInstance().setInterrupt(handler, index, mask);
+}
     static const size_t sramSize = 10000;
     using RegisterType = uint16_t;
+
+    static const uint8_t NB_PORTS = 4;
 
     static const uint8_t OUT_REG_CYCLES = 3;
     static const uint8_t OUTCLR_REG_CYCLES = 1;
@@ -161,6 +167,9 @@ public:
   /// Returns the native direction register associated to Port0.
   static uint16_t& GetDirectionRegister() { return GP0_DIR; }
 
+  static void setInterruptOnChange(const std::function<void()>& ISR, uint16_t mask) {
+    Device::SetInterruptOnChange(ISR, GetInputRegister(), mask);
+  }
 };
 
 class Pin0 : public Pin<Port0> {
@@ -201,6 +210,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 0
   static constexpr uint8_t bit()      { return 0; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin1 : public Pin<Port0> {
@@ -241,6 +252,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 1
   static constexpr uint8_t bit()      { return 1; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin2 : public Pin<Port0> {
@@ -281,6 +294,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 2
   static constexpr uint8_t bit()      { return 2; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin3 : public Pin<Port0> {
@@ -321,6 +336,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 3
   static constexpr uint8_t bit()      { return 3; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin4 : public Pin<Port0> {
@@ -361,6 +378,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 4
   static constexpr uint8_t bit()      { return 4; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin5 : public Pin<Port0> {
@@ -401,6 +420,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 5
   static constexpr uint8_t bit()      { return 5; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin6 : public Pin<Port0> {
@@ -441,6 +462,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 6
   static constexpr uint8_t bit()      { return 6; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin7 : public Pin<Port0> {
@@ -481,6 +504,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 7
   static constexpr uint8_t bit()      { return 7; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin8 : public Pin<Port0> {
@@ -521,6 +546,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 8
   static constexpr uint8_t bit()      { return 8; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin9 : public Pin<Port0> {
@@ -561,6 +588,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 9
   static constexpr uint8_t bit()      { return 9; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin10 : public Pin<Port0> {
@@ -601,6 +630,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 10
   static constexpr uint8_t bit()      { return 10; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin11 : public Pin<Port0> {
@@ -641,6 +672,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 11
   static constexpr uint8_t bit()      { return 11; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin12 : public Pin<Port0> {
@@ -681,6 +714,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 12
   static constexpr uint8_t bit()      { return 12; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin13 : public Pin<Port0> {
@@ -721,6 +756,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 13
   static constexpr uint8_t bit()      { return 13; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin14 : public Pin<Port0> {
@@ -761,6 +798,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 14
   static constexpr uint8_t bit()      { return 14; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 class Pin15 : public Pin<Port0> {
@@ -801,6 +840,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 15
   static constexpr uint8_t bit()      { return 15; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 
@@ -873,37 +914,40 @@ public:
   /// Returns the native direction register associated to Port1.
   static uint16_t& GetDirectionRegister() { return GP1_DIR; }
 
+  static void setInterruptOnChange(const std::function<void()>& ISR, uint16_t mask) {
+    Device::SetInterruptOnChange(ISR, GetInputRegister(), mask);
+  }
 };
 
-class Pin0 : public Pin<Port1> {
+class Pin16 : public Pin<Port1> {
 public:
-  /// Sets Pin0 to HIGH.
+  /// Sets Pin16 to HIGH.
   static void set()       { Port1::setBits(1<<0); }
 
-  /// Sets Pin0 to asked status.
+  /// Sets Pin16 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? Port1::setBits(1<<0) : Port1::clearBits(1<<0); }
 
-  /// Sets Pin0 to LOW.
+  /// Sets Pin16 to LOW.
   static void clear()     { Port1::clearBits(1<<0); }
 
-  /// Toggles Pin0 value.
+  /// Toggles Pin16 value.
   static void toggle()    { Port1::toggleBits(1<<0); }
 
-  /// Configures Pin0 as an output pin.
+  /// Configures Pin16 as an output pin.
   static void setOutput() { Port1::setOutput(1<<0); }
 
-  /// Configures Pin0 as an input pin.
+  /// Configures Pin16 as an input pin.
   static void setInput()  { Port1::setInput(1<<0); }
 
-  /// Pulses Pin0 with high state first.
+  /// Pulses Pin16 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin0 with low state first.
+  /// Pulses Pin16 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin0 value.
-  /// @return true if Pin0 is high, false otherwise.
+  /// Reads Pin16 value.
+  /// @return true if Pin16 is high, false otherwise.
   static bool test()      { return Port1::test(0); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -913,37 +957,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 0
   static constexpr uint8_t bit()      { return 0; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class Pin1 : public Pin<Port1> {
+class Pin17 : public Pin<Port1> {
 public:
-  /// Sets Pin1 to HIGH.
+  /// Sets Pin17 to HIGH.
   static void set()       { Port1::setBits(1<<1); }
 
-  /// Sets Pin1 to asked status.
+  /// Sets Pin17 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? Port1::setBits(1<<1) : Port1::clearBits(1<<1); }
 
-  /// Sets Pin1 to LOW.
+  /// Sets Pin17 to LOW.
   static void clear()     { Port1::clearBits(1<<1); }
 
-  /// Toggles Pin1 value.
+  /// Toggles Pin17 value.
   static void toggle()    { Port1::toggleBits(1<<1); }
 
-  /// Configures Pin1 as an output pin.
+  /// Configures Pin17 as an output pin.
   static void setOutput() { Port1::setOutput(1<<1); }
 
-  /// Configures Pin1 as an input pin.
+  /// Configures Pin17 as an input pin.
   static void setInput()  { Port1::setInput(1<<1); }
 
-  /// Pulses Pin1 with high state first.
+  /// Pulses Pin17 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin1 with low state first.
+  /// Pulses Pin17 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin1 value.
-  /// @return true if Pin1 is high, false otherwise.
+  /// Reads Pin17 value.
+  /// @return true if Pin17 is high, false otherwise.
   static bool test()      { return Port1::test(1); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -953,37 +999,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 1
   static constexpr uint8_t bit()      { return 1; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class Pin2 : public Pin<Port1> {
+class Pin18 : public Pin<Port1> {
 public:
-  /// Sets Pin2 to HIGH.
+  /// Sets Pin18 to HIGH.
   static void set()       { Port1::setBits(1<<2); }
 
-  /// Sets Pin2 to asked status.
+  /// Sets Pin18 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? Port1::setBits(1<<2) : Port1::clearBits(1<<2); }
 
-  /// Sets Pin2 to LOW.
+  /// Sets Pin18 to LOW.
   static void clear()     { Port1::clearBits(1<<2); }
 
-  /// Toggles Pin2 value.
+  /// Toggles Pin18 value.
   static void toggle()    { Port1::toggleBits(1<<2); }
 
-  /// Configures Pin2 as an output pin.
+  /// Configures Pin18 as an output pin.
   static void setOutput() { Port1::setOutput(1<<2); }
 
-  /// Configures Pin2 as an input pin.
+  /// Configures Pin18 as an input pin.
   static void setInput()  { Port1::setInput(1<<2); }
 
-  /// Pulses Pin2 with high state first.
+  /// Pulses Pin18 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin2 with low state first.
+  /// Pulses Pin18 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin2 value.
-  /// @return true if Pin2 is high, false otherwise.
+  /// Reads Pin18 value.
+  /// @return true if Pin18 is high, false otherwise.
   static bool test()      { return Port1::test(2); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -993,37 +1041,81 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 2
   static constexpr uint8_t bit()      { return 2; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class Pin4 : public Pin<Port1> {
+class Pin19 : public Pin<Port1> {
 public:
-  /// Sets Pin4 to HIGH.
+  /// Sets Pin19 to HIGH.
+  static void set()       { Port1::setBits(1<<3); }
+
+  /// Sets Pin19 to asked status.
+  /// @param setHigh set pin to HIGH if true, LOW otherwise
+  static void set(bool setHigh) { setHigh ? Port1::setBits(1<<3) : Port1::clearBits(1<<3); }
+
+  /// Sets Pin19 to LOW.
+  static void clear()     { Port1::clearBits(1<<3); }
+
+  /// Toggles Pin19 value.
+  static void toggle()    { Port1::toggleBits(1<<3); }
+
+  /// Configures Pin19 as an output pin.
+  static void setOutput() { Port1::setOutput(1<<3); }
+
+  /// Configures Pin19 as an input pin.
+  static void setInput()  { Port1::setInput(1<<3); }
+
+  /// Pulses Pin19 with high state first.
+  static void pulseHigh() { set(); clear(); }
+
+  /// Pulses Pin19 with low state first.
+  static void pulseLow()  { clear(); set(); }
+
+  /// Reads Pin19 value.
+  /// @return true if Pin19 is high, false otherwise.
+  static bool test()      { return Port1::test(3); }
+
+  /// Returns the bitmask corresponding to this pin in the associated Port.
+  /// @return (1<<3)
+  static constexpr uint16_t bitmask() { return (1<<3); }
+
+  /// Returns the bit number corresponding to this pin in the associated Port.
+  /// @return 3
+  static constexpr uint8_t bit()      { return 3; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
+};
+
+class Pin20 : public Pin<Port1> {
+public:
+  /// Sets Pin20 to HIGH.
   static void set()       { Port1::setBits(1<<4); }
 
-  /// Sets Pin4 to asked status.
+  /// Sets Pin20 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? Port1::setBits(1<<4) : Port1::clearBits(1<<4); }
 
-  /// Sets Pin4 to LOW.
+  /// Sets Pin20 to LOW.
   static void clear()     { Port1::clearBits(1<<4); }
 
-  /// Toggles Pin4 value.
+  /// Toggles Pin20 value.
   static void toggle()    { Port1::toggleBits(1<<4); }
 
-  /// Configures Pin4 as an output pin.
+  /// Configures Pin20 as an output pin.
   static void setOutput() { Port1::setOutput(1<<4); }
 
-  /// Configures Pin4 as an input pin.
+  /// Configures Pin20 as an input pin.
   static void setInput()  { Port1::setInput(1<<4); }
 
-  /// Pulses Pin4 with high state first.
+  /// Pulses Pin20 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin4 with low state first.
+  /// Pulses Pin20 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin4 value.
-  /// @return true if Pin4 is high, false otherwise.
+  /// Reads Pin20 value.
+  /// @return true if Pin20 is high, false otherwise.
   static bool test()      { return Port1::test(4); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1033,46 +1125,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 4
   static constexpr uint8_t bit()      { return 4; }
-};
 
-class Pin5 : public Pin<Port1> {
-public:
-  /// Sets Pin5 to HIGH.
-  static void set()       { Port1::setBits(1<<5); }
-
-  /// Sets Pin5 to asked status.
-  /// @param setHigh set pin to HIGH if true, LOW otherwise
-  static void set(bool setHigh) { setHigh ? Port1::setBits(1<<5) : Port1::clearBits(1<<5); }
-
-  /// Sets Pin5 to LOW.
-  static void clear()     { Port1::clearBits(1<<5); }
-
-  /// Toggles Pin5 value.
-  static void toggle()    { Port1::toggleBits(1<<5); }
-
-  /// Configures Pin5 as an output pin.
-  static void setOutput() { Port1::setOutput(1<<5); }
-
-  /// Configures Pin5 as an input pin.
-  static void setInput()  { Port1::setInput(1<<5); }
-
-  /// Pulses Pin5 with high state first.
-  static void pulseHigh() { set(); clear(); }
-
-  /// Pulses Pin5 with low state first.
-  static void pulseLow()  { clear(); set(); }
-
-  /// Reads Pin5 value.
-  /// @return true if Pin5 is high, false otherwise.
-  static bool test()      { return Port1::test(5); }
-
-  /// Returns the bitmask corresponding to this pin in the associated Port.
-  /// @return (1<<5)
-  static constexpr uint16_t bitmask() { return (1<<5); }
-
-  /// Returns the bit number corresponding to this pin in the associated Port.
-  /// @return 5
-  static constexpr uint8_t bit()      { return 5; }
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 
@@ -1145,37 +1199,40 @@ public:
   /// Returns the native direction register associated to PortSimuA.
   static uint16_t& GetDirectionRegister() { return GPSimuA_DIR; }
 
+  static void setInterruptOnChange(const std::function<void()>& ISR, uint16_t mask) {
+    Device::SetInterruptOnChange(ISR, GetInputRegister(), mask);
+  }
 };
 
-class PinSimuA0 : public Pin<PortSimuA> {
+class PinS0 : public Pin<PortSimuA> {
 public:
-  /// Sets Pin0 to HIGH.
+  /// Sets PinS0 to HIGH.
   static void set()       { PortSimuA::setBits(1<<0); }
 
-  /// Sets Pin0 to asked status.
+  /// Sets PinS0 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuA::setBits(1<<0) : PortSimuA::clearBits(1<<0); }
 
-  /// Sets Pin0 to LOW.
+  /// Sets PinS0 to LOW.
   static void clear()     { PortSimuA::clearBits(1<<0); }
 
-  /// Toggles Pin0 value.
+  /// Toggles PinS0 value.
   static void toggle()    { PortSimuA::toggleBits(1<<0); }
 
-  /// Configures Pin0 as an output pin.
+  /// Configures PinS0 as an output pin.
   static void setOutput() { PortSimuA::setOutput(1<<0); }
 
-  /// Configures Pin0 as an input pin.
+  /// Configures PinS0 as an input pin.
   static void setInput()  { PortSimuA::setInput(1<<0); }
 
-  /// Pulses Pin0 with high state first.
+  /// Pulses PinS0 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin0 with low state first.
+  /// Pulses PinS0 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin0 value.
-  /// @return true if Pin0 is high, false otherwise.
+  /// Reads PinS0 value.
+  /// @return true if PinS0 is high, false otherwise.
   static bool test()      { return PortSimuA::test(0); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1185,37 +1242,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 0
   static constexpr uint8_t bit()      { return 0; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class PinSimuA1 : public Pin<PortSimuA> {
+class PinS1 : public Pin<PortSimuA> {
 public:
-  /// Sets Pin1 to HIGH.
+  /// Sets PinS1 to HIGH.
   static void set()       { PortSimuA::setBits(1<<1); }
 
-  /// Sets Pin1 to asked status.
+  /// Sets PinS1 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuA::setBits(1<<1) : PortSimuA::clearBits(1<<1); }
 
-  /// Sets Pin1 to LOW.
+  /// Sets PinS1 to LOW.
   static void clear()     { PortSimuA::clearBits(1<<1); }
 
-  /// Toggles Pin1 value.
+  /// Toggles PinS1 value.
   static void toggle()    { PortSimuA::toggleBits(1<<1); }
 
-  /// Configures Pin1 as an output pin.
+  /// Configures PinS1 as an output pin.
   static void setOutput() { PortSimuA::setOutput(1<<1); }
 
-  /// Configures Pin1 as an input pin.
+  /// Configures PinS1 as an input pin.
   static void setInput()  { PortSimuA::setInput(1<<1); }
 
-  /// Pulses Pin1 with high state first.
+  /// Pulses PinS1 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin1 with low state first.
+  /// Pulses PinS1 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin1 value.
-  /// @return true if Pin1 is high, false otherwise.
+  /// Reads PinS1 value.
+  /// @return true if PinS1 is high, false otherwise.
   static bool test()      { return PortSimuA::test(1); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1225,37 +1284,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 1
   static constexpr uint8_t bit()      { return 1; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class PinSimuA2 : public Pin<PortSimuA> {
+class PinS2 : public Pin<PortSimuA> {
 public:
-  /// Sets Pin2 to HIGH.
+  /// Sets PinS2 to HIGH.
   static void set()       { PortSimuA::setBits(1<<2); }
 
-  /// Sets Pin2 to asked status.
+  /// Sets PinS2 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuA::setBits(1<<2) : PortSimuA::clearBits(1<<2); }
 
-  /// Sets Pin2 to LOW.
+  /// Sets PinS2 to LOW.
   static void clear()     { PortSimuA::clearBits(1<<2); }
 
-  /// Toggles Pin2 value.
+  /// Toggles PinS2 value.
   static void toggle()    { PortSimuA::toggleBits(1<<2); }
 
-  /// Configures Pin2 as an output pin.
+  /// Configures PinS2 as an output pin.
   static void setOutput() { PortSimuA::setOutput(1<<2); }
 
-  /// Configures Pin2 as an input pin.
+  /// Configures PinS2 as an input pin.
   static void setInput()  { PortSimuA::setInput(1<<2); }
 
-  /// Pulses Pin2 with high state first.
+  /// Pulses PinS2 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin2 with low state first.
+  /// Pulses PinS2 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin2 value.
-  /// @return true if Pin2 is high, false otherwise.
+  /// Reads PinS2 value.
+  /// @return true if PinS2 is high, false otherwise.
   static bool test()      { return PortSimuA::test(2); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1265,37 +1326,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 2
   static constexpr uint8_t bit()      { return 2; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class PinSimuA3 : public Pin<PortSimuA> {
+class PinS3 : public Pin<PortSimuA> {
 public:
-  /// Sets Pin3 to HIGH.
+  /// Sets PinS3 to HIGH.
   static void set()       { PortSimuA::setBits(1<<3); }
 
-  /// Sets Pin3 to asked status.
+  /// Sets PinS3 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuA::setBits(1<<3) : PortSimuA::clearBits(1<<3); }
 
-  /// Sets Pin3 to LOW.
+  /// Sets PinS3 to LOW.
   static void clear()     { PortSimuA::clearBits(1<<3); }
 
-  /// Toggles Pin3 value.
+  /// Toggles PinS3 value.
   static void toggle()    { PortSimuA::toggleBits(1<<3); }
 
-  /// Configures Pin3 as an output pin.
+  /// Configures PinS3 as an output pin.
   static void setOutput() { PortSimuA::setOutput(1<<3); }
 
-  /// Configures Pin3 as an input pin.
+  /// Configures PinS3 as an input pin.
   static void setInput()  { PortSimuA::setInput(1<<3); }
 
-  /// Pulses Pin3 with high state first.
+  /// Pulses PinS3 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin3 with low state first.
+  /// Pulses PinS3 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin3 value.
-  /// @return true if Pin3 is high, false otherwise.
+  /// Reads PinS3 value.
+  /// @return true if PinS3 is high, false otherwise.
   static bool test()      { return PortSimuA::test(3); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1305,37 +1368,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 3
   static constexpr uint8_t bit()      { return 3; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class PinSimuA4 : public Pin<PortSimuA> {
+class PinS4 : public Pin<PortSimuA> {
 public:
-  /// Sets Pin4 to HIGH.
+  /// Sets PinS4 to HIGH.
   static void set()       { PortSimuA::setBits(1<<4); }
 
-  /// Sets Pin4 to asked status.
+  /// Sets PinS4 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuA::setBits(1<<4) : PortSimuA::clearBits(1<<4); }
 
-  /// Sets Pin4 to LOW.
+  /// Sets PinS4 to LOW.
   static void clear()     { PortSimuA::clearBits(1<<4); }
 
-  /// Toggles Pin4 value.
+  /// Toggles PinS4 value.
   static void toggle()    { PortSimuA::toggleBits(1<<4); }
 
-  /// Configures Pin4 as an output pin.
+  /// Configures PinS4 as an output pin.
   static void setOutput() { PortSimuA::setOutput(1<<4); }
 
-  /// Configures Pin4 as an input pin.
+  /// Configures PinS4 as an input pin.
   static void setInput()  { PortSimuA::setInput(1<<4); }
 
-  /// Pulses Pin4 with high state first.
+  /// Pulses PinS4 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin4 with low state first.
+  /// Pulses PinS4 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin4 value.
-  /// @return true if Pin4 is high, false otherwise.
+  /// Reads PinS4 value.
+  /// @return true if PinS4 is high, false otherwise.
   static bool test()      { return PortSimuA::test(4); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1345,37 +1410,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 4
   static constexpr uint8_t bit()      { return 4; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class PinSimuA5 : public Pin<PortSimuA> {
+class PinS5 : public Pin<PortSimuA> {
 public:
-  /// Sets Pin5 to HIGH.
+  /// Sets PinS5 to HIGH.
   static void set()       { PortSimuA::setBits(1<<5); }
 
-  /// Sets Pin5 to asked status.
+  /// Sets PinS5 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuA::setBits(1<<5) : PortSimuA::clearBits(1<<5); }
 
-  /// Sets Pin5 to LOW.
+  /// Sets PinS5 to LOW.
   static void clear()     { PortSimuA::clearBits(1<<5); }
 
-  /// Toggles Pin5 value.
+  /// Toggles PinS5 value.
   static void toggle()    { PortSimuA::toggleBits(1<<5); }
 
-  /// Configures Pin5 as an output pin.
+  /// Configures PinS5 as an output pin.
   static void setOutput() { PortSimuA::setOutput(1<<5); }
 
-  /// Configures Pin5 as an input pin.
+  /// Configures PinS5 as an input pin.
   static void setInput()  { PortSimuA::setInput(1<<5); }
 
-  /// Pulses Pin5 with high state first.
+  /// Pulses PinS5 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin5 with low state first.
+  /// Pulses PinS5 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin5 value.
-  /// @return true if Pin5 is high, false otherwise.
+  /// Reads PinS5 value.
+  /// @return true if PinS5 is high, false otherwise.
   static bool test()      { return PortSimuA::test(5); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1385,37 +1452,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 5
   static constexpr uint8_t bit()      { return 5; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class PinSimuA6 : public Pin<PortSimuA> {
+class PinS6 : public Pin<PortSimuA> {
 public:
-  /// Sets Pin6 to HIGH.
+  /// Sets PinS6 to HIGH.
   static void set()       { PortSimuA::setBits(1<<6); }
 
-  /// Sets Pin6 to asked status.
+  /// Sets PinS6 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuA::setBits(1<<6) : PortSimuA::clearBits(1<<6); }
 
-  /// Sets Pin6 to LOW.
+  /// Sets PinS6 to LOW.
   static void clear()     { PortSimuA::clearBits(1<<6); }
 
-  /// Toggles Pin6 value.
+  /// Toggles PinS6 value.
   static void toggle()    { PortSimuA::toggleBits(1<<6); }
 
-  /// Configures Pin6 as an output pin.
+  /// Configures PinS6 as an output pin.
   static void setOutput() { PortSimuA::setOutput(1<<6); }
 
-  /// Configures Pin6 as an input pin.
+  /// Configures PinS6 as an input pin.
   static void setInput()  { PortSimuA::setInput(1<<6); }
 
-  /// Pulses Pin6 with high state first.
+  /// Pulses PinS6 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin6 with low state first.
+  /// Pulses PinS6 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin6 value.
-  /// @return true if Pin6 is high, false otherwise.
+  /// Reads PinS6 value.
+  /// @return true if PinS6 is high, false otherwise.
   static bool test()      { return PortSimuA::test(6); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1425,37 +1494,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 6
   static constexpr uint8_t bit()      { return 6; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class PinSimuA7 : public Pin<PortSimuA> {
+class PinS7 : public Pin<PortSimuA> {
 public:
-  /// Sets Pin7 to HIGH.
+  /// Sets PinS7 to HIGH.
   static void set()       { PortSimuA::setBits(1<<7); }
 
-  /// Sets Pin7 to asked status.
+  /// Sets PinS7 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuA::setBits(1<<7) : PortSimuA::clearBits(1<<7); }
 
-  /// Sets Pin7 to LOW.
+  /// Sets PinS7 to LOW.
   static void clear()     { PortSimuA::clearBits(1<<7); }
 
-  /// Toggles Pin7 value.
+  /// Toggles PinS7 value.
   static void toggle()    { PortSimuA::toggleBits(1<<7); }
 
-  /// Configures Pin7 as an output pin.
+  /// Configures PinS7 as an output pin.
   static void setOutput() { PortSimuA::setOutput(1<<7); }
 
-  /// Configures Pin7 as an input pin.
+  /// Configures PinS7 as an input pin.
   static void setInput()  { PortSimuA::setInput(1<<7); }
 
-  /// Pulses Pin7 with high state first.
+  /// Pulses PinS7 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin7 with low state first.
+  /// Pulses PinS7 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin7 value.
-  /// @return true if Pin7 is high, false otherwise.
+  /// Reads PinS7 value.
+  /// @return true if PinS7 is high, false otherwise.
   static bool test()      { return PortSimuA::test(7); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1465,6 +1536,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 7
   static constexpr uint8_t bit()      { return 7; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 
@@ -1537,37 +1610,40 @@ public:
   /// Returns the native direction register associated to PortSimuB.
   static uint16_t& GetDirectionRegister() { return GPSimuB_DIR; }
 
+  static void setInterruptOnChange(const std::function<void()>& ISR, uint16_t mask) {
+    Device::SetInterruptOnChange(ISR, GetInputRegister(), mask);
+  }
 };
 
-class PinSimuB0 : public Pin<PortSimuB> {
+class PinS8 : public Pin<PortSimuB> {
 public:
-  /// Sets Pin0 to HIGH.
+  /// Sets PinS8 to HIGH.
   static void set()       { PortSimuB::setBits(1<<0); }
 
-  /// Sets Pin0 to asked status.
+  /// Sets PinS8 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuB::setBits(1<<0) : PortSimuB::clearBits(1<<0); }
 
-  /// Sets Pin0 to LOW.
+  /// Sets PinS8 to LOW.
   static void clear()     { PortSimuB::clearBits(1<<0); }
 
-  /// Toggles Pin0 value.
+  /// Toggles PinS8 value.
   static void toggle()    { PortSimuB::toggleBits(1<<0); }
 
-  /// Configures Pin0 as an output pin.
+  /// Configures PinS8 as an output pin.
   static void setOutput() { PortSimuB::setOutput(1<<0); }
 
-  /// Configures Pin0 as an input pin.
+  /// Configures PinS8 as an input pin.
   static void setInput()  { PortSimuB::setInput(1<<0); }
 
-  /// Pulses Pin0 with high state first.
+  /// Pulses PinS8 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin0 with low state first.
+  /// Pulses PinS8 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin0 value.
-  /// @return true if Pin0 is high, false otherwise.
+  /// Reads PinS8 value.
+  /// @return true if PinS8 is high, false otherwise.
   static bool test()      { return PortSimuB::test(0); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1577,37 +1653,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 0
   static constexpr uint8_t bit()      { return 0; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class PinSimuB1 : public Pin<PortSimuB> {
+class PinS9 : public Pin<PortSimuB> {
 public:
-  /// Sets Pin1 to HIGH.
+  /// Sets PinS9 to HIGH.
   static void set()       { PortSimuB::setBits(1<<1); }
 
-  /// Sets Pin1 to asked status.
+  /// Sets PinS9 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuB::setBits(1<<1) : PortSimuB::clearBits(1<<1); }
 
-  /// Sets Pin1 to LOW.
+  /// Sets PinS9 to LOW.
   static void clear()     { PortSimuB::clearBits(1<<1); }
 
-  /// Toggles Pin1 value.
+  /// Toggles PinS9 value.
   static void toggle()    { PortSimuB::toggleBits(1<<1); }
 
-  /// Configures Pin1 as an output pin.
+  /// Configures PinS9 as an output pin.
   static void setOutput() { PortSimuB::setOutput(1<<1); }
 
-  /// Configures Pin1 as an input pin.
+  /// Configures PinS9 as an input pin.
   static void setInput()  { PortSimuB::setInput(1<<1); }
 
-  /// Pulses Pin1 with high state first.
+  /// Pulses PinS9 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin1 with low state first.
+  /// Pulses PinS9 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin1 value.
-  /// @return true if Pin1 is high, false otherwise.
+  /// Reads PinS9 value.
+  /// @return true if PinS9 is high, false otherwise.
   static bool test()      { return PortSimuB::test(1); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1617,37 +1695,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 1
   static constexpr uint8_t bit()      { return 1; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class PinSimuB2 : public Pin<PortSimuB> {
+class PinS10 : public Pin<PortSimuB> {
 public:
-  /// Sets Pin2 to HIGH.
+  /// Sets PinS10 to HIGH.
   static void set()       { PortSimuB::setBits(1<<2); }
 
-  /// Sets Pin2 to asked status.
+  /// Sets PinS10 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuB::setBits(1<<2) : PortSimuB::clearBits(1<<2); }
 
-  /// Sets Pin2 to LOW.
+  /// Sets PinS10 to LOW.
   static void clear()     { PortSimuB::clearBits(1<<2); }
 
-  /// Toggles Pin2 value.
+  /// Toggles PinS10 value.
   static void toggle()    { PortSimuB::toggleBits(1<<2); }
 
-  /// Configures Pin2 as an output pin.
+  /// Configures PinS10 as an output pin.
   static void setOutput() { PortSimuB::setOutput(1<<2); }
 
-  /// Configures Pin2 as an input pin.
+  /// Configures PinS10 as an input pin.
   static void setInput()  { PortSimuB::setInput(1<<2); }
 
-  /// Pulses Pin2 with high state first.
+  /// Pulses PinS10 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin2 with low state first.
+  /// Pulses PinS10 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin2 value.
-  /// @return true if Pin2 is high, false otherwise.
+  /// Reads PinS10 value.
+  /// @return true if PinS10 is high, false otherwise.
   static bool test()      { return PortSimuB::test(2); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1657,37 +1737,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 2
   static constexpr uint8_t bit()      { return 2; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class PinSimuB3 : public Pin<PortSimuB> {
+class PinS11 : public Pin<PortSimuB> {
 public:
-  /// Sets Pin3 to HIGH.
+  /// Sets PinS11 to HIGH.
   static void set()       { PortSimuB::setBits(1<<3); }
 
-  /// Sets Pin3 to asked status.
+  /// Sets PinS11 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuB::setBits(1<<3) : PortSimuB::clearBits(1<<3); }
 
-  /// Sets Pin3 to LOW.
+  /// Sets PinS11 to LOW.
   static void clear()     { PortSimuB::clearBits(1<<3); }
 
-  /// Toggles Pin3 value.
+  /// Toggles PinS11 value.
   static void toggle()    { PortSimuB::toggleBits(1<<3); }
 
-  /// Configures Pin3 as an output pin.
+  /// Configures PinS11 as an output pin.
   static void setOutput() { PortSimuB::setOutput(1<<3); }
 
-  /// Configures Pin3 as an input pin.
+  /// Configures PinS11 as an input pin.
   static void setInput()  { PortSimuB::setInput(1<<3); }
 
-  /// Pulses Pin3 with high state first.
+  /// Pulses PinS11 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin3 with low state first.
+  /// Pulses PinS11 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin3 value.
-  /// @return true if Pin3 is high, false otherwise.
+  /// Reads PinS11 value.
+  /// @return true if PinS11 is high, false otherwise.
   static bool test()      { return PortSimuB::test(3); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1697,37 +1779,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 3
   static constexpr uint8_t bit()      { return 3; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class PinSimuB4 : public Pin<PortSimuB> {
+class PinS12 : public Pin<PortSimuB> {
 public:
-  /// Sets Pin4 to HIGH.
+  /// Sets PinS12 to HIGH.
   static void set()       { PortSimuB::setBits(1<<4); }
 
-  /// Sets Pin4 to asked status.
+  /// Sets PinS12 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuB::setBits(1<<4) : PortSimuB::clearBits(1<<4); }
 
-  /// Sets Pin4 to LOW.
+  /// Sets PinS12 to LOW.
   static void clear()     { PortSimuB::clearBits(1<<4); }
 
-  /// Toggles Pin4 value.
+  /// Toggles PinS12 value.
   static void toggle()    { PortSimuB::toggleBits(1<<4); }
 
-  /// Configures Pin4 as an output pin.
+  /// Configures PinS12 as an output pin.
   static void setOutput() { PortSimuB::setOutput(1<<4); }
 
-  /// Configures Pin4 as an input pin.
+  /// Configures PinS12 as an input pin.
   static void setInput()  { PortSimuB::setInput(1<<4); }
 
-  /// Pulses Pin4 with high state first.
+  /// Pulses PinS12 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin4 with low state first.
+  /// Pulses PinS12 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin4 value.
-  /// @return true if Pin4 is high, false otherwise.
+  /// Reads PinS12 value.
+  /// @return true if PinS12 is high, false otherwise.
   static bool test()      { return PortSimuB::test(4); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1737,37 +1821,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 4
   static constexpr uint8_t bit()      { return 4; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class PinSimuB5 : public Pin<PortSimuB> {
+class PinS13 : public Pin<PortSimuB> {
 public:
-  /// Sets Pin5 to HIGH.
+  /// Sets PinS13 to HIGH.
   static void set()       { PortSimuB::setBits(1<<5); }
 
-  /// Sets Pin5 to asked status.
+  /// Sets PinS13 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuB::setBits(1<<5) : PortSimuB::clearBits(1<<5); }
 
-  /// Sets Pin5 to LOW.
+  /// Sets PinS13 to LOW.
   static void clear()     { PortSimuB::clearBits(1<<5); }
 
-  /// Toggles Pin5 value.
+  /// Toggles PinS13 value.
   static void toggle()    { PortSimuB::toggleBits(1<<5); }
 
-  /// Configures Pin5 as an output pin.
+  /// Configures PinS13 as an output pin.
   static void setOutput() { PortSimuB::setOutput(1<<5); }
 
-  /// Configures Pin5 as an input pin.
+  /// Configures PinS13 as an input pin.
   static void setInput()  { PortSimuB::setInput(1<<5); }
 
-  /// Pulses Pin5 with high state first.
+  /// Pulses PinS13 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin5 with low state first.
+  /// Pulses PinS13 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin5 value.
-  /// @return true if Pin5 is high, false otherwise.
+  /// Reads PinS13 value.
+  /// @return true if PinS13 is high, false otherwise.
   static bool test()      { return PortSimuB::test(5); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1777,37 +1863,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 5
   static constexpr uint8_t bit()      { return 5; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class PinSimuB6 : public Pin<PortSimuB> {
+class PinS14 : public Pin<PortSimuB> {
 public:
-  /// Sets Pin6 to HIGH.
+  /// Sets PinS14 to HIGH.
   static void set()       { PortSimuB::setBits(1<<6); }
 
-  /// Sets Pin6 to asked status.
+  /// Sets PinS14 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuB::setBits(1<<6) : PortSimuB::clearBits(1<<6); }
 
-  /// Sets Pin6 to LOW.
+  /// Sets PinS14 to LOW.
   static void clear()     { PortSimuB::clearBits(1<<6); }
 
-  /// Toggles Pin6 value.
+  /// Toggles PinS14 value.
   static void toggle()    { PortSimuB::toggleBits(1<<6); }
 
-  /// Configures Pin6 as an output pin.
+  /// Configures PinS14 as an output pin.
   static void setOutput() { PortSimuB::setOutput(1<<6); }
 
-  /// Configures Pin6 as an input pin.
+  /// Configures PinS14 as an input pin.
   static void setInput()  { PortSimuB::setInput(1<<6); }
 
-  /// Pulses Pin6 with high state first.
+  /// Pulses PinS14 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin6 with low state first.
+  /// Pulses PinS14 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin6 value.
-  /// @return true if Pin6 is high, false otherwise.
+  /// Reads PinS14 value.
+  /// @return true if PinS14 is high, false otherwise.
   static bool test()      { return PortSimuB::test(6); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1817,37 +1905,39 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 6
   static constexpr uint8_t bit()      { return 6; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
-class PinSimuB7 : public Pin<PortSimuB> {
+class PinS15 : public Pin<PortSimuB> {
 public:
-  /// Sets Pin7 to HIGH.
+  /// Sets PinS15 to HIGH.
   static void set()       { PortSimuB::setBits(1<<7); }
 
-  /// Sets Pin7 to asked status.
+  /// Sets PinS15 to asked status.
   /// @param setHigh set pin to HIGH if true, LOW otherwise
   static void set(bool setHigh) { setHigh ? PortSimuB::setBits(1<<7) : PortSimuB::clearBits(1<<7); }
 
-  /// Sets Pin7 to LOW.
+  /// Sets PinS15 to LOW.
   static void clear()     { PortSimuB::clearBits(1<<7); }
 
-  /// Toggles Pin7 value.
+  /// Toggles PinS15 value.
   static void toggle()    { PortSimuB::toggleBits(1<<7); }
 
-  /// Configures Pin7 as an output pin.
+  /// Configures PinS15 as an output pin.
   static void setOutput() { PortSimuB::setOutput(1<<7); }
 
-  /// Configures Pin7 as an input pin.
+  /// Configures PinS15 as an input pin.
   static void setInput()  { PortSimuB::setInput(1<<7); }
 
-  /// Pulses Pin7 with high state first.
+  /// Pulses PinS15 with high state first.
   static void pulseHigh() { set(); clear(); }
 
-  /// Pulses Pin7 with low state first.
+  /// Pulses PinS15 with low state first.
   static void pulseLow()  { clear(); set(); }
 
-  /// Reads Pin7 value.
-  /// @return true if Pin7 is high, false otherwise.
+  /// Reads PinS15 value.
+  /// @return true if PinS15 is high, false otherwise.
   static bool test()      { return PortSimuB::test(7); }
 
   /// Returns the bitmask corresponding to this pin in the associated Port.
@@ -1857,6 +1947,8 @@ public:
   /// Returns the bit number corresponding to this pin in the associated Port.
   /// @return 7
   static constexpr uint8_t bit()      { return 7; }
+
+static void setInterruptOnChange(const std::function<void()> &ISR) { Port::setInterruptOnChange(ISR, bitmask()); }
 };
 
 

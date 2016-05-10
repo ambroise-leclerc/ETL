@@ -10,7 +10,7 @@ set(ETL_ARCHITECTURE include/etl/architecture/MockCore.h)
 set(HEADERS ${ETL_HEADERS} ${ETL_ARCHITECTURE} test/MockDevice.h
             include/etl/architecture/MockCore.h )
             
-add_executable( Tests test/test.cpp test/SetClearTest.cpp
+add_executable( Tests test/test.cpp test/SetClearTest.cpp test/InterruptsTest.cpp
                 ${HEADERS} )
 
 #target_compile_features(etltest PUBLIC cxx_binary_literals)
