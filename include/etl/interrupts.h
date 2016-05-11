@@ -31,8 +31,7 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_INTERRUPTS_H_
-#define ETL_INTERRUPTS_H_
+#pragma once
 #include <cstdint>
 
 namespace etl {
@@ -65,19 +64,24 @@ class Interrupts {
 
 #define MOCK
 #ifdef MOCK
+
 class Interrupts {
 public:
-    static bool enabled;
-    static void enable()    { enabled = true; }
-    static void disable()   { enabled = false; }
+    static bool enabled(bool change = false, bool value = true) {
+        static bool val = true;
+        if (change) {
+            val = value;
+        }
+        return val;
+    }
+
+    static void enable()    { enabled(true, true); }
+    static void disable() { enabled(true, false); }
 };
 
-bool Interrupts::enabled = true;
 
 #endif MOCK
 
 
   
 } // namespace etl  
-
-#endif // ETL_INTERRUPTS_H_

@@ -87,7 +87,6 @@ SCENARIO("Test dual interruptions on strobe and clock") {
                                         .reg(ClientData::Port::GetInputRegister()).bit(ClientData::bit()));
 
         ClientClk::onChange([&simu]() -> void { simu.clockChangedISR(); });
-        //TODO : implémenter l'ajout de nouveaux bits de mask pour que setInterruptOnChange n'écrase pas le précédent appel
         ClientStrobe::onChange([&simu]()-> void { simu.strobeChangedISR(); });  
 
 
@@ -100,6 +99,9 @@ SCENARIO("Test dual interruptions on strobe and clock") {
             THEN("client is notified of a new data") {
                 REQUIRE(simu.currentBit == true);
             }
+
+            Strobe::pulseHigh();
+
         }
     }
 }
