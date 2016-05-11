@@ -20,7 +20,7 @@ SCENARIO("TEST InterruptManager") {
     std::cout << "TEST InterruptManager" << '\n';
     std::function<void(void)> myFunction = TestInterrupt::work;
 
-    PortSimuA::setInterruptOnChange(myFunction, 0b00000001);
+    PortSimuA::onChange(myFunction, 0b00000001);
     std::cout << "1" << '\n';
     Device::yield();
     REQUIRE(testString.length() == 0);
@@ -86,9 +86,9 @@ SCENARIO("Test dual interruptions on strobe and clock") {
         Device::pragma(Pragma("BitLink").reg(Data::Port::GetOutputRegister()).bit(Data::bit())
                                         .reg(ClientData::Port::GetInputRegister()).bit(ClientData::bit()));
 
-        ClientClk::setInterruptOnChange([&simu]() -> void { simu.clockChangedISR(); });
+        ClientClk::onChange([&simu]() -> void { simu.clockChangedISR(); });
         //TODO : implémenter l'ajout de nouveaux bits de mask pour que setInterruptOnChange n'écrase pas le précédent appel
-        ClientStrobe::setInterruptOnChange([&simu]()-> void { simu.strobeChangedISR(); });  
+        ClientStrobe::onChange([&simu]()-> void { simu.strobeChangedISR(); });  
 
 
         WHEN("Issueing clock signals") {
@@ -99,6 +99,62 @@ SCENARIO("Test dual interruptions on strobe and clock") {
             Clk::pulseHigh();
             THEN("client is notified of a new data") {
                 REQUIRE(simu.currentBit == true);
+            }
+        }
+    }
+}
+
+SCENARIO("InterruptsDispatcher test") {
+    using namespace etl;
+
+    GIVEN("an interrupt dispatcher") {
+        InterruptsDispatcher<uint8_t, uint8_t> dispatcher;
+
+        std::string witness;
+        enum registers { A, B, C };
+        REQUIRE(witness == "");
+
+        dispatcher.addCallback([&witness]() { witness += "A0"; }, A, 1 << 0);
+        dispatcher.addCallback([&witness]() { witness += "A1"; }, A, 1 << 1);
+        dispatcher.addCallback([&witness]() { witness += "A2"; }, A, 1 << 2);
+        dispatcher.addCallback([&witness]() { witness += "B0"; }, B, 1 << 0);
+
+        WHEN("callbacks are set") {
+            THEN("pin changes trigger callbacks") {
+                dispatcher.signalPortsPinsChange(A, 0b11111111);
+                REQUIRE(witness == "A0A1A2");
+
+                dispatcher.signalPortsPinsChange(A, 0b11111000);
+                REQUIRE(witness == "A0A1A2");
+
+                dispatcher.signalPortsPinsChange(A, 0b11111100);
+                REQUIRE(witness == "A0A1A2A2");
+
+                dispatcher.signalPortsPinsChange(B, 0b11111111);
+                REQUIRE(witness == "A0A1A2A2B0");
+
+                dispatcher.signalPortsPinsChange(C, 0b11111111);
+                REQUIRE(witness == "A0A1A2A2B0");
+            }
+        }
+
+        WHEN("multiple callbacks are set") {
+            dispatcher.addCallback([&witness]() { witness += "A*"; }, A, 0b11111111);
+            THEN("multiple calls are made on same pins") {
+                dispatcher.signalPortsPinsChange(A, 0b11111111);
+                REQUIRE(witness == "A0A1A2A*");
+            }
+        }
+
+        WHEN("callbacks are cleared") {
+            dispatcher.removeCallback(A, 1 << 1);
+            dispatcher.removeCallback(B, 1 << 0);
+            THEN("pin changes trigger callbacks except for removed ones") {
+                dispatcher.signalPortsPinsChange(A, 0b11111111);
+                REQUIRE(witness == "A0A2");
+
+                dispatcher.signalPortsPinsChange(B, 0b11111111);
+                REQUIRE(witness == "A0A2");
             }
         }
     }
