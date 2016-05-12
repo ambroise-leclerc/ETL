@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <ETL/architecture/MockCore.h>
+#include <etl/architecture/MockCore.h>
 #include <vector>
 #include <sstream>
 #include <cstdint>
