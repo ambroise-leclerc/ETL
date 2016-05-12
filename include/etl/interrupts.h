@@ -31,25 +31,57 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_INTERRUPTS_H_
-#define ETL_INTERRUPTS_H_
+#pragma once
+#include <cstdint>
 
 namespace etl {
   
+
+#ifdef AVR
 class Interrupts {
  public:
   /// Enables interrupts by setting the global interrupt mask.
   /// This function generates a single 'sei' instruction with
   /// no overhead.
-  static void Enable() { asm volatile("sei" ::: "memory"); }
+  static void enable() { asm volatile("sei" ::: "memory"); }
     
   /// Disables interrupts by clearing the global interrupt mask.
   /// This function generates a single 'cli' instruction with
   /// no overhead.
-  static void Disable() { asm volatile("cli" ::: "memory"); }
+  static void disable() { asm volatile("cli" ::: "memory"); }
+
+  static uint8_t saveStatus() { return SREG; }
+
+  static void restoreStatus(uint8_t statusSave) { SREG = statusSave; }
 };
+
+#endif AVR
+
+
+#ifdef ESP
+#endif ESP
+
+
+#define MOCK
+#ifdef MOCK
+
+class Interrupts {
+public:
+    static bool enabled(bool change = false, bool value = true) {
+        static bool val = true;
+        if (change) {
+            val = value;
+        }
+        return val;
+    }
+
+    static void enable()    { enabled(true, true); }
+    static void disable() { enabled(true, false); }
+};
+
+
+#endif MOCK
+
 
   
 } // namespace etl  
-
-#endif // ETL_INTERRUPTS_H_
