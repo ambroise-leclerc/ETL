@@ -3,6 +3,8 @@
 #define __Mock_Mock__
 #include <etl/ioports.h>
 
+#include <iostream>
+
 static std::string testString;
 
 struct TestInterrupt {
