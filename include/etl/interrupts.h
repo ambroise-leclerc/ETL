@@ -33,6 +33,10 @@
 
 #pragma once
 #include <cstdint>
+#include <map>
+#include <list>
+#include <tuple>
+#include <functional>
 
 namespace etl {
   
@@ -55,11 +59,11 @@ class Interrupts {
   static void restoreStatus(uint8_t statusSave) { SREG = statusSave; }
 };
 
-#endif AVR
+#endif // AVR
 
 
 #ifdef ESP
-#endif ESP
+#endif // ESP
 
 
 #define MOCK
@@ -80,7 +84,43 @@ public:
 };
 
 
-#endif MOCK
+template <typename Register, typename RegisterType>
+class InterruptsDispatcher {
+    using Callback = std::function<void()>;
+    enum triggerCallbacksFields { TriggerMask, CallbackFunc };
+    using TriggerCallbacks = std::list<std::tuple<RegisterType, Callback>>;
+
+    std::map<Register, TriggerCallbacks>  interruptRegisters;       ///< which registers can trigger interrupts ?
+
+public:
+    /// Registers a callback that will be called when register regId status matches (&) triggerMask
+    /// @param callback a callable object
+    /// @param regId id of register 
+    void addCallback(std::function<void()> callback, Register regId, RegisterType triggerMask) {
+        interruptRegisters[regId].push_back(std::make_tuple(triggerMask, callback));
+    }
+
+    /// Unregisters all callbacks associated to triggerMask on register regId.
+    void removeCallback(Register regId, RegisterType triggerMask) {
+        interruptRegisters[regId].remove_if([&triggerMask](auto& trigCallback) { return std::get<TriggerMask>(trigCallback) == triggerMask; });
+    }
+
+    void signalPortsPinsChange(Register regId, RegisterType changedPins) {
+        for (auto& trigCallback : interruptRegisters[regId]) {
+            if (changedPins & std::get<TriggerMask>(trigCallback)) {
+                std::get<CallbackFunc>(trigCallback)();
+            }
+        }
+    }
+
+    void clear() {
+        interruptRegisters.clear();
+    }
+};
+
+
+
+#endif // MOCK
 
 
   

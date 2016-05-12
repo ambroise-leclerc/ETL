@@ -37,43 +37,11 @@
 #include <list>
 #include <vector>
 #include <sstream>
-#include <map>
 #include <etl/metautils.h>
 #include <functional>
 #include <cassert>
 
 namespace etl {
-template <typename Register, typename RegisterType>
-class InterruptsDispatcher {
-    using Callback = std::function<void()>;
-    enum triggerCallbacksFields { TriggerMask, CallbackFunc };
-    using TriggerCallbacks = std::list<std::tuple<RegisterType, Callback>>;
-    TriggerCallbacks triggerCallbacks;
-
-    std::map<Register, TriggerCallbacks>  interruptRegisters;       ///< which registers can trigger interrupts ?
-
-public:
-    /// Registers a callback that will be called when register regId status matches (&) triggerMask
-    /// @param callback a callable object
-    /// @param regId id of register 
-    void addCallback(std::function<void()> callback, Register regId, RegisterType triggerMask) {
-        interruptRegisters[regId].push_back(std::make_tuple(triggerMask, callback));
-    }
-
-    /// Unregisters all callbacks associated to triggerMask on register regId.
-    void removeCallback(Register regId, RegisterType triggerMask) {
-        interruptRegisters[regId].remove_if([&triggerMask](auto& trigCallback) { return std::get<TriggerMask>(trigCallback) == triggerMask; });
-    }
-
-    void signalPortsPinsChange(Register regId, RegisterType changedPins) {
-        for (auto& trigCallback : interruptRegisters[regId]) {
-            if (changedPins & std::get<TriggerMask>(trigCallback)) {
-                std::get<CallbackFunc>(trigCallback)();
-            }
-        }
-    }
-};
-
 
 class MockCore {
 public:
@@ -95,6 +63,9 @@ public:
 
     void configure(uint8_t numberOfPorts) {
         assert(NbPorts == numberOfPorts);
+        std::fill(registers.begin(), registers.end(), 0);
+        bitLogicLinkOps.clear();
+        callbackDispatcher.clear();
     };
 
     void yield() {
@@ -203,7 +174,7 @@ protected:
 
         switch (StringHash::calc(tokens[0].c_str())) {
         case "BitLink"_hash:
-        bitLogicLinkOps.emplace_back(*this, stoi(tokens[1]), stoi(tokens[2]), stoi(tokens[3]), stoi(tokens[4]));
+            bitLogicLinkOps.emplace_back(*this, stoi(tokens[1]), stoi(tokens[2]), stoi(tokens[3]), stoi(tokens[4]));
             return 0;
         }
         return -1;
