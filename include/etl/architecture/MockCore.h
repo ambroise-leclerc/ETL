@@ -142,9 +142,9 @@ private:
         list<pair<Register, RegisterType>> modifiedRegisters;
 
         for (auto index = 0; index < registers.size(); ++index) {
-            auto xor = registers[index] ^ registersFileCopy[index];     // which bits have been flipped ?
-            if (xor != 0) {
-                modifiedRegisters.push_back(std::make_pair(index, xor));
+            auto flippedBits = registers[index] ^ registersFileCopy[index];     // which bits have been flipped ?
+            if (flippedBits != 0) {
+                modifiedRegisters.push_back(std::make_pair(index, flippedBits));
             }
         }
 
