@@ -33,11 +33,8 @@
 #pragma once
 
 #include <etl/architecture/MockCore.h>
-#include <vector>
 #include <sstream>
 #include <cstdint>
-#include <iostream>
-#include <assert.h>
 
 namespace etl {
 
