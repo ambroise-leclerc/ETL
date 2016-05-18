@@ -4,10 +4,26 @@
 #define __Mock_Mock__
 #include <etl/ioports.h>
 #include <algorithm>
+#include <string>
+#include <etl/ostream.h>
 
 
 
 using namespace etl;
+
+
+class OutputDisplayTest {
+public:
+    static void print(const std::string& string) {
+        std::cout << string << std::endl;
+    }
+};
+
+SCENARIO("Ostream") {
+    etl::ostream<OutputDisplayTest> coutTest;
+    coutTest << "un test";
+
+}
 /*
 SCENARIO("GPIO directions", "[DDR]") {
     GIVEN("an MCU with default output gpios") {

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.7)
 project(ETL)
 
 set(ETL_HEADERS include/etl/debug_policies.h include/etl/freestore.h include/etl/interrupts.h include/etl/ioports.h
-                include/etl/metautils.h include/etl/watchdog.h)
+                include/etl/metautils.h include/etl/watchdog.h include/etl/ostream.h)
                 
 set(ETL_ARCHITECTURE include/etl/architecture/MockCore.h)
 
