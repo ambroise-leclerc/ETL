@@ -1,9 +1,11 @@
-/// @file interrupts.h
-/// @data 04/05/2014 18:15:46
-/// @author Ambroise Leclerc, Cécile Gomes
-/// @brief Output stream
+
+
+/// @file oastream
+/// @data 18/05/2016 16:31:53
+/// @author Ambroise Leclerc,Cécile Gomes
+/// @brief basic ostream.
 //
-// Copyright (c) 2016, Ambroise Leclerc, Cécile Gomes
+// Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -33,16 +35,17 @@
 
 #pragma once
 
-#include <string>
-#include <../libstd/include/ostream>
+#include "type_traits"
 
-namespace etl {
 
-    template<typename OutputDisplay>
-    class ostream : etlstd::std::basic_ostream<char> {
-        public:
-            void operator<<(const std::string& string) {
-                OutputDisplay::print(string);
-            }
-    };
+inline namespace etlstd {
+    inline namespace std {
+
+        template<
+            class CharT,
+            class Traits = std::char_traits<CharT>
+        > class basic_ostream {
+                using char_type = CharT;
+            };
+    }
 }
