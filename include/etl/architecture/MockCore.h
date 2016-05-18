@@ -31,31 +31,29 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
+#include <etl/interrupts.h>
 #include <cstdint>
 #include <array>
 #include <list>
 #include <vector>
 #include <sstream>
 #include <etl/metautils.h>
-
+#include <functional>
+#include <cassert>
 
 namespace etl {
-    
+
 class MockCore {
 public:
     using Register = uint8_t;
     using RegisterType = uint16_t;
-    static const Register NbPorts = 2;
+    static const Register NbPorts = 4;
     std::array<RegisterType, 7 * NbPorts> registers;
     RegisterType *gpOut, *gpIn, *gpDir, *gpOutSet, *gpOutClr, *gpDirSet, *gpDirClr;
 
-    MockCore() : gpOut(&registers[0 * NbPorts]),
-        gpIn(&registers[1 * NbPorts]),
-        gpDir(&registers[2 * NbPorts]),
-        gpOutSet(&registers[3 * NbPorts]),
-        gpOutClr(&registers[4 * NbPorts]),
-        gpDirSet(&registers[5 * NbPorts]),
-        gpDirClr(&registers[6 * NbPorts]) {
+    MockCore() : gpOut(&registers[0 * NbPorts]), gpIn(&registers[1 * NbPorts]), gpDir(&registers[2 * NbPorts]),
+                 gpOutSet(&registers[3 * NbPorts]), gpOutClr(&registers[4 * NbPorts]), gpDirSet(&registers[5 * NbPorts]),
+                 gpDirClr(&registers[6 * NbPorts]), registersFileCopy(registers) {
     }
 
     MockCore(MockCore const&) = delete;
@@ -63,13 +61,30 @@ public:
     MockCore& operator=(MockCore const&) = delete;
     MockCore& operator=(MockCore&&) = delete;
 
-    void configure(uint8_t numberOfPorts) { };
+    void configure(uint8_t numberOfPorts) {
+        assert(NbPorts == numberOfPorts);
+        std::fill(registers.begin(), registers.end(), 0);
+        bitLogicLinkOps.clear();
+        callbackDispatcher.clear();
+    };
 
     void yield() {
         consume1TRegisters();
         applyBitLogicOps();
         generateInterrupts();
     }
+
+    void addOnChangeCallback(const std::function<void()>& handler, Register regId, RegisterType triggerMask) {
+        callbackDispatcher.addCallback(handler, regId, triggerMask);
+    }
+
+    void clearAddOnChangeCallback(Register regId, RegisterType triggerMask) {
+        callbackDispatcher.removeCallback(regId, triggerMask);
+    }
+
+private:
+    InterruptsDispatcher<Register, RegisterType> callbackDispatcher;
+    decltype(registers) registersFileCopy;
 
 private:
     void consume1TRegisters() {
@@ -88,10 +103,37 @@ private:
         }
     }
 
+    void generateInterrupts() {
+        using namespace etl;
+        using namespace std;
+        if (!Interrupts::enabled) {
+            return;
+        }
+
+        list<pair<Register, RegisterType>> modifiedRegisters;
+
+        for (auto index = 0; index < registers.size(); ++index) {
+            auto flippedBits = registers[index] ^ registersFileCopy[index];     // which bits have been flipped ?
+            if (flippedBits != 0) {
+                modifiedRegisters.push_back(std::make_pair(index, flippedBits));
+            }
+        }
+
+        registersFileCopy = registers;
+
+        Interrupts::disable();
+        for (const auto& modified : modifiedRegisters) {
+            callbackDispatcher.signalPortsPinsChange(modified.first, modified.second);
+        }
+        Interrupts::enable();
+    }
+
     class BitLogic {
     public:
         BitLogic(MockCore& mock, Register inputReg, RegisterType inputMask, Register outputReg, RegisterType outputMask)
-            : mock(mock), inputReg(inputReg), outputReg(outputReg), inputMask(inputMask), outputMask(outputMask) {}
+            : mock(mock), inputReg(inputReg), outputReg(outputReg), inputMask(inputMask), outputMask(outputMask) {
+        }
+
     protected:
         MockCore& mock;
         Register inputReg, outputReg;
@@ -102,10 +144,11 @@ private:
     class BitLogicLink : public BitLogic {
     public:
         BitLogicLink(MockCore& mock, Register inputReg, RegisterType inputMask, Register outputReg, RegisterType outputMask)
-            : BitLogic(mock, inputReg, inputMask, outputReg, outputMask) {}
+            : BitLogic(mock, inputReg, inputMask, outputReg, outputMask) {
+        }
 
         void apply() {
-            if ((mock.registers[inputReg] & inputMask) == inputMask) {                
+            if ((mock.registers[inputReg] & inputMask) == inputMask) {
                 mock.registers[outputReg] |= outputMask;
             }
             else {
@@ -120,7 +163,6 @@ private:
         }
     }
 
-    void generateInterrupts() { }
 
     std::list<BitLogicLink> bitLogicLinkOps;
 
@@ -140,5 +182,6 @@ protected:
 };
 
 
-
 } // namespace etl
+
+
