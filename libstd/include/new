@@ -31,8 +31,7 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_NEW_
-#define ETL_LIBSTD_NEW_
+#pragma once
 
 #include <etl/freestore.h>
 
@@ -77,4 +76,3 @@ void operator delete(void*, void* const){ }
 void operator delete[](void*, void* const){ }
 
 
-#endif // ETL_LIBSTD_NEW_

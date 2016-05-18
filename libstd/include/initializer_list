@@ -30,10 +30,39 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_INITIALIZER_LIST_
-#define ETL_LIBSTD_INITIALIZER_LIST_
+namespace std {
 
-#include <h/initializer_list.h>
+template<typename T>
+class initializer_list {
+public:
+    using value_type = T;
+    using reference = const T&;
+    using const_reference = const T&;
+    using size_type = std::size_t;
+    using iterator = const T*;
+    using const_iterator = const T*;
 
-#endif // ETL_LIBSTD_INITIALIZER_LIST_
+
+    constexpr initializer_list() noexcept : begin_(nullptr), size_(0) {}
+
+    constexpr size_t   size()  const noexcept { return size_; }
+    constexpr const T* begin() const noexcept { return begin_; }
+    constexpr const T* end()   const noexcept { return begin_ + size_; }
+
+private:
+    iterator begin_;
+    size_type size_;
+};
+
+template<typename T>
+constexpr const T* begin(initializer_list<T> list) noexcept { return list.begin(); }
+
+template<typename T>
+constexpr const T* end(initializer_list<T> list) noexcept { return list.end(); }
+
+
+
+} // namespace std  
+

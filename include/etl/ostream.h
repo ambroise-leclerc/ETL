@@ -33,16 +33,21 @@
 
 #pragma once
 
-#include <string>
-#include <../libstd/include/ostream>
+//#include <string>
+//#include <../libstd/include/ostream>
 
 namespace etl {
+//#include <../libstd/include/string>
+//#include <../libstd/include/ostream>
 
-    template<typename OutputDisplay>
-    class ostream : etlstd::std::basic_ostream<char> {
-        public:
-            void operator<<(const std::string& string) {
-                OutputDisplay::print(string);
-            }
-    };
-}
+template<typename OutputDisplay>
+class ostream /*: public std::basic_ostream<char> */{
+public:
+    void operator<<(const char* string) {
+    //void operator<<(const std::string& string) {
+        OutputDisplay::print(string);
+    }
+};
+
+
+} // namespace etl

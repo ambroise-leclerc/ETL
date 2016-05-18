@@ -34,6 +34,8 @@
 #ifndef ETL_LIBSTD_VECTOR_H_
 #define ETL_LIBSTD_VECTOR_H_
 
+#include "../memory"
+
 namespace std {
 
 template<typename T, typename Allocator = std::allocator<T>>

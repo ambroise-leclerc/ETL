@@ -30,18 +30,651 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_ALGORITHM_
-#define ETL_LIBSTD_ALGORITHM_
+#include "iterator"
+#include "utility"
 
-#include <h/algorithm_sequence.h>
-#include <h/algorithm_modifying.h>
-#include <h/algorithm_partitions.h>
-#include <h/algorithm_sorting.h>
-#include <h/algorithm_binary.h>
-#include <h/algorithm_merge.h>
-#include <h/algorithm_heap.h>
-#include <h/algorithm_minmax.h>
-#include <h/algorithm_other.h>
+namespace std {
 
-#endif // ETL_LIBSTD_ALGORITHM_
+template<typename ForwardIterator1, typename ForwardIterator2>
+ForwardIterator1 search(ForwardIterator1 first, ForwardIterator1 last, ForwardIterator2 s_first, ForwardIterator2 s_last) {
+  for (; ; ++first) {
+    ForwardIterator1 it = first;
+    for (ForwardIterator2 s_it = s_first; ; ++it, ++s_it) {
+      if (s_it == s_last) return first;
+      if (it == last) return last;
+      if (!(*it == *s_it)) {
+        break;
+      }
+    }
+  }
+}
+
+template<typename ForwardIterator1, typename ForwardIterator2, typename BinaryPredicate>
+ForwardIterator1 search(ForwardIterator1 first, ForwardIterator1 last, ForwardIterator2 s_first, ForwardIterator2 s_last, BinaryPredicate p) {
+  for (; ; ++first) {
+    ForwardIterator1 it = first;
+    for (ForwardIterator2 s_it = s_first; ; ++it, ++s_it) {
+      if (s_it == s_last) return first;
+      if (it == last) return last;
+      if (!p(*it, *s_it)) {
+        break;
+      }
+    }
+  }
+}
+
+template<typename ForwardIterator, typename Size, typename T>
+ForwardIterator search_n(ForwardIterator first, ForwardIterator last, Size count, const T& value) {
+  for(; first != last; ++first) {
+    if (!(*first == value)) {
+      continue;
+    }
+ 
+    ForwardIterator candidate = first;
+    Size cur_count = 0;
+ 
+    while (true) {
+      if (++cur_count == count) return candidate;
+      if (++first == last) return last;
+      if (!(*first == value)) break;
+    }
+  }
+  return last;
+}
+
+template<typename ForwardIterator, typename Size, typename T, typename BinaryPredicate>
+ForwardIterator search_n(ForwardIterator first, ForwardIterator last, Size count, const T& value, BinaryPredicate p) {
+  for(; first != last; ++first)
+    if (!p(*first, value)) continue;
+    
+  ForwardIterator candidate = first;
+  Size cur_count = 0;
+ 
+  while (true) {
+    if (++cur_count == count) return candidate;
+    if (++first == last) return last;
+    if (!p(*first, value)) break;
+  }
+  return last;
+}
+
+template<typename InputIterator, typename T>
+InputIterator find(InputIterator first, InputIterator last, const T& value) {
+  for (; first != last; ++first) {
+    if (*first == value) {
+      return first;
+    }
+  }
+  return last;
+}
+
+template<typename InputIterator, typename UnaryPredicate>
+InputIterator find_if(InputIterator first, InputIterator last, UnaryPredicate p) {
+  for (; first != last; ++first) {
+    if (p(*first)) {
+      return first;
+    }
+  }
+  return last;
+}
+
+template<typename InputIterator, typename UnaryPredicate>
+InputIterator find_if_not(InputIterator first, InputIterator last, UnaryPredicate q) {
+  for (; first != last; ++first) {
+    if (!q(*first)) {
+      return first;
+    }
+  }
+  return last;
+}
+
+template<typename InputIterator, typename UnaryPredicate>
+bool all_of(InputIterator first, InputIterator last, UnaryPredicate p) {
+  return std::find_if_not(first, last, p) == last;
+}
+
+template<typename InputIterator, typename UnaryPredicate>
+bool any_of(InputIterator first, InputIterator last, UnaryPredicate p) {
+  return std::find_if(first, last, p) != last;
+}
+
+template<typename InputIterator, typename UnaryFunction>
+UnaryFunction for_each(InputIterator first, InputIterator last, UnaryFunction f) {
+  for (; first != last; ++first) {
+    f(*first);
+  }
+  return f;
+}
+
+template<typename InputIterator, typename T>
+typename iterator_traits<InputIterator>::difference_type count(InputIterator first, InputIterator last, const T& value) {
+  typename iterator_traits<InputIterator>::difference_type ret = 0;
+  for (; first != last; ++first) {
+    if (*first == value) {
+      ret++;
+    }
+  }
+  return ret;
+}
+
+template<typename InputIterator, typename UnaryPredicate>
+typename iterator_traits<InputIterator>::difference_type count_if(InputIterator first, InputIterator last, UnaryPredicate p) {
+  typename iterator_traits<InputIterator>::difference_type ret = 0;
+  for (; first != last; ++first) {
+    if (p(*first)) {
+      ret++;
+    }
+  }
+  return ret;
+}
+
+template<typename InputIterator1, typename InputIterator2>
+std::pair<InputIterator1, InputIterator2> mismatch(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2) {
+  while (first1 != last1 && *first1 == *first2) {
+    ++first1, ++first2;
+  }
+  return std::make_pair(first1, first2);
+}
+
+template<typename InputIterator1, typename InputIterator2, typename BinaryPredicate>
+std::pair<InputIterator1, InputIterator2> mismatch(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, BinaryPredicate p) {
+  while (first1 != last1 && p(*first1, *first2)) {
+    ++first1, ++first2;
+  }
+  return std::make_pair(first1, first2);
+}
+
+template<typename InputIterator1, typename InputIterator2>
+bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2) {
+  for (; first1 != last1; ++first1, ++first2) {
+    if (!(*first1 == *first2)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+template<typename InputIterator1, typename InputIterator2, typename BinaryPredicate>
+bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, BinaryPredicate p) {
+  for (; first1 != last1; ++first1, ++first2) {
+    if (!p(*first1, *first2)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+template<typename ForwardIterator1, typename ForwardIterator2>
+ForwardIterator1 find_end(ForwardIterator1 first, ForwardIterator1 last, ForwardIterator2 s_first, ForwardIterator2 s_last) {
+  if (s_first == s_last) return last;
+  ForwardIterator1 result = last;
+  while (true) {
+    ForwardIterator1 new_result = std::search(first, last, s_first, s_last);
+    if (new_result == last) return result;
+    else {
+      result = new_result;
+      first = result;
+      ++first;
+    }
+  }
+  return result;
+}
+
+template<typename ForwardIterator1, typename ForwardIterator2, typename BinaryPredicate>
+ForwardIterator1 find_end(ForwardIterator1 first, ForwardIterator1 last, ForwardIterator2 s_first, ForwardIterator2 s_last, BinaryPredicate p) {
+  if (s_first == s_last) return last;
+  ForwardIterator1 result = last;
+  while (true) {
+    ForwardIterator1 new_result = std::search(first, last, s_first, s_last, p);
+    if (new_result == last) return result;
+    else {
+      result = new_result;
+      first = result;
+      ++first;
+    }
+  }
+  return result;
+}
+
+template<typename InputIterator, typename ForwardIterator>
+InputIterator find_first_of(InputIterator first, InputIterator last, ForwardIterator s_first, ForwardIterator s_last) {
+  for (; first != last; ++first) {
+    for (auto it = s_first; it != s_last; ++it) {
+      if (*first == *it) return first;
+    }
+  }
+  return last;
+}
+
+template<typename InputIterator, typename ForwardIterator, typename BinaryPredicate>
+InputIterator find_first_of(InputIterator first, InputIterator last, ForwardIterator s_first, ForwardIterator s_last, BinaryPredicate p) {
+  for (; first != last; ++first) {
+    for (auto it = s_first; it != s_last; ++it) {
+      if (p(*first, *it)) return first;
+    }
+  }
+  return last;
+}
+
+template<typename ForwardIterator>
+ForwardIterator adjacent_find(ForwardIterator first, ForwardIterator last) {
+  if (first == last) return last;
+  ForwardIterator next = first;
+  ++next;
+  for (; next != last; ++next, ++first) {
+    if (*first == *next) return first;
+  }
+  return last;
+}
+
+template<typename ForwardIterator, typename BinaryPredicate>
+ForwardIterator adjacent_find(ForwardIterator first, ForwardIterator last, BinaryPredicate p) {
+  if (first == last) return last;
+  ForwardIterator next = first;
+  ++next;
+  for (; next != last; ++next, ++first) {
+    if (p(*first, *next)) return first;
+  }
+  return last;
+}
+
+template<typename InputIterator, typename OutputIterator>
+OutputIterator copy(InputIterator first, InputIterator last, OutputIterator d_first) {
+    while (first != last) {
+        *d_first++ = *first++;
+    }
+    return d_first;
+}
+
+template<typename InputIterator, typename OutputIterator, typename UnaryPredicate>
+OutputIterator copy_if(InputIterator first, InputIterator last, OutputIterator d_first, UnaryPredicate pred) {
+    while (first != last) {
+        if (pred(*first))
+            *d_first++ = *first;
+        first++;
+    }
+    return d_first;
+}
+
+template<typename InputIterator, typename Size, typename OutputIterator>
+OutputIterator copy_n(InputIterator first, Size count, OutputIterator result) {
+    if (count > 0) {
+        *result++ = *first;
+        for (Size i = 1; i < count; ++i) {
+            *result++ = *++first;
+        }
+    }
+    return result;
+}
+
+template<typename BidirectionalIterator1, typename BidirectionalIterator2>
+BidirectionalIterator2 copy_backward(BidirectionalIterator1 first, BidirectionalIterator1 last, BidirectionalIterator2 d_last)
+{
+    while (first != last) {
+        *(--d_last) = *(--last);
+    }
+    return d_last;
+}
+
+template<typename InputIterator, typename OutputIterator>
+OutputIterator move(InputIterator first, InputIterator last, OutputIterator d_first) {
+    while (first != last) {
+        *d_first++ = std::move(*first++);
+    }
+    return d_first;
+}
+
+template<typename BidirectionalIterator1, typename BidirectionalIterator2>
+BidirectionalIterator2 move_backward(BidirectionalIterator1 first, BidirectionalIterator1 last, BidirectionalIterator2 d_last) {
+    while (first != last) {
+        *(--d_last) = std::move(*(--last));
+    }
+    return d_last;
+}
+
+template<typename ForwardIterator, typename T>
+void fill(ForwardIterator first, ForwardIterator last, const T& value) {
+    for (; first != last; ++first) {
+        *first = value;
+    }
+}
+
+template<typename OutputIterator, typename Size, typename T>
+OutputIterator fill_n(OutputIterator first, Size count, const T& value) {
+    for (Size i = 0; i < count; i++) {
+        *first++ = value;
+    }
+    return first;
+}
+
+template<typename InputIterator, typename OutputIterator, typename UnaryOperation>
+OutputIterator transform(InputIterator first1, InputIterator last1, OutputIterator d_first, UnaryOperation unary_op) {
+    while (first1 != last1) {
+        *d_first++ = unary_op(*first1++);
+    }
+    return d_first;
+}
+
+template<typename InputIterator1, typename InputIterator2, typename OutputIterator, typename BinaryOperation>
+OutputIterator transform(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, OutputIterator d_first, BinaryOperation binary_op) {
+    while (first1 != last1) {
+        *d_first++ = binary_op(*first1++, *first2++);
+    }
+    return d_first;
+}
+
+template<typename ForwardIterator, typename Generator>
+void generate(ForwardIterator first, ForwardIterator last, Generator g) {
+    while (first != last) {
+        *first++ = g();
+    }
+}
+
+template<typename OutputIterator, typename Size, typename Generator>
+OutputIterator generate_n(OutputIterator first, Size count, Generator g) {
+    for (Size i = 0; i < count; i++) {
+        *first++ = g();
+    }
+    return first;
+}
+
+template<typename ForwardIterator, typename T >
+ForwardIterator remove(ForwardIterator first, ForwardIterator last, const T& value) {
+    first = std::find(first, last, value);
+    if (first != last)
+        for (ForwardIterator i = first; ++i != last; )
+            if (!(*i == value))
+                *first++ = std::move(*i);
+    return first;
+}
+
+template<typename ForwardIterator, typename UnaryPredicate>
+ForwardIterator remove_if(ForwardIterator first, ForwardIterator last, UnaryPredicate p) {
+    first = std::find_if(first, last, p);
+    if (first != last)
+        for (ForwardIterator i = first; ++i != last; )
+            if (!p(*i))
+                *first++ = std::move(*i);
+    return first;
+}
+
+template<typename InputIterator, typename OutputIterator, typename T>
+OutputIterator remove_copy(InputIterator first, InputIterator last, OutputIterator d_first, const T& value) {
+    for (; first != last; ++first) {
+        if (!(*first == value)) {
+            *d_first++ = *first;
+        }
+    }
+    return d_first;
+}
+
+template<typename InputIterator, typename OutputIterator, typename UnaryPredicate>
+OutputIterator remove_copy_if(InputIterator first, InputIterator last, OutputIterator d_first, UnaryPredicate p) {
+    for (; first != last; ++first) {
+        if (!p(*first)) {
+            *d_first++ = *first;
+        }
+    }
+    return d_first;
+}
+
+template<typename ForwardIterator, typename T>
+void replace(ForwardIterator first, ForwardIterator last, const T& old_value, const T& new_value) {
+    for (; first != last; ++first) {
+        if (*first == old_value) {
+            *first = new_value;
+        }
+    }
+}
+
+template<typename ForwardIterator, typename UnaryPredicate, typename T>
+void replace_if(ForwardIterator first, ForwardIterator last, UnaryPredicate p, const T& new_value) {
+    for (; first != last; ++first) {
+        if (p(*first)) {
+            *first = new_value;
+        }
+    }
+}
+
+template<typename InputIterator, typename OutputIterator, typename T>
+OutputIterator replace_copy(InputIterator first, InputIterator last, OutputIterator d_first, const T& old_value, const T& new_value) {
+    for (; first != last; ++first) {
+        *d_first++ = (*first == old_value) ? new_value : *first;
+    }
+    return d_first;
+}
+
+template<typename InputIterator, typename OutputIterator, typename UnaryPredicate, typename T>
+OutputIterator replace_copy_if(InputIterator first, InputIterator last, OutputIterator d_first, UnaryPredicate p, const T& new_value) {
+    for (; first != last; ++first) {
+        *d_first++ = p(*first) ? new_value : *first;
+    }
+    return d_first;
+}
+
+template<typename ForwardIterator1, typename ForwardIterator2>
+void iter_swap(ForwardIterator1 a, ForwardIterator2 b) { std::swap(*a, *b); }
+
+template<typename ForwardIterator1, typename ForwardIterator2>
+ForwardIterator2 swap_ranges(ForwardIterator1 first1, ForwardIterator1 last1, ForwardIterator2 first2) {
+    while (first1 != last1) {
+        std::iter_swap(first1++, first2++);
+    }
+    return first2;
+}
+
+template<typename BidirectionalIterator>
+void reverse(BidirectionalIterator first, BidirectionalIterator last) {
+    while ((first != last) && (first != --last)) {
+        std::swap(*first++, *last);
+    }
+}
+
+template<typename BidirectionalIterator, typename OutputIterator>
+OutputIterator reverse_copy(BidirectionalIterator first, BidirectionalIterator last, OutputIterator d_first) {
+    while (first != last) {
+        *(d_first++) = *(--last);
+    }
+    return d_first;
+}
+
+template<typename ForwardIterator>
+void rotate(ForwardIterator first, ForwardIterator n_first, ForwardIterator last) {
+    ForwardIterator next = n_first;
+    while (first != next) {
+        std::iter_swap(first++, next++);
+        if (next == last) {
+            next = n_first;
+        }
+        else
+            if (first == n_first) {
+                n_first = next;
+            }
+    }
+}
+
+template<typename ForwardIterator, typename OutputIterator>
+OutputIterator rotate_copy(ForwardIterator first, ForwardIterator n_first, ForwardIterator last, OutputIterator d_first) {
+    d_first = std::copy(n_first, last, d_first);
+    return std::copy(first, n_first, d_first);
+}
+
+template<typename RandomIterator, typename RandomFunc>
+void random_shuffle(RandomIterator first, RandomIterator last, RandomFunc&& r) {
+    typename std::iterator_traits<RandomIterator>::difference_type i, n;
+    n = last - first;
+    for (i = n - 1; i > 0; --i) {
+        std::swap(first[i], first[r(i + 1)]);
+    }
+}
+/*
+template<typename RandomAccessIterator, typename UniformRandomNumberGenerator>
+void shuffle(RandomAccessIterator first, RandomAccessIterator last, UniformRandomNumberGenerator&& g) {
+for (auto i = (last-first)-1; i>0; --i) {
+std::uniform_int_distribution<decltype(i)> distrib(0,i);
+std::swap(first[i], first[distrib(g)]);
+}
+}
+*/
+template<typename ForwardIterator>
+ForwardIterator unique(ForwardIterator first, ForwardIterator last) {
+    if (first == last) return last;
+
+    ForwardIterator result = first;
+    while (++first != last) {
+        if (!(*result == *first)) {
+            *(++result) = *first;
+        }
+    }
+    return ++result;
+}
+
+template<typename ForwardIterator, typename BinaryPredicate>
+ForwardIterator unique(ForwardIterator first, ForwardIterator last, BinaryPredicate p) {
+    if (first == last) return last;
+
+    ForwardIterator result = first;
+    while (++first != last) {
+        if (!p(*result, *first)) {
+            *(++result) = *first;
+        }
+    }
+    return ++result;
+}
+
+template<typename ForwardIterator, typename OutputIterator>
+ForwardIterator unique_copy(ForwardIterator first, ForwardIterator last, OutputIterator d_first) {
+    if (first == last) return d_first;
+
+    *d_first = *first;
+    while (++first != last) {
+        if (!(*d_first == *first)) {
+            *(++d_first) = *first;
+        }
+    }
+    return ++d_first;
+}
+
+template<typename ForwardIterator, typename OutputIterator, typename BinaryPredicate>
+ForwardIterator unique_copy(ForwardIterator first, ForwardIterator last, OutputIterator d_first, BinaryPredicate p) {
+    if (first == last) return d_first;
+
+    *d_first = *first;
+    while (++first != last) {
+        if (!p(*d_first, *first)) {
+            *(++d_first) = *first;
+        }
+    }
+    return ++d_first;
+}
+
+template<typename ForwardIt>
+ForwardIt max_element(ForwardIt first, ForwardIt last) {
+    if (first == last) { return last; }
+    ForwardIt largest = first;
+    ++first;
+    for (; first != last; ++first) {
+        if (*largest < *first) { largest = first; }
+    }
+    return largest;
+}
+
+template<typename ForwardIt, typename Compare>
+ForwardIt max_element(ForwardIt first, ForwardIt last, Compare comp) {
+    if (first == last) { return last; }
+    ForwardIt largest = first;
+    ++first;
+    for (; first != last; ++first) {
+        if (comp(*largest, *first)) { largest = first; }
+    }
+    return largest;
+}
+
+template<typename ForwardIt>
+ForwardIt min_element(ForwardIt first, ForwardIt last) {
+    if (first == last) { return last; }
+    ForwardIt smallest = first;
+    ++first;
+    for (; first != last; ++first) {
+        if (*first < *smallest) { smallest = first; }
+    }
+    return smallest;
+}
+
+template<typename ForwardIt, typename Compare>
+ForwardIt min_element(ForwardIt first, ForwardIt last, Compare comp) {
+    if (first == last) { return last; }
+    ForwardIt smallest = first;
+    ++first;
+    for (; first != last; ++first) {
+        if (comp(*first, *smallest)) { smallest = first; }
+    }
+    return smallest;
+}
+
+template<typename T>
+constexpr const T& max(const T& a, const T& b) {
+    return (a < b) ? b : a;
+}
+
+template<typename T, typename Compare>
+constexpr const T& max(const T& a, const T& b, Compare comp) {
+    return (comp(a, b)) ? b : a;
+}
+
+template<typename T>
+constexpr T max(std::initializer_list<T> ilist) {
+    return *std::max_element(ilist.begin(), ilist.end());
+}
+
+template<typename T, typename Compare>
+constexpr T max(std::initializer_list<T> ilist, Compare comp) {
+    return *std::max_element(ilist.begin(), ilist.end(), comp);
+}
+
+template<typename  T>
+constexpr const T& min(const T& a, const T& b) {
+    return (b < a) ? b : a;
+}
+
+template<typename  T, typename Compare>
+constexpr const T& min(const T& a, const T& b, Compare comp) {
+    return (comp(b, a)) ? b : a;
+}
+
+template<typename T>
+constexpr T min(std::initializer_list<T> ilist) {
+    return *std::min_element(ilist.begin(), ilist.end());
+}
+
+template<typename T, typename Compare>
+constexpr T min(std::initializer_list<T> ilist, Compare comp) {
+    return *std::min_element(ilist.begin(), ilist.end(), comp);
+}
+
+template<typename InputIt1, typename InputIt2>
+bool lexicographical_compare(InputIt1 first1, InputIt1 last1,
+    InputIt2 first2, InputIt2 last2) {
+    for (; (first1 != last1) && (first2 != last2); first1++, first2++) {
+        if (*first1 < *first2) { return true; }
+        if (*first2 < *first1) { return false; }
+    }
+    return (first1 == last1) && (first2 != last2);
+}
+
+template<typename InputIt1, typename InputIt2, typename Compare>
+bool lexicographical_compare(InputIt1 first1, InputIt1 last1,
+    InputIt2 first2, InputIt2 last2,
+    Compare comp) {
+    for (; (first1 != last1) && (first2 != last2); first1++, first2++) {
+        if (comp(*first1, *first2)) { return true; }
+        if (comp(*first2, *first1)) { return false; }
+    }
+    return (first1 == last1) && (first2 != last2);
+}
+
+
+} // namespace std
