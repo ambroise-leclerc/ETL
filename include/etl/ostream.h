@@ -33,19 +33,26 @@
 
 #pragma once
 
-//#include <string>
-//#include <../libstd/include/ostream>
+#include <ostream>
 
 namespace etl {
-//#include <../libstd/include/string>
-//#include <../libstd/include/ostream>
+//#include "../libstd/include/ostream"
 
-template<typename OutputDisplay>
-class ostream /*: public std::basic_ostream<char> */{
+template<typename OutputDisplay, typename CharT = char, typename Traits = std::char_traits<CharT>>
+class ostream : public std::basic_ostream<CharT, Traits> {
+
+
+    template<typename CharT = char, typename Traits = std::char_traits<CharT>>
+    class EtlBuf : public std::basic_streambuf<CharT, Traits> {
+    public:
+        EtlBuf() : std::basic_streambuf<CharT, Traits>() {}
+    };
+
 public:
-    void operator<<(const char* string) {
-    //void operator<<(const std::string& string) {
-        OutputDisplay::print(string);
+    EtlBuf<CharT, Traits> buffer;
+
+    ostream() : std::basic_ostream<CharT, Traits>(&buffer) {
+        
     }
 };
 

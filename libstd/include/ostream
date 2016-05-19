@@ -39,8 +39,55 @@
 namespace std {
 
 template<typename CharT, typename Traits = char_traits<CharT>>
-class basic_ostream {
+class basic_streambuf {
+public:
     using char_type = CharT;
+    using traits_type = Traits;
+    using int_type = Traits::int_type;
+    using pos_type = Traits::pos_type;
+    using off_type = Traits::off_type;
+
+    
+    auto eback() const { return getBeg; }   ///< Returns the pointer to the beginning of the get area. 
+    auto gptr() const { return getCur; }    ///< Returns the pointer to the current character in the get area.
+    auto egptr() const { return getEnd; }   ///< Returns the pointer to the end of the get area.
+    auto pbase() const { return getBeg; }   ///< Returns the pointer to the beginning of the put area. 
+    auto pptr() const { return getCur; }    ///< Returns the pointer to the current character in the put area.
+    auto epptr() const { return getEnd; }   ///< Returns the pointer to the end of the put area.
+
+protected:
+    basic_streambuf() : getBeg(nullptr), getCur(nullptr), getEnd(nullptr), 
+                        putBeg(nullptr), putCur(nullptr), putEnd(nullptr) { }
+
+    basic_streambuf(const basic_streambuf& rhs) : getBeg(rhs.eback()), getCur(rhs.gptr()), getEnd(rhs.egptr()),
+                                                  putBeg(rhs.pbase()), putCur(rhs.pptr()), putEnd(rhs.epptr()) { }
+private:
+    using Ptr = char_type*;
+    Ptr getBeg, getCur, getEnd;
+    Ptr putBeg, putCur, putEnd;
+};
+
+template<typename CharT, typename Traits = char_traits<CharT>>
+class basic_ostream {
+public:
+    using char_type = CharT;
+    using traits_type = Traits;
+    using int_type = Traits::int_type;
+    using pos_type = Traits::pos_type;
+    using off_type = Traits::off_type;
+
+    explicit basic_ostream(std::basic_streambuf<CharT, Traits>* sb) {
+
+    }
+
+    operator<<(const char_type* zString) {
+        auto length = traits_type::length(zString);
+        traits_type::copy(pptr(), zString, length);
+    }
+
+protected:
+    basic_ostream(const basic_ostream& rhs) = delete;
+    basic_ostream(const basic_ostream&& rhs) = delete;  // not standard compliant : when implemented, basic_ofstream and basic_ostringstream will need this constructor
 };
 
 } // namespace std
