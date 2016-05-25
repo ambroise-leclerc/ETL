@@ -32,10 +32,85 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <ioports_esp.h>
+#include <etl/architecture/ioports_esp.h>
 
 namespace etl {
 	
+    
+    struct Pin16 : public Pin<Port0> {
+
+        static void set() {
+            set(true);
+        }
+
+
+        static void set(bool value) {
+            WRITE_PERI_REG(RTC_GPIO_OUT,
+		        (READ_PERI_REG(RTC_GPIO_OUT) & 0xfffffffe) | (value & 0x01));
+        }
+
+        static void clear() {
+            set(false);
+        }
+
+        static void toggle() {
+	        if (READ_PERI_REG(RTC_GPIO_IN_DATA) & 0x01 != 0)
+	        {
+		        clear();
+	        }
+	        else {
+		        set();
+	        }	
+        }
+
+        static void setOutput() {
+            WRITE_PERI_REG(PAD_XPD_DCDC_CONF,
+                (READ_PERI_REG(PAD_XPD_DCDC_CONF) & 0xffffffbc) | (uint8_t)0x1); 	// mux configuration for XPD_DCDC to output rtc_gpio0
+
+            WRITE_PERI_REG(RTC_GPIO_CONF,
+                (READ_PERI_REG(RTC_GPIO_CONF) & (uint8_t)0xfffffffe) | (uint8_t)0x0);	//mux configuration for out enable
+
+            WRITE_PERI_REG(RTC_GPIO_ENABLE,
+                (READ_PERI_REG(RTC_GPIO_ENABLE) & (uint8_t)0xfffffffe) | (uint8_t)0x1);	//out enable
+        }
+
+        static void setInput() {
+            WRITE_PERI_REG(PAD_XPD_DCDC_CONF,
+                (READ_PERI_REG(PAD_XPD_DCDC_CONF) & 0xffffffbc) | (uint8_t)0x1); 	// mux configuration for XPD_DCDC and rtc_gpio0 connection
+
+            WRITE_PERI_REG(RTC_GPIO_CONF,
+                (READ_PERI_REG(RTC_GPIO_CONF) & (uint8_t)0xfffffffe) | (uint8_t)0x0);	//mux configuration for out enable
+
+            WRITE_PERI_REG(RTC_GPIO_ENABLE,
+                READ_PERI_REG(RTC_GPIO_ENABLE) & (uint8_t)0xfffffffe);	//out disable
+        }
+
+        static uint16_t  read() {
+            return (uint16_t)(READ_PERI_REG(RTC_GPIO_IN_DATA) & 1);
+        }
+
+        static void pulseHigh() {
+	        set();
+	        clear();
+        }
+
+        static void pulseLow() {
+	        clear();
+            set();
+        }
+
+        static constexpr uint8_t bitmask() {
+           
+        }
+
+        static void attachHandler(voidFuncPtr userFunc) {
+         
+        }
+        		        
+        static void interrupt() {
+            
+        }
+    };
 
 
 	struct Pin15 : public Pin<Port0> {
