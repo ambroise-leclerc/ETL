@@ -37,7 +37,7 @@
 namespace etl {
 	
     
-    struct Pin16 : public Pin<Port0> {
+    struct Pin16 : public Pin<Port1> {
 
         static void set() {
             set(true);
