@@ -38,35 +38,40 @@ namespace etl {
 
     struct Pin0 : public Pin<Port0> {
 
-       static void Set() {
+       static void set() {
             AbstractPin<0>::Set();
         }
 
-        static void Clear() {
+
+       static void set(bool value) {
+            AbstractPin<0>::Set(value);
+        }
+
+        static void clear() {
             AbstractPin<0>::Clear();
         }
 
-        static void Toggle() {
+        static void toggle() {
             AbstractPin<0>::Toggle();
         }
 
-        static void SetOutput() {
+        static void setOutput() {
             AbstractPin<0>::SetOutput();
         }
 
-        static void SetInput() {
+        static void setInput() {
             AbstractPin<0>::SetInput();
         }
 
-        static uint16_t  Read() {
+        static uint16_t  read() {
            return AbstractPin<0>::Read();
         }
 
-        static void PulseHigh() {
+        static void pulseHigh() {
             AbstractPin<0>::PulseHigh();
         }
 
-        static void PulseLow() {
+        static void pulseLow() {
            AbstractPin<0>::PulseLow();
          }
 
@@ -75,47 +80,52 @@ namespace etl {
         }
 
          // Attache le handler sur un interrput
-        static void AttachHandler(voidFuncPtr userFunc) {
+        static void attachHandler(voidFuncPtr userFunc) {
             AbstractPin<0>::AttachHandler(userFunc);
         }
 
          // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void Interrupt() {
+         static void interrupt() {
               AbstractPin<0>::Interrupt();
          }
     };
 
     struct Pin2 : public Pin<Port0> {
 
-       static void Set() {
+       static void set() {
             AbstractPin<2>::Set();
         }
 
-        static void Clear() {
+
+       static void set(bool value) {
+            AbstractPin<2>::Set(value);
+        }
+
+        static void clear() {
             AbstractPin<2>::Clear();
         }
 
-        static void Toggle() {
+        static void toggle() {
             AbstractPin<2>::Toggle();
         }
 
-        static void SetOutput() {
+        static void setOutput() {
             AbstractPin<2>::SetOutput();
         }
 
-        static void SetInput() {
+        static void setInput() {
             AbstractPin<2>::SetInput();
         }
 
-        static uint16_t  Read() {
+        static uint16_t  read() {
            return AbstractPin<2>::Read();
         }
 
-        static void PulseHigh() {
+        static void pulseHigh() {
             AbstractPin<2>::PulseHigh();
         }
 
-        static void PulseLow() {
+        static void pulseLow() {
            AbstractPin<2>::PulseLow();
          }
 
@@ -124,47 +134,52 @@ namespace etl {
         }
 
          // Attache le handler sur un interrput
-        static void AttachHandler(voidFuncPtr userFunc) {
+        static void attachHandler(voidFuncPtr userFunc) {
             AbstractPin<2>::AttachHandler(userFunc);
         }
 
          // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void Interrupt() {
+         static void interrupt() {
               AbstractPin<2>::Interrupt();
          }
     };
 
     struct Pin4 : public Pin<Port0> {
 
-       static void Set() {
+       static void set() {
             AbstractPin<4>::Set();
         }
 
-        static void Clear() {
+
+       static void set(bool value) {
+            AbstractPin<4>::Set(value);
+        }
+
+        static void clear() {
             AbstractPin<4>::Clear();
         }
 
-        static void Toggle() {
+        static void toggle() {
             AbstractPin<4>::Toggle();
         }
 
-        static void SetOutput() {
+        static void setOutput() {
             AbstractPin<4>::SetOutput();
         }
 
-        static void SetInput() {
+        static void setInput() {
             AbstractPin<4>::SetInput();
         }
 
-        static uint16_t  Read() {
+        static uint16_t  read() {
            return AbstractPin<4>::Read();
         }
 
-        static void PulseHigh() {
+        static void pulseHigh() {
             AbstractPin<4>::PulseHigh();
         }
 
-        static void PulseLow() {
+        static void pulseLow() {
            AbstractPin<4>::PulseLow();
          }
 
@@ -173,47 +188,52 @@ namespace etl {
         }
 
          // Attache le handler sur un interrput
-        static void AttachHandler(voidFuncPtr userFunc) {
+        static void attachHandler(voidFuncPtr userFunc) {
             AbstractPin<4>::AttachHandler(userFunc);
         }
 
          // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void Interrupt() {
+         static void interrupt() {
               AbstractPin<4>::Interrupt();
          }
     };
 
     struct Pin5 : public Pin<Port0> {
 
-       static void Set() {
+       static void set() {
             AbstractPin<5>::Set();
         }
 
-        static void Clear() {
+
+       static void set(bool value) {
+            AbstractPin<5>::Set(value);
+        }
+
+        static void clear() {
             AbstractPin<5>::Clear();
         }
 
-        static void Toggle() {
+        static void toggle() {
             AbstractPin<5>::Toggle();
         }
 
-        static void SetOutput() {
+        static void setOutput() {
             AbstractPin<5>::SetOutput();
         }
 
-        static void SetInput() {
+        static void setInput() {
             AbstractPin<5>::SetInput();
         }
 
-        static uint16_t  Read() {
+        static uint16_t  read() {
            return AbstractPin<5>::Read();
         }
 
-        static void PulseHigh() {
+        static void pulseHigh() {
             AbstractPin<5>::PulseHigh();
         }
 
-        static void PulseLow() {
+        static void pulseLow() {
            AbstractPin<5>::PulseLow();
          }
 
@@ -222,47 +242,52 @@ namespace etl {
         }
 
          // Attache le handler sur un interrput
-        static void AttachHandler(voidFuncPtr userFunc) {
+        static void attachHandler(voidFuncPtr userFunc) {
             AbstractPin<5>::AttachHandler(userFunc);
         }
 
          // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void Interrupt() {
+         static void interrupt() {
               AbstractPin<5>::Interrupt();
          }
     };
 
     struct Pin12 : public Pin<Port0> {
 
-       static void Set() {
+       static void set() {
             AbstractPin<12>::Set();
         }
 
-        static void Clear() {
+
+       static void set(bool value) {
+            AbstractPin<12>::Set(value);
+        }
+
+        static void clear() {
             AbstractPin<12>::Clear();
         }
 
-        static void Toggle() {
+        static void toggle() {
             AbstractPin<12>::Toggle();
         }
 
-        static void SetOutput() {
+        static void setOutput() {
             AbstractPin<12>::SetOutput();
         }
 
-        static void SetInput() {
+        static void setInput() {
             AbstractPin<12>::SetInput();
         }
 
-        static uint16_t  Read() {
+        static uint16_t  read() {
            return AbstractPin<12>::Read();
         }
 
-        static void PulseHigh() {
+        static void pulseHigh() {
             AbstractPin<12>::PulseHigh();
         }
 
-        static void PulseLow() {
+        static void pulseLow() {
            AbstractPin<12>::PulseLow();
          }
 
@@ -271,47 +296,52 @@ namespace etl {
         }
 
          // Attache le handler sur un interrput
-        static void AttachHandler(voidFuncPtr userFunc) {
+        static void attachHandler(voidFuncPtr userFunc) {
             AbstractPin<12>::AttachHandler(userFunc);
         }
 
          // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void Interrupt() {
+         static void interrupt() {
               AbstractPin<12>::Interrupt();
          }
     };
 
     struct Pin13 : public Pin<Port0> {
 
-       static void Set() {
+       static void set() {
             AbstractPin<13>::Set();
         }
 
-        static void Clear() {
+
+       static void set(bool value) {
+            AbstractPin<13>::Set(value);
+        }
+
+        static void clear() {
             AbstractPin<13>::Clear();
         }
 
-        static void Toggle() {
+        static void toggle() {
             AbstractPin<13>::Toggle();
         }
 
-        static void SetOutput() {
+        static void setOutput() {
             AbstractPin<13>::SetOutput();
         }
 
-        static void SetInput() {
+        static void setInput() {
             AbstractPin<13>::SetInput();
         }
 
-        static uint16_t  Read() {
+        static uint16_t  read() {
            return AbstractPin<13>::Read();
         }
 
-        static void PulseHigh() {
+        static void pulseHigh() {
             AbstractPin<13>::PulseHigh();
         }
 
-        static void PulseLow() {
+        static void pulseLow() {
            AbstractPin<13>::PulseLow();
          }
 
@@ -320,47 +350,52 @@ namespace etl {
         }
 
          // Attache le handler sur un interrput
-        static void AttachHandler(voidFuncPtr userFunc) {
+        static void attachHandler(voidFuncPtr userFunc) {
             AbstractPin<13>::AttachHandler(userFunc);
         }
 
          // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void Interrupt() {
+         static void interrupt() {
               AbstractPin<13>::Interrupt();
          }
     };
 
     struct Pin14 : public Pin<Port0> {
 
-       static void Set() {
+       static void set() {
             AbstractPin<14>::Set();
         }
 
-        static void Clear() {
+
+       static void set(bool value) {
+            AbstractPin<14>::Set(value);
+        }
+
+        static void clear() {
             AbstractPin<14>::Clear();
         }
 
-        static void Toggle() {
+        static void toggle() {
             AbstractPin<14>::Toggle();
         }
 
-        static void SetOutput() {
+        static void setOutput() {
             AbstractPin<14>::SetOutput();
         }
 
-        static void SetInput() {
+        static void setInput() {
             AbstractPin<14>::SetInput();
         }
 
-        static uint16_t  Read() {
+        static uint16_t  read() {
            return AbstractPin<14>::Read();
         }
 
-        static void PulseHigh() {
+        static void pulseHigh() {
             AbstractPin<14>::PulseHigh();
         }
 
-        static void PulseLow() {
+        static void pulseLow() {
            AbstractPin<14>::PulseLow();
          }
 
@@ -369,47 +404,52 @@ namespace etl {
         }
 
          // Attache le handler sur un interrput
-        static void AttachHandler(voidFuncPtr userFunc) {
+        static void attachHandler(voidFuncPtr userFunc) {
             AbstractPin<14>::AttachHandler(userFunc);
         }
 
          // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void Interrupt() {
+         static void interrupt() {
               AbstractPin<14>::Interrupt();
          }
     };
 
     struct Pin15 : public Pin<Port0> {
 
-       static void Set() {
+       static void set() {
             AbstractPin<15>::Set();
         }
 
-        static void Clear() {
+
+       static void set(bool value) {
+            AbstractPin<15>::Set(value);
+        }
+
+        static void clear() {
             AbstractPin<15>::Clear();
         }
 
-        static void Toggle() {
+        static void toggle() {
             AbstractPin<15>::Toggle();
         }
 
-        static void SetOutput() {
+        static void setOutput() {
             AbstractPin<15>::SetOutput();
         }
 
-        static void SetInput() {
+        static void setInput() {
             AbstractPin<15>::SetInput();
         }
 
-        static uint16_t  Read() {
+        static uint16_t  read() {
            return AbstractPin<15>::Read();
         }
 
-        static void PulseHigh() {
+        static void pulseHigh() {
             AbstractPin<15>::PulseHigh();
         }
 
-        static void PulseLow() {
+        static void pulseLow() {
            AbstractPin<15>::PulseLow();
          }
 
@@ -418,12 +458,12 @@ namespace etl {
         }
 
          // Attache le handler sur un interrput
-        static void AttachHandler(voidFuncPtr userFunc) {
+        static void attachHandler(voidFuncPtr userFunc) {
             AbstractPin<15>::AttachHandler(userFunc);
         }
 
          // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void Interrupt() {
+         static void interrupt() {
               AbstractPin<15>::Interrupt();
          }
     };

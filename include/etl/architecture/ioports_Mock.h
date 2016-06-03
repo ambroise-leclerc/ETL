@@ -163,20 +163,20 @@ public:
     static bool test(uint8_t pos)          { return (GP0_IN & (1<<pos)) != 0; }
 
     /// Returns the native output register associated to Port0.
-    static uint16_t& GetOutputRegister()    { return GP0_OUT; }
+    static uint16_t& getOutputRegister()    { return GP0_OUT; }
 
     /// Returns the native input register associated to Port0.
-    static uint16_t& GetInputRegister()     { return GP0_IN; }
+    static uint16_t& getInputRegister()     { return GP0_IN; }
 
     /// Returns the native direction register associated to Port0.
-    static uint16_t& GetDirectionRegister() { return GP0_DIR; }
+    static uint16_t& getDirectionRegister() { return GP0_DIR; }
 
     static void onChange(const std::function<void()>& callback, uint16_t mask) {
-        Device::addOnChangeCallback(callback, GetInputRegister(), mask);
+        Device::addOnChangeCallback(callback, getInputRegister(), mask);
     }
 
     static void clearOnChange(uint16_t mask) {
-        Device::removeOnChangeCallback(GetInputRegister(), mask);
+        Device::removeOnChangeCallback(getInputRegister(), mask);
     }
 };
 
@@ -946,20 +946,20 @@ public:
     static bool test(uint8_t pos)          { return (GP1_IN & (1<<pos)) != 0; }
 
     /// Returns the native output register associated to Port1.
-    static uint16_t& GetOutputRegister()    { return GP1_OUT; }
+    static uint16_t& getOutputRegister()    { return GP1_OUT; }
 
     /// Returns the native input register associated to Port1.
-    static uint16_t& GetInputRegister()     { return GP1_IN; }
+    static uint16_t& getInputRegister()     { return GP1_IN; }
 
     /// Returns the native direction register associated to Port1.
-    static uint16_t& GetDirectionRegister() { return GP1_DIR; }
+    static uint16_t& getDirectionRegister() { return GP1_DIR; }
 
     static void onChange(const std::function<void()>& callback, uint16_t mask) {
-        Device::addOnChangeCallback(callback, GetInputRegister(), mask);
+        Device::addOnChangeCallback(callback, getInputRegister(), mask);
     }
 
     static void clearOnChange(uint16_t mask) {
-        Device::removeOnChangeCallback(GetInputRegister(), mask);
+        Device::removeOnChangeCallback(getInputRegister(), mask);
     }
 };
 
@@ -1245,20 +1245,20 @@ public:
     static bool test(uint8_t pos)          { return (GPSimuA_IN & (1<<pos)) != 0; }
 
     /// Returns the native output register associated to PortSimuA.
-    static uint16_t& GetOutputRegister()    { return GPSimuA_OUT; }
+    static uint16_t& getOutputRegister()    { return GPSimuA_OUT; }
 
     /// Returns the native input register associated to PortSimuA.
-    static uint16_t& GetInputRegister()     { return GPSimuA_IN; }
+    static uint16_t& getInputRegister()     { return GPSimuA_IN; }
 
     /// Returns the native direction register associated to PortSimuA.
-    static uint16_t& GetDirectionRegister() { return GPSimuA_DIR; }
+    static uint16_t& getDirectionRegister() { return GPSimuA_DIR; }
 
     static void onChange(const std::function<void()>& callback, uint16_t mask) {
-        Device::addOnChangeCallback(callback, GetInputRegister(), mask);
+        Device::addOnChangeCallback(callback, getInputRegister(), mask);
     }
 
     static void clearOnChange(uint16_t mask) {
-        Device::removeOnChangeCallback(GetInputRegister(), mask);
+        Device::removeOnChangeCallback(getInputRegister(), mask);
     }
 };
 
@@ -1676,20 +1676,20 @@ public:
     static bool test(uint8_t pos)          { return (GPSimuB_IN & (1<<pos)) != 0; }
 
     /// Returns the native output register associated to PortSimuB.
-    static uint16_t& GetOutputRegister()    { return GPSimuB_OUT; }
+    static uint16_t& getOutputRegister()    { return GPSimuB_OUT; }
 
     /// Returns the native input register associated to PortSimuB.
-    static uint16_t& GetInputRegister()     { return GPSimuB_IN; }
+    static uint16_t& getInputRegister()     { return GPSimuB_IN; }
 
     /// Returns the native direction register associated to PortSimuB.
-    static uint16_t& GetDirectionRegister() { return GPSimuB_DIR; }
+    static uint16_t& getDirectionRegister() { return GPSimuB_DIR; }
 
     static void onChange(const std::function<void()>& callback, uint16_t mask) {
-        Device::addOnChangeCallback(callback, GetInputRegister(), mask);
+        Device::addOnChangeCallback(callback, getInputRegister(), mask);
     }
 
     static void clearOnChange(uint16_t mask) {
-        Device::removeOnChangeCallback(GetInputRegister(), mask);
+        Device::removeOnChangeCallback(getInputRegister(), mask);
     }
 };
 
