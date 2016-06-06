@@ -102,8 +102,8 @@ SCENARIO("Test leds") {
             simu.init();
             REQUIRE(simu.currentBit == false);
 
-            Clk::set();
-            Data::pulseHigh();
+            Data::set();
+            Clk::pulseHigh();
             THEN("client is notified of a new data") {
                 REQUIRE(simu.currentBit == true);
             }
