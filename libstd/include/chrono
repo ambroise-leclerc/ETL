@@ -32,11 +32,20 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
+#include <libstd\include\ratio>
+
 namespace std {
 namespace chrono {
 
+template <class Rep> struct duration_values {
+    static constexpr Rep zero() { return Rep(0); }
+    static constexpr Rep min()  { return numeric_limits<Rep>::lowest(); }
+    static constexpr Rep max()  { return numeric_limits<Rep>::max(); }
+};
+
 template<typename Rep, typename Period = ratio<1>>
 class duration {
+    static_assert(etlHelper::is_ratio<Period>::value, "duration<Rep, Period> : Period template parameter must be a std::ratio");
 public:
     using rep = Rep;
     using period = Period;
@@ -47,6 +56,23 @@ public:
     duration& operator=(const duration&) = default;
     template<typename Rep2> constexpr duration(const Rep2& ticks) : ticksCount(static_cast<rep>(ticks)) {}
     constexpr rep count() const { return ticksCount; }
+
+    constexpr duration operator+() const        { return *this; }
+    constexpr duration operator-() const        { return duration(-ticksCount); }
+    duration& operator++()                      { ++ticksCount; return *this; }
+    duration  operator++(int)                   { return duration(ticksCount++); }
+    duration& operator--()                      { --ticksCount; return *this; }
+    duration  operator--(int)                   { return duration(ticksCount--); }
+    duration& operator+=(const duration& d)     { ticksCount += d.count(); return *this; }
+    duration& operator-=(const duration& d)     { ticksCount -= d.count(); return *this; }
+    duration& operator*=(const rep& rhs)        { rep *= rhs; return *this; }
+    duration& operator/=(const rep& rhs)        { rep /= rhs; return *this; }
+    duration& operator%=(const rep& rhs)        { rep %= rhs; return *this; }
+    duration& operator%=(const duration& rhs)   { rep %= rhs.count(); return *this; }
+
+    static constexpr duration zero()            { return duration(duration_values<rep>::zero()); }
+    static constexpr duration min()             { return duration(duration_values<rep>::min()); }
+    static constexpr duration max()             { return duration(duration_values<rep>::max()); }
 
 private:
     rep ticksCount;

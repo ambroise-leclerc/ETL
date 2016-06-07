@@ -33,7 +33,14 @@
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 
+
+namespace etlTest {
 #include <libstd/include/chrono>
+} // namespace etlTest
 
 SCENARIO("std::chrono") {
+
+
+    etlTest::std::chrono::duration<int, int> duree;
+    
 }

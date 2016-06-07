@@ -35,6 +35,8 @@
 #ifndef ETL_LIBSTD_TRAITS_PRIMARY_TYPES_H
 #define ETL_LIBSTD_TRAITS_PRIMARY_TYPES_H
 
+#include <cstdint>
+
 namespace etlHelper {
   template<typename> struct is_type_entier         : std::false_type { };
   template <> struct is_type_entier<bool>          : std::true_type { };
@@ -94,7 +96,7 @@ struct is_scalar : std::integral_constant<bool,
 /// is_array::value is true if T is an array, false otherwise.                         
 template<typename T> struct is_array                       : std::false_type { };
 template<typename T> struct is_array<T[]>                  : std::true_type { };
-template<typename T, std::size_t N> struct is_array<T[N]>  : std::true_type { };
+template<typename T, size_t N> struct is_array<T[N]>  : std::true_type { };
 
 
 
@@ -111,7 +113,29 @@ struct is_object : std::integral_constant<bool,
 /// is_function::value is true if T is a function type, false otherwise
 template<typename> struct is_function : std::false_type { };
 template<typename Ret, typename... Args> struct is_function<Ret(Args...)> : std::true_type {};
-template<typename Ret, typename... Args> struct is_function<Ret(Args......)> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...)> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) const> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) volatile> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) const volatile> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) const> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) volatile> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) const volatile> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) &> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) const &> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) volatile &> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) const volatile &> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) &> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) const &> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) volatile &> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) const volatile &> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) && > : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) const &&> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) volatile &&> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) const volatile &&> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) && > : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) const &&> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) volatile &&> : std::true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) const volatile &&> : std::true_type {};
 
 
 } // namespace std

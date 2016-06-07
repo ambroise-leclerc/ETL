@@ -31,6 +31,7 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
+#include <libstd/include/type_traits>
 
 namespace std {
 
@@ -42,10 +43,10 @@ namespace etlHelper {
     template<intmax_t A, intmax_t B> struct PPCM { static const intmax_t value = A / PGCD<A, B>::value * B; };
     template<intmax_t X>             struct Abs { static const intmax_t value = X < 0 ? -X : X; };
     template<intmax_t X>             struct Sign { static const intmax_t value = X == 0 ? 0 : (X < 0 ? -1 : 1); };
-}
+} // namespace etlHelper
 
 template<intmax_t Num, intmax_t Denom = 1>
-class ratio {)
+class ratio {
 public:
     using type = ratio<Num, Denom>;
     static constexpr intmax_t num = (etlHelper::Sign<Num>::value * etlHelper::Sign<Denom>::value) * etlHelper::Abs(Num)::value / etlHelper::PGCD<etlHelper::Abs<Num>::value, etlHelper::Abs<Denom>::value>::value;
@@ -69,6 +70,10 @@ using tera 	= ratio<1000000000000, 1>;
 using peta 	= ratio<1000000000000000, 1>;
 using exa 	= ratio<1000000000000000000, 1>;
 
+namespace etlHelper {
+    template<typename T>                    struct is_ratio : false_type {};
+    template<intmax_t Num, intmax_t Denom>  struct is_ratio<ratio<Num, Denom>> : true_type {};
+} // namespace etlHelper
 
 
 
