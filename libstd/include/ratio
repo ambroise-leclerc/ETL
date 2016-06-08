@@ -43,7 +43,9 @@ namespace etlHelper {
     template<intmax_t A, intmax_t B> struct PPCM { static const intmax_t value = A / PGCD<A, B>::value * B; };
     template<intmax_t X>             struct Abs { static const intmax_t value = X < 0 ? -X : X; };
     template<intmax_t X>             struct Sign { static const intmax_t value = X == 0 ? 0 : (X < 0 ? -1 : 1); };
+
 } // namespace etlHelper
+
 
 template<intmax_t Num, intmax_t Denom = 1>
 class ratio {
@@ -75,6 +77,48 @@ namespace etlHelper {
     template<intmax_t Num, intmax_t Denom>  struct is_ratio<ratio<Num, Denom>> : true_type {};
 } // namespace etlHelper
 
+
+
+namespace etlHelper {
+    template<typename R1, typename R2> class ratio_multiply {
+        static const intmax_t pgcdND = PGCD<R1::num, R2::den>::value;
+        static const intmax_t pgcdDN = PGCD<R1::den, R2::num>::value;
+    public:
+        using type = typename ratio<(R1::num / pgcdND)*(R2::num / pgcdDN), (R2:den / pgcdND)*(R1::den / pgcdDN)>;
+    };
+
+    template<typename R1, typename R2> class ratio_divide {
+        static const intmax_t pgcdNum = PGCD<R1::num, R2::num>::value;
+        static const intmax_t pgcdDen = PGCD<R1::den, R2::den>::value;
+    public:
+        using type = typename ratio<(R1::num / pgcdNum)*(R2::den / pgcdDen), (R2::num / pgcdNum)*(R1::den / pgcdDen)>;
+    };
+
+    template<typename R1, typename R2> class ratio_add {
+        static const intmax_t pgcdNum = PGCD<R1::num, R2::num>::value;
+        static const intmax_t pgcdDen = PGCD<R1::den, R2::den>::value;
+    public:
+        using type = typename ratio_multiply<
+            ratio<pgcdNum, R1::den / pgcdDen>,
+            ratio<((R1::num / pgcdNum)*(R2::den / pgcdDen)) + ((R2::num / pgcdNum)*(R1::den / pgcdDen)), R2::den>>::type;
+    };
+
+    template<typename R1, typename R2> class ratio_add {
+        static const intmax_t pgcdNum = PGCD<R1::num, R2::num>::value;
+        static const intmax_t pgcdDen = PGCD<R1::den, R2::den>::value;
+    public:
+        using type = typename ratio_multiply<
+            ratio<pgcdNum, R1::den / pgcdDen>,
+            ratio<((R1::num / pgcdNum)*(R2::den / pgcdDen)) - ((R2::num / pgcdNum)*(R1::den / pgcdDen)), R2::den>>::type;
+    };
+
+} // namespace etlHelper
+
+
+template<typename R1, typename R2> using ratio_add = etlHelper::ratio_add::type;
+template<typename R1, typename R2> using ratio_substract = etlHelper::ratio_substract::type;
+template<typename R1, typename R2> using ratio_multiply = etlHelper::ratio_multiply::type;
+template<typename R1, typename R2> using ratio_divide = etlHelper::ratio_divide::type;
 
 
 } // namespace std
