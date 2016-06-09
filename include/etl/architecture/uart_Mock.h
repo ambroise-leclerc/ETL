@@ -40,26 +40,10 @@ namespace etl {
 
     // Traits à définir dans etl/architecture/uart_archxx.h
 
-    struct FakePin {
-        static void setOutput() {
-
-        }
-
-        static void set() {
-            std::cout << '1';
-        }
-
-        static void clear() {
-            std::cout << '0';
-        }
-    };
 
     template<typename> struct is_uart_txd_capable : std::false_type {};
     template<> struct is_uart_txd_capable<Pin0> : std::true_type {};
     template<> struct is_uart_txd_capable<Pin14> : std::true_type {};
-
-    template<> struct is_uart_txd_capable<FakePin> : std::true_type {};
-   
 
     template<typename> struct is_uart_rxd_capable : std::false_type {};
     template<> struct is_uart_rxd_capable<Pin0> : std::true_type {};

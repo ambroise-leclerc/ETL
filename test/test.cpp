@@ -43,6 +43,21 @@ SCENARIO("Timers") {
 */
 
 
+struct FakePin {
+    static void setOutput() {
+
+    }
+
+    static void set() {
+        std::cout << '1';
+    }
+
+    static void clear() {
+        std::cout << '0';
+    }
+};
+
+template<> struct is_uart_txd_capable<FakePin> : std::true_type {};
 
 SCENARIO("Uart") {
     using uart = etl::Uart<Pin0, FakePin>;
