@@ -106,9 +106,9 @@ namespace etl {
          }
 
 private:
-    static enum Parity {None,Even,Odd};
-    static enum StopBit {One,Two};
-    static enum BitNumber {Five = 5,Six = 6,Seven = 7,Eight = 8,Nine = 9};
+    enum Parity {None,Even,Odd};
+    enum StopBit {One,Two};
+    enum BitNumber {Five = 5,Six = 6,Seven = 7,Eight = 8,Nine = 9};
 
   
     static const auto bitNumberMask = 0b111000;
@@ -116,11 +116,11 @@ private:
     static const auto parityMask = 0b000110;
 
 
-    static const auto parity = static_cast<Parity>((FRAME_FORMAT & parityMask) >>1 );
-    static const auto stopBit = static_cast<StopBit>(FRAME_FORMAT & stopBitMask);
-    static const auto bitNumber =  static_cast<BitNumber>((FRAME_FORMAT & bitNumberMask)>>3)+5;
+    static constexpr  auto parity = static_cast<Parity>((FRAME_FORMAT & parityMask) >>1 );
+    static constexpr  auto stopBit = static_cast<StopBit>(FRAME_FORMAT & stopBitMask);
+    static constexpr  auto bitNumber =  static_cast<BitNumber>((FRAME_FORMAT & bitNumberMask)>>3)+5;
 
-    static const auto waitTime = static_cast<uint16_t>(1000 / BAUD_RATE);
+    static constexpr  auto waitTime = static_cast<uint16_t>(1000 / BAUD_RATE);
 
     static auto  sendBit(SizeUint datum) {
         uint8_t nbOdd = 0;
