@@ -31,7 +31,7 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
-#include <libstd/include/type_traits>
+#include <../libstd/include/type_traits>
 
 namespace std {
 
@@ -103,7 +103,7 @@ namespace etlHelper {
             ratio<((R1::num / pgcdNum)*(R2::den / pgcdDen)) + ((R2::num / pgcdNum)*(R1::den / pgcdDen)), R2::den>>::type;
     };
 
-    template<typename R1, typename R2> class ratio_add {
+    template<typename R1, typename R2> class ratio_substract {
         static const intmax_t pgcdNum = PGCD<R1::num, R2::num>::value;
         static const intmax_t pgcdDen = PGCD<R1::den, R2::den>::value;
     public:
@@ -120,5 +120,12 @@ template<typename R1, typename R2> using ratio_substract = etlHelper::ratio_subs
 template<typename R1, typename R2> using ratio_multiply = etlHelper::ratio_multiply::type;
 template<typename R1, typename R2> using ratio_divide = etlHelper::ratio_divide::type;
 
+
+template<typename R1, typename R2> using ratio_equal : public std::integral_constant <bool, R1::num == R2::num && R1::den == R2::den> {};
+
+
+
+// C++17 helpers
+template<typename R1, typename R2> constexpr bool ratio_equal_v = ratio_equal<R1, R2>::value;
 
 } // namespace std

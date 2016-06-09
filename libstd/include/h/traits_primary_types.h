@@ -31,12 +31,10 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
+#include <../libstd/include/cstdint>
 
-#ifndef ETL_LIBSTD_TRAITS_PRIMARY_TYPES_H
-#define ETL_LIBSTD_TRAITS_PRIMARY_TYPES_H
-
-#include <cstdint>
-
+namespace std {
 namespace etlHelper {
   template<typename> struct is_type_entier         : std::false_type { };
   template <> struct is_type_entier<bool>          : std::true_type { };
@@ -58,7 +56,6 @@ namespace etlHelper {
   template<typename T, typename U> struct is_mb_pointeur<T U::*>     : std::true_type { };
 } // namespace etlHelper 
 
-namespace std {
 /// Checks whether T is a void type. is_void< >::value equals true if T is of
 /// type void, const void, volatile void, or const volatile void.
 template<typename T>
@@ -139,4 +136,3 @@ template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) co
 
 
 } // namespace std
-#endif // ETL_LIBSTD_TRAITS_PRIMARY_TYPES_H

@@ -31,7 +31,7 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
-
+#include <avr/io.h>
 
 namespace etl {
 #define IOPORTS_TO_STRING(name) #name

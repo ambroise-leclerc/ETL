@@ -1,0 +1,163 @@
+/// @file limits
+/// @data 09/06/2016 08:23:53
+/// @author Ambroise Leclerc
+/// @brief Numeric limits
+//
+// Copyright (c) 2016, Ambroise Leclerc
+//   All rights reserved.
+//
+//   Redistribution and use in source and binary forms, with or without
+//   modification, are permitted provided that the following conditions are met:
+//
+//   * Redistributions of source code must retain the above copyright
+//     notice, this list of conditions and the following disclaimer.
+//   * Redistributions in binary form must reproduce the above copyright
+//     notice, this list of conditions and the following disclaimer in
+//     the documentation and/or other materials provided with the
+//     distribution.
+//   * Neither the name of the copyright holders nor the names of
+//     contributors may be used to endorse or promote products derived
+//     from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+//  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+//  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+//  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+//  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+//  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+//  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+//  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+//  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+//  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+//  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
+//#include <../libstd/include/climits>
+
+namespace std {
+enum float_round_style {
+    round_indeterminate       = -1,
+    round_toward_zero         =  0,
+    round_to_nearest          =  1,
+    round_toward_infinity     =  2,
+    round_toward_neg_infinity =  3
+};
+
+enum float_denorm_style {
+    denorm_indeterminate = -1,
+    denorm_absent = 0,
+    denorm_present = 1
+};
+
+template<typename T>
+struct numeric_limits {
+    static constexpr bool is_specialized = false;
+    static constexpr T min() noexcept           { return T(); }
+    static constexpr T max() noexcept           { return T(); }
+    static constexpr T lowest() noexcept        { return T(); }
+    static constexpr int digits = 0;
+    static constexpr int digits10 = 0;
+    static constexpr int max_digits10 = 0;
+    static constexpr bool is_signed = false;
+    static constexpr bool is_integer = false;
+    static constexpr bool is_exact = false;
+    static constexpr int radix = 0;
+    static constexpr T epsilon() noexcept       { return T(); }
+    static constexpr T round_error() noexcept   { return T(); }
+    static constexpr int min_exponent = 0;
+    static constexpr int min_exponent10 = 0;
+    static constexpr int max_exponent = 0;
+    static constexpr int max_exponent10 = 0;
+    static constexpr bool has_infinity = false;
+    static constexpr bool has_quiet_NaN = false;
+    static constexpr bool has_signaling_NaN = false;
+    static constexpr float_denorm_style has_denorm = denorm_absent;
+    static constexpr bool has_denorm_loss = false;
+    static constexpr T infinity() noexcept      { return T(); }
+    static constexpr T quiet_NaN() noexcept     { return T(); }
+    static constexpr T signaling_NaN() noexcept { return T(); }
+    static constexpr T denorm_min() noexcept    { return T(); }
+    static constexpr bool is_iec559 = false;
+    static constexpr bool is_bounded = false;
+    static constexpr bool is_modulo = false;
+    static constexpr bool traps = false;
+    static constexpr bool tinyness_before = false;
+    static constexpr float_round_style round_style = round_toward_zero;
+};
+
+
+namespace etlHelper {
+    template<typename T> constexpr auto typeIsSigned() { return static_cast<T>(-1) < 0; }
+    template<typename T> constexpr auto typeDigits() { return (sizeof(T) * CHAR_BIT - typeIsSigned<T>()); }
+    template<typename T> constexpr auto typeDigits10() { return typeDigits<T>() * 643L/2136; }
+    template<typename T> constexpr T typeMax() { return typeIsSigned<T>() ?
+                                                    ((((static_cast<T>(1) << (typeDigits<T>() - 1)) -1) << 1) + 1) :
+                                                    ~static_cast<T>(0); }
+    template<typename T> constexpr T typeMin() { return typeIsSigned<T>() ? -typeMax<T>() - 1 : static_cast<T>(0); }
+
+    template<typename T> class numericLimitsBase {
+    protected:
+        using type = T;
+        
+    public:
+        static constexpr bool is_specialized = true;
+        static constexpr type min() noexcept        { return typeMin<type>(); }
+        static constexpr type max() noexcept        { return typeMax<type>(); }
+        static constexpr type lowest() noexcept     { return min(); }
+    
+        static constexpr int digits =				typeDigits<type>();
+        static constexpr int digits10 =				typeDigits10<type>();;
+        static constexpr int max_digits10 = 0;
+        static constexpr bool is_signed =			typeIsSigned<type>();
+        static constexpr bool is_integer = true;
+        static constexpr bool is_exact = true;
+        static constexpr int radix = 2;
+        static constexpr type epsilon() noexcept       { return 0; }
+        static constexpr type round_error() noexcept   { return 0; }
+        static constexpr int min_exponent = 0;
+        static constexpr int min_exponent10 = 0;
+        static constexpr int max_exponent = 0;
+        static constexpr int max_exponent10 = 0;
+        static constexpr bool has_infinity = false;
+        static constexpr bool has_quiet_NaN = false;
+        static constexpr bool has_signaling_NaN = false;
+        static constexpr float_denorm_style has_denorm = denorm_absent;
+        static constexpr bool has_denorm_loss = false;
+        static constexpr type infinity() noexcept      { return type(); }
+        static constexpr type quiet_NaN() noexcept     { return type(); }
+        static constexpr type signaling_NaN() noexcept { return type(); }
+        static constexpr type denorm_min() noexcept    { return static_cast<type>(0); }
+        static constexpr bool is_iec559 = false;
+        static constexpr bool is_bounded = true;
+        static constexpr bool is_modulo = false;
+        static constexpr bool traps = false;
+        static constexpr bool tinyness_before = false;
+        static constexpr float_round_style round_style = round_toward_zero;
+    };
+    
+} // namespace etlHelper
+
+
+
+template<> struct numeric_limits<bool>  : public etlHelper::numericLimitsBase<bool> {
+    static constexpr bool min() noexcept           { return false; }
+    static constexpr bool max() noexcept           { return true; }
+    static constexpr bool lowest() noexcept        { return min(); }
+    static constexpr int digits = 1;
+    static constexpr int digits10 = 0;
+};
+
+template<> struct numeric_limits<char>  : public etlHelper::numericLimitsBase<char> {};
+template<> struct numeric_limits<signed char> : public etlHelper::numericLimitsBase<signed char> {};
+template<> struct numeric_limits<unsigned char> : public etlHelper::numericLimitsBase<unsigned char> {};
+template<> struct numeric_limits<wchar_t> : public etlHelper::numericLimitsBase<wchar_t> {};
+template<> struct numeric_limits<short int> : public etlHelper::numericLimitsBase<short int> {};
+template<> struct numeric_limits<int> : public etlHelper::numericLimitsBase<int> {};
+template<> struct numeric_limits<long int> : public etlHelper::numericLimitsBase<long int> {};
+template<> struct numeric_limits<long long int> : public etlHelper::numericLimitsBase<long long int> {};
+template<> struct numeric_limits<unsigned short int> : public etlHelper::numericLimitsBase<unsigned short int> {};
+template<> struct numeric_limits<unsigned int> : public etlHelper::numericLimitsBase<unsigned int> {};
+template<> struct numeric_limits<unsigned long int> : public etlHelper::numericLimitsBase<unsigned long int> {};
+template<> struct numeric_limits<unsigned long long int> : public etlHelper::numericLimitsBase<unsigned long long int> {};
+
+
+}  // namespace std

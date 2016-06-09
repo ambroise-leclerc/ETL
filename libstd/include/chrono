@@ -32,7 +32,8 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <libstd\include\ratio>
+#include <../libstd/include/ratio>
+#include <../libstd/include/limits>
 
 namespace std {
 namespace chrono {
@@ -138,8 +139,8 @@ inline namespace literals {
 inline namespace chrono_literals {
 constexpr chrono::microseconds operator ""us(unsigned long long us) { return chrono::microseconds(static_cast<chrono::microseconds::rep>(us)); }
 
-constexpr duration<long double, micro> operator ""us(long double us) {
-    return duration<long double, micro>(us);
+constexpr chrono::duration<long double, chrono::micro> operator ""us(long double us) {
+    return chrono::duration<long double, chrono::micro>(us);
 }
 
 } // namespace chrono_literals
