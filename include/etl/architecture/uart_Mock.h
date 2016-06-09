@@ -111,18 +111,18 @@ private:
     static enum BitNumber {Five = 5,Six = 6,Seven = 7,Eight = 8,Nine = 9};
 
   
-    static const uint8_t bitNumberMask = 0b111000;
-    static const uint8_t stopBitMask = 0b000001;
-    static const uint8_t parityMask = 0b000110;
+    static const auto bitNumberMask = 0b111000;
+    static const auto stopBitMask = 0b000001;
+    static const auto parityMask = 0b000110;
 
 
-    static const Parity parity = static_cast<Parity>((FRAME_FORMAT & parityMask) >>1 );
-    static const StopBit stopBit = static_cast<StopBit>(FRAME_FORMAT & stopBitMask);
+    static const auto parity = static_cast<Parity>((FRAME_FORMAT & parityMask) >>1 );
+    static const auto stopBit = static_cast<StopBit>(FRAME_FORMAT & stopBitMask);
     static const auto bitNumber =  static_cast<BitNumber>((FRAME_FORMAT & bitNumberMask)>>3)+5;
 
     static const auto waitTime = static_cast<uint16_t>(1000 / BAUD_RATE);
 
-    static uint8_t  sendBit(SizeUint datum) {
+    static auto  sendBit(SizeUint datum) {
         uint8_t nbOdd = 0;
         for (auto i = bitNumber-1; i >= 0; i--) {
             auto value = (datum >> i) & 0x01;
