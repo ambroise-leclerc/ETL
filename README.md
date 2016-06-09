@@ -1,7 +1,7 @@
 ETL
 ===
 
-[![Build Status](https://api.travis-ci.org/ambroise-leclerc/ETL.svg)](https://api.travis-ci.org/ambroise-leclerc/ETL)
+[![Build Status](https://travis-ci.org/ambroise-leclerc/ETL.svg?branch=master)](https://travis-ci.org/ambroise-leclerc/ETL)
 
 *C++14 Embedded Template Library for Atmel AVR 8-bit and Espressif ESP 32-bit microcontrollers.*
 

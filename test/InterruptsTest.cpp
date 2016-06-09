@@ -81,12 +81,12 @@ SCENARIO("Test dual interruptions on strobe and clock") {
 
         Client<ClientStrobe, ClientClk, ClientData> simu;
 
-        Device::pragma(Pragma("BitLink").reg(Strobe::Port::GetOutputRegister()).bit(Strobe::bit())
-                                        .reg(ClientStrobe::Port::GetInputRegister()).bit(ClientStrobe::bit()));
-        Device::pragma(Pragma("BitLink").reg(Clk::Port::GetOutputRegister()).bit(Clk::bit())
-                                        .reg(ClientClk::Port::GetInputRegister()).bit(ClientClk::bit()));
-        Device::pragma(Pragma("BitLink").reg(Data::Port::GetOutputRegister()).bit(Data::bit())
-                                        .reg(ClientData::Port::GetInputRegister()).bit(ClientData::bit()));
+        Device::pragma(Pragma("BitLink").reg(Strobe::Port::getOutputRegister()).bit(Strobe::bit())
+                                        .reg(ClientStrobe::Port::getInputRegister()).bit(ClientStrobe::bit()));
+        Device::pragma(Pragma("BitLink").reg(Clk::Port::getOutputRegister()).bit(Clk::bit())
+                                        .reg(ClientClk::Port::getInputRegister()).bit(ClientClk::bit()));
+        Device::pragma(Pragma("BitLink").reg(Data::Port::getOutputRegister()).bit(Data::bit())
+                                        .reg(ClientData::Port::getInputRegister()).bit(ClientData::bit()));
 
         ClientClk::onChange([&simu]() -> void { simu.clockChangedISR(); });
         ClientStrobe::onChange([&simu]()-> void { simu.strobeChangedISR(); });  
