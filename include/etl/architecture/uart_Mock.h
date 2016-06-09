@@ -102,9 +102,7 @@ private:
 
     static constexpr  auto parity = static_cast<Parity>((FRAME_FORMAT & parityMask) >>1 );
     static constexpr  auto stopBit = static_cast<StopBit>(FRAME_FORMAT & stopBitMask);
-    static constexpr  auto bitNumber =  static_cast<BitNumber>((FRAME_FORMAT & bitNumberMask)>>3)+5;
-
-    static constexpr  auto waitTime = static_cast<uint16_t>(1000 / BAUD_RATE);
+    static constexpr  auto bitNumber = static_cast<BitNumber>((FRAME_FORMAT & bitNumberMask)>>3)+5;
 
     static auto  sendBit(SizeUint datum) {
         uint8_t nbOdd = 0;
@@ -145,7 +143,7 @@ private:
     }
 
     static void wait() {
-        std::this_thread::sleep_for(std::chrono::milliseconds(waitTime));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000u/BAUD_RATE));
     }
 
     static void txdSet(uint8_t value) {
@@ -172,5 +170,4 @@ private:
 
 
 };
-
 } // namespace etl
