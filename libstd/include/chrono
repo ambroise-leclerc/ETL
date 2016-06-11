@@ -37,6 +37,16 @@
 
 namespace std {
 namespace chrono {
+	template<typename Rep, typename Period = ratio<1>> struct duration;
+} // namespace chrono
+
+// std::common_type specialization for std::chrono::duration
+template<typename Rep1, typename Period1, typename Rep2, typename Period2>
+struct common_type<chrono::duration<Rep1, Period1>, chrono::duration<Rep2, Period2>> {
+    using type = chrono::duration<typename common_type<Rep1, Rep2>::type, typename etlHelper::PGCD<Period1, Period2>::type>;
+};
+
+namespace chrono {
 
 template<typename Rep> struct duration_values {
     static constexpr Rep zero() { return Rep(0); }
@@ -44,19 +54,42 @@ template<typename Rep> struct duration_values {
     static constexpr Rep max()  { return numeric_limits<Rep>::max(); }
 };
 
-// std::common_type specialization for std::chrono::duration
-template<typename Rep1, typename Period1, typename Rep2, typename Period2>
-struct common_type<duration<Rep1, Period1>, duration<Rep2, Period2>> {
-    using type = duration<typename common_type<Rep1, Rep2>::type, typename etlHelper::PGCD<Period1, Period2>::type> type;
-};
+namespace etlHelper {
+    template<typename From, typename To, typename Period = std::ratio_divide<typename From::period, typename To::period>,
+             bool = Period::num == 1, bool = Period::den == 1>
+    struct duration_cast;
 
-/*
+    template<typename From, typename To, typename Period>
+    struct duration_cast<From, To, Period, true, true> {
+        constexpr To operator()(const From& dur) const { return To(static_cast<typename To::rep>(dur.count())); }
+    };
+
+    template<typename From, typename To, typename Period>
+    struct duration_cast<From, To, Period, true, false> {
+        constexpr To operator()(const From& dur) const {
+            using ComRep = common_type_t<typename To::rep, typename From::rep, intmax_t>;
+            return To(static_cast<typename To::rep>(static_cast<ComRep>(dur.count()) * static_cast<ComRep>(Period::num)));
+        }
+    };
+
+    template<typename From, typename To, typename Period>
+    struct duration_cast<From, To, Period, false, false> {
+        constexpr To operator()(const From& dur) const {
+            using ComRep = common_type_t<typename To::rep, typename From::rep, intmax_t>;
+            return To(static_cast<typename To::rep>(static_cast<ComRep>(dur.count()) * static_cast<ComRep>(Period::num) / static_cast<ComRep>(Period::den)));
+        }
+    };
+} // namespace etlHelper
+
+
+
 /// Converts a std::chrono::duration to a duration of different type ToDuration
-template<typename ToDuration, typename Rep, typename Period>
-constexpr ToDuration duration_cast(const duration<Rep, Period>& ticks) {
-
+template<typename ToDuration, typename Rep, typename Period> constexpr ToDuration duration_cast(const duration<Rep, Period>& ticks) {
+	return etlHelper::duration_cast<duration<Rep, Period>, ToDuration>()(ticks);
 }
-*/
+
+
+
 template<typename Rep, typename Period = ratio<1>>
 class duration {
     static_assert(etlHelper::is_ratio<Period>::value, "duration<Rep, Period> : Period template parameter must be a std::ratio");
@@ -100,6 +133,7 @@ using seconds       = duration<uint64_t>;
 using minutes       = duration<uint32_t, ratio<60>>;
 using hours         = duration<uint32_t, ratio<3600>>;
 
+
 } // namespace chrono
 
 inline namespace literals {
@@ -117,31 +151,6 @@ namespace etlHelper {
     template<typename Rep, typename Period> struct is_duration<volatile duration<Rep, Period>> : true_type {};
     template<typename Rep, typename Period> struct is_duration<const volatile duration<Rep, Period>> : true_type {};
 
-    template<typename From, typename To,
-             typename Period = typename ratio_divide<typename From::period, typename To::period>::type,
-             bool = Period::num == 1, bool = Period::den == 1>
-    struct duration_cast;
-
-    template<typename From, typename To, typename Period>
-    struct duration_cast<From, To, Period, true, true> {
-        constexpr To operator()(const From& dur) const { return To(static_cast<typename To::rep>(dur.count())); }
-    };
-
-    template<typename From, typename To, typename Period>
-    struct duration_cast<From, To, Period, true, false> {
-        constexpr To operator()(const From& dur) const {
-            using ComRep = common_type<typename To::rep, typename From::rep, intmax_t>::type;
-            return To(static_cast<typename To::rep>(static_cast<ComRep>(dur.count()) * static_cast<ComRep>(Period::num)));
-        }
-    };
-
-    template<typename From, typename To, typename Period>
-    struct duration_cast<From, To, Period, false, false> {
-        constexpr To operator()(const From& dur) const {
-            using ComRep = common_type<typename To::rep, typename From::rep, intmax_t>::type;
-            return To(static_cast<typename To::rep>(static_cast<ComRep>(dur.count()) * static_cast<ComRep)(Period::num) / static_cast<ComRep>(Period::den)));
-        }
-    };
 } // namespace etlHelper
 
 

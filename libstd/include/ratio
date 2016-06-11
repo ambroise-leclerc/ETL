@@ -75,11 +75,7 @@ using exa   = ratio<1000000000000000000, 1>;
 namespace etlHelper {
     template<typename T>                    struct is_ratio : false_type {};
     template<intmax_t Num, intmax_t Denom>  struct is_ratio<ratio<Num, Denom>> : true_type {};
-} // namespace etlHelper
 
-
-
-namespace etlHelper {
     template<typename R1, typename R2> class ratio_multiply {
         static const intmax_t pgcdND = PGCD<R1::num, R2::den>::value;
         static const intmax_t pgcdDN = PGCD<R1::den, R2::num>::value;
@@ -115,10 +111,10 @@ namespace etlHelper {
 } // namespace etlHelper
 
 
-template<typename R1, typename R2> using ratio_add = etlHelper::ratio_add::type;
-template<typename R1, typename R2> using ratio_substract = etlHelper::ratio_substract::type;
-template<typename R1, typename R2> using ratio_multiply = etlHelper::ratio_multiply::type;
-template<typename R1, typename R2> using ratio_divide = etlHelper::ratio_divide::type;
+template<typename R1, typename R2> using ratio_add			= typename etlHelper::ratio_add<R1, R2>::type;
+template<typename R1, typename R2> using ratio_substract	= typename etlHelper::ratio_substract<R1, R2>::type;
+template<typename R1, typename R2> using ratio_multiply		= typename etlHelper::ratio_multiply<R1, R2>::type;
+template<typename R1, typename R2> using ratio_divide		= typename etlHelper::ratio_divide<R1, R2>::type;
 
 
 template<typename R1, typename R2> using ratio_equal : public std::integral_constant <bool, R1::num == R2::num && R1::den == R2::den> {};

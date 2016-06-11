@@ -35,12 +35,13 @@
 #ifndef ETL_LIBSTD_TRAITS_ADD_H
 #define ETL_LIBSTD_TRAITS_ADD_H
 
+namespace std {
+
 namespace etlHelper {
   template<typename T, bool b> struct rvalue_reference_type { using type = T; };
   template<typename T> struct rvalue_reference_type<T, true> { using type = T&&; }; 
-}
+} // namespace etlHelper
 
-namespace std {
 // Obtains a pointer on type T or on the referred type.
 template<typename T> struct add_pointer {
   using type = typename std::remove_reference<T>::type*;

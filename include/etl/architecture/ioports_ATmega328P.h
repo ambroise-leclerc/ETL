@@ -101,10 +101,6 @@ struct PortB {
   /// @return true if the requested bit is set, false otherwise.
   static bool test(uint8_t pos) { return PINB & (1<<pos); }
 
-  /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
-  /// @return PORTB
-  static constexpr decltype(PORTB) GetNativePort() { return PORTB; }
-
 };
 
 struct PinB7 : public Pin<PortB> {
@@ -441,10 +437,6 @@ struct PortC {
   /// @return true if the requested bit is set, false otherwise.
   static bool test(uint8_t pos) { return PINC & (1<<pos); }
 
-  /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
-  /// @return PORTC
-  static constexpr decltype(PORTC) GetNativePort() { return PORTC; }
-
 };
 
 struct PinC6 : public Pin<PortC> {
@@ -745,10 +737,6 @@ struct PortD {
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
   static bool test(uint8_t pos) { return PIND & (1<<pos); }
-
-  /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
-  /// @return PORTD
-  static constexpr decltype(PORTD) GetNativePort() { return PORTD; }
 
 };
 

@@ -134,5 +134,5 @@ template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) co
 template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) volatile &&> : std::true_type {};
 template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) const volatile &&> : std::true_type {};
 
-
+template<typename T> using is_function_v = typename is_function<T>::value;
 } // namespace std

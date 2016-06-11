@@ -31,9 +31,8 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_TYPE_TRAITS_H
-#define ETL_LIBSTD_TYPE_TRAITS_H
 #include <cstddef>
 #include "h/traits_operations.h"
 #include "h/traits_primary_types.h"
@@ -44,7 +43,13 @@
 
 namespace std {
 
+template<bool B, typename T = void> struct enable_if			{};
+template<typename T>				struct enable_if<true, T>   { using type = T; };
+
+template<bool B, typename T = void> using enable_if_t = typename enable_if<B, T>::type;
+
+//template<typename Base, Derived> struct is_base_of : public integral_constant<bool, is_class<Base>::value && sizeof(etlHelper::is_base_of(Base, Derived)> {};
+
 
 } // namespace std
 
-#endif // ETL_LIBSTD_TYPE_TRAITS_H

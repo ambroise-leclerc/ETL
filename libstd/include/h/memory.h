@@ -37,32 +37,31 @@
 #include <type_traits>
 #include <utility>
 
+namespace std {
 namespace etlHelper {
+	// addressof helpers taken from Boost library
+	template<class T>
+	struct addressof_ref {
+	  T & v_; 
+	  addressof_ref( T & v ): v_( v ) {}
+	  operator T& () const { return v_; }
 
-// addressof helpers taken from Boost library
-template<class T>
-struct addressof_ref {
-  T & v_; 
-  addressof_ref( T & v ): v_( v ) {}
-  operator T& () const { return v_; }
+	 private:
+	  addressof_ref & operator=(const addressof_ref &);
+	};
 
- private:
-  addressof_ref & operator=(const addressof_ref &);
-};
+	template<class T>
+	struct addressof_impl
+	{
+	  static T * f( T & v, long ) {
+		return reinterpret_cast<T*>(
+		  &const_cast<char&>(reinterpret_cast<const volatile char &>(v)));
+	  }
 
-template<class T>
-struct addressof_impl
-{
-  static T * f( T & v, long ) {
-    return reinterpret_cast<T*>(
-      &const_cast<char&>(reinterpret_cast<const volatile char &>(v)));
-  }
-
-  static T * f( T * v, int ) { return v; }
-};
+	  static T * f( T * v, int ) { return v; }
+	};
 } // namespace etlHelper 
 
-namespace std {
   
 template<typename T>
 class allocator {
@@ -96,7 +95,7 @@ class allocator {
 
 template<typename T>
 T* addressof(T& arg) {
-  return ::etlHelper::addressof_impl<T>::f(::etlHelper::addressof_ref<T>(arg), 0);
+  return etlHelper::addressof_impl<T>::f(etlHelper::addressof_ref<T>(arg), 0);
 }  
 
 } // namespace std
