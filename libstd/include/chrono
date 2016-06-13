@@ -155,7 +155,7 @@ constexpr chrono::duration<long double, nano>           operator "" ns(long doub
 } // namespace chrono_literals
 } // namespace literals
 
-/*s
+/*
 namespace etlHelper {
     template<typename T>                    struct is_duration : false_type {};
     template<typename Rep, typename Period> struct is_duration<duration<Rep, Period>> : true_type {};
