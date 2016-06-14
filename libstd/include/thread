@@ -37,7 +37,8 @@ namespace this_thread {
 
 template<typename Rep, typename Period>
 void sleep_for(const chrono::duration<Rep, Period>& rel_time) {
-    
+    auto int_ms = std::chrono::duration_cast<std::chrono::milliseconds(rel_time);
+    etl::Device::delay_ms(int_ms.count());
 }
 
 

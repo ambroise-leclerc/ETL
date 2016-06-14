@@ -78,6 +78,8 @@ public:
     static int64_t pragma(const Pragma& param) { return MockDevice::getInstance().pragma(param.paramsList); }
     static int64_t pragma(std::string pragma)  { return MockDevice::getInstance().pragma(pragma); }
     static void initialize()                   { MockDevice::getInstance().configure(NB_PORTS); }
+    static void delay_us(uint32_t us)          { std::this_thread::sleep_for(std::chrono::microseconds(us)); }
+    static void delay_ms(uint32_t ms)          { std::this_thread::sleep_for(std::chrono::milliseconds(ms)); }
     static void yield()                        { MockDevice::getInstance().yield(); }
     static void addOnChangeCallback(const std::function<void()> handler, uint16_t& triggerRegister, uint16_t mask) {
         auto index = &triggerRegister - MockDevice::getInstance().registers.data();
@@ -106,7 +108,7 @@ class Port0 {
 public:
     using PinChangeIRQ = PinChangeIRQ0;
 
-    /// Assigns a value to Port0.
+    /// Assigns a value to Port0
     /// @param[in] value value to affect to port0
     static void assign(uint16_t value)     {
         if (Device::OUT_REG_CYCLES < (Device::OUTSET_REG_CYCLES + Device::OUTCLR_REG_CYCLES)) {
@@ -119,20 +121,20 @@ public:
         Device::yield();
     }
 
-    /// Sets masked bits in PORT0.
+    /// Sets masked bits in PORT0
     /// @param[in] mask bits to set
     static void setBits(uint16_t mask)     { GP0_OUT |= mask; Device::yield(); }
 
-    /// Clears masked bits in PORT0.
+    /// Clears masked bits in PORT0
     /// @param[in] mask bits to clear
     static void clearBits(uint16_t mask)   { GP0_OUT &= ~mask; Device::yield(); } 
 
-    /// Changes values of masked bits in PORT0.
+    /// Changes values of masked bits in PORT0
     /// @param[in] mask bits to change
     /// @param[in] value new bits values
     static void changeBits(uint16_t mask, uint16_t value) { auto tmp = GP0_OUT & ~mask; GP0_OUT = tmp | value; Device::yield(); }
 
-    /// Toggles masked bits in PORT0.
+    /// Toggles masked bits in PORT0
     /// @param[in] mask bits to toggle
     static void toggleBits(uint16_t mask)  { GP0_OUT ^= mask; Device::yield(); } 
 
@@ -162,13 +164,13 @@ public:
     /// @return true if the requested bit is set, false otherwise.
     static bool test(uint8_t pos)          { return (GP0_IN & (1<<pos)) != 0; }
 
-    /// Returns the native output register associated to Port0.
+    /// Returns the native output register associated to Port0
     static uint16_t& getOutputRegister()    { return GP0_OUT; }
 
-    /// Returns the native input register associated to Port0.
+    /// Returns the native input register associated to Port0
     static uint16_t& getInputRegister()     { return GP0_IN; }
 
-    /// Returns the native direction register associated to Port0.
+    /// Returns the native direction register associated to Port0
     static uint16_t& getDirectionRegister() { return GP0_DIR; }
 
     static void onChange(const std::function<void()>& callback, uint16_t mask) {
@@ -889,7 +891,7 @@ class Port1 {
 public:
     using PinChangeIRQ = PinChangeIRQ1;
 
-    /// Assigns a value to Port1.
+    /// Assigns a value to Port1
     /// @param[in] value value to affect to port1
     static void assign(uint16_t value)     {
         if (Device::OUT_REG_CYCLES < (Device::OUTSET_REG_CYCLES + Device::OUTCLR_REG_CYCLES)) {
@@ -902,20 +904,20 @@ public:
         Device::yield();
     }
 
-    /// Sets masked bits in PORT1.
+    /// Sets masked bits in PORT1
     /// @param[in] mask bits to set
     static void setBits(uint16_t mask)     { GP1_OUT |= mask; Device::yield(); }
 
-    /// Clears masked bits in PORT1.
+    /// Clears masked bits in PORT1
     /// @param[in] mask bits to clear
     static void clearBits(uint16_t mask)   { GP1_OUT &= ~mask; Device::yield(); } 
 
-    /// Changes values of masked bits in PORT1.
+    /// Changes values of masked bits in PORT1
     /// @param[in] mask bits to change
     /// @param[in] value new bits values
     static void changeBits(uint16_t mask, uint16_t value) { auto tmp = GP1_OUT & ~mask; GP1_OUT = tmp | value; Device::yield(); }
 
-    /// Toggles masked bits in PORT1.
+    /// Toggles masked bits in PORT1
     /// @param[in] mask bits to toggle
     static void toggleBits(uint16_t mask)  { GP1_OUT ^= mask; Device::yield(); } 
 
@@ -945,13 +947,13 @@ public:
     /// @return true if the requested bit is set, false otherwise.
     static bool test(uint8_t pos)          { return (GP1_IN & (1<<pos)) != 0; }
 
-    /// Returns the native output register associated to Port1.
+    /// Returns the native output register associated to Port1
     static uint16_t& getOutputRegister()    { return GP1_OUT; }
 
-    /// Returns the native input register associated to Port1.
+    /// Returns the native input register associated to Port1
     static uint16_t& getInputRegister()     { return GP1_IN; }
 
-    /// Returns the native direction register associated to Port1.
+    /// Returns the native direction register associated to Port1
     static uint16_t& getDirectionRegister() { return GP1_DIR; }
 
     static void onChange(const std::function<void()>& callback, uint16_t mask) {
@@ -1188,7 +1190,7 @@ class PortSimuA {
 public:
     using PinChangeIRQ = PinChangeIRQSimuA;
 
-    /// Assigns a value to PortSimuA.
+    /// Assigns a value to PortSimuA
     /// @param[in] value value to affect to portSimuA
     static void assign(uint16_t value)     {
         if (Device::OUT_REG_CYCLES < (Device::OUTSET_REG_CYCLES + Device::OUTCLR_REG_CYCLES)) {
@@ -1201,20 +1203,20 @@ public:
         Device::yield();
     }
 
-    /// Sets masked bits in PORTSimuA.
+    /// Sets masked bits in PORTSimuA
     /// @param[in] mask bits to set
     static void setBits(uint16_t mask)     { GPSimuA_OUT |= mask; Device::yield(); }
 
-    /// Clears masked bits in PORTSimuA.
+    /// Clears masked bits in PORTSimuA
     /// @param[in] mask bits to clear
     static void clearBits(uint16_t mask)   { GPSimuA_OUT &= ~mask; Device::yield(); } 
 
-    /// Changes values of masked bits in PORTSimuA.
+    /// Changes values of masked bits in PORTSimuA
     /// @param[in] mask bits to change
     /// @param[in] value new bits values
     static void changeBits(uint16_t mask, uint16_t value) { auto tmp = GPSimuA_OUT & ~mask; GPSimuA_OUT = tmp | value; Device::yield(); }
 
-    /// Toggles masked bits in PORTSimuA.
+    /// Toggles masked bits in PORTSimuA
     /// @param[in] mask bits to toggle
     static void toggleBits(uint16_t mask)  { GPSimuA_OUT ^= mask; Device::yield(); } 
 
@@ -1244,13 +1246,13 @@ public:
     /// @return true if the requested bit is set, false otherwise.
     static bool test(uint8_t pos)          { return (GPSimuA_IN & (1<<pos)) != 0; }
 
-    /// Returns the native output register associated to PortSimuA.
+    /// Returns the native output register associated to PortSimuA
     static uint16_t& getOutputRegister()    { return GPSimuA_OUT; }
 
-    /// Returns the native input register associated to PortSimuA.
+    /// Returns the native input register associated to PortSimuA
     static uint16_t& getInputRegister()     { return GPSimuA_IN; }
 
-    /// Returns the native direction register associated to PortSimuA.
+    /// Returns the native direction register associated to PortSimuA
     static uint16_t& getDirectionRegister() { return GPSimuA_DIR; }
 
     static void onChange(const std::function<void()>& callback, uint16_t mask) {
@@ -1619,7 +1621,7 @@ class PortSimuB {
 public:
     using PinChangeIRQ = PinChangeIRQSimuB;
 
-    /// Assigns a value to PortSimuB.
+    /// Assigns a value to PortSimuB
     /// @param[in] value value to affect to portSimuB
     static void assign(uint16_t value)     {
         if (Device::OUT_REG_CYCLES < (Device::OUTSET_REG_CYCLES + Device::OUTCLR_REG_CYCLES)) {
@@ -1632,20 +1634,20 @@ public:
         Device::yield();
     }
 
-    /// Sets masked bits in PORTSimuB.
+    /// Sets masked bits in PORTSimuB
     /// @param[in] mask bits to set
     static void setBits(uint16_t mask)     { GPSimuB_OUT |= mask; Device::yield(); }
 
-    /// Clears masked bits in PORTSimuB.
+    /// Clears masked bits in PORTSimuB
     /// @param[in] mask bits to clear
     static void clearBits(uint16_t mask)   { GPSimuB_OUT &= ~mask; Device::yield(); } 
 
-    /// Changes values of masked bits in PORTSimuB.
+    /// Changes values of masked bits in PORTSimuB
     /// @param[in] mask bits to change
     /// @param[in] value new bits values
     static void changeBits(uint16_t mask, uint16_t value) { auto tmp = GPSimuB_OUT & ~mask; GPSimuB_OUT = tmp | value; Device::yield(); }
 
-    /// Toggles masked bits in PORTSimuB.
+    /// Toggles masked bits in PORTSimuB
     /// @param[in] mask bits to toggle
     static void toggleBits(uint16_t mask)  { GPSimuB_OUT ^= mask; Device::yield(); } 
 
@@ -1675,13 +1677,13 @@ public:
     /// @return true if the requested bit is set, false otherwise.
     static bool test(uint8_t pos)          { return (GPSimuB_IN & (1<<pos)) != 0; }
 
-    /// Returns the native output register associated to PortSimuB.
+    /// Returns the native output register associated to PortSimuB
     static uint16_t& getOutputRegister()    { return GPSimuB_OUT; }
 
-    /// Returns the native input register associated to PortSimuB.
+    /// Returns the native input register associated to PortSimuB
     static uint16_t& getInputRegister()     { return GPSimuB_IN; }
 
-    /// Returns the native direction register associated to PortSimuB.
+    /// Returns the native direction register associated to PortSimuB
     static uint16_t& getDirectionRegister() { return GPSimuB_DIR; }
 
     static void onChange(const std::function<void()>& callback, uint16_t mask) {
