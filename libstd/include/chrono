@@ -37,7 +37,7 @@
 
 namespace std {
 namespace chrono {
-	template<typename Rep, typename Period = ratio<1>> struct duration;
+	template<typename Rep, typename Period = ratio<1>> class duration;
 } // namespace chrono
 
 // std::common_type specialization for std::chrono::duration

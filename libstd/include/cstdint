@@ -33,7 +33,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-inline namespace std {
+namespace std {
 
 #include <stdint.h>
 

@@ -32,6 +32,8 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
+#include <util/delay.h>
+#include <avr/io.h>
 
 namespace etl {
 #define IOPORTS_TO_STRING(name) #name

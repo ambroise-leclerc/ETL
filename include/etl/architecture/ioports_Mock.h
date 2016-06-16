@@ -33,6 +33,7 @@
 #pragma once
 
 #include <MockDevice.h>
+#include <thread>
 
 namespace etl {
 

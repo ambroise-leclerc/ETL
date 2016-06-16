@@ -30,9 +30,8 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-#define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-
+#include <iostream>
 
 namespace etlTest {
 #include <libstd/include/chrono>
@@ -40,7 +39,17 @@ namespace etlTest {
 
 SCENARIO("std::chrono") {
 
-
-    etlTest::std::chrono::duration<int, int> duree;
+    using namespace etlTest::std::chrono;
+    using namespace etlTest::std::chrono_literals;    
+    auto dur_ns = 2153123456ns;
+    GIVEN("a duration in ns") {
+        std::cout << "ns:" << dur_ns.count() << "  ms:" << duration_cast<microseconds>(dur_ns).count() << "\n";
+        REQUIRE(duration_cast<nanoseconds>(dur_ns) == 2153123456ns);
+        REQUIRE(duration_cast<microseconds>(dur_ns) == 2153123us);
+        REQUIRE(duration_cast<milliseconds>(dur_ns) == 2153ms);
+        REQUIRE(duration_cast<seconds>(dur_ns) == 2s);
+        REQUIRE(duration_cast<minutes>(dur_ns) == 0min);
+        //etlTest::std::chrono::duration<int, int> duree;
+    }
     
 }
