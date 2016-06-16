@@ -31,88 +31,100 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
-#ifndef ETL_LIBSTD_TRAITS_PRIMARY_TYPES_H
-#define ETL_LIBSTD_TRAITS_PRIMARY_TYPES_H
-
-namespace etlHelper {
-  template<typename> struct is_type_entier         : std::false_type { };
-  template <> struct is_type_entier<bool>          : std::true_type { };
-  template <> struct is_type_entier<int8_t>        : std::true_type { };
-  template <> struct is_type_entier<uint8_t>       : std::true_type { };
-  template <> struct is_type_entier<int16_t>       : std::true_type { };
-  template <> struct is_type_entier<uint16_t>      : std::true_type { };
-  template <> struct is_type_entier<int32_t>       : std::true_type { };
-  template <> struct is_type_entier<uint32_t>      : std::true_type { };
-  template <> struct is_type_entier<int64_t>       : std::true_type { };
-  template <> struct is_type_entier<uint64_t>      : std::true_type { };
-  template<typename> struct is_type_flottant       : std::false_type { };
-  template <> struct is_type_flottant<float>       : std::true_type { };
-  template <> struct is_type_flottant<double>      : std::true_type { };
-  template <> struct is_type_flottant<long double> : std::true_type { };
-  template<typename T> struct is_pointeur          : std::false_type { };
-  template<typename T> struct is_pointeur<T*>      : std::true_type { };
-  template<typename T> struct is_mb_pointeur       : std::false_type { };
-  template<typename T, typename U> struct is_mb_pointeur<T U::*>     : std::true_type { };
-} // namespace etlHelper 
+#pragma once
+#include <../libstd/include/cstdint>
 
 namespace std {
+namespace etlHelper {
+  template<typename> struct is_type_entier         : false_type { };
+  template <> struct is_type_entier<bool>          : true_type { };
+  template <> struct is_type_entier<int8_t>        : true_type { };
+  template <> struct is_type_entier<uint8_t>       : true_type { };
+  template <> struct is_type_entier<int16_t>       : true_type { };
+  template <> struct is_type_entier<uint16_t>      : true_type { };
+  template <> struct is_type_entier<int32_t>       : true_type { };
+  template <> struct is_type_entier<uint32_t>      : true_type { };
+  template <> struct is_type_entier<int64_t>       : true_type { };
+  template <> struct is_type_entier<uint64_t>      : true_type { };
+  template<typename> struct is_type_flottant       : false_type { };
+  template <> struct is_type_flottant<float>       : true_type { };
+  template <> struct is_type_flottant<double>      : true_type { };
+  template <> struct is_type_flottant<long double> : true_type { };
+  template<typename T> struct is_pointeur          : false_type { };
+  template<typename T> struct is_pointeur<T*>      : true_type { };
+  template<typename T> struct is_mb_pointeur       : false_type { };
+  template<typename T, typename U> struct is_mb_pointeur<T U::*>     : true_type { };
+} // namespace etlHelper 
+
 /// Checks whether T is a void type. is_void< >::value equals true if T is of
 /// type void, const void, volatile void, or const volatile void.
 template<typename T>
 struct is_void
- : std::integral_constant<bool, std::is_same<void, typename std::remove_cv<T>::type>::value>
+ : integral_constant<bool, is_same<void, typename remove_cv<T>::type>::value>
 {};
 
 /// Checks if T is an union.
 /// is_union::value is true if T is an union, false otherwise.                         
-template<typename T> struct is_union : std::integral_constant<bool, __is_union(T)> { };
-template<typename T> struct is_enum : std::integral_constant<bool, __is_enum(T)> { };
-template<typename T> struct is_class : std::integral_constant<bool, __is_class(T)> { };
-template<typename T> struct is_integral : etlHelper::is_type_entier<typename std::remove_cv<T>::type>::type { };
-template<typename T> struct is_floating_point : etlHelper::is_type_flottant<typename std::remove_cv<T>::type>::type { };
-template<typename T> struct is_pointer : etlHelper::is_pointeur<typename std::remove_cv<T>::type> {};
-template<typename T> struct is_member_pointer : etlHelper::is_mb_pointeur<typename std::remove_cv<T>::type> {};
+template<typename T> struct is_union : integral_constant<bool, __is_union(T)> { };
+template<typename T> struct is_enum : integral_constant<bool, __is_enum(T)> { };
+template<typename T> struct is_class : integral_constant<bool, __is_class(T)> { };
+template<typename T> struct is_integral : etlHelper::is_type_entier<typename remove_cv<T>::type>::type { };
+template<typename T> struct is_floating_point : etlHelper::is_type_flottant<typename remove_cv<T>::type>::type { };
+template<typename T> struct is_pointer : etlHelper::is_pointeur<typename remove_cv<T>::type> {};
+template<typename T> struct is_member_pointer : etlHelper::is_mb_pointeur<typename remove_cv<T>::type> {};
   
   
-template<typename T> 
-struct is_arithmetic : std::integral_constant<bool,
-                         std::is_integral<T>::value ||
-                         std::is_floating_point<T>::value> { };
+template<typename T> struct is_arithmetic : integral_constant<bool, is_integral<T>::value || is_floating_point<T>::value> { };
                            
 /// Checks if T is a scalar type.
 /// is_scalar::value is true if T is a scalar type, false otherwise.  
 template<typename T>
-struct is_scalar : std::integral_constant<bool,
-                     std::is_arithmetic<T>::value     ||
-                     std::is_enum<T>::value           ||
-                     std::is_pointer<T>::value        ||
-                     std::is_member_pointer<T>::value ||
-                     std::is_same<std::nullptr_t, typename std::remove_cv<T>::type>::value> { };
+struct is_scalar : integral_constant<bool,
+                   is_arithmetic<T>::value     ||
+                   is_enum<T>::value           ||
+                   is_pointer<T>::value        ||
+                   is_member_pointer<T>::value ||
+                   is_same<nullptr_t, typename remove_cv<T>::type>::value> { };
 
 /// Checks if T is an array.
 /// is_array::value is true if T is an array, false otherwise.                         
-template<typename T> struct is_array                       : std::false_type { };
-template<typename T> struct is_array<T[]>                  : std::true_type { };
-template<typename T, std::size_t N> struct is_array<T[N]>  : std::true_type { };
+template<typename T> struct is_array                  : false_type { };
+template<typename T> struct is_array<T[]>             : true_type { };
+template<typename T, size_t N> struct is_array<T[N]>  : true_type { };
 
 
 
 /// Checks if T is an object type (scalar, array, class, union).
 /// is_object::value is true if T is an object, false otherwise.
-template<typename T>
-struct is_object : std::integral_constant<bool,
-                     std::is_scalar<T>::value ||
-                     std::is_array<T>::value  ||
-                     std::is_union<T>::value  ||
-                     std::is_class<T>::value> { };
+template<typename T> struct is_object : integral_constant<bool, is_scalar<T>::value || is_array<T>::value || is_union<T>::value || is_class<T>::value> { };
 
 /// Checks if T is a function type.
 /// is_function::value is true if T is a function type, false otherwise
-template<typename> struct is_function : std::false_type { };
-template<typename Ret, typename... Args> struct is_function<Ret(Args...)> : std::true_type {};
-template<typename Ret, typename... Args> struct is_function<Ret(Args......)> : std::true_type {};
+template<typename> struct is_function : false_type { };
+template<typename Ret, typename... Args> struct is_function<Ret(Args...)>                       : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...)>                  : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) const>                 : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) volatile>              : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) const volatile>        : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) const>            : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) volatile>         : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) const volatile>   : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) &>                     : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) const &>               : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) volatile &>            : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) const volatile &>      : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) &>                : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) const &>          : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) volatile &>       : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) const volatile &> : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) &&>                    : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) const &&>              : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) volatile &&>           : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args...) const volatile &&>     : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) &&>               : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) const &&>         : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) volatile &&>      : true_type {};
+template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) const volatile &&>: true_type {};
 
-
+template<typename T> using is_function_v = typename is_function<T>::value;
 } // namespace std
-#endif // ETL_LIBSTD_TRAITS_PRIMARY_TYPES_H

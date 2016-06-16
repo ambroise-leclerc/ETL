@@ -30,12 +30,8 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE./*
-
-
-
-#ifndef ETL_DEBUG_H_
-#define ETL_DEBUG_H_
-
+#pragma once
+#include <cstdint>
 namespace etl {
   
 class FreeStoreNoDebug {
@@ -72,5 +68,3 @@ using FreeStoreTracePolicy = FreeStoreDebugTrace<ETL_FREESTORE_LOG_DEPTH>;
 #endif
   
 } // namespace etl
-
-#endif /* ETL_DEBUG_H_ */

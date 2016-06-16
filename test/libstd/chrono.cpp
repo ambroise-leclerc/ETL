@@ -1,10 +1,9 @@
-/// @file <type_traits>
-/// @data 07/03/2014 08:50:53
+/// @file test/libstd/chrono.cpp
+/// @data 06/06/2016 22:23:53
 /// @author Ambroise Leclerc
-/// @brief Traits : part of type support library
+/// @brief BDD tests for chrono
 //
-// Embedded Template Library
-// Copyright (c) 2014, Ambroise Leclerc
+// Copyright (c) 2016, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -31,25 +30,23 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-#pragma once
+#include <catch.hpp>
 
-#include <cstddef>
-#include "h/traits_operations.h"
-#include "h/traits_primary_types.h"
-#include "h/traits_references.h"
-#include "h/traits_add.h"
-#include "h/utility_declval.h"
-#include "h/traits_utils.h"
+namespace etlTest {
+#include <libstd/include/chrono>
+} // namespace etlTest
 
-namespace std {
+SCENARIO("std::chrono") {
 
-template<bool B, typename T = void> struct enable_if            {};
-template<typename T>                struct enable_if<true, T>   { using type = T; };
-
-template<bool B, typename T = void> using enable_if_t = typename enable_if<B, T>::type;
-
-//template<typename Base, Derived> struct is_base_of : public integral_constant<bool, is_class<Base>::value && sizeof(etlHelper::is_base_of(Base, Derived)> {};
-
-
-} // namespace std
-
+    using namespace etlTest::std::chrono;
+    using namespace etlTest::std::chrono_literals;    
+    auto dur_ns = 2153123456ns;
+    GIVEN("a duration in ns") {
+        REQUIRE(duration_cast<nanoseconds>(dur_ns) == 2153123456ns);
+        REQUIRE(duration_cast<microseconds>(dur_ns) == 2153123us);
+        REQUIRE(duration_cast<milliseconds>(dur_ns) == 2153ms);
+        REQUIRE(duration_cast<seconds>(dur_ns) == 2s);
+        REQUIRE(duration_cast<minutes>(dur_ns) == 0min);
+    }
+    
+}

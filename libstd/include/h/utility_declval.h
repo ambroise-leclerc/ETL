@@ -36,6 +36,7 @@
 #ifndef ETL_LIBSTD_UTILITY_DECLVAL_H_
 #define ETL_LIBSTD_UTILITY_DECLVAL_H_
 
+namespace std {
 namespace etlHelper {
 
   template<typename T> struct declval {
@@ -44,7 +45,6 @@ namespace etlHelper {
   };
 }
 
-namespace std {
   
 template<typename T> typename std::add_rvalue_reference<T>::type declval() noexcept {
   static_assert(etlHelper::declval<T>::never_use, "std::declval() return value must never be used (ISO §20.2.4).");

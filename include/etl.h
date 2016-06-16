@@ -30,12 +30,7 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE./*
-
-
-
-#ifndef ETL_H_
-#define ETL_H_
-
+#pragma once
 
 #include <stdlib.h>
 #include <etl/debug_policies.h>
@@ -58,5 +53,3 @@ struct Architecture {
 
 
 } // namespace etl
-
-#endif /* ETL_H_ */
