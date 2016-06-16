@@ -3,6 +3,7 @@
 
 #define __Mock_Mock__
 #include <etl/ioports.h>
+#include <etl/architecture/uart_Mock.h>
 #include <algorithm>
 
 
@@ -40,3 +41,35 @@ SCENARIO("Timers") {
 }
 
 */
+
+namespace etl {
+struct FakePin {
+    static void setOutput() {
+
+    }
+
+    static void set() {
+        std::cout << '1';
+    }
+
+    static void clear() {
+        std::cout << '0';
+    }
+};
+
+template<> struct is_uart_txd_capable<FakePin> : std::true_type {};
+}
+
+SCENARIO("Uart") {
+    using uart = etl::Uart<Pin0, etl::FakePin>;
+    uart::start();
+    uart::write(2);
+    uart::write(5);
+    uart::write(7);
+
+    using uart2 = etl::Uart<Pin0, FakePin,14500, FrameFormat::_5E2,uint8_t>;
+    uart2::start();
+    uart2::write(2);
+    uart2::write(5);
+    uart2::write(7);
+}
