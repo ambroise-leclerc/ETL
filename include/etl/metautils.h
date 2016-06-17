@@ -37,6 +37,13 @@ public:
         return seed;
     }
 
+    static uint32_t calcWithSize(const char* zStr, uint8_t size, uint32_t seed = 0) {
+        for (auto i = 0; i < size; i++) {
+            seed = seed * 101 + *zStr++;
+        }
+        return seed;
+    }
+
 private:
     static constexpr uint32_t compileTime(const char* zStr, uint32_t seed = 0) {
         return *zStr ? (compileTime(zStr + 1, (seed * 101ull) + *zStr)) : seed;
