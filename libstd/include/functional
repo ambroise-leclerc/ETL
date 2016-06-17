@@ -30,30 +30,54 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
+#include "h/functional.h"
+#include <type_traits>
+#include <memory>
 
-#ifndef ETL_LIBSTD_FUNCTIONAL_
-#define ETL_LIBSTD_FUNCTIONAL_
+namespace std {
+
+
+template<typename T>
+class reference_wrapper {
+public:
+    using type = T;
+
+    /// Constructor : stores a reference to x.
+    reference_wrapper(T& x) noexcept : data(std::addressof(x)) {}
+
+    /// Move constructor : deleted, construction from a temporary object is not allowed.
+    reference_wrapper(T&&) = delete;
+
+    /// Copy constructor : stores a reference to other.get().
+    reference_wrapper(const reference_wrapper<T>& other) noexcept : data(std::addressof(other.get())) {}
+
+    operator T& () const noexcept { return *data; }
+    T& get() const noexcept { return *data; }
+    
+    template<typename... Args> typename result_of<T&(Args&&...) >::type operator() (Args&&... args) const {
+        return std::invoke(get(), std::forward<Args>(args)...);
+    }
+private:
+    T* data;
+};
+
+template<typename T> reference_wrapper<T> ref(T& t) { return reference_wrapper<T>(t); }
+template<typename T> reference_wrapper<T> ref(reference_wrapper<T> t) { return ref(t.get()); }
+template<typename T> void ref(const T&&) = delete;
+template<typename T> reference_wrapper<const T> cref(const T& t) { return reference_wrapper<const T>(t); }
+template<typename T> reference_wrapper<const T> cref(std::reference_wrapper<T> t) { return cref(t.get()); }
+template<typename T> void cref(const T&&) = delete;
 
 namespace etlHelper {
-  
-template<typename T>
-struct reference_wrapper_base { };
-
-template<typename T>
-struct is_reference_wrapper : std::false_type {};
-
-template<typename U>
-struct is_reference_wrapper<std::reference_wrapper<U>> : std::true_type {};
-
-template<typename T>
-constexpr bool is_reference_wrapper_v = is_reference_wrapper<T>::value;
- 
-  
+    template<typename T> struct is_reference_wrapper : false_type {};
+    template<typename U> struct is_reference_wrapper<reference_wrapper<U>> : true_type {};
+    template<typename T> using is_reference_wrapper_v = typename is_reference_wrapper<T>::value;
 } // namespace etlHelper
 
+} // namespace std
 
-#include "h/functional.h"
+
+
 #include "h/functional_operators.h"
-#include "h/functional_reference_wrapper.h"
 
-#endif // ETL_LIBSTD_FUNCTIONAL_

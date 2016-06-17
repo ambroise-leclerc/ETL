@@ -32,6 +32,8 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
+#include <util/delay.h>
+#include <avr/io.h>
 
 namespace etl {
 #define IOPORTS_TO_STRING(name) #name
@@ -39,9 +41,11 @@ namespace etl {
 
 class Device {
 public:
-  static const size_t flash_size = 8192;
-  static const size_t eeprom_size = 512;
-  static const size_t sram_size = 1024;
+    static void delay_us(uint32_t us)          { _delay_us(us); }
+    static void delay_ms(uint32_t ms)          { _delay_ms(ms); }
+    static const size_t flash_size = 8192;
+    static const size_t eeprom_size = 512;
+    static const size_t sram_size = 1024;
 };
 
 struct PinChangeIRQ0;
@@ -51,24 +55,24 @@ struct PinChangeIRQ2;
 struct PortB {
   using PinChangeIRQ = PinChangeIRQ0;
 
-  /// Assigns a value to PORTB.
+  /// Assigns a value to PORTB
   /// @param[in] value value affected to PORTB
   static void assign(uint8_t value)   { PORTB = value; }
 
-  /// Sets masked bits in PORTB.
+  /// Sets masked bits in PORTB
   /// @param[in] mask bits to set
   static void setBits(uint8_t mask)   { PORTB |= mask;}
 
-  /// Clears masked bits in PORTB.
+  /// Clears masked bits in PORTB
   /// @param[in] mask bits to clear
   static void clearBits(uint8_t mask) { PORTB &= ~mask;} 
 
-  /// Changes values of masked bits in PORTB.
+  /// Changes values of masked bits in PORTB
   /// @param[in] mask bits to change
   /// @param[in] value new bits values
   static void changeBits(uint8_t mask, uint8_t value) { uint8_t tmp = PORTB & ~mask; PORTB = tmp | value; } 
 
-  /// Toggles masked bits in PORTB.
+  /// Toggles masked bits in PORTB
   /// @param[in] mask bits to toggle
   static void toggleBits(uint8_t mask) { PORTB ^= mask;} 
 
@@ -82,11 +86,11 @@ struct PortB {
 
   /// Set corresponding masked bits of PORTB to output direction.
   /// @param[in] mask bits
-  static void setDDR(uint8_t mask)    { DDRB |= mask; }
+  static void setOutput(uint8_t mask)    { DDRB |= mask; }
 
   /// Set corresponding masked bits of PORTB to input direction.
   /// @param[in] mask bits
-  static void clearDDR(uint8_t mask)  { DDRB &= ~mask; }
+  static void setInput(uint8_t mask)  { DDRB &= ~mask; }
 
   /// Returns PINB register.
   static uint8_t getPIN()             { return PINB; }
@@ -100,10 +104,6 @@ struct PortB {
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
   static bool test(uint8_t pos) { return PINB & (1<<pos); }
-
-  /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
-  /// @return PORTB
-  static constexpr decltype(PORTB) GetNativePort() { return PORTB; }
 
 };
 
@@ -391,24 +391,24 @@ struct PinB0 : public Pin<PortB> {
 struct PortC {
   using PinChangeIRQ = PinChangeIRQ1;
 
-  /// Assigns a value to PORTC.
+  /// Assigns a value to PORTC
   /// @param[in] value value affected to PORTC
   static void assign(uint8_t value)   { PORTC = value; }
 
-  /// Sets masked bits in PORTC.
+  /// Sets masked bits in PORTC
   /// @param[in] mask bits to set
   static void setBits(uint8_t mask)   { PORTC |= mask;}
 
-  /// Clears masked bits in PORTC.
+  /// Clears masked bits in PORTC
   /// @param[in] mask bits to clear
   static void clearBits(uint8_t mask) { PORTC &= ~mask;} 
 
-  /// Changes values of masked bits in PORTC.
+  /// Changes values of masked bits in PORTC
   /// @param[in] mask bits to change
   /// @param[in] value new bits values
   static void changeBits(uint8_t mask, uint8_t value) { uint8_t tmp = PORTC & ~mask; PORTC = tmp | value; } 
 
-  /// Toggles masked bits in PORTC.
+  /// Toggles masked bits in PORTC
   /// @param[in] mask bits to toggle
   static void toggleBits(uint8_t mask) { PORTC ^= mask;} 
 
@@ -422,11 +422,11 @@ struct PortC {
 
   /// Set corresponding masked bits of PORTC to output direction.
   /// @param[in] mask bits
-  static void setDDR(uint8_t mask)    { DDRC |= mask; }
+  static void setOutput(uint8_t mask)    { DDRC |= mask; }
 
   /// Set corresponding masked bits of PORTC to input direction.
   /// @param[in] mask bits
-  static void clearDDR(uint8_t mask)  { DDRC &= ~mask; }
+  static void setInput(uint8_t mask)  { DDRC &= ~mask; }
 
   /// Returns PINC register.
   static uint8_t getPIN()             { return PINC; }
@@ -440,10 +440,6 @@ struct PortC {
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
   static bool test(uint8_t pos) { return PINC & (1<<pos); }
-
-  /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
-  /// @return PORTC
-  static constexpr decltype(PORTC) GetNativePort() { return PORTC; }
 
 };
 
@@ -696,24 +692,24 @@ struct PinC0 : public Pin<PortC> {
 struct PortD {
   using PinChangeIRQ = PinChangeIRQ2;
 
-  /// Assigns a value to PORTD.
+  /// Assigns a value to PORTD
   /// @param[in] value value affected to PORTD
   static void assign(uint8_t value)   { PORTD = value; }
 
-  /// Sets masked bits in PORTD.
+  /// Sets masked bits in PORTD
   /// @param[in] mask bits to set
   static void setBits(uint8_t mask)   { PORTD |= mask;}
 
-  /// Clears masked bits in PORTD.
+  /// Clears masked bits in PORTD
   /// @param[in] mask bits to clear
   static void clearBits(uint8_t mask) { PORTD &= ~mask;} 
 
-  /// Changes values of masked bits in PORTD.
+  /// Changes values of masked bits in PORTD
   /// @param[in] mask bits to change
   /// @param[in] value new bits values
   static void changeBits(uint8_t mask, uint8_t value) { uint8_t tmp = PORTD & ~mask; PORTD = tmp | value; } 
 
-  /// Toggles masked bits in PORTD.
+  /// Toggles masked bits in PORTD
   /// @param[in] mask bits to toggle
   static void toggleBits(uint8_t mask) { PORTD ^= mask;} 
 
@@ -727,11 +723,11 @@ struct PortD {
 
   /// Set corresponding masked bits of PORTD to output direction.
   /// @param[in] mask bits
-  static void setDDR(uint8_t mask)    { DDRD |= mask; }
+  static void setOutput(uint8_t mask)    { DDRD |= mask; }
 
   /// Set corresponding masked bits of PORTD to input direction.
   /// @param[in] mask bits
-  static void clearDDR(uint8_t mask)  { DDRD &= ~mask; }
+  static void setInput(uint8_t mask)  { DDRD &= ~mask; }
 
   /// Returns PIND register.
   static uint8_t getPIN()             { return PIND; }
@@ -745,10 +741,6 @@ struct PortD {
   /// @param[in] position of the bit to return
   /// @return true if the requested bit is set, false otherwise.
   static bool test(uint8_t pos) { return PIND & (1<<pos); }
-
-  /// Returns the native port #define corresponding to Pin"+port+pin+" as defined in "avr/io.h" 
-  /// @return PORTD
-  static constexpr decltype(PORTD) GetNativePort() { return PORTD; }
 
 };
 

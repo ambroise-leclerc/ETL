@@ -1,10 +1,9 @@
-/// @file <type_traits>
-/// @data 07/03/2014 08:50:53
+/// @file thread
+/// @data 13/06/2016 18:23:53
 /// @author Ambroise Leclerc
-/// @brief Traits : part of type support library
+/// @brief this header is part of the thread support library.
 //
-// Embedded Template Library
-// Copyright (c) 2014, Ambroise Leclerc
+// Copyright (c) 2016, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -33,23 +32,15 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <cstddef>
-#include "h/traits_operations.h"
-#include "h/traits_primary_types.h"
-#include "h/traits_references.h"
-#include "h/traits_add.h"
-#include "h/utility_declval.h"
-#include "h/traits_utils.h"
-
 namespace std {
+namespace this_thread {
 
-template<bool B, typename T = void> struct enable_if            {};
-template<typename T>                struct enable_if<true, T>   { using type = T; };
+template<typename Rep, typename Period>
+void sleep_for(const chrono::duration<Rep, Period>& rel_time) {
+    auto int_us = chrono::duration_cast<chrono::microseconds>(rel_time);
+    etl::Device::delay_us(int_us.count());
+}
 
-template<bool B, typename T = void> using enable_if_t = typename enable_if<B, T>::type;
 
-//template<typename Base, Derived> struct is_base_of : public integral_constant<bool, is_class<Base>::value && sizeof(etlHelper::is_base_of(Base, Derived)> {};
-
-
+} // namespace this_thread
 } // namespace std
-

@@ -99,8 +99,8 @@ template<typename T, typename M> M MemberType(M T::*);
 template<typename T, typename M> T ClassType(M T::*);
 
 template<typename T, typename R, R T::*M >
-constexpr std::size_t OffsetOf() {
-  return reinterpret_cast<std::size_t>(&(((T*)0)->*M));
+constexpr auto OffsetOf() {
+  return reinterpret_cast<size_t>(&(((T*)0)->*M));
 }
 #define CompileTimeOffsetOf(m) etl::OffsetOf<decltype(etl::ClassType(m)), decltype(etl::MemberType(m)), m>()
 
