@@ -37,6 +37,16 @@ public:
         return seed;
     }
 
+    template<typename Iter>
+    static uint32_t calc(Iter first, Iter last, uint32_t seed = 0) {
+        while (first != last) {
+            seed = seed * 101 + *first++;
+        }
+        return seed;
+    }
+
+
+
 private:
     static constexpr uint32_t compileTime(const char* zStr, uint32_t seed = 0) {
         return *zStr ? (compileTime(zStr + 1, (seed * 101ull) + *zStr)) : seed;
