@@ -34,6 +34,7 @@
 #include <cstdint>
 #include <type_traits>
 #include <thread>
+#include <tuple>  
 #include <chrono>   
 
 namespace etl {
@@ -79,7 +80,16 @@ namespace etl {
 
         }
 
-        static SizeUint read() { return 0; };
+        static SizeUint read() {
+          
+            while (rxdRead()) {
+             
+            }
+            auto returnValue = readBits();
+            assert(readParity(std::get<1>(returnValue)));
+            assert(readStopBits());
+            return std::get<0>(returnValue);
+        };
 
         static void write(SizeUint datum) {
             std::cout << '\n';
@@ -103,6 +113,50 @@ private:
     static constexpr  auto parity = static_cast<Parity>((FRAME_FORMAT & parityMask) >>1 );
     static constexpr  auto stopBit = static_cast<StopBit>(FRAME_FORMAT & stopBitMask);
     static constexpr  auto bitNumber = static_cast<BitNumber>((FRAME_FORMAT & bitNumberMask)>>3)+5;
+
+    static auto  readStopBits() {
+        bool ok = true;
+        switch (stopBit) {
+        case One:
+            return (rxdRead());
+            break;
+        case Two:
+            ok &= (rxdRead());
+            ok &= (rxdRead());
+            break;
+        }
+        return ok;
+    }
+
+    static auto  readBits() {
+        SizeUint returnValue = 0;
+        uint8_t nbOdd = 0;
+        for (auto i = 0; i < bitNumber; i++) {
+            if (rxdRead()) {
+                nbOdd++;
+                returnValue = (returnValue  << 1) | 1;
+            }
+            else {
+                returnValue = (returnValue << 1);
+            }
+        }
+        return std::make_tuple(returnValue, nbOdd);
+    }
+
+    static bool  readParity(uint8_t odd) {
+        bool parityBit = rxdRead();
+        switch (parity) {
+        case Even:
+            return (parityBit == (odd % 2));
+            break;
+        case Odd:
+            return (parityBit == (((odd % 2) == 0) ? 1 : 0));
+            break;
+        default :
+            return true;
+        }
+    }
+
 
     static auto  sendBit(SizeUint datum) {
         uint8_t nbOdd = 0;
@@ -165,6 +219,12 @@ private:
     static void txdClear() {
         TxD::clear();
         wait();
+    }
+
+
+    static bool rxdRead() {
+        wait();
+        return RxD::test();
     }
 
 

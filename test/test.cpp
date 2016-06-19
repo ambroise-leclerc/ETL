@@ -55,10 +55,34 @@ struct FakePin {
     static void clear() {
         std::cout << '0';
     }
+
+
 };
 
+struct FakePinReader {
+    static void setInput() {
+
+    }
+
+    static bool test() {
+        if (index > 11) {
+            index = 0;
+        }
+        return toRead[index++];
+    }
+
+   
+    static const bool toRead[];
+    static uint8_t index;
+};
+
+//const bool FakePinReader::toRead[] = { false,true,true,true,true,false,true,true,false,false,true };
+const bool FakePinReader::toRead[] = { false,true,true,false,false,true,true,true,true };
+uint8_t FakePinReader::index = 0;
 template<> struct is_uart_txd_capable<FakePin> : std::true_type {};
+template<> struct is_uart_rxd_capable<FakePinReader> : std::true_type {};
 }
+
 
 SCENARIO("Uart") {
     using uart = etl::Uart<Pin0, etl::FakePin>;
@@ -72,4 +96,22 @@ SCENARIO("Uart") {
     uart2::write(2);
     uart2::write(5);
     uart2::write(7);
+}
+
+/*
+
+SCENARIO("Uart Read") {
+    using uart = etl::Uart<FakePinReader, etl::Pin14>;
+    uart::start();
+    uint8_t value = uart::read();
+    REQUIRE(value == 0b11110110);
+
+}*/
+
+SCENARIO("Uart Read2") {
+    using uart = etl::Uart<FakePinReader, etl::Pin14, 14500, FrameFormat::_5E2, uint8_t>;
+    uart::start();
+    uint8_t value = uart::read();
+    REQUIRE(value == 0b11001);
+
 }
