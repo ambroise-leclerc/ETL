@@ -64,6 +64,13 @@ struct FakePinReader {
 
     }
 
+    static void set() {
+    }
+
+    static void clear() {
+    }
+
+
     static bool test() {
         if (index > 11) {
             index = 0;

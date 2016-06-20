@@ -247,5 +247,5 @@ namespace etl {
 
     };
 
-    template<typename RxD, typename TxD, uint32_t BAUD_RATE = 9600, FrameFormat FRAME_FORMAT = FrameFormat::_8N1, typename SizeUint = uint8_t> bool Uart<RxD, TxD, BAUD_RATE, FRAME_FORMAT, SizeUint>::dataToRead = false;
+    template<typename RxD, typename TxD, uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT, typename SizeUint> bool Uart<RxD, TxD, BAUD_RATE, FRAME_FORMAT, SizeUint>::dataToRead = false;
 } // namespace etl
