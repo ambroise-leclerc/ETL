@@ -97,7 +97,7 @@ namespace etl {
             txdClear();
             uint8_t nbOdd = sendBit(datum);
             sendParity(nbOdd);
-            sendStopBity();
+            sendStopBit();
         }
 
     private:
@@ -185,7 +185,7 @@ namespace etl {
             }
         }
 
-        static void sendStopBity() {
+        static void sendStopBit() {
             switch (stopBit) {
             case One:
                 txdSet();
