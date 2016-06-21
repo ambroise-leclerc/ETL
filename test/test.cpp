@@ -5,6 +5,7 @@
 #include <etl/ioports.h>
 #include <etl/architecture/uart_Mock.h>
 #include <algorithm>
+#include <thread>
 
 
 
@@ -40,7 +41,7 @@ SCENARIO("Timers") {
     
 }
 
-*/
+
 
 namespace etl {
 struct FakePin {
@@ -64,6 +65,13 @@ struct FakePinReader {
 
     }
 
+   static void set() {
+    }
+
+    static void clear() {
+    }
+
+
     static bool test() {
         if (index > 11) {
             index = 0;
@@ -83,22 +91,48 @@ template<> struct is_uart_txd_capable<FakePin> : std::true_type {};
 template<> struct is_uart_rxd_capable<FakePinReader> : std::true_type {};
 }
 
+void ack1()
+{
+    using uart = etl::Uart<Pin0, etl::FakePin>;
+    while (true) {
+        uart::read();
+    }
+}
+
+void ack2()
+{
+    using uart2 = etl::Uart<Pin0, FakePin, 14500, FrameFormat::_5E2, uint8_t>;
+    while(true){
+        uart2::read();
+    }
+}
+
 
 SCENARIO("Uart") {
+    
     using uart = etl::Uart<Pin0, etl::FakePin>;
     uart::start();
+    std::thread t1(ack1);
     uart::write(2);
     uart::write(5);
     uart::write(7);
+    t1.join();
+   
+}
 
-    using uart2 = etl::Uart<Pin0, FakePin,14500, FrameFormat::_5E2,uint8_t>;
+
+SCENARIO("Uart 2") {
+
+    using uart2 = etl::Uart<Pin0, FakePin, 14500, FrameFormat::_5E2, uint8_t>;
     uart2::start();
+    std::thread t2(ack2);
     uart2::write(2);
     uart2::write(5);
     uart2::write(7);
+    t2.join();
 }
 
-/*
+
 
 SCENARIO("Uart Read") {
     using uart = etl::Uart<FakePinReader, etl::Pin14>;
@@ -106,7 +140,7 @@ SCENARIO("Uart Read") {
     uint8_t value = uart::read();
     REQUIRE(value == 0b11110110);
 
-}*/
+}
 
 SCENARIO("Uart Read2") {
     using uart = etl::Uart<FakePinReader, etl::Pin14, 14500, FrameFormat::_5E2, uint8_t>;
@@ -114,4 +148,4 @@ SCENARIO("Uart Read2") {
     uint8_t value = uart::read();
     REQUIRE(value == 0b11001);
 
-}
+}*/

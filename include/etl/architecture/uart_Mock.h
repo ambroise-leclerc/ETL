@@ -70,10 +70,12 @@ namespace etl {
             RxD::setInput();
             TxD::setOutput();
             TxD::set();
+            RxD::set();
             std::cout << '\n';
-            std::cout << "bitNumber: " << bitNumber<< '\n';
+            std::cout << "bitNumber: " << bitNumber << '\n';
             std::cout << "parity: " << parity << '\n';
             std::cout << "stopBit: " << stopBit << '\n';
+            std::cout << "RxD::test(): " << RxD::test() << '\n';
         }
 
         static void stop() {
@@ -81,9 +83,9 @@ namespace etl {
         }
 
         static SizeUint read() {
-          
+
             while (rxdRead()) {
-             
+
             }
             auto returnValue = readBits();
             assert(readParity(std::get<1>(returnValue)));
@@ -92,142 +94,158 @@ namespace etl {
         };
 
         static void write(SizeUint datum) {
-            std::cout << '\n';
             txdClear();
             uint8_t nbOdd = sendBit(datum);
             sendParity(nbOdd);
             sendStopBity();
-         }
-
-private:
-    enum Parity {None,Even,Odd};
-    enum StopBit {One,Two};
-    enum BitNumber {Five = 5,Six = 6,Seven = 7,Eight = 8,Nine = 9};
-
-  
-    static const auto bitNumberMask = 0b111000;
-    static const auto stopBitMask = 0b000001;
-    static const auto parityMask = 0b000110;
-
-
-    static constexpr  auto parity = static_cast<Parity>((FRAME_FORMAT & parityMask) >>1 );
-    static constexpr  auto stopBit = static_cast<StopBit>(FRAME_FORMAT & stopBitMask);
-    static constexpr  auto bitNumber = static_cast<BitNumber>((FRAME_FORMAT & bitNumberMask)>>3)+5;
-
-    static auto  readStopBits() {
-        bool ok = true;
-        switch (stopBit) {
-        case One:
-            return (rxdRead());
-            break;
-        case Two:
-            ok &= (rxdRead());
-            ok &= (rxdRead());
-            break;
         }
-        return ok;
-    }
 
-    static auto  readBits() {
-        SizeUint returnValue = 0;
-        uint8_t nbOdd = 0;
-        for (auto i = 0; i < bitNumber; i++) {
-            if (rxdRead()) {
-                nbOdd++;
-                returnValue = (returnValue  << 1) | 1;
+    private:
+        enum Parity { None, Even, Odd };
+        enum StopBit { One, Two };
+        enum BitNumber { Five = 5, Six = 6, Seven = 7, Eight = 8, Nine = 9 };
+
+
+        static const auto bitNumberMask = 0b111000;
+        static const auto stopBitMask = 0b000001;
+        static const auto parityMask = 0b000110;
+
+
+        static constexpr  auto parity = static_cast<Parity>((FRAME_FORMAT & parityMask) >> 1);
+        static constexpr  auto stopBit = static_cast<StopBit>(FRAME_FORMAT & stopBitMask);
+        static constexpr  auto bitNumber = static_cast<BitNumber>((FRAME_FORMAT & bitNumberMask) >> 3) + 5;
+
+        static auto  readStopBits() {
+            bool ok = true;
+            switch (stopBit) {
+            case One:
+                return (rxdRead());
+                break;
+            case Two:
+                ok &= (rxdRead());
+                ok &= (rxdRead());
+                break;
+            }
+            return ok;
+        }
+
+        static auto  readBits() {
+            SizeUint returnValue = 0;
+            uint8_t nbOdd = 0;
+            for (auto i = 0; i < bitNumber; i++) {
+                if (rxdRead()) {
+                    nbOdd++;
+                    returnValue = (returnValue << 1) | 1;
+                }
+                else {
+                    returnValue = (returnValue << 1);
+                }
+            }
+            return std::make_tuple(returnValue, nbOdd);
+        }
+
+        static bool  readParity(uint8_t odd) {
+            bool parityBit = rxdRead();
+            switch (parity) {
+            case Even:
+                return (parityBit == (odd % 2));
+                break;
+            case Odd:
+                return (parityBit == (((odd % 2) == 0) ? 1 : 0));
+                break;
+            default:
+                return true;
+            }
+        }
+
+
+        static auto  sendBit(SizeUint datum) {
+            uint8_t nbOdd = 0;
+            for (auto i = bitNumber - 1; i >= 0; i--) {
+                auto value = (datum >> i) & 0x01;
+                if (value == 1) {
+                    nbOdd++;
+                }
+                txdSet(value);
+            }
+            return nbOdd;
+        }
+
+        static void sendParity(uint8_t odd) {
+            switch (parity) {
+            case None:
+                txdClear();
+                break;
+            case Even:
+                txdSet(odd % 2);
+                break;
+            case Odd:
+                txdSet(((odd % 2) == 0) ? 1 : 0);
+                break;
+            }
+        }
+
+        static void sendStopBity() {
+            switch (stopBit) {
+            case One:
+                txdSet();
+                break;
+            case Two:
+                txdSet();
+                txdSet();
+                break;
+            }
+        }
+
+        static void waitRead() {
+            while (!dataToRead) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000u / BAUD_RATE));
+            }
+
+        }
+
+        static void waitWrite() {
+            while (dataToRead) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000u / BAUD_RATE));
+            }
+        }
+
+        static void txdSet(uint8_t value) {
+            waitWrite();
+            if (value == 1)
+            {
+                TxD::set();
             }
             else {
-                returnValue = (returnValue << 1);
+                TxD::clear();
             }
+            dataToRead = true;
         }
-        return std::make_tuple(returnValue, nbOdd);
-    }
 
-    static bool  readParity(uint8_t odd) {
-        bool parityBit = rxdRead();
-        switch (parity) {
-        case Even:
-            return (parityBit == (odd % 2));
-            break;
-        case Odd:
-            return (parityBit == (((odd % 2) == 0) ? 1 : 0));
-            break;
-        default :
-            return true;
-        }
-    }
-
-
-    static auto  sendBit(SizeUint datum) {
-        uint8_t nbOdd = 0;
-        for (auto i = bitNumber-1; i >= 0; i--) {
-            auto value = (datum >> i) & 0x01;
-            if (value == 1) {
-                nbOdd++;
-            }
-            txdSet(value);
-        }
-        return nbOdd;
-    }
-
-    static void sendParity(uint8_t odd) {
-        switch (parity) {
-        case None:
-            txdClear();
-            break;
-        case Even:
-            txdSet(odd % 2);
-            break;
-        case Odd:
-            txdSet(((odd % 2)==0)?1:0);
-            break;
-        }
-    }
-
-    static void sendStopBity() {
-        switch (stopBit) {
-        case One:
-            txdSet();
-            break;
-        case Two:
-            txdSet();
-            txdSet();
-            break;
-        }
-    }
-
-    static void wait() {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000u/BAUD_RATE));
-    }
-
-    static void txdSet(uint8_t value) {
-        if (value == 1)
-        {
+        static void txdSet() {
+            waitWrite();
             TxD::set();
+            dataToRead = true;
         }
-        else {
+
+        static void txdClear() {
+            waitWrite();
             TxD::clear();
+            dataToRead = true;
         }
-        wait();
-    }
-
-    static void txdSet() {
-        TxD::set();
-        wait();
-    }
-
-    static void txdClear() {
-        TxD::clear();
-        wait();
-    }
 
 
-    static bool rxdRead() {
-        wait();
-        return RxD::test();
-    }
+        static bool rxdRead() {
+            waitRead();
+            bool value = RxD::test();
+            dataToRead = false;
+            return value;
+        }
+
+        static bool dataToRead;
 
 
+    };
 
-};
+    template<typename RxD, typename TxD, uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT, typename SizeUint> bool Uart<RxD, TxD, BAUD_RATE, FRAME_FORMAT, SizeUint>::dataToRead = false;
 } // namespace etl
