@@ -134,10 +134,10 @@ private:
     rep ticksCount;
 };
 
-using nanoseconds   = duration<uint64_t, nano>;
-using microseconds  = duration<uint64_t, micro>;
-using milliseconds  = duration<uint64_t, milli>;
-using seconds       = duration<uint64_t>;
+using nanoseconds   = duration<uint32_t, nano>;
+using microseconds  = duration<uint32_t, micro>;
+using milliseconds  = duration<uint32_t, milli>;
+using seconds       = duration<uint32_t>;
 using minutes       = duration<uint32_t, ratio<60, 1>>;
 using hours         = duration<uint32_t, ratio<3600, 1>>;
 

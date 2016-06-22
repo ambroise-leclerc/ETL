@@ -35,10 +35,20 @@
 namespace std {
 namespace this_thread {
 
+/// Blocks the execution of the current thread for the specified constant sleepDuration with a 1 cycle resolution.
 template<typename Rep, typename Period>
-void sleep_for(const chrono::duration<Rep, Period>& rel_time) {
-    auto int_us = chrono::duration_cast<chrono::microseconds>(rel_time);
-    etl::Device::delay_us(int_us.count());
+constexpr void sleep_for(const chrono::duration<Rep, Period>& sleepDuration) {
+    etl::Device::delayTicks(chrono::duration_cast<etl::clock_cycles>(sleepDuration).count());
+}
+
+
+/// Blocks the execution of the current thread for the specified sleepDuration with a 1 millisecond resolution.
+template<typename Rep, typename Period>
+void sleep_for(chrono::duration<Rep, Period>& sleepDuration) {
+	uint32_t nbMs = chrono::duration_cast<chrono::milliseconds>(sleepDuration).count();
+	for (auto count = nbMs; count > 0; count--) {
+		etl::Device::delayTicks(chrono::duration_cast<etl::clock_cycles>(1ms).count() - (64 / etl::Device::architectureWidth));
+	}
 }
 
 

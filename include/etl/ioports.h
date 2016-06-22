@@ -1,5 +1,5 @@
-/// @file ioports_ATmega328P.h
-/// @date 12/05/2014 09:34:16
+/// @file ioports_ATmega644P.h
+/// @date 18/06/2016 18:17:16
 /// @author Ambroise Leclerc and Cécile Gomes
 /// @brief Microcontrollers peripherals handling classes
 //
@@ -33,12 +33,6 @@
 #pragma once
 
 
-template<typename ParentPort>
-struct Pin {
-  /// Port is defined as the Port object to which this pin belongs.
-  using Port = ParentPort;
-  using PinChangeIRQ = typename ParentPort::PinChangeIRQ;
-};
 
 
 #if defined (__AVR_Dummy__)
@@ -68,5 +62,7 @@ struct Pin {
 #include "architecture/ioports_ATmega328.h"
 #elif defined (__AVR_ATmega328P__)
 #include "architecture/ioports_ATmega328P.h"
+#elif defined (__AVR_ATmega644P__)
+#include "architecture/ioports_ATmega644P.h"
 #endif
 
