@@ -34,6 +34,10 @@
 
 #include <util/delay.h>
 #include <avr/io.h>
+#include <avr/interrupt.h>
+#include <chrono>
+
+extern void __builtin_avr_delay_cycles(unsigned long);
 
 namespace etl {
 #define IOPORTS_TO_STRING(name) #name
@@ -41,13 +45,16 @@ namespace etl {
 
 class Device {
 public:
-    static void delay_us(uint32_t us)          { _delay_us(us); }
-    static void delay_ms(uint32_t ms)          { _delay_ms(ms); }
-    static const size_t flash_size = 16384;
-    static const size_t eeprom_size = 512;
-    static const size_t sram_size = 1024;
+    static void delayTicks(uint32_t ticks)            { __builtin_avr_delay_cycles(ticks); }
+    static const auto flashSize = 16384;
+    static const auto eepromSize = 512;
+    static const auto sramSize = 1024;
+    static const auto architectureWidth = 8;
+    static const uint32_t McuFrequency = F_CPU;
 };
 
+using clock_cycles = std::chrono::duration<unsigned long, std::ratio<1, Device::McuFrequency>>;
+constexpr clock_cycles operator ""clks(unsigned long long c)     { return clock_cycles(static_cast<clock_cycles::rep>(c)); }
 struct PinChangeIRQ0;
 struct PinChangeIRQ1;
 struct PinChangeIRQ2;

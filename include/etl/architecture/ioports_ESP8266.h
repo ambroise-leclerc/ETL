@@ -1,5 +1,5 @@
 /// @file ioports_ESP8266.h
-/// @date 18/06/16 19:24
+/// @date 22/06/16 11:13
 /// @author Ambroise Leclerc and Cécile Gomes
 /// @brief Espressif ESP 32-bit microcontrollers peripherals handling classes
 //
