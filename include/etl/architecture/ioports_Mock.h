@@ -183,7 +183,7 @@ public:
     }
 };
 
-class Pin0 : public Pin<Port0> {
+class Pin0 {
 public:
     /// Sets Pin0 to HIGH.
     static void set()       { Port0::setBits(1<<0); }
@@ -225,9 +225,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin1 : public Pin<Port0> {
+class Pin1 {
 public:
     /// Sets Pin1 to HIGH.
     static void set()       { Port0::setBits(1<<1); }
@@ -269,9 +272,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin2 : public Pin<Port0> {
+class Pin2 {
 public:
     /// Sets Pin2 to HIGH.
     static void set()       { Port0::setBits(1<<2); }
@@ -313,9 +319,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin3 : public Pin<Port0> {
+class Pin3 {
 public:
     /// Sets Pin3 to HIGH.
     static void set()       { Port0::setBits(1<<3); }
@@ -357,9 +366,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin4 : public Pin<Port0> {
+class Pin4 {
 public:
     /// Sets Pin4 to HIGH.
     static void set()       { Port0::setBits(1<<4); }
@@ -401,9 +413,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin5 : public Pin<Port0> {
+class Pin5 {
 public:
     /// Sets Pin5 to HIGH.
     static void set()       { Port0::setBits(1<<5); }
@@ -445,9 +460,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin6 : public Pin<Port0> {
+class Pin6 {
 public:
     /// Sets Pin6 to HIGH.
     static void set()       { Port0::setBits(1<<6); }
@@ -489,9 +507,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin7 : public Pin<Port0> {
+class Pin7 {
 public:
     /// Sets Pin7 to HIGH.
     static void set()       { Port0::setBits(1<<7); }
@@ -533,9 +554,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin8 : public Pin<Port0> {
+class Pin8 {
 public:
     /// Sets Pin8 to HIGH.
     static void set()       { Port0::setBits(1<<8); }
@@ -577,9 +601,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin9 : public Pin<Port0> {
+class Pin9 {
 public:
     /// Sets Pin9 to HIGH.
     static void set()       { Port0::setBits(1<<9); }
@@ -621,9 +648,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin10 : public Pin<Port0> {
+class Pin10 {
 public:
     /// Sets Pin10 to HIGH.
     static void set()       { Port0::setBits(1<<10); }
@@ -665,9 +695,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin11 : public Pin<Port0> {
+class Pin11 {
 public:
     /// Sets Pin11 to HIGH.
     static void set()       { Port0::setBits(1<<11); }
@@ -709,9 +742,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin12 : public Pin<Port0> {
+class Pin12 {
 public:
     /// Sets Pin12 to HIGH.
     static void set()       { Port0::setBits(1<<12); }
@@ -753,9 +789,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin13 : public Pin<Port0> {
+class Pin13 {
 public:
     /// Sets Pin13 to HIGH.
     static void set()       { Port0::setBits(1<<13); }
@@ -797,9 +836,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin14 : public Pin<Port0> {
+class Pin14 {
 public:
     /// Sets Pin14 to HIGH.
     static void set()       { Port0::setBits(1<<14); }
@@ -841,9 +883,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
-class Pin15 : public Pin<Port0> {
+class Pin15 {
 public:
     /// Sets Pin15 to HIGH.
     static void set()       { Port0::setBits(1<<15); }
@@ -885,6 +930,9 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port0;
 };
 
 
@@ -966,7 +1014,7 @@ public:
     }
 };
 
-class Pin16 : public Pin<Port1> {
+class Pin16 {
 public:
     /// Sets Pin16 to HIGH.
     static void set()       { Port1::setBits(1<<0); }
@@ -1008,9 +1056,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port1;
 };
 
-class Pin17 : public Pin<Port1> {
+class Pin17 {
 public:
     /// Sets Pin17 to HIGH.
     static void set()       { Port1::setBits(1<<1); }
@@ -1052,9 +1103,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port1;
 };
 
-class Pin18 : public Pin<Port1> {
+class Pin18 {
 public:
     /// Sets Pin18 to HIGH.
     static void set()       { Port1::setBits(1<<2); }
@@ -1096,9 +1150,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port1;
 };
 
-class Pin19 : public Pin<Port1> {
+class Pin19 {
 public:
     /// Sets Pin19 to HIGH.
     static void set()       { Port1::setBits(1<<3); }
@@ -1140,9 +1197,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port1;
 };
 
-class Pin20 : public Pin<Port1> {
+class Pin20 {
 public:
     /// Sets Pin20 to HIGH.
     static void set()       { Port1::setBits(1<<4); }
@@ -1184,6 +1244,9 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = Port1;
 };
 
 
@@ -1265,7 +1328,7 @@ public:
     }
 };
 
-class PinS0 : public Pin<PortSimuA> {
+class PinS0 {
 public:
     /// Sets PinS0 to HIGH.
     static void set()       { PortSimuA::setBits(1<<0); }
@@ -1307,9 +1370,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuA;
 };
 
-class PinS1 : public Pin<PortSimuA> {
+class PinS1 {
 public:
     /// Sets PinS1 to HIGH.
     static void set()       { PortSimuA::setBits(1<<1); }
@@ -1351,9 +1417,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuA;
 };
 
-class PinS2 : public Pin<PortSimuA> {
+class PinS2 {
 public:
     /// Sets PinS2 to HIGH.
     static void set()       { PortSimuA::setBits(1<<2); }
@@ -1395,9 +1464,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuA;
 };
 
-class PinS3 : public Pin<PortSimuA> {
+class PinS3 {
 public:
     /// Sets PinS3 to HIGH.
     static void set()       { PortSimuA::setBits(1<<3); }
@@ -1439,9 +1511,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuA;
 };
 
-class PinS4 : public Pin<PortSimuA> {
+class PinS4 {
 public:
     /// Sets PinS4 to HIGH.
     static void set()       { PortSimuA::setBits(1<<4); }
@@ -1483,9 +1558,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuA;
 };
 
-class PinS5 : public Pin<PortSimuA> {
+class PinS5 {
 public:
     /// Sets PinS5 to HIGH.
     static void set()       { PortSimuA::setBits(1<<5); }
@@ -1527,9 +1605,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuA;
 };
 
-class PinS6 : public Pin<PortSimuA> {
+class PinS6 {
 public:
     /// Sets PinS6 to HIGH.
     static void set()       { PortSimuA::setBits(1<<6); }
@@ -1571,9 +1652,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuA;
 };
 
-class PinS7 : public Pin<PortSimuA> {
+class PinS7 {
 public:
     /// Sets PinS7 to HIGH.
     static void set()       { PortSimuA::setBits(1<<7); }
@@ -1615,6 +1699,9 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuA;
 };
 
 
@@ -1696,7 +1783,7 @@ public:
     }
 };
 
-class PinS8 : public Pin<PortSimuB> {
+class PinS8 {
 public:
     /// Sets PinS8 to HIGH.
     static void set()       { PortSimuB::setBits(1<<0); }
@@ -1738,9 +1825,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuB;
 };
 
-class PinS9 : public Pin<PortSimuB> {
+class PinS9 {
 public:
     /// Sets PinS9 to HIGH.
     static void set()       { PortSimuB::setBits(1<<1); }
@@ -1782,9 +1872,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuB;
 };
 
-class PinS10 : public Pin<PortSimuB> {
+class PinS10 {
 public:
     /// Sets PinS10 to HIGH.
     static void set()       { PortSimuB::setBits(1<<2); }
@@ -1826,9 +1919,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuB;
 };
 
-class PinS11 : public Pin<PortSimuB> {
+class PinS11 {
 public:
     /// Sets PinS11 to HIGH.
     static void set()       { PortSimuB::setBits(1<<3); }
@@ -1870,9 +1966,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuB;
 };
 
-class PinS12 : public Pin<PortSimuB> {
+class PinS12 {
 public:
     /// Sets PinS12 to HIGH.
     static void set()       { PortSimuB::setBits(1<<4); }
@@ -1914,9 +2013,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuB;
 };
 
-class PinS13 : public Pin<PortSimuB> {
+class PinS13 {
 public:
     /// Sets PinS13 to HIGH.
     static void set()       { PortSimuB::setBits(1<<5); }
@@ -1958,9 +2060,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuB;
 };
 
-class PinS14 : public Pin<PortSimuB> {
+class PinS14 {
 public:
     /// Sets PinS14 to HIGH.
     static void set()       { PortSimuB::setBits(1<<6); }
@@ -2002,9 +2107,12 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuB;
 };
 
-class PinS15 : public Pin<PortSimuB> {
+class PinS15 {
 public:
     /// Sets PinS15 to HIGH.
     static void set()       { PortSimuB::setBits(1<<7); }
@@ -2046,6 +2154,9 @@ public:
     static void onChange(const std::function<void()> &callback) { Port::onChange(callback, bitmask()); }
 
     static void clearOnChange() { Port::clearOnChange(bitmask()); }
+
+    /// Port is defined as the Port object to which this pin belongs.
+    using Port = PortSimuB;
 };
 
 
