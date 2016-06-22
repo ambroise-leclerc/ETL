@@ -32,439 +32,211 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <ioports_esp.h>
+#include <../libstd/include/cstdint>
+extern "C" {
+    #include "eagle_soc.h"
+}
+static const uint32_t BASE_ADRR = 0x60000000;
+
+static uint32_t* gpcAdress[16] = {
+    (uint32_t *)(BASE_ADRR + 0x328), (uint32_t *)(BASE_ADRR + 0x32C), (uint32_t *)(BASE_ADRR + 0x330), (uint32_t *)(BASE_ADRR + 0x334),
+    (uint32_t *)(BASE_ADRR + 0x338), (uint32_t *)(BASE_ADRR + 0x33C), (uint32_t *)(BASE_ADRR + 0x340), (uint32_t *)(BASE_ADRR + 0x344 ),
+    (uint32_t *)(BASE_ADRR + 0x348), (uint32_t *)(BASE_ADRR +0x34C ), (uint32_t *)(BASE_ADRR + 0x350), (uint32_t *) (BASE_ADRR +0x354 ),
+    (uint32_t *)(BASE_ADRR +0x358 ), (uint32_t *)(BASE_ADRR + 0x35C), (uint32_t *)(BASE_ADRR + 0x360), (uint32_t *)(BASE_ADRR +0x364 )        };
+
+static uint32_t periphs[16] = {
+    PERIPHS_IO_MUX_GPIO0_U, PERIPHS_IO_MUX_U0TXD_U, PERIPHS_IO_MUX_GPIO2_U, PERIPHS_IO_MUX_U0RXD_U,
+    PERIPHS_IO_MUX_GPIO4_U, PERIPHS_IO_MUX_GPIO5_U, PERIPHS_IO_MUX_SD_CLK_U, PERIPHS_IO_MUX_SD_DATA0_U,
+    PERIPHS_IO_MUX_SD_DATA1_U, PERIPHS_IO_MUX_SD_DATA2_U, PERIPHS_IO_MUX_SD_DATA3_U, PERIPHS_IO_MUX_SD_CMD_U,
+    PERIPHS_IO_MUX_MTDI_U, PERIPHS_IO_MUX_MTCK_U, PERIPHS_IO_MUX_MTMS_U, PERIPHS_IO_MUX_MTDO_U       };
+
+static uint8_t functionsGpio[16] = {
+    FUNC_GPIO0, FUNC_GPIO1, FUNC_GPIO2, FUNC_GPIO3, FUNC_GPIO4, FUNC_GPIO5, 3, 3,
+    3, FUNC_GPIO9, FUNC_GPIO10, 3, FUNC_GPIO12, FUNC_GPIO13, FUNC_GPIO14, FUNC_GPIO15 };
 
 namespace etl {
 
-    struct Pin0 : public Pin<Port0> {
-
-       static void set() {
-            AbstractPin<0>::Set();
-        }
-
-
-       static void set(bool value) {
-            AbstractPin<0>::Set(value);
-        }
-
-        static void clear() {
-            AbstractPin<0>::Clear();
-        }
-
-        static void toggle() {
-            AbstractPin<0>::Toggle();
-        }
-
-        static void setOutput() {
-            AbstractPin<0>::SetOutput();
-        }
-
-        static void setInput() {
-            AbstractPin<0>::SetInput();
-        }
-
-        static uint16_t  read() {
-           return AbstractPin<0>::Read();
-        }
-
-        static void pulseHigh() {
-            AbstractPin<0>::PulseHigh();
-        }
-
-        static void pulseLow() {
-           AbstractPin<0>::PulseLow();
-         }
-
-        static constexpr uint8_t bitmask() {
-            return AbstractPin<0>::bitmask();
-        }
-
-         // Attache le handler sur un interrput
-        static void attachHandler(voidFuncPtr userFunc) {
-            AbstractPin<0>::AttachHandler(userFunc);
-        }
-
-         // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void interrupt() {
-              AbstractPin<0>::Interrupt();
-         }
-    };
-
-    struct Pin2 : public Pin<Port0> {
-
-       static void set() {
-            AbstractPin<2>::Set();
-        }
-
-
-       static void set(bool value) {
-            AbstractPin<2>::Set(value);
-        }
-
-        static void clear() {
-            AbstractPin<2>::Clear();
-        }
-
-        static void toggle() {
-            AbstractPin<2>::Toggle();
-        }
-
-        static void setOutput() {
-            AbstractPin<2>::SetOutput();
-        }
-
-        static void setInput() {
-            AbstractPin<2>::SetInput();
-        }
-
-        static uint16_t  read() {
-           return AbstractPin<2>::Read();
-        }
-
-        static void pulseHigh() {
-            AbstractPin<2>::PulseHigh();
-        }
-
-        static void pulseLow() {
-           AbstractPin<2>::PulseLow();
-         }
-
-        static constexpr uint8_t bitmask() {
-            return AbstractPin<2>::bitmask();
-        }
-
-         // Attache le handler sur un interrput
-        static void attachHandler(voidFuncPtr userFunc) {
-            AbstractPin<2>::AttachHandler(userFunc);
-        }
-
-         // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void interrupt() {
-              AbstractPin<2>::Interrupt();
-         }
-    };
-
-    struct Pin4 : public Pin<Port0> {
-
-       static void set() {
-            AbstractPin<4>::Set();
-        }
-
-
-       static void set(bool value) {
-            AbstractPin<4>::Set(value);
-        }
-
-        static void clear() {
-            AbstractPin<4>::Clear();
-        }
-
-        static void toggle() {
-            AbstractPin<4>::Toggle();
-        }
-
-        static void setOutput() {
-            AbstractPin<4>::SetOutput();
-        }
-
-        static void setInput() {
-            AbstractPin<4>::SetInput();
-        }
-
-        static uint16_t  read() {
-           return AbstractPin<4>::Read();
-        }
-
-        static void pulseHigh() {
-            AbstractPin<4>::PulseHigh();
-        }
-
-        static void pulseLow() {
-           AbstractPin<4>::PulseLow();
-         }
-
-        static constexpr uint8_t bitmask() {
-            return AbstractPin<4>::bitmask();
-        }
-
-         // Attache le handler sur un interrput
-        static void attachHandler(voidFuncPtr userFunc) {
-            AbstractPin<4>::AttachHandler(userFunc);
-        }
-
-         // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void interrupt() {
-              AbstractPin<4>::Interrupt();
-         }
-    };
-
-    struct Pin5 : public Pin<Port0> {
-
-       static void set() {
-            AbstractPin<5>::Set();
-        }
-
-
-       static void set(bool value) {
-            AbstractPin<5>::Set(value);
-        }
-
-        static void clear() {
-            AbstractPin<5>::Clear();
-        }
-
-        static void toggle() {
-            AbstractPin<5>::Toggle();
-        }
-
-        static void setOutput() {
-            AbstractPin<5>::SetOutput();
-        }
-
-        static void setInput() {
-            AbstractPin<5>::SetInput();
-        }
-
-        static uint16_t  read() {
-           return AbstractPin<5>::Read();
-        }
-
-        static void pulseHigh() {
-            AbstractPin<5>::PulseHigh();
-        }
-
-        static void pulseLow() {
-           AbstractPin<5>::PulseLow();
-         }
-
-        static constexpr uint8_t bitmask() {
-            return AbstractPin<5>::bitmask();
-        }
-
-         // Attache le handler sur un interrput
-        static void attachHandler(voidFuncPtr userFunc) {
-            AbstractPin<5>::AttachHandler(userFunc);
-        }
-
-         // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void interrupt() {
-              AbstractPin<5>::Interrupt();
-         }
-    };
-
-    struct Pin12 : public Pin<Port0> {
-
-       static void set() {
-            AbstractPin<12>::Set();
-        }
-
-
-       static void set(bool value) {
-            AbstractPin<12>::Set(value);
-        }
-
-        static void clear() {
-            AbstractPin<12>::Clear();
-        }
-
-        static void toggle() {
-            AbstractPin<12>::Toggle();
-        }
-
-        static void setOutput() {
-            AbstractPin<12>::SetOutput();
-        }
-
-        static void setInput() {
-            AbstractPin<12>::SetInput();
-        }
-
-        static uint16_t  read() {
-           return AbstractPin<12>::Read();
-        }
-
-        static void pulseHigh() {
-            AbstractPin<12>::PulseHigh();
-        }
-
-        static void pulseLow() {
-           AbstractPin<12>::PulseLow();
-         }
-
-        static constexpr uint8_t bitmask() {
-            return AbstractPin<12>::bitmask();
-        }
-
-         // Attache le handler sur un interrput
-        static void attachHandler(voidFuncPtr userFunc) {
-            AbstractPin<12>::AttachHandler(userFunc);
-        }
-
-         // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void interrupt() {
-              AbstractPin<12>::Interrupt();
-         }
-    };
-
-    struct Pin13 : public Pin<Port0> {
-
-       static void set() {
-            AbstractPin<13>::Set();
-        }
-
-
-       static void set(bool value) {
-            AbstractPin<13>::Set(value);
-        }
-
-        static void clear() {
-            AbstractPin<13>::Clear();
-        }
-
-        static void toggle() {
-            AbstractPin<13>::Toggle();
-        }
-
-        static void setOutput() {
-            AbstractPin<13>::SetOutput();
-        }
-
-        static void setInput() {
-            AbstractPin<13>::SetInput();
-        }
-
-        static uint16_t  read() {
-           return AbstractPin<13>::Read();
-        }
-
-        static void pulseHigh() {
-            AbstractPin<13>::PulseHigh();
-        }
-
-        static void pulseLow() {
-           AbstractPin<13>::PulseLow();
-         }
-
-        static constexpr uint8_t bitmask() {
-            return AbstractPin<13>::bitmask();
-        }
-
-         // Attache le handler sur un interrput
-        static void attachHandler(voidFuncPtr userFunc) {
-            AbstractPin<13>::AttachHandler(userFunc);
-        }
-
-         // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void interrupt() {
-              AbstractPin<13>::Interrupt();
-         }
-    };
-
-    struct Pin14 : public Pin<Port0> {
-
-       static void set() {
-            AbstractPin<14>::Set();
-        }
-
-
-       static void set(bool value) {
-            AbstractPin<14>::Set(value);
-        }
-
-        static void clear() {
-            AbstractPin<14>::Clear();
-        }
-
-        static void toggle() {
-            AbstractPin<14>::Toggle();
-        }
-
-        static void setOutput() {
-            AbstractPin<14>::SetOutput();
-        }
-
-        static void setInput() {
-            AbstractPin<14>::SetInput();
-        }
-
-        static uint16_t  read() {
-           return AbstractPin<14>::Read();
-        }
-
-        static void pulseHigh() {
-            AbstractPin<14>::PulseHigh();
-        }
-
-        static void pulseLow() {
-           AbstractPin<14>::PulseLow();
-         }
-
-        static constexpr uint8_t bitmask() {
-            return AbstractPin<14>::bitmask();
-        }
-
-         // Attache le handler sur un interrput
-        static void attachHandler(voidFuncPtr userFunc) {
-            AbstractPin<14>::AttachHandler(userFunc);
-        }
-
-         // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void interrupt() {
-              AbstractPin<14>::Interrupt();
-         }
-    };
-
-    struct Pin15 : public Pin<Port0> {
-
-       static void set() {
-            AbstractPin<15>::Set();
-        }
-
-
-       static void set(bool value) {
-            AbstractPin<15>::Set(value);
-        }
-
-        static void clear() {
-            AbstractPin<15>::Clear();
-        }
-
-        static void toggle() {
-            AbstractPin<15>::Toggle();
-        }
-
-        static void setOutput() {
-            AbstractPin<15>::SetOutput();
-        }
-
-        static void setInput() {
-            AbstractPin<15>::SetInput();
-        }
-
-        static uint16_t  read() {
-           return AbstractPin<15>::Read();
-        }
-
-        static void pulseHigh() {
-            AbstractPin<15>::PulseHigh();
-        }
-
-        static void pulseLow() {
-           AbstractPin<15>::PulseLow();
-         }
-
-        static constexpr uint8_t bitmask() {
-            return AbstractPin<15>::bitmask();
-        }
-
-         // Attache le handler sur un interrput
-        static void attachHandler(voidFuncPtr userFunc) {
-            AbstractPin<15>::AttachHandler(userFunc);
-        }
-
-         // Fonction d interruption que j'aurais bien mise prive mais je sais pas comment on fait!
-         static void interrupt() {
-              AbstractPin<15>::Interrupt();
-         }
-    };
+class Pin0 {
+public:
+    static void set()       { GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, (1 << 0)); }
+    static void set(bool v) { v ? set() : clear(); }
+    static void clear()     { GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, (1 << 0)); }
+    static void toggle()    { (GPIO_REG_READ(GPIO_OUT_ADDRESS) & (1 << 0)) == 0 ? set() : clear(); }
+    static void setOutput() { PIN_FUNC_SELECT(periphs[0], functionsGpio[0]);
+                              PIN_PULLUP_DIS(periphs[0]);
+                              *gpcAdress[ 0] &= (*gpcAdress[0] & (0xF << 7));
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TS_ADDRESS, 1 << 0);
+    }
+    static void setInput()  { PIN_FUNC_SELECT(periphs[0], functionsGpio[0]);
+                              PIN_PULLUP_DIS(periphs[0]);
+                              *gpcAdress[0] &= (*gpcAdress[0] & (0xF << 7)) | (1 << 0);
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TC_ADDRESS, 1 << 0);
+                              GPIO_REG_WRITE(GPIO_STATUS_W1TC_ADDRESS, 1 << 0);
+    }
+    static uint16_t read() { return (GPIO_REG_READ(GPIO_IN_ADDRESS) & (1 << 0)) != 0; }
+    static void pulseHigh(){ set(); clear(); }
+    static void pulseLow() { clear(); set(); }
+    static constexpr uint16_t bitmask() { return 1 << 0; }
+};
+
+class Pin2 {
+public:
+    static void set()       { GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, (1 << 2)); }
+    static void set(bool v) { v ? set() : clear(); }
+    static void clear()     { GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, (1 << 2)); }
+    static void toggle()    { (GPIO_REG_READ(GPIO_OUT_ADDRESS) & (1 << 2)) == 0 ? set() : clear(); }
+    static void setOutput() { PIN_FUNC_SELECT(periphs[2], functionsGpio[2]);
+                              PIN_PULLUP_DIS(periphs[2]);
+                              *gpcAdress[ 2] &= (*gpcAdress[2] & (0xF << 7));
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TS_ADDRESS, 1 << 2);
+    }
+    static void setInput()  { PIN_FUNC_SELECT(periphs[2], functionsGpio[2]);
+                              PIN_PULLUP_DIS(periphs[2]);
+                              *gpcAdress[2] &= (*gpcAdress[2] & (0xF << 7)) | (1 << 2);
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TC_ADDRESS, 1 << 2);
+                              GPIO_REG_WRITE(GPIO_STATUS_W1TC_ADDRESS, 1 << 2);
+    }
+    static uint16_t read() { return (GPIO_REG_READ(GPIO_IN_ADDRESS) & (1 << 2)) != 0; }
+    static void pulseHigh(){ set(); clear(); }
+    static void pulseLow() { clear(); set(); }
+    static constexpr uint16_t bitmask() { return 1 << 2; }
+};
+
+class Pin4 {
+public:
+    static void set()       { GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, (1 << 4)); }
+    static void set(bool v) { v ? set() : clear(); }
+    static void clear()     { GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, (1 << 4)); }
+    static void toggle()    { (GPIO_REG_READ(GPIO_OUT_ADDRESS) & (1 << 4)) == 0 ? set() : clear(); }
+    static void setOutput() { PIN_FUNC_SELECT(periphs[4], functionsGpio[4]);
+                              PIN_PULLUP_DIS(periphs[4]);
+                              *gpcAdress[ 4] &= (*gpcAdress[4] & (0xF << 7));
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TS_ADDRESS, 1 << 4);
+    }
+    static void setInput()  { PIN_FUNC_SELECT(periphs[4], functionsGpio[4]);
+                              PIN_PULLUP_DIS(periphs[4]);
+                              *gpcAdress[4] &= (*gpcAdress[4] & (0xF << 7)) | (1 << 4);
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TC_ADDRESS, 1 << 4);
+                              GPIO_REG_WRITE(GPIO_STATUS_W1TC_ADDRESS, 1 << 4);
+    }
+    static uint16_t read() { return (GPIO_REG_READ(GPIO_IN_ADDRESS) & (1 << 4)) != 0; }
+    static void pulseHigh(){ set(); clear(); }
+    static void pulseLow() { clear(); set(); }
+    static constexpr uint16_t bitmask() { return 1 << 4; }
+};
+
+class Pin5 {
+public:
+    static void set()       { GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, (1 << 5)); }
+    static void set(bool v) { v ? set() : clear(); }
+    static void clear()     { GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, (1 << 5)); }
+    static void toggle()    { (GPIO_REG_READ(GPIO_OUT_ADDRESS) & (1 << 5)) == 0 ? set() : clear(); }
+    static void setOutput() { PIN_FUNC_SELECT(periphs[5], functionsGpio[5]);
+                              PIN_PULLUP_DIS(periphs[5]);
+                              *gpcAdress[ 5] &= (*gpcAdress[5] & (0xF << 7));
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TS_ADDRESS, 1 << 5);
+    }
+    static void setInput()  { PIN_FUNC_SELECT(periphs[5], functionsGpio[5]);
+                              PIN_PULLUP_DIS(periphs[5]);
+                              *gpcAdress[5] &= (*gpcAdress[5] & (0xF << 7)) | (1 << 5);
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TC_ADDRESS, 1 << 5);
+                              GPIO_REG_WRITE(GPIO_STATUS_W1TC_ADDRESS, 1 << 5);
+    }
+    static uint16_t read() { return (GPIO_REG_READ(GPIO_IN_ADDRESS) & (1 << 5)) != 0; }
+    static void pulseHigh(){ set(); clear(); }
+    static void pulseLow() { clear(); set(); }
+    static constexpr uint16_t bitmask() { return 1 << 5; }
+};
+
+class Pin12 {
+public:
+    static void set()       { GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, (1 << 12)); }
+    static void set(bool v) { v ? set() : clear(); }
+    static void clear()     { GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, (1 << 12)); }
+    static void toggle()    { (GPIO_REG_READ(GPIO_OUT_ADDRESS) & (1 << 12)) == 0 ? set() : clear(); }
+    static void setOutput() { PIN_FUNC_SELECT(periphs[12], functionsGpio[12]);
+                              PIN_PULLUP_DIS(periphs[12]);
+                              *gpcAdress[ 12] &= (*gpcAdress[12] & (0xF << 7));
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TS_ADDRESS, 1 << 12);
+    }
+    static void setInput()  { PIN_FUNC_SELECT(periphs[12], functionsGpio[12]);
+                              PIN_PULLUP_DIS(periphs[12]);
+                              *gpcAdress[12] &= (*gpcAdress[12] & (0xF << 7)) | (1 << 12);
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TC_ADDRESS, 1 << 12);
+                              GPIO_REG_WRITE(GPIO_STATUS_W1TC_ADDRESS, 1 << 12);
+    }
+    static uint16_t read() { return (GPIO_REG_READ(GPIO_IN_ADDRESS) & (1 << 12)) != 0; }
+    static void pulseHigh(){ set(); clear(); }
+    static void pulseLow() { clear(); set(); }
+    static constexpr uint16_t bitmask() { return 1 << 12; }
+};
+
+class Pin13 {
+public:
+    static void set()       { GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, (1 << 13)); }
+    static void set(bool v) { v ? set() : clear(); }
+    static void clear()     { GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, (1 << 13)); }
+    static void toggle()    { (GPIO_REG_READ(GPIO_OUT_ADDRESS) & (1 << 13)) == 0 ? set() : clear(); }
+    static void setOutput() { PIN_FUNC_SELECT(periphs[13], functionsGpio[13]);
+                              PIN_PULLUP_DIS(periphs[13]);
+                              *gpcAdress[ 13] &= (*gpcAdress[13] & (0xF << 7));
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TS_ADDRESS, 1 << 13);
+    }
+    static void setInput()  { PIN_FUNC_SELECT(periphs[13], functionsGpio[13]);
+                              PIN_PULLUP_DIS(periphs[13]);
+                              *gpcAdress[13] &= (*gpcAdress[13] & (0xF << 7)) | (1 << 13);
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TC_ADDRESS, 1 << 13);
+                              GPIO_REG_WRITE(GPIO_STATUS_W1TC_ADDRESS, 1 << 13);
+    }
+    static uint16_t read() { return (GPIO_REG_READ(GPIO_IN_ADDRESS) & (1 << 13)) != 0; }
+    static void pulseHigh(){ set(); clear(); }
+    static void pulseLow() { clear(); set(); }
+    static constexpr uint16_t bitmask() { return 1 << 13; }
+};
+
+class Pin14 {
+public:
+    static void set()       { GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, (1 << 14)); }
+    static void set(bool v) { v ? set() : clear(); }
+    static void clear()     { GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, (1 << 14)); }
+    static void toggle()    { (GPIO_REG_READ(GPIO_OUT_ADDRESS) & (1 << 14)) == 0 ? set() : clear(); }
+    static void setOutput() { PIN_FUNC_SELECT(periphs[14], functionsGpio[14]);
+                              PIN_PULLUP_DIS(periphs[14]);
+                              *gpcAdress[ 14] &= (*gpcAdress[14] & (0xF << 7));
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TS_ADDRESS, 1 << 14);
+    }
+    static void setInput()  { PIN_FUNC_SELECT(periphs[14], functionsGpio[14]);
+                              PIN_PULLUP_DIS(periphs[14]);
+                              *gpcAdress[14] &= (*gpcAdress[14] & (0xF << 7)) | (1 << 14);
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TC_ADDRESS, 1 << 14);
+                              GPIO_REG_WRITE(GPIO_STATUS_W1TC_ADDRESS, 1 << 14);
+    }
+    static uint16_t read() { return (GPIO_REG_READ(GPIO_IN_ADDRESS) & (1 << 14)) != 0; }
+    static void pulseHigh(){ set(); clear(); }
+    static void pulseLow() { clear(); set(); }
+    static constexpr uint16_t bitmask() { return 1 << 14; }
+};
+
+class Pin15 {
+public:
+    static void set()       { GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, (1 << 15)); }
+    static void set(bool v) { v ? set() : clear(); }
+    static void clear()     { GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, (1 << 15)); }
+    static void toggle()    { (GPIO_REG_READ(GPIO_OUT_ADDRESS) & (1 << 15)) == 0 ? set() : clear(); }
+    static void setOutput() { PIN_FUNC_SELECT(periphs[15], functionsGpio[15]);
+                              PIN_PULLUP_DIS(periphs[15]);
+                              *gpcAdress[ 15] &= (*gpcAdress[15] & (0xF << 7));
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TS_ADDRESS, 1 << 15);
+    }
+    static void setInput()  { PIN_FUNC_SELECT(periphs[15], functionsGpio[15]);
+                              PIN_PULLUP_DIS(periphs[15]);
+                              *gpcAdress[15] &= (*gpcAdress[15] & (0xF << 7)) | (1 << 15);
+                              GPIO_REG_WRITE(GPIO_ENABLE_W1TC_ADDRESS, 1 << 15);
+                              GPIO_REG_WRITE(GPIO_STATUS_W1TC_ADDRESS, 1 << 15);
+    }
+    static uint16_t read() { return (GPIO_REG_READ(GPIO_IN_ADDRESS) & (1 << 15)) != 0; }
+    static void pulseHigh(){ set(); clear(); }
+    static void pulseLow() { clear(); set(); }
+    static constexpr uint16_t bitmask() { return 1 << 15; }
+};
 } // namespace etl
