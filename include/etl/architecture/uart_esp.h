@@ -7,8 +7,11 @@ extern "C"
 #include "ets_sys.h"
 #include "osapi.h"
 #include "uart_register.h"
+#include "user_interface.h"
     static void uart0_rx_intr_handler(void *para);
     void uart_div_modify(int no, unsigned int freq);
+    void system_uart_swap(void);
+    void system_uart_de_swap(void);
 }
 namespace etl {
 
@@ -61,10 +64,11 @@ public:
       //  ETS_UART_INTR_ATTACH((void *)intr_handler, NULL);
         PIN_PULLUP_DIS(PERIPHS_IO_MUX_U0TXD_U);
         PIN_FUNC_SELECT(PERIPHS_IO_MUX_U0TXD_U, FUNC_U0TXD);
+    
+        
+       uart_div_modify(0, UART_CLK_FREQ / BAUD_RATE);
 
-        uart_div_modify(0, UART_CLK_FREQ / BAUD_RATE);
-
-        WRITE_PERI_REG(UART_CONF0(0), existParity
+       WRITE_PERI_REG(UART_CONF0(0), existParity
             | parityEsp
             | (stopBit << UART_STOP_BIT_NUM_S)
             | (bitNumber << UART_BIT_NUM_S));
@@ -72,9 +76,9 @@ public:
         //clear rx and tx fifo,not ready
         SET_PERI_REG_MASK(UART_CONF0(0), UART_RXFIFO_RST | UART_TXFIFO_RST);
         CLEAR_PERI_REG_MASK(UART_CONF0(0), UART_RXFIFO_RST | UART_TXFIFO_RST);
-
+	   
         //set rx fifo trigger
-      /*  WRITE_PERI_REG(UART_CONF1(0),
+      /* WRITE_PERI_REG(UART_CONF1(0),
             ((0x10 & UART_RXFIFO_FULL_THRHD) << UART_RXFIFO_FULL_THRHD_S) |
             ((0x10 & UART_RX_FLOW_THRHD) << UART_RX_FLOW_THRHD_S) |
             UART_RX_FLOW_EN |
@@ -87,24 +91,24 @@ public:
         WRITE_PERI_REG(UART_INT_CLR(0), 0xffff);
         //enable rx_interrupt
         SET_PERI_REG_MASK(UART_INT_ENA(0), UART_RXFIFO_FULL_INT_ENA);*/
+       
     }
 
     static void write(SizeUint datum) {
-        auto fifoLength  = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S) & UART_TXFIFO_CNT > 0;
-        while (!fifoLength)
+        bool tx_fifo_len = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= MAX_FIFO_LENGHT;
+        while (tx_fifo_len)
         {
-            fifoLength = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S) & UART_TXFIFO_CNT > 0;
+            tx_fifo_len = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= MAX_FIFO_LENGHT;
         }
-
         WRITE_PERI_REG(UART_FIFO(0), datum);
     }
 
 
     static SizeUint read() {
-        bool data = ((READ_PERI_REG(UART_STATUS(0)) >> UART_RXFIFO_CNT_S) & UART_RXFIFO_CNT)>0;
-        while(!data)
+        bool rx_fifo_len = ((READ_PERI_REG(UART_STATUS(0)) >> UART_RXFIFO_CNT_S) & UART_RXFIFO_CNT) >= MAX_FIFO_LENGHT;
+        while (!rx_fifo_len)
         {
-            data = ((READ_PERI_REG(UART_STATUS(0)) >> UART_RXFIFO_CNT_S) & UART_RXFIFO_CNT)>0;
+            rx_fifo_len = ((READ_PERI_REG(UART_STATUS(0)) >> UART_RXFIFO_CNT_S) & UART_RXFIFO_CNT) >= MAX_FIFO_LENGHT;
         }
         return READ_PERI_REG(UART_FIFO(0)) & 0xFF;
     }
@@ -121,6 +125,8 @@ private:
     static const auto bitNumberMask = 0b111000;
     static const auto stopBitMask = 0b000001;
     static const auto parityMask = 0b000110;
+    
+    static const auto MAX_FIFO_LENGHT = 128;
 
     static constexpr  auto parity = static_cast<Parity>((FRAME_FORMAT & parityMask) >> 1);
     static constexpr  auto stopBit = static_cast<StopBit>(FRAME_FORMAT & stopBitMask);
@@ -128,7 +134,7 @@ private:
 
     static constexpr  auto existParity = (parity == None) ? 0 : BIT3 | BIT5;
     static constexpr  auto  parityEsp = (parity == None | parity == Odd) ? 0 : BIT4;
-
+    
     
 };
 
