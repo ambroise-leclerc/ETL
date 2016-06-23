@@ -12,6 +12,7 @@ extern "C"
     void uart_div_modify(int no, unsigned int freq);
     void system_uart_swap(void);
     void system_uart_de_swap(void);
+   // void system_set_os_print(uint8 onoff);
 }
 namespace etl {
 
@@ -61,6 +62,7 @@ template<uint32_t BAUD_RATE = 9600, FrameFormat FRAME_FORMAT = FrameFormat::_8N1
 class Uart0 {
 public:
     static void start() {
+        system_set_os_print(0);
       //  ETS_UART_INTR_ATTACH((void *)intr_handler, NULL);
         PIN_PULLUP_DIS(PERIPHS_IO_MUX_U0TXD_U);
         PIN_FUNC_SELECT(PERIPHS_IO_MUX_U0TXD_U, FUNC_U0TXD);
@@ -105,10 +107,10 @@ public:
 
 
     static SizeUint read() {
-        bool rx_fifo_len = ((READ_PERI_REG(UART_STATUS(0)) >> UART_RXFIFO_CNT_S) & UART_RXFIFO_CNT) >= MAX_FIFO_LENGHT;
+        bool rx_fifo_len = READ_PERI_REG(UART_STATUS(0)) & (UART_RXFIFO_CNT << UART_RXFIFO_CNT_S) > 0;
         while (!rx_fifo_len)
         {
-            rx_fifo_len = ((READ_PERI_REG(UART_STATUS(0)) >> UART_RXFIFO_CNT_S) & UART_RXFIFO_CNT) >= MAX_FIFO_LENGHT;
+            rx_fifo_len = READ_PERI_REG(UART_STATUS(0)) & (UART_RXFIFO_CNT << UART_RXFIFO_CNT_S)  > 0;
         }
         return READ_PERI_REG(UART_FIFO(0)) & 0xFF;
     }
