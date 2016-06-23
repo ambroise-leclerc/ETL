@@ -8,10 +8,13 @@ extern "C"
 #include "osapi.h"
 #include "uart_register.h"
 #include "user_interface.h"
-    static void uart0_rx_intr_handler(void *para);
+    //static void uart0_rx_intr_handler(void *para);
     void uart_div_modify(int no, unsigned int freq);
     void system_uart_swap(void);
     void system_uart_de_swap(void);
+    void ets_isr_attach(int intr, void *handler, void *arg);
+    void ets_isr_unmask(unsigned intr);
+    void ets_isr_mask(unsigned intr);
    // void system_set_os_print(uint8 onoff);
 }
 namespace etl {
@@ -33,14 +36,31 @@ enum FrameFormat {
     _9N1 = 0b100000, _9N2 = 0b1000001, _9E1 = 0b100010, _9E2 = 0b100011, _9O1 = 0b100100, _9O2 = 0b100101
 };
 
-
-void
-intr_handler()
+typedef void(*CharReceiver)(uint8_t);
+    
+    
+void intr_handler(CharReceiver func)
 {
+    uint8_t rcvChar;
+    
+    //func('o');
+   
+    ETS_UART_INTR_DISABLE();
+    while (READ_PERI_REG(UART_STATUS(0)) & (UART_RXFIFO_CNT << UART_RXFIFO_CNT_S)) {
+        func( READ_PERI_REG(UART_FIFO(0)) & 0xFF);
+  // func(rcvChar);
+    }
+     //clear all interrupt
+    ETS_UART_INTR_ENABLE();
+    WRITE_PERI_REG(UART_INT_CLR(0), UART_RXFIFO_FULL_INT_CLR);
+   
+    
+  /*  func('o');
   
-   /* uint8_t rcvChar;
+    uint8_t rcvChar;
 
-    if (UART_RXFIFO_FULL_INT_ST != (READ_PERI_REG(UART_INT_ST(UART0)) & UART_RXFIFO_FULL_INT_ST)) {
+    if (UART_RXFIFO_FULL_INT_ST != (READ_PERI_REG(UART_INT_ST(0)) & UART_RXFIFO_FULL_INT_ST)) {
+        func('a');
         return;
     }
 
@@ -48,13 +68,11 @@ intr_handler()
 
     while (READ_PERI_REG(UART_STATUS(0)) & (UART_RXFIFO_CNT << UART_RXFIFO_CNT_S)) {
         rcvChar = READ_PERI_REG(UART_FIFO(0)) & 0xFF;
-
-
-        buffer[0] = rcvChar;
-
-
-    }*/
+        func(rcvChar);
+    }
+    func('l');*/
 }
+    
 
 
 
@@ -63,7 +81,6 @@ class Uart0 {
 public:
     static void start() {
         system_set_os_print(0);
-      //  ETS_UART_INTR_ATTACH((void *)intr_handler, NULL);
         PIN_PULLUP_DIS(PERIPHS_IO_MUX_U0TXD_U);
         PIN_FUNC_SELECT(PERIPHS_IO_MUX_U0TXD_U, FUNC_U0TXD);
     
@@ -78,22 +95,20 @@ public:
         //clear rx and tx fifo,not ready
         SET_PERI_REG_MASK(UART_CONF0(0), UART_RXFIFO_RST | UART_TXFIFO_RST);
         CLEAR_PERI_REG_MASK(UART_CONF0(0), UART_RXFIFO_RST | UART_TXFIFO_RST);
-	   
-        //set rx fifo trigger
-      /* WRITE_PERI_REG(UART_CONF1(0),
-            ((0x10 & UART_RXFIFO_FULL_THRHD) << UART_RXFIFO_FULL_THRHD_S) |
-            ((0x10 & UART_RX_FLOW_THRHD) << UART_RX_FLOW_THRHD_S) |
-            UART_RX_FLOW_EN |
-            (0x02 & UART_RX_TOUT_THRHD) << UART_RX_TOUT_THRHD_S |
-            UART_RX_TOUT_EN);
-        SET_PERI_REG_MASK(UART_INT_ENA(0), UART_RXFIFO_TOUT_INT_ENA |
-            UART_FRM_ERR_INT_ENA);
+       
+    }
+    
+    static void start(CharReceiver func) {
+        start();
+        ETS_UART_INTR_ATTACH((void *)intr_handler, (void *)func);
+        WRITE_PERI_REG(UART_CONF1(0), (0x01 & UART_RXFIFO_FULL_THRHD) << UART_RXFIFO_FULL_THRHD_S);
 
         //clear all interrupt
         WRITE_PERI_REG(UART_INT_CLR(0), 0xffff);
         //enable rx_interrupt
-        SET_PERI_REG_MASK(UART_INT_ENA(0), UART_RXFIFO_FULL_INT_ENA);*/
-       
+        SET_PERI_REG_MASK(UART_INT_ENA(0), UART_RXFIFO_FULL_INT_ENA);
+        ETS_UART_INTR_ENABLE();
+     
     }
 
     static void write(SizeUint datum) {
