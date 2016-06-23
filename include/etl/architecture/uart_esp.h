@@ -8,24 +8,14 @@ extern "C"
 #include "osapi.h"
 #include "uart_register.h"
 #include "user_interface.h"
-    //static void uart0_rx_intr_handler(void *para);
     void uart_div_modify(int no, unsigned int freq);
     void system_uart_swap(void);
     void system_uart_de_swap(void);
     void ets_isr_attach(int intr, void *handler, void *arg);
     void ets_isr_unmask(unsigned intr);
     void ets_isr_mask(unsigned intr);
-   // void system_set_os_print(uint8 onoff);
 }
 namespace etl {
-
-/*    template<typename> struct is_uart_txd_capable : std::false_type {};
-    template<> struct is_uart_txd_capable<Pin1> : std::true_type {};
-    template<> struct is_uart_txd_capable<Pin15> : std::true_type {};
-
-    template<typename> struct is_uart_rxd_capable : std::false_type {};
-    template<> struct is_uart_rxd_capable<Pin3> : std::true_type {};
-    template<> struct is_uart_rxd_capable<Pin13> : std::true_type {};*/
 
 
 enum FrameFormat {
@@ -42,35 +32,16 @@ typedef void(*CharReceiver)(uint8_t);
 void intr_handler(CharReceiver func)
 {
     uint8_t rcvChar;
-    
-    //func('o');
-   
-    ETS_UART_INTR_DISABLE();
-    while (READ_PERI_REG(UART_STATUS(0)) & (UART_RXFIFO_CNT << UART_RXFIFO_CNT_S)) {
-        func( READ_PERI_REG(UART_FIFO(0)) & 0xFF);
-  // func(rcvChar);
+    if (READ_PERI_REG(UART_INT_ST(0))&UART_RXFIFO_FULL_INT_ST == UART_RXFIFO_FULL_INT_ST)
+    {
+        ETS_UART_INTR_DISABLE();
+        while (READ_PERI_REG(UART_STATUS(0)) & (UART_RXFIFO_CNT << UART_RXFIFO_CNT_S)) {
+            func( READ_PERI_REG(UART_FIFO(0)) & 0xFF);
+        }
+         //clear all interrupt
+        WRITE_PERI_REG(UART_INT_CLR(0), UART_RXFIFO_FULL_INT_CLR);
+        ETS_UART_INTR_ENABLE();
     }
-     //clear all interrupt
-    ETS_UART_INTR_ENABLE();
-    WRITE_PERI_REG(UART_INT_CLR(0), UART_RXFIFO_FULL_INT_CLR);
-   
-    
-  /*  func('o');
-  
-    uint8_t rcvChar;
-
-    if (UART_RXFIFO_FULL_INT_ST != (READ_PERI_REG(UART_INT_ST(0)) & UART_RXFIFO_FULL_INT_ST)) {
-        func('a');
-        return;
-    }
-
-    WRITE_PERI_REG(UART_INT_CLR(0), UART_RXFIFO_FULL_INT_CLR);
-
-    while (READ_PERI_REG(UART_STATUS(0)) & (UART_RXFIFO_CNT << UART_RXFIFO_CNT_S)) {
-        rcvChar = READ_PERI_REG(UART_FIFO(0)) & 0xFF;
-        func(rcvChar);
-    }
-    func('l');*/
 }
     
 
