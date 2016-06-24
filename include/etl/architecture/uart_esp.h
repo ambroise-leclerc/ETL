@@ -114,7 +114,7 @@ private:
     static const auto stopBitMask = 0b000001;
     static const auto parityMask = 0b000110;
     
-    static const auto MAX_FIFO_LENGHT = 128;
+    static const auto MAX_FIFO_LENGHT = 126;
 
     static constexpr  auto parity = static_cast<Parity>((FRAME_FORMAT & parityMask) >> 1);
     static constexpr  auto stopBit = static_cast<StopBit>(FRAME_FORMAT & stopBitMask);
@@ -125,5 +125,59 @@ private:
     
     
 };
+    
+    
+template<uint32_t BAUD_RATE = 9600, FrameFormat FRAME_FORMAT = FrameFormat::_8N1, typename SizeUint = uint8_t>
+class Uart1 {
+public:
+    static void start() {
+        PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO2_U, FUNC_U1TXD_BK);
+    
+        
+        uart_div_modify(1, UART_CLK_FREQ / BAUD_RATE);
+
+        WRITE_PERI_REG(UART_CONF0(1),
+            existParity
+                | parityEsp
+                | (stopBit << UART_STOP_BIT_NUM_S)
+                | (bitNumber << UART_BIT_NUM_S));
+
+                        //clear rx and tx fifo,not ready
+        SET_PERI_REG_MASK(UART_CONF0(1),  UART_TXFIFO_RST);
+        CLEAR_PERI_REG_MASK(UART_CONF0(1), UART_TXFIFO_RST);
+    }
+    
+   
+    static void write(SizeUint datum) {
+        bool tx_fifo_len = (READ_PERI_REG(UART_STATUS(1)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= MAX_FIFO_LENGHT;
+        while (tx_fifo_len)
+        {
+            tx_fifo_len = (READ_PERI_REG(UART_STATUS(1)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= MAX_FIFO_LENGHT;
+        }
+        WRITE_PERI_REG(UART_FIFO(1), datum);
+    }
+
+private:
+
+    enum Parity { None, Even, Odd };
+    enum StopBit { One, Two };
+    enum BitNumber { Five, Six, Seven, Eight, Nine };
+
+    static const auto bitNumberMask = 0b111000;
+    static const auto stopBitMask = 0b000001;
+    static const auto parityMask = 0b000110;
+    
+    static const auto MAX_FIFO_LENGHT = 126;
+
+    static constexpr  auto parity = static_cast<Parity>((FRAME_FORMAT & parityMask) >> 1);
+    static constexpr  auto stopBit = static_cast<StopBit>(FRAME_FORMAT & stopBitMask);
+    static constexpr  auto bitNumber = static_cast<BitNumber>((FRAME_FORMAT & bitNumberMask) >> 3);
+
+    static constexpr  auto existParity = (parity == None) ? 0 : BIT3 | BIT5;
+    static constexpr  auto  parityEsp = (parity == None | parity == Odd) ? 0 : BIT4;
+    
+    
+};
+
 
 }
