@@ -98,10 +98,10 @@ public:
     }
 
     static void write(SizeUint datum) {
-        bool tx_fifo_len = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= MAX_FIFO_LENGHT;
+        bool tx_fifo_len = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= (MAX_FIFO_LENGHT-2);
         while (tx_fifo_len)
         {
-            tx_fifo_len = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= MAX_FIFO_LENGHT;
+            tx_fifo_len = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= (MAX_FIFO_LENGHT - 2);
         }
         WRITE_PERI_REG(UART_FIFO(0), datum);
     }
@@ -126,7 +126,7 @@ private:
     static const auto stopBitMask = 0b000001;
     static const auto parityMask = 0b000110;
     
-    static const auto MAX_FIFO_LENGHT = 126;
+    static const auto MAX_FIFO_LENGHT = 128;
 
     static constexpr  auto parity = static_cast<Parity>((FRAME_FORMAT & parityMask) >> 1);
     static constexpr  auto stopBit = static_cast<StopBit>(FRAME_FORMAT & stopBitMask);
@@ -173,10 +173,10 @@ public:
     }*/
    
     static void write(SizeUint datum) {
-        bool tx_fifo_len = (READ_PERI_REG(UART_STATUS(1)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= MAX_FIFO_LENGHT;
+        bool tx_fifo_len = (READ_PERI_REG(UART_STATUS(1)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= (MAX_FIFO_LENGHT - 2);
         while (tx_fifo_len)
         {
-            tx_fifo_len = (READ_PERI_REG(UART_STATUS(1)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= MAX_FIFO_LENGHT;
+            tx_fifo_len = (READ_PERI_REG(UART_STATUS(1)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= (MAX_FIFO_LENGHT - 2);
         }
         WRITE_PERI_REG(UART_FIFO(1), datum);
     }
@@ -254,10 +254,10 @@ public:
     }
 
     static void write(SizeUint datum) {
-        bool tx_fifo_len = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= MAX_FIFO_LENGHT;
+        bool tx_fifo_len = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= (MAX_FIFO_LENGHT - 2);
         while (tx_fifo_len)
         {
-            tx_fifo_len = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= MAX_FIFO_LENGHT;
+            tx_fifo_len = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= (MAX_FIFO_LENGHT - 2);
         }
         WRITE_PERI_REG(UART_FIFO(0), datum);
     }
@@ -283,7 +283,7 @@ private:
     static const auto stopBitMask = 0b000001;
     static const auto parityMask = 0b000110;
     
-    static const auto MAX_FIFO_LENGHT = 126;
+    static const auto MAX_FIFO_LENGHT = 128;
 
     static constexpr  auto parity = static_cast<Parity>((FRAME_FORMAT & parityMask) >> 1);
     static constexpr  auto stopBit = static_cast<StopBit>(FRAME_FORMAT & stopBitMask);
