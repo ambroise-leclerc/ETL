@@ -51,6 +51,16 @@ public:
     static const auto sramSize = 4096;
     static const auto architectureWidth = 8;
     static const uint32_t McuFrequency = F_CPU;
+
+    /// Enables interrupts by setting the global interrupt mask.
+    /// This function generates a single 'sei' instruction with
+    /// no overhead.
+    static void enableInterrupts() { asm volatile("sei" ::: "memory"); }
+
+    /// Disables interrupts by clearing the global interrupt mask.
+    /// This function generates a single 'cli' instruction with
+    /// no overhead.
+    static void disableInterrupts() { asm volatile("cli" ::: "memory"); }
 };
 
 using clock_cycles = std::chrono::duration<unsigned long, std::ratio<1, Device::McuFrequency>>;
@@ -114,6 +124,8 @@ struct PinA7 {
     /// Sets PinA7 to HIGH.
     static void set()       { PORTA |= (1<<7); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinA7 to LOW.
     static void clear()     { PORTA &= ~(1<<7); }
 
@@ -151,6 +163,8 @@ struct PinA7 {
 struct PinA6 {
     /// Sets PinA6 to HIGH.
     static void set()       { PORTA |= (1<<6); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinA6 to LOW.
     static void clear()     { PORTA &= ~(1<<6); }
@@ -190,6 +204,8 @@ struct PinA5 {
     /// Sets PinA5 to HIGH.
     static void set()       { PORTA |= (1<<5); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinA5 to LOW.
     static void clear()     { PORTA &= ~(1<<5); }
 
@@ -227,6 +243,8 @@ struct PinA5 {
 struct PinA4 {
     /// Sets PinA4 to HIGH.
     static void set()       { PORTA |= (1<<4); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinA4 to LOW.
     static void clear()     { PORTA &= ~(1<<4); }
@@ -266,6 +284,8 @@ struct PinA3 {
     /// Sets PinA3 to HIGH.
     static void set()       { PORTA |= (1<<3); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinA3 to LOW.
     static void clear()     { PORTA &= ~(1<<3); }
 
@@ -303,6 +323,8 @@ struct PinA3 {
 struct PinA2 {
     /// Sets PinA2 to HIGH.
     static void set()       { PORTA |= (1<<2); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinA2 to LOW.
     static void clear()     { PORTA &= ~(1<<2); }
@@ -342,6 +364,8 @@ struct PinA1 {
     /// Sets PinA1 to HIGH.
     static void set()       { PORTA |= (1<<1); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinA1 to LOW.
     static void clear()     { PORTA &= ~(1<<1); }
 
@@ -379,6 +403,8 @@ struct PinA1 {
 struct PinA0 {
     /// Sets PinA0 to HIGH.
     static void set()       { PORTA |= (1<<0); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinA0 to LOW.
     static void clear()     { PORTA &= ~(1<<0); }
@@ -473,6 +499,8 @@ struct PinB7 {
     /// Sets PinB7 to HIGH.
     static void set()       { PORTB |= (1<<7); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinB7 to LOW.
     static void clear()     { PORTB &= ~(1<<7); }
 
@@ -510,6 +538,8 @@ struct PinB7 {
 struct PinB6 {
     /// Sets PinB6 to HIGH.
     static void set()       { PORTB |= (1<<6); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinB6 to LOW.
     static void clear()     { PORTB &= ~(1<<6); }
@@ -549,6 +579,8 @@ struct PinB5 {
     /// Sets PinB5 to HIGH.
     static void set()       { PORTB |= (1<<5); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinB5 to LOW.
     static void clear()     { PORTB &= ~(1<<5); }
 
@@ -586,6 +618,8 @@ struct PinB5 {
 struct PinB4 {
     /// Sets PinB4 to HIGH.
     static void set()       { PORTB |= (1<<4); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinB4 to LOW.
     static void clear()     { PORTB &= ~(1<<4); }
@@ -625,6 +659,8 @@ struct PinB3 {
     /// Sets PinB3 to HIGH.
     static void set()       { PORTB |= (1<<3); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinB3 to LOW.
     static void clear()     { PORTB &= ~(1<<3); }
 
@@ -662,6 +698,8 @@ struct PinB3 {
 struct PinB2 {
     /// Sets PinB2 to HIGH.
     static void set()       { PORTB |= (1<<2); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinB2 to LOW.
     static void clear()     { PORTB &= ~(1<<2); }
@@ -701,6 +739,8 @@ struct PinB1 {
     /// Sets PinB1 to HIGH.
     static void set()       { PORTB |= (1<<1); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinB1 to LOW.
     static void clear()     { PORTB &= ~(1<<1); }
 
@@ -738,6 +778,8 @@ struct PinB1 {
 struct PinB0 {
     /// Sets PinB0 to HIGH.
     static void set()       { PORTB |= (1<<0); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinB0 to LOW.
     static void clear()     { PORTB &= ~(1<<0); }
@@ -832,6 +874,8 @@ struct PinC7 {
     /// Sets PinC7 to HIGH.
     static void set()       { PORTC |= (1<<7); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinC7 to LOW.
     static void clear()     { PORTC &= ~(1<<7); }
 
@@ -869,6 +913,8 @@ struct PinC7 {
 struct PinC6 {
     /// Sets PinC6 to HIGH.
     static void set()       { PORTC |= (1<<6); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinC6 to LOW.
     static void clear()     { PORTC &= ~(1<<6); }
@@ -908,6 +954,8 @@ struct PinC5 {
     /// Sets PinC5 to HIGH.
     static void set()       { PORTC |= (1<<5); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinC5 to LOW.
     static void clear()     { PORTC &= ~(1<<5); }
 
@@ -945,6 +993,8 @@ struct PinC5 {
 struct PinC4 {
     /// Sets PinC4 to HIGH.
     static void set()       { PORTC |= (1<<4); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinC4 to LOW.
     static void clear()     { PORTC &= ~(1<<4); }
@@ -984,6 +1034,8 @@ struct PinC3 {
     /// Sets PinC3 to HIGH.
     static void set()       { PORTC |= (1<<3); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinC3 to LOW.
     static void clear()     { PORTC &= ~(1<<3); }
 
@@ -1021,6 +1073,8 @@ struct PinC3 {
 struct PinC2 {
     /// Sets PinC2 to HIGH.
     static void set()       { PORTC |= (1<<2); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinC2 to LOW.
     static void clear()     { PORTC &= ~(1<<2); }
@@ -1060,6 +1114,8 @@ struct PinC1 {
     /// Sets PinC1 to HIGH.
     static void set()       { PORTC |= (1<<1); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinC1 to LOW.
     static void clear()     { PORTC &= ~(1<<1); }
 
@@ -1097,6 +1153,8 @@ struct PinC1 {
 struct PinC0 {
     /// Sets PinC0 to HIGH.
     static void set()       { PORTC |= (1<<0); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinC0 to LOW.
     static void clear()     { PORTC &= ~(1<<0); }
@@ -1191,6 +1249,8 @@ struct PinD7 {
     /// Sets PinD7 to HIGH.
     static void set()       { PORTD |= (1<<7); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinD7 to LOW.
     static void clear()     { PORTD &= ~(1<<7); }
 
@@ -1228,6 +1288,8 @@ struct PinD7 {
 struct PinD6 {
     /// Sets PinD6 to HIGH.
     static void set()       { PORTD |= (1<<6); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinD6 to LOW.
     static void clear()     { PORTD &= ~(1<<6); }
@@ -1267,6 +1329,8 @@ struct PinD5 {
     /// Sets PinD5 to HIGH.
     static void set()       { PORTD |= (1<<5); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinD5 to LOW.
     static void clear()     { PORTD &= ~(1<<5); }
 
@@ -1304,6 +1368,8 @@ struct PinD5 {
 struct PinD4 {
     /// Sets PinD4 to HIGH.
     static void set()       { PORTD |= (1<<4); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinD4 to LOW.
     static void clear()     { PORTD &= ~(1<<4); }
@@ -1343,6 +1409,8 @@ struct PinD3 {
     /// Sets PinD3 to HIGH.
     static void set()       { PORTD |= (1<<3); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinD3 to LOW.
     static void clear()     { PORTD &= ~(1<<3); }
 
@@ -1380,6 +1448,8 @@ struct PinD3 {
 struct PinD2 {
     /// Sets PinD2 to HIGH.
     static void set()       { PORTD |= (1<<2); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinD2 to LOW.
     static void clear()     { PORTD &= ~(1<<2); }
@@ -1419,6 +1489,8 @@ struct PinD1 {
     /// Sets PinD1 to HIGH.
     static void set()       { PORTD |= (1<<1); }
 
+    static void set(bool v) { v ? set() : clear(); }
+
     /// Sets PinD1 to LOW.
     static void clear()     { PORTD &= ~(1<<1); }
 
@@ -1456,6 +1528,8 @@ struct PinD1 {
 struct PinD0 {
     /// Sets PinD0 to HIGH.
     static void set()       { PORTD |= (1<<0); }
+
+    static void set(bool v) { v ? set() : clear(); }
 
     /// Sets PinD0 to LOW.
     static void clear()     { PORTD &= ~(1<<0); }
@@ -1557,37 +1631,37 @@ struct Timer0 {
     CLK_DIV_1024 = (1<<CS02)|(1<<CS01)|(1<<CS00), BITS = (1<<CS02)|(1<<CS01)|(1<<CS00) };
 
   enum Interrupt : uint8_t { 
-    OVERFLOW = (1<<TOIE0), COMPAREMATCHA = (1<<OCIE0A), COMPAREMATCHB = (1<<OCIE0B)};
+    OVERFLOW = (1<<TOIE0), COMPARE_MATCH_A = (1<<OCIE0A), COMPARE_MATCH_B = (1<<OCIE0B)};
   enum Constants : uint8_t { ALL_BITS = 0xFF };
-  static value_type GetValue()                 { return TCNT0; }
-  static void SetValue(value_type value)       { TCNT0 = value; }
-  static void AddValue(value_type value)       { TCNT0 += value; }
-  static void SubValue(value_type value)       { TCNT0 -= value; }
-  static void SetCtrlRegA(uint8_t mask)        { TCCR0A |= mask; }
-  static void ClearCtrlRegA(uint8_t mask)      { TCCR0A &= ~mask; }
-  static void SetCtrlRegB(uint8_t mask)        { TCCR0B |= mask; }
-  static void ClearCtrlRegB(uint8_t mask)      { TCCR0B &= ~mask; }
-  static void SetInterruptMask(uint8_t mask)   { TIMSK0 |= mask; }
-  static void ClearInterruptMask(uint8_t mask) { TIMSK0 &= ~mask; }
-  static void SetPrescaler(Prescaler val)      { TCCR0B &= ~Prescaler::BITS; TCCR0B |= val; }
-  static void SetOutputCompareValueA(value_type value) { OCR0A = value; }
-  static value_type GetOutputCompareValueA()           { return OCR0A; }
-  static void SetOutputCompareValueB(value_type value) { OCR0B = value; }
-  static value_type GetOutputCompareValueB()           { return OCR0B; }
+  static value_type getValue()                 { return TCNT0; }
+  static void setValue(value_type value)       { TCNT0 = value; }
+  static void addValue(value_type value)       { TCNT0 += value; }
+  static void subValue(value_type value)       { TCNT0 -= value; }
+  static void setCtrlRegA(uint8_t mask)        { TCCR0A |= mask; }
+  static void clearCtrlRegA(uint8_t mask)      { TCCR0A &= ~mask; }
+  static void setCtrlRegB(uint8_t mask)        { TCCR0B |= mask; }
+  static void clearCtrlRegB(uint8_t mask)      { TCCR0B &= ~mask; }
+  static void setInterruptMask(uint8_t mask)   { TIMSK0 |= mask; }
+  static void clearInterruptMask(uint8_t mask) { TIMSK0 &= ~mask; }
+  static void setPrescaler(Prescaler val)      { TCCR0B &= ~Prescaler::BITS; TCCR0B |= val; }
+  static void setOutputCompareValueA(value_type value) { OCR0A = value; }
+  static value_type getOutputCompareValueA()           { return OCR0A; }
+  static void setOutputCompareValueB(value_type value) { OCR0B = value; }
+  static value_type getOutputCompareValueB()           { return OCR0B; }
 
-  struct ISR {
+  struct Isr {
     static void Overflow() IOPORTS_IRQ_HANDLER(TIMER0_OVF_vect, signal);
     static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER0_COMPA_vect, signal);
     static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER0_COMPB_vect, signal);
   };
 
-  struct ISRNoBlock {
+  struct IsrNoBlock {
     static void Overflow() IOPORTS_IRQ_HANDLER(TIMER0_OVF_vect, interrupt);
     static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER0_COMPA_vect, interrupt);
     static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER0_COMPB_vect, interrupt);
   };
 
-  struct ISRNaked {
+  struct IsrNaked {
     static void Overflow() IOPORTS_IRQ_HANDLER(TIMER0_OVF_vect, naked);
     static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER0_COMPA_vect, naked);
     static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER0_COMPB_vect, naked);
@@ -1605,39 +1679,39 @@ struct Timer1 {
     CLK_DIV_1024 = (1<<CS12)|(1<<CS11)|(1<<CS10), BITS = (1<<CS12)|(1<<CS11)|(1<<CS10) };
 
   enum Interrupt : uint8_t { 
-    OVERFLOW = (1<<TOIE1), CAPTURE = (1<<ICIE1), COMPAREMATCHA = (1<<OCIE1A), COMPAREMATCHB = (1<<OCIE1B)};
+    OVERFLOW = (1<<TOIE1), CAPTURE = (1<<ICIE1), COMPARE_MATCH_A = (1<<OCIE1A), COMPARE_MATCH_B = (1<<OCIE1B)};
   enum Constants : uint8_t { ALL_BITS = 0xFF };
-  static value_type GetValue()                 { return TCNT1; }
-  static void SetValue(value_type value)       { TCNT1 = value; }
-  static void AddValue(value_type value)       { TCNT1 += value; }
-  static void SubValue(value_type value)       { TCNT1 -= value; }
-  static void SetCtrlRegA(uint8_t mask)        { TCCR1A |= mask; }
-  static void ClearCtrlRegA(uint8_t mask)      { TCCR1A &= ~mask; }
-  static void SetCtrlRegB(uint8_t mask)        { TCCR1B |= mask; }
-  static void ClearCtrlRegB(uint8_t mask)      { TCCR1B &= ~mask; }
-  static void SetInterruptMask(uint8_t mask)   { TIMSK1 |= mask; }
-  static void ClearInterruptMask(uint8_t mask) { TIMSK1 &= ~mask; }
-  static void SetPrescaler(Prescaler val)      { TCCR1B &= ~Prescaler::BITS; TCCR1B |= val; }
-  static void SetOutputCompareValueA(value_type value) { OCR1A = value; }
-  static value_type GetOutputCompareValueA()           { return OCR1A; }
-  static void SetOutputCompareValueB(value_type value) { OCR1B = value; }
-  static value_type GetOutputCompareValueB()           { return OCR1B; }
+  static value_type getValue()                 { return TCNT1; }
+  static void setValue(value_type value)       { TCNT1 = value; }
+  static void addValue(value_type value)       { TCNT1 += value; }
+  static void subValue(value_type value)       { TCNT1 -= value; }
+  static void setCtrlRegA(uint8_t mask)        { TCCR1A |= mask; }
+  static void clearCtrlRegA(uint8_t mask)      { TCCR1A &= ~mask; }
+  static void setCtrlRegB(uint8_t mask)        { TCCR1B |= mask; }
+  static void clearCtrlRegB(uint8_t mask)      { TCCR1B &= ~mask; }
+  static void setInterruptMask(uint8_t mask)   { TIMSK1 |= mask; }
+  static void clearInterruptMask(uint8_t mask) { TIMSK1 &= ~mask; }
+  static void setPrescaler(Prescaler val)      { TCCR1B &= ~Prescaler::BITS; TCCR1B |= val; }
+  static void setOutputCompareValueA(value_type value) { OCR1A = value; }
+  static value_type getOutputCompareValueA()           { return OCR1A; }
+  static void setOutputCompareValueB(value_type value) { OCR1B = value; }
+  static value_type getOutputCompareValueB()           { return OCR1B; }
 
-  struct ISR {
+  struct Isr {
     static void Overflow() IOPORTS_IRQ_HANDLER(TIMER1_OVF_vect, signal);
     static void Capture() IOPORTS_IRQ_HANDLER(TIMER1_CAPT_vect, signal);
     static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER1_COMPA_vect, signal);
     static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER1_COMPB_vect, signal);
   };
 
-  struct ISRNoBlock {
+  struct IsrNoBlock {
     static void Overflow() IOPORTS_IRQ_HANDLER(TIMER1_OVF_vect, interrupt);
     static void Capture() IOPORTS_IRQ_HANDLER(TIMER1_CAPT_vect, interrupt);
     static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER1_COMPA_vect, interrupt);
     static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER1_COMPB_vect, interrupt);
   };
 
-  struct ISRNaked {
+  struct IsrNaked {
     static void Overflow() IOPORTS_IRQ_HANDLER(TIMER1_OVF_vect, naked);
     static void Capture() IOPORTS_IRQ_HANDLER(TIMER1_CAPT_vect, naked);
     static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER1_COMPA_vect, naked);
@@ -1657,38 +1731,38 @@ struct Timer2 {
     INC_ON_FALLING = (1<<CS22)|(1<<CS21), INC_ON_RISING = (1<<CS22)|(1<<CS21)|(1<<CS20) };
 
   enum Interrupt : uint8_t { 
-    OVERFLOW = (1<<TOIE2), COMPAREMATCHA = (1<<OCIE2A), COMPAREMATCHB = (1<<OCIE2B)};
+    OVERFLOW = (1<<TOIE2), COMPARE_MATCH_A = (1<<OCIE2A), COMPARE_MATCH_B = (1<<OCIE2B)};
   enum Constants : uint8_t { ALL_BITS = 0xFF };
-  static value_type GetValue()                 { return TCNT2; }
-  static void SetValue(value_type value)       { TCNT2 = value; }
-  static void AddValue(value_type value)       { TCNT2 += value; }
-  static void SubValue(value_type value)       { TCNT2 -= value; }
-  static void SetCtrlRegA(uint8_t mask)        { TCCR2A |= mask; }
-  static void ClearCtrlRegA(uint8_t mask)      { TCCR2A &= ~mask; }
-  static void SetCtrlRegB(uint8_t mask)        { TCCR2B |= mask; }
-  static void ClearCtrlRegB(uint8_t mask)      { TCCR2B &= ~mask; }
-  static void SetInterruptMask(uint8_t mask)   { TIMSK2 |= mask; }
-  static void ClearInterruptMask(uint8_t mask) { TIMSK2 &= ~mask; }
-  static void SetPrescaler(Prescaler val)      { TCCR2B &= ~Prescaler::BITS; TCCR2B |= val; }
-  static void SetExternalClockSource(ClockSource val)  { TCCR2B &= ~Prescaler::BITS; TCCR2B |= val; }
-  static void SetOutputCompareValueA(value_type value) { OCR2A = value; }
-  static value_type GetOutputCompareValueA()           { return OCR2A; }
-  static void SetOutputCompareValueB(value_type value) { OCR2B = value; }
-  static value_type GetOutputCompareValueB()           { return OCR2B; }
+  static value_type getValue()                 { return TCNT2; }
+  static void setValue(value_type value)       { TCNT2 = value; }
+  static void addValue(value_type value)       { TCNT2 += value; }
+  static void subValue(value_type value)       { TCNT2 -= value; }
+  static void setCtrlRegA(uint8_t mask)        { TCCR2A |= mask; }
+  static void clearCtrlRegA(uint8_t mask)      { TCCR2A &= ~mask; }
+  static void setCtrlRegB(uint8_t mask)        { TCCR2B |= mask; }
+  static void clearCtrlRegB(uint8_t mask)      { TCCR2B &= ~mask; }
+  static void setInterruptMask(uint8_t mask)   { TIMSK2 |= mask; }
+  static void clearInterruptMask(uint8_t mask) { TIMSK2 &= ~mask; }
+  static void setPrescaler(Prescaler val)      { TCCR2B &= ~Prescaler::BITS; TCCR2B |= val; }
+  static void setExternalClockSource(ClockSource val)  { TCCR2B &= ~Prescaler::BITS; TCCR2B |= val; }
+  static void setOutputCompareValueA(value_type value) { OCR2A = value; }
+  static value_type getOutputCompareValueA()           { return OCR2A; }
+  static void setOutputCompareValueB(value_type value) { OCR2B = value; }
+  static value_type getOutputCompareValueB()           { return OCR2B; }
 
-  struct ISR {
+  struct Isr {
     static void Overflow() IOPORTS_IRQ_HANDLER(TIMER2_OVF_vect, signal);
     static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER2_COMPA_vect, signal);
     static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER2_COMPB_vect, signal);
   };
 
-  struct ISRNoBlock {
+  struct IsrNoBlock {
     static void Overflow() IOPORTS_IRQ_HANDLER(TIMER2_OVF_vect, interrupt);
     static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER2_COMPA_vect, interrupt);
     static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER2_COMPB_vect, interrupt);
   };
 
-  struct ISRNaked {
+  struct IsrNaked {
     static void Overflow() IOPORTS_IRQ_HANDLER(TIMER2_OVF_vect, naked);
     static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER2_COMPA_vect, naked);
     static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER2_COMPB_vect, naked);
@@ -1697,8 +1771,8 @@ struct Timer2 {
 
 #ifdef PCICR
 struct PinChangeControlRegister {
-  static void SetBits(uint8_t mask)   { PCICR |= mask; }
-  static void ClearBits(uint8_t mask) { PCICR &= ~mask; }
+  static void setBits(uint8_t mask)   { PCICR |= mask; }
+  static void clearBits(uint8_t mask) { PCICR &= ~mask; }
 };
 #endif // PCICR
 
