@@ -26,10 +26,10 @@ enum FrameFormat {
     _9N1 = 0b100000, _9N2 = 0b1000001, _9E1 = 0b100010, _9E2 = 0b100011, _9O1 = 0b100100, _9O2 = 0b100101
 };
 
-typedef void(*CharReceiver)(uint8_t);
+  
+template<typename CharType = char>  using CharReceiver = void(*)(CharType);
     
-    
-void intr_handler(CharReceiver func)
+void intr_handler(CharReceiver<> func)
 {
     uint8_t rcvChar;
     if (READ_PERI_REG(UART_INT_ST(0))&UART_RXFIFO_FULL_INT_ST == UART_RXFIFO_FULL_INT_ST)
@@ -44,7 +44,7 @@ void intr_handler(CharReceiver func)
     }
 }
     
-void intr_handler1(CharReceiver func)
+    void intr_handler1(CharReceiver<> func)
 {
     uint8_t rcvChar;
     if (READ_PERI_REG(UART_INT_ST(1))&UART_RXFIFO_FULL_INT_ST == UART_RXFIFO_FULL_INT_ST)
@@ -59,7 +59,7 @@ void intr_handler1(CharReceiver func)
     }
 }
 
-template<uint32_t BAUD_RATE = 9600, FrameFormat FRAME_FORMAT = FrameFormat::_8N1, typename SizeUint = uint8_t>
+template<uint32_t BAUD_RATE = 9600, FrameFormat FRAME_FORMAT = FrameFormat::_8N1, typename CharType = uint8_t>
 class Uart0 {
 public:
     static void start() {
@@ -84,7 +84,7 @@ public:
        
     }
     
-    static void start(CharReceiver func) {
+    template<typename CharTypeFct = char>  static void start(CharReceiver<CharTypeFct> func) {
         start();
         ETS_UART_INTR_ATTACH((void *)intr_handler, (void *)func);
         WRITE_PERI_REG(UART_CONF1(0), (0x01 & UART_RXFIFO_FULL_THRHD) << UART_RXFIFO_FULL_THRHD_S);
@@ -97,7 +97,7 @@ public:
      
     }
 
-    static void write(SizeUint datum) {
+    static void write(CharType datum) {
         bool tx_fifo_len = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= (MAX_FIFO_LENGHT-2);
         while (tx_fifo_len)
         {
@@ -105,15 +105,24 @@ public:
         }
         WRITE_PERI_REG(UART_FIFO(0), datum);
     }
+    
+    static void writeAsync(CharType datum) {
+        WRITE_PERI_REG(UART_FIFO(0), datum);
+    }
 
 
-    static SizeUint read() {
+    static CharType read() {
         bool rx_fifo_len = READ_PERI_REG(UART_STATUS(0)) & (UART_RXFIFO_CNT << UART_RXFIFO_CNT_S) > 0;
         while (!rx_fifo_len)
         {
             rx_fifo_len = READ_PERI_REG(UART_STATUS(0)) & (UART_RXFIFO_CNT << UART_RXFIFO_CNT_S)  > 0;
         }
         return READ_PERI_REG(UART_FIFO(0)) & 0xFF;
+    }
+    
+    uint8_t getRemainingBufferSize()
+    {
+        return (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT;
     }
 
 private:
@@ -139,7 +148,7 @@ private:
 };
     
     
-template<uint32_t BAUD_RATE = 9600, FrameFormat FRAME_FORMAT = FrameFormat::_8N1, typename SizeUint = uint8_t>
+template<uint32_t BAUD_RATE = 9600, FrameFormat FRAME_FORMAT = FrameFormat::_8N1, typename CharType = uint8_t>
 class Uart1 {
 public:
     static void start() {
@@ -172,7 +181,7 @@ public:
      
     }*/
    
-    static void write(SizeUint datum) {
+    static void write(CharType datum) {
         bool tx_fifo_len = (READ_PERI_REG(UART_STATUS(1)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= (MAX_FIFO_LENGHT - 2);
         while (tx_fifo_len)
         {
@@ -180,6 +189,11 @@ public:
         }
         WRITE_PERI_REG(UART_FIFO(1), datum);
     }
+    
+    static void writeAsync(CharType datum) {
+        WRITE_PERI_REG(UART_FIFO(1), datum);
+    }
+
     
    /* static SizeUint read() {
         bool rx_fifo_len = READ_PERI_REG(UART_STATUS(1)) & (UART_RXFIFO_CNT << UART_RXFIFO_CNT_S) > 0;
@@ -189,6 +203,12 @@ public:
         }
         return READ_PERI_REG(UART_FIFO(1)) & 0xFF;
     }*/
+    
+    uint8_t getRemainingBufferSize()
+    {
+        return (READ_PERI_REG(UART_STATUS(1)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT;
+    }
+
 
 private:
 
@@ -213,7 +233,7 @@ private:
 };
 
     
-template<uint32_t BAUD_RATE = 9600, FrameFormat FRAME_FORMAT = FrameFormat::_8N1, typename SizeUint = uint8_t>
+    template<uint32_t BAUD_RATE = 9600, FrameFormat FRAME_FORMAT = FrameFormat::_8N1, typename CharType = uint8_t>
 class Uart2 {
 public:
     static void start() {
@@ -240,7 +260,7 @@ public:
        
     }
     
-    static void start(CharReceiver func) {
+    template<typename CharTypeFct = char>  static void start(CharReceiver<CharTypeFct> func) {
         start();
         ETS_UART_INTR_ATTACH((void *)intr_handler, (void *)func);
         WRITE_PERI_REG(UART_CONF1(0), (0x01 & UART_RXFIFO_FULL_THRHD) << UART_RXFIFO_FULL_THRHD_S);
@@ -253,7 +273,7 @@ public:
      
     }
 
-    static void write(SizeUint datum) {
+    static void write(CharType datum) {
         bool tx_fifo_len = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= (MAX_FIFO_LENGHT - 2);
         while (tx_fifo_len)
         {
@@ -261,9 +281,13 @@ public:
         }
         WRITE_PERI_REG(UART_FIFO(0), datum);
     }
+    
+    static void writeAsync(CharType datum) {
+        WRITE_PERI_REG(UART_FIFO(0), datum);
+    }
 
 
-    static SizeUint read() {
+    static CharType read() {
         bool rx_fifo_len = READ_PERI_REG(UART_STATUS(0)) & (UART_RXFIFO_CNT << UART_RXFIFO_CNT_S) > 0;
         while (!rx_fifo_len)
         {
@@ -271,6 +295,12 @@ public:
         }
         return READ_PERI_REG(UART_FIFO(0)) & 0xFF;
     }
+    
+    uint8_t getRemainingBufferSize()
+    {
+        return (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT;
+    }
+
 
 
 private:
