@@ -1,4 +1,4 @@
-/// @file ioports_ATmega644P.h
+/// @file ioports_ATmega644A.h
 /// @date 18/06/2016 18:17:16
 /// @author Ambroise Leclerc and Cécile Gomes
 /// @brief Microcontrollers peripherals handling classes
@@ -64,5 +64,7 @@
 #include "architecture/ioports_ATmega328P.h"
 #elif defined (__AVR_ATmega644P__)
 #include "architecture/ioports_ATmega644P.h"
+#elif defined (__AVR_ATmega644A__)
+#include "architecture/ioports_ATmega644A.h"
 #endif
 
