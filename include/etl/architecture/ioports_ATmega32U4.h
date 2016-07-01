@@ -1646,6 +1646,15 @@ struct Timer4 {
   };
 };  
 
+template<typename> struct is_uart_txd_capable : std::false_type {};
+template<typename> struct is_uart_rxd_capable : std::false_type {};
+enum FrameFormat {
+    _5N1 = 0b00000, _5N2 = 0b000001, _5E1 = 0b00010, _5E2 = 0b00011, _5O1 = 0b00100, _5O2 = 0b00101,       // Encoding 5-N-1 : nbBits - no, even or odd parity - 1 or 2 stop bits : 0b00 - 00 - 0
+    _6N1 = 0b01000, _6N2 = 0b010001, _6E1 = 0b01010, _6E2 = 0b01011, _6O1 = 0b01100, _6O2 = 0b01101,
+    _7N1 = 0b10000, _7N2 = 0b100001, _7E1 = 0b10010, _7E2 = 0b10011, _7O1 = 0b10100, _7O2 = 0b10101,
+    _8N1 = 0b11000, _8N2 = 0b110001, _8E1 = 0b11010, _8E2 = 0b11011, _8O1 = 0b11100, _8O2 = 0b11101,
+    NbBitsMask = 0b11000, ParityMask = 0b00110, StopBitMask = 0b00001
+};
 #ifdef PCICR
 struct PinChangeControlRegister {
   static void setBits(uint8_t mask)   { PCICR |= mask; }
