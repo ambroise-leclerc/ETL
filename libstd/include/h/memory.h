@@ -34,8 +34,8 @@
 
 #ifndef ETL_LIBSTD_MEMORY_H_
 #define ETL_LIBSTD_MEMORY_H_
-#include <type_traits>
-#include <utility>
+#include <../libstd/include/type_traits>
+#include <../libstd/include/utility>
 
 namespace std {
 namespace etlHelper {

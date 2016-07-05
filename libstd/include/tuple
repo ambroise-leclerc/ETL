@@ -33,23 +33,91 @@
 
 #ifndef ETL_LIBSTD_TUPLE_
 #define ETL_LIBSTD_TUPLE_
+#include <../libstd/include/functional>
+#include <../libstd/include/type_traits>
 
 
 namespace std {
 
 template <typename... Types>
 class tuple {
- public:
-  constexpr tuple();
-  explicit constexpr tuple(const Types&... args);
-
-  template <typename... UTypes>
-  explicit constexpr tuple(UTypes&&... args);
+public:
+    constexpr tuple();
+    explicit constexpr tuple(const Types&... args);
+    template<typename... UTypes> constexpr tuple(tuple<UTypes...>& other)
+    {
+    }
+    
+    template <typename... UTypes>
+    explicit constexpr tuple(UTypes&&... args);
 };
 
-} // namespace std
+// "Some implementations of std::tuple use recursive inheritance. But the good ones don't. ;-)"
+// So this is a quick std::tuple implementation with huge compile times and wrong memory order.
 
-#include <h/tuple.h>
+namespace etlHelper {
+  
+	template<typename T>
+	struct deep_decay {
+		using type = typename std::decay<T>::type;
+	};
+ 
+	template<typename T>
+	struct deep_decay<std::reference_wrapper<T>> {
+		using type = T&;
+	};
+ 
+	template<typename T>
+	using deep_decay_t = typename deep_decay<T>::type;
+
+} // namespace etlHelper  
+
+// empty tuple
+template<> class tuple<> {};
+  
+// recursive tuple definition
+template<typename First, typename... Rest>
+struct tuple<First, Rest...> : private tuple<Rest...> {
+	// tuple(First first, Rest... rest): tuple<Rest...>(rest...), first_(first) {}
+
+	First first_;
+};
+
+// tuple_value, an helper accessor class for std::tuple values.
+template<std::size_t Index, typename Tuple> struct tuple_element;
+
+// tuple_value<0...> access to  first value
+template<typename First, typename... Rest>
+struct tuple_element<0, std::tuple<First, Rest...>> {
+	using type = First&;
+	using TupleType = std::tuple<First, Rest...>;
+};
+
+// recursive tuple_value definition
+template<size_t Index, typename First, typename... Rest>
+struct tuple_element<Index, std::tuple<First, Rest...>> : public tuple_element<Index - 1, std::tuple<Rest...>> {};   
+  
+
+
+/// Extract the Ith element from the tuple.
+/// @param[in] tuple std::tuple whose contents will be extracted
+/// @return Reference to the selected element of tuple
+template<std::size_t I, typename... Types>
+	auto get(std::tuple<Types...>& tuple)->typename std::tuple_element<I, std::tuple<Types...>>::type {
+		using ElementTuple = typename std::tuple_element<I, std::tuple<Types...>>::TupleType;
+		return reinterpret_cast<ElementTuple&>(tuple).first_;
+	}  
+
+
+/// Creates a tuple object from the arguments.
+/// @param[in] args... arguments to construct the tuple from
+/// @return a std::stuple object.
+template<typename... Types>
+	constexpr std::tuple<typename etlHelper::deep_decay_t<Types>...> make_tuple(Types&&... args) {
+		return std::tuple<etlHelper::deep_decay_t<Types>...>(std::forward<Types>(args)...);
+	}
+
+} // namespace std
 
 
 #endif // ETL_LIBSTD_TUPLE_

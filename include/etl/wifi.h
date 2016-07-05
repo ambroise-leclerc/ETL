@@ -1,5 +1,5 @@
 #pragma once
-#include <memory>
+//#include <memory>
 
 extern "C"
 {
@@ -23,7 +23,7 @@ extern "C"
 using uartWifi =   etl::Uart0<>;
 void writeUartWifi(sint8 s)
 {
- uartWifi::write((char)(s+48));
+    uartWifi::write((char)(s+48));
     uartWifi::write('\r');
     uartWifi::write('\n');
 }
@@ -125,11 +125,6 @@ public:
         return *this;
     }
 
-    auto& setQueryParams(const char* queryParamsP) {
-        queryParams = queryParamsP;
-        return *this;
-    }
-    
     auto& setData(const char* dataP) {
         data = dataP;
         return *this;
@@ -165,7 +160,6 @@ public:
     REQUEST_TYPE currentyType;
     
     const char * path;
-    const char * queryParams;
     const char * contentype;
     const char * data;
     responseReceived callback = nullptr;
@@ -275,10 +269,7 @@ struct ClientManager
     
 };
 
-
 int ClientManager::clientIndex = 0;
-
-    
 
 void  connected(void *arg)
 {
@@ -301,7 +292,6 @@ void  connected(void *arg)
         writeUartWifi("Sending: ");
         writeUartWifi(clientPtr->queryParam.buffer);
         auto value = espconn_sent(&(clientPtr->connection), (uint8_t *)(clientPtr->queryParam.buffer), os_strlen(clientPtr->queryParam.buffer));
-        writeUartWifi("END Sending!!!");
     }
         break;
     case QueryParam::GET :
@@ -390,7 +380,6 @@ public:
         connect(ssid, password);
         wifi_set_event_handler_cb(handler);
     }
-    
 
 };
 
