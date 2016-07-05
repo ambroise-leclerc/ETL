@@ -24,6 +24,8 @@ using uartWifi =   etl::Uart0<>;
 void writeUartWifi(sint8 s)
 {
  uartWifi::write((char)(s+48));
+    uartWifi::write('\r');
+    uartWifi::write('\n');
 }
 
 void writeUartWifi(const char * string)
@@ -74,10 +76,7 @@ namespace std
 }
 
 void * operator new(size_t size) {
-    writeUartWifi("inside new ope");
-    os_delay_us(100);
     auto rsize = os_malloc(size);
-    writeUartWifi("end new ope");
     return rsize;
 }
 
@@ -114,6 +113,64 @@ void __cxa_deleted_virtual(void) {
 } 
 
 void  dnsResolved(const char *name, ip_addr_t *ipaddr, void *arg);
+void  response(void *arg, char *pdata, unsigned short len);
+
+using responseReceived = void(*)(char * receivedData);
+
+
+class QueryParam {
+public:
+    auto& setPath(const char* pathP) {
+        path = pathP;
+        return *this;
+    }
+
+    auto& setQueryParams(const char* queryParamsP) {
+        queryParams = queryParamsP;
+        return *this;
+    }
+    
+    auto& setData(const char* dataP) {
+        data = dataP;
+        return *this;
+    }
+
+    auto& setContentType(const char* contentpeP) {
+        contentype = contentpeP;
+        return *this;
+    }
+    
+    auto& setCallBack(responseReceived callBackP) {
+        callback = callBackP;
+        return *this;
+    }
+    
+    void setPost()
+    {
+        currentyType = QueryParam::POST;
+    }
+    
+    void setGet()
+    {
+        currentyType = QueryParam::GET;
+    }
+
+
+    enum REQUEST_TYPE
+    {
+        POST = 13, 
+        GET = 14
+    };
+    
+    REQUEST_TYPE currentyType;
+    
+    const char * path;
+    const char * queryParams;
+    const char * contentype;
+    const char * data;
+    responseReceived callback = nullptr;
+    char buffer[2048];
+};
 
 class Client
 {
@@ -123,31 +180,42 @@ public:
         : host(hostP) {}
     ~Client() {}
   
-    void post(const char * nameP)
+    void send()
     {
-        currentyType = POST;
-        name = nameP;
-        espconn_gethostbyname(&connection, host, &ip, dnsResolved);
+        run();
+    }
+
+	QueryParam& buildPost() {
+    	queryParam.setPost();
+    	return queryParam;
+    }
+   
+    QueryParam& buildGet() {
+        queryParam.setGet();
+        return queryParam;
     }
   
-    enum REQUEST_TYPE
+    bool isBusy()
     {
-        POST, 
-        GET
-    };
+        return busy;
+    }
     
     const char * host;
-    const char * name;
    
-    REQUEST_TYPE currentyType;
+    QueryParam queryParam;
     
-    const char * path = "/update";
-    char data[256];
-    char buffer[2048];
-
+    bool busy = false;
+    
     espconn connection;
     ip_addr_t  ip;
     esp_tcp  tcp;
+    
+private:
+    void run()
+    {
+        busy = true;
+        auto value = espconn_gethostbyname(&connection, host, &ip, dnsResolved);
+    }
 };
 
 Client* clientTab[10];
@@ -156,8 +224,6 @@ struct ClientManager
 {
     auto static createClient(const char * hostP)
     {
-        writeUartWifi("createClient by host");
-        writeUartWifi(hostP);
         auto clientPtr = new Client(hostP);
         auto oldPtr = clientTab[clientIndex] ;
         if(oldPtr){
@@ -178,8 +244,6 @@ struct ClientManager
     
     auto static getClient(const char * hostP)
     {
-        writeUartWifi("getClient by host");
-        writeUartWifi(hostP);
         for (int i = 0; i < clientIndex; i++)
         {
             auto clientPtr = clientTab[i];
@@ -195,19 +259,15 @@ struct ClientManager
     
     static Client* getClient(espconn * connection)
     {
-        writeUartWifi("getClient by ptr");
-       
         for (int i = 0; i < clientIndex; i++)
         {
             auto clientPtr = clientTab[i];
             if (connection == &(clientPtr->connection))
             {
-                writeUartWifi("find");
                 return clientPtr;
             }
             
         }
-        writeUartWifi("nullptr");
         return nullptr ;
     }
     
@@ -224,30 +284,27 @@ void  connected(void *arg)
 {
     writeUartWifi("tcp_connected");
     auto clientPtr = ClientManager::getClient((espconn *)arg);
-    auto currentyType = clientPtr->currentyType;
+    auto currentyType = clientPtr->queryParam.currentyType;
     switch (currentyType)
     {
-    case Client::POST :
+    case QueryParam::POST :
     {
-        const char * prenom = clientPtr->name;
-        auto number = 10;
-        os_sprintf(clientPtr->data, "api_key=1LBURH919EGVNR97&field1=%s&field2=%d", prenom, number);
-        os_sprintf(clientPtr->buffer,
-            "POST %s HTTP/1.1 \r\nHost: %s \r\nCache-Control: no-cache \r\nContent-Type: application/x-www-form-urlencoded \r\nContent-Length: %d \r\n\r\n%s",
-            clientPtr->path,
+        writeUartWifi("POST");
+        os_sprintf(clientPtr->queryParam.buffer,
+            "POST %s HTTP/1.1 \r\nHost: %s \r\nCache-Control: no-cache \r\nContent-Type: %s \r\nContent-Length: %d \r\n\r\n%s",
+            clientPtr->queryParam.path,
             clientPtr->host,
-            os_strlen(clientPtr->data),
-            clientPtr->data);
+            clientPtr->queryParam.contentype,
+            os_strlen(clientPtr->queryParam.data),
+            clientPtr->queryParam.data);
     
         writeUartWifi("Sending: ");
-        writeUartWifi(clientPtr->buffer);
-        auto value = espconn_sent(&(clientPtr->connection), (uint8_t *)(clientPtr->buffer), os_strlen(clientPtr->buffer));
-        writeUartWifi("value:");
-        writeUartWifi(value);
+        writeUartWifi(clientPtr->queryParam.buffer);
+        auto value = espconn_sent(&(clientPtr->connection), (uint8_t *)(clientPtr->queryParam.buffer), os_strlen(clientPtr->queryParam.buffer));
         writeUartWifi("END Sending!!!");
     }
         break;
-     case Client::GET :
+    case QueryParam::GET :
            break;
     }
      
@@ -256,7 +313,13 @@ void  connected(void *arg)
 void  response(void *arg, char *pdata, unsigned short len)
 {
     writeUartWifi("response:");
-    writeUartWifi(pdata);
+    auto clientPtr = ClientManager::getClient((espconn *)arg);
+    clientPtr->busy = false;
+    if (clientPtr->queryParam.callback)
+    {
+        writeUartWifi("call callback:");
+        clientPtr->queryParam.callback(pdata);
+    }
 }
 
 void  sentcb(void *arg)
@@ -276,8 +339,6 @@ void  disconnected(void *arg)
 
 void  dnsResolved(const char *name, ip_addr_t *ipaddr, void *arg)
 {
-    writeUartWifi("dns_done");
-        
     if (ipaddr == NULL) 
     {
         writeUartWifi("DNS lookup failed\n");
@@ -292,31 +353,19 @@ void  dnsResolved(const char *name, ip_addr_t *ipaddr, void *arg)
         writeUartWifi("Connecting dnsResolved...");
         writeUartWifi(name);
         auto clientPtr = ClientManager::getClient(name);
-        writeUartWifi("ClientPtr retrieved");
-        writeUartWifi("ESPCONN_TCP");
         auto connection = &(clientPtr->connection);
         connection->type = ESPCONN_TCP;
- writeUartWifi("ESPCONN_NONE");
         connection->state = ESPCONN_NONE;
- writeUartWifi("&(clientPtr->tcp)");
         connection->proto.tcp = &(clientPtr->tcp);
-writeUartWifi("espconn_port");
         connection->proto.tcp->local_port = espconn_port();
-writeUartWifi("remote_port");
         connection->proto.tcp->remote_port = 80;
-writeUartWifi("os_memcpy");
         os_memcpy(connection->proto.tcp->remote_ip, &ipaddr->addr, 4);
-writeUartWifi("espconn_regist_connectcb");
         espconn_regist_connectcb(connection, connected);
-writeUartWifi("espconn_regist_disconcb");
         espconn_regist_disconcb(connection, disconnected);
-writeUartWifi("espconn_regist_recvcb");
         espconn_regist_recvcb(connection, response);
         espconn_regist_sentcb(connection, sentcb);
         espconn_regist_write_finish(connection,finishWrite);
-writeUartWifi("espconn_connect");
         espconn_connect(connection);
-     writeUartWifi("end dns_done");
     }
 }
 
