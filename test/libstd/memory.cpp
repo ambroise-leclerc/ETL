@@ -1,10 +1,9 @@
-/// @file utility_declval.h
-/// @data 13/03/2014 22:09:55
+/// @file test/libstd/memory.cpp
+/// @data 06/06/2016 22:23:53
 /// @author Ambroise Leclerc
-/// @brief ISO §20.2.4
+/// @brief BDD tests for <memory>
 //
-// Embedded Template Library
-// Copyright (c) 2014, Ambroise Leclerc
+// Copyright (c) 2016, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -31,21 +30,48 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#include <catch.hpp>
 
-#pragma once
+namespace etlTest {
+#include <libstd/include/memory>
+#include <libstd/include/utility>
+} // namespace etlTest
 
-namespace std {
-namespace etlHelper {
-    template<typename T> struct declval {
-        static const bool never_use = false;
-        static typename std::add_rvalue_reference<T>::type ret();
-    };
-} // namespace etlHelper
+class MyClass {
+public:
+    MyClass(uint32_t id) : id(id) {
+        instances++;
+    }
 
-  
-template<typename T> typename std::add_rvalue_reference<T>::type declval() noexcept {
-    static_assert(etlHelper::declval<T>::never_use, "std::declval() return value must never be used (ISO §20.2.4).");
-    return etlHelper::declval<T>::ret();
+    ~MyClass() {
+        instances--;
+    }
+public:
+    static uint8_t instances;
+    uint32_t id;
+};
+
+uint8_t MyClass::instances = 0;
+using namespace etlTest::std;
+
+SCENARIO("std::unique_ptr") {
+    GIVEN("0 class instances") {
+        MyClass::instances = 0;
+        WHEN("a unique_ptr is created") {
+            THEN("") {
+                auto obj = make_unique<MyClass>(123456);
+                REQUIRE(MyClass::instances == 1);
+                auto obj2 = move(obj);
+                REQUIRE(MyClass::instances == 1);
+                REQUIRE(obj2->id == 123456);
+            }
+            REQUIRE(MyClass::instances == 0);
+        }
+    }
 }
 
-} // namspace std
+SCENARIO("std::shared_ptr") {
+    
+
+
+}

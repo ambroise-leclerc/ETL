@@ -36,11 +36,18 @@
 #define ETL_LIBSTD_CSTDDEF_H_
 
 namespace std {
+#ifdef __GNUG__
+    using nullptr_t = decltype(nullptr);
+#elseif
+    using nullptr_t = decltype(__nullptr);
+#endif
 
-typedef decltype(nullptr) nullptr_t;
-typedef __SIZE_TYPE__ size_t;
-typedef __PTRDIFF_TYPE__ ptrdiff_t;
-typedef ::max_align_t max_align_t;
-
+    using size_t = ::size_t;
+	using ptrdiff_t = ::ptrdiff_t;
+	using max_align_t = ::max_align_t;
 } // namespace std
+
+using std::nullptr_t;
+
+
 #endif // ETL_LIBSTD_CSTDDEF_H_
