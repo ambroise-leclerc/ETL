@@ -32,8 +32,8 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_UNIQUE_PTR_H
-#define ETL_LIBSTD_UNIQUE_PTR_H
+#pragma once 
+
 #include <../libstd/include/utility>
 #include <../libstd/include/cstddef>
 #include <../libstd/include/h/default_delete.h>
@@ -387,5 +387,3 @@ template <class T, class D>
 bool operator>=(nullptr_t, const unique_ptr<T, D>& y);
 
 } // namespace std
-
-#endif // ETL_LIBSTD_UNIQUE_PTR_H

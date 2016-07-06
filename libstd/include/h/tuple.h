@@ -36,8 +36,8 @@
 
 // "Some implementations of std::tuple use recursive inheritance. But the good ones don't. ;-)"
 // So this is a quick std::tuple implementation with huge compile times and wrong memory order.
-#include <functional>
-#include <type_traits>
+#include <../libstd/include/functional>
+#include <../libstd/include/type_traits>
 
 namespace etlHelper {
   

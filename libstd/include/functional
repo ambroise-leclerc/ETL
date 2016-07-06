@@ -32,8 +32,9 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 #include "h/functional.h"
-#include <type_traits>
-#include <memory>
+#include "h/functional_operators.h"
+#include <../libstd/include/type_traits>
+#include <../libstd/include/memory>
 
 namespace std {
 
