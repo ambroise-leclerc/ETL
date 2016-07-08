@@ -36,6 +36,7 @@
 #include <thread>
 #include <tuple>  
 #include <chrono>   
+#include <atomic>
 
 namespace etl {
 
@@ -59,6 +60,14 @@ namespace etl {
         _9N1 = 0b100000, _9N2 = 0b1000001, _9E1 = 0b100010, _9E2 = 0b100011, _9O1 = 0b100100, _9O2 = 0b100101
     };
 
+    void receiverChar(char c) {
+
+    }
+
+    template<typename CharType = char>  using CharReceiver = void(*)(CharType);
+
+
+
     template<typename RxD, typename TxD, uint32_t BAUD_RATE = 9600, FrameFormat FRAME_FORMAT = FrameFormat::_8N1, typename SizeUint = uint8_t>
     class Uart {
     public:
@@ -78,6 +87,12 @@ namespace etl {
             std::cout << "RxD::test(): " << RxD::test() << '\n';
         }
 
+        static void start(CharReceiver<> receiverP) {
+            start();
+            receiver = receiverP;
+            new thread(readBoucle);
+        }
+
         static void stop() {
 
         }
@@ -85,7 +100,7 @@ namespace etl {
         static SizeUint read() {
 
             while (rxdRead()) {
-
+               
             }
             auto returnValue = readBits();
             assert(readParity(std::get<1>(returnValue)));
@@ -100,10 +115,18 @@ namespace etl {
             sendStopBit();
         }
 
+        static SizeUint readBoucle() {
+            while (true) {
+            receiver(read());
+           }
+        };
+
     private:
         enum Parity { None, Even, Odd };
         enum StopBit { One, Two };
         enum BitNumber { Five = 5, Six = 6, Seven = 7, Eight = 8, Nine = 9 };
+
+        static CharReceiver<> receiver;
 
 
         static const auto bitNumberMask = 0b111000;
@@ -160,6 +183,7 @@ namespace etl {
 
 
         static auto  sendBit(SizeUint datum) {
+
             uint8_t nbOdd = 0;
             for (auto i = bitNumber - 1; i >= 0; i--) {
                 auto value = (datum >> i) & 0x01;
@@ -201,7 +225,6 @@ namespace etl {
             while (!dataToRead) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(1000u / BAUD_RATE));
             }
-
         }
 
         static void waitWrite() {
@@ -242,10 +265,11 @@ namespace etl {
             return value;
         }
 
-        static bool dataToRead;
+        static std::atomic<bool> dataToRead;
 
 
     };
 
-    template<typename RxD, typename TxD, uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT, typename SizeUint> bool Uart<RxD, TxD, BAUD_RATE, FRAME_FORMAT, SizeUint>::dataToRead = false;
+    template<typename RxD, typename TxD, uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT, typename SizeUint> std::atomic<bool> Uart<RxD, TxD, BAUD_RATE, FRAME_FORMAT, SizeUint>::dataToRead = false;
+    template<typename RxD, typename TxD, uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT, typename SizeUint> CharReceiver<> Uart<RxD, TxD, BAUD_RATE, FRAME_FORMAT, SizeUint>::receiver = receiverChar;
 } // namespace etl

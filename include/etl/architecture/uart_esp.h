@@ -96,6 +96,17 @@ public:
         ETS_UART_INTR_ENABLE();
      
     }
+    
+    template<typename CharTypeFct = char>  static void setReceiver(CharReceiver<CharTypeFct> func) {
+        ETS_UART_INTR_ATTACH((void *)intr_handler, (void *)func);
+        WRITE_PERI_REG(UART_CONF1(0), (0x01 & UART_RXFIFO_FULL_THRHD) << UART_RXFIFO_FULL_THRHD_S);
+
+        //clear all interrupt
+        WRITE_PERI_REG(UART_INT_CLR(0), 0xffff);
+        //enable rx_interrupt
+        SET_PERI_REG_MASK(UART_INT_ENA(0), UART_RXFIFO_FULL_INT_ENA);
+        ETS_UART_INTR_ENABLE();
+    }
 
     static void write(CharType datum) {
         bool tx_fifo_len = (READ_PERI_REG(UART_STATUS(0)) >> UART_TXFIFO_CNT_S)&UART_TXFIFO_CNT >= (MAX_FIFO_LENGHT-2);

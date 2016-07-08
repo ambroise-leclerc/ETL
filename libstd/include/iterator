@@ -35,10 +35,10 @@
 #define ETL_LIBSTD_ITERATOR_
 
 
-#include <h/iterator_traits.h>
-#include <h/iterator.h>
-#include <h/iterator_reverse.h>
-#include <h/iterator_move.h>
-#include <h/iterator_utils.h>
+#include <../libstd/include/h/iterator_traits.h>
+#include <../libstd/include/h/iterator.h>
+#include <../libstd/include/h/iterator_reverse.h>
+#include <../libstd/include/h/iterator_move.h>
+#include <../libstd/include/h/iterator_utils.h>
 
 #endif // ETL_LIBSTD_ITERATOR_

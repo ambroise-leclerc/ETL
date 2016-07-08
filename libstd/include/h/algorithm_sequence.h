@@ -33,7 +33,7 @@
 
 #ifndef ETL_LIBSTD_ALGORITHM_SEQUENCE_H_
 #define ETL_LIBSTD_ALGORITHM_SEQUENCE_H_
-#include <iterator>
+#include <../libstd/include/iterator>
 
 namespace std {
 

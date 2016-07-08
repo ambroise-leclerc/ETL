@@ -49,27 +49,27 @@ extern "C" void abort() {
 
 namespace std
 {
-    void __throw_bad_function_call()
+	void ICACHE_FLASH_ATTR __throw_bad_function_call()
     {
         abort();
     }
 
-    void __throw_length_error(char const*)
+	void ICACHE_FLASH_ATTR  __throw_length_error(char const*)
     {
         abort();
     }
 
-    void __throw_bad_alloc()
+	void ICACHE_FLASH_ATTR __throw_bad_alloc()
     {
         abort();
     }
 
-    void __throw_logic_error(const char* str)
+	void ICACHE_FLASH_ATTR __throw_logic_error(const char* str)
     {
         abort();
     }
 
-    void __throw_out_of_range(const char* str)
+	void ICACHE_FLASH_ATTR __throw_out_of_range(const char* str)
     {
         abort();
     }
@@ -104,16 +104,16 @@ extern "C" void __cxa_pure_virtual(void) __attribute__((__noreturn__));
 extern "C" void __cxa_deleted_virtual(void) __attribute__((__noreturn__));
 
 
-void __cxa_pure_virtual(void) {
+void ICACHE_FLASH_ATTR __cxa_pure_virtual(void) {
     abort();
 }
 
-void __cxa_deleted_virtual(void) {
+void ICACHE_FLASH_ATTR __cxa_deleted_virtual(void) {
     abort();
 } 
 
-void  dnsResolved(const char *name, ip_addr_t *ipaddr, void *arg);
-void  response(void *arg, char *pdata, unsigned short len);
+void ICACHE_FLASH_ATTR dnsResolved(const char *name, ip_addr_t *ipaddr, void *arg);
+void ICACHE_FLASH_ATTR response(void *arg, char *pdata, unsigned short len);
 
 using responseReceived = void(*)(char * receivedData);
 
@@ -271,7 +271,7 @@ struct ClientManager
 
 int ClientManager::clientIndex = 0;
 
-void  connected(void *arg)
+void ICACHE_FLASH_ATTR connected(void *arg)
 {
     writeUartWifi("tcp_connected");
     auto clientPtr = ClientManager::getClient((espconn *)arg);
@@ -300,7 +300,7 @@ void  connected(void *arg)
      
 }
 
-void  response(void *arg, char *pdata, unsigned short len)
+void ICACHE_FLASH_ATTR response(void *arg, char *pdata, unsigned short len)
 {
     writeUartWifi("response:");
     auto clientPtr = ClientManager::getClient((espconn *)arg);
@@ -312,22 +312,22 @@ void  response(void *arg, char *pdata, unsigned short len)
     }
 }
 
-void  sentcb(void *arg)
+void ICACHE_FLASH_ATTR  sentcb(void *arg)
 {
     writeUartWifi("sentcb:");
 }
 
-void finishWrite(void *arg)
+void ICACHE_FLASH_ATTR finishWrite(void *arg)
 {
      writeUartWifi("finishWrite:");
 }
 
-void  disconnected(void *arg)
+void ICACHE_FLASH_ATTR disconnected(void *arg)
 {
     writeUartWifi("tcp_disconnected");
 }
 
-void  dnsResolved(const char *name, ip_addr_t *ipaddr, void *arg)
+void ICACHE_FLASH_ATTR dnsResolved(const char *name, ip_addr_t *ipaddr, void *arg)
 {
     if (ipaddr == NULL) 
     {

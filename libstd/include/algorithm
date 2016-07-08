@@ -34,14 +34,14 @@
 #ifndef ETL_LIBSTD_ALGORITHM_
 #define ETL_LIBSTD_ALGORITHM_
 
-#include <h/algorithm_sequence.h>
-#include <h/algorithm_modifying.h>
-#include <h/algorithm_partitions.h>
-#include <h/algorithm_sorting.h>
-#include <h/algorithm_binary.h>
-#include <h/algorithm_merge.h>
-#include <h/algorithm_heap.h>
-#include <h/algorithm_minmax.h>
-#include <h/algorithm_other.h>
+#include <../libstd/include/h/algorithm_sequence.h>
+#include <../libstd/include/h/algorithm_modifying.h>
+#include <../libstd/include/h/algorithm_partitions.h>
+#include <../libstd/include/h/algorithm_sorting.h>
+#include <../libstd/include/h/algorithm_binary.h>
+#include <../libstd/include/h/algorithm_merge.h>
+#include <../libstd/include/h/algorithm_heap.h>
+#include <../libstd/include/h/algorithm_minmax.h>
+#include <../libstd/include/h/algorithm_other.h>
 
 #endif // ETL_LIBSTD_ALGORITHM_
