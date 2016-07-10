@@ -20,15 +20,15 @@ extern "C"
 
 
 
-using uartWifi =   etl::Uart0<>;
-void writeUartWifi(sint8 s)
+using uartWifi =   etl::Uart1<>;
+void ICACHE_FLASH_ATTR writeUartWifi(sint8 s)
 {
     uartWifi::write((char)(s+48));
     uartWifi::write('\r');
     uartWifi::write('\n');
 }
 
-void writeUartWifi(const char * string)
+void ICACHE_FLASH_ATTR writeUartWifi(const char * string)
 {
     auto i = 0;
     while (string[i] != '\0')
@@ -40,7 +40,7 @@ void writeUartWifi(const char * string)
     uartWifi::write('\n');
 }
 
-extern "C" void abort() {
+extern "C" ICACHE_FLASH_ATTR void abort() {
     while (true)
         ; // enter an infinite loop and get reset by the WDT
 }
@@ -75,28 +75,28 @@ namespace std
     }
 }
 
-void * operator new(size_t size) {
+void *  ICACHE_FLASH_ATTR operator new(size_t size) {
     auto rsize = os_malloc(size);
     return rsize;
 }
 
-void * operator new[](size_t size) {
+void *  ICACHE_FLASH_ATTR operator new[](size_t size) {
     return os_malloc(size);
 }
 
-void operator delete(void * ptr, size_t) {
+void ICACHE_FLASH_ATTR operator delete(void * ptr, size_t) {
     os_free(ptr);
 }
 
-void operator delete[](void * ptr, size_t) {
+void ICACHE_FLASH_ATTR operator delete[](void * ptr, size_t) {
     os_free(ptr);
 } 
 
-void operator delete(void * ptr) {
+void ICACHE_FLASH_ATTR operator delete(void * ptr) {
     os_free(ptr);
 }
 
-void operator delete[](void * ptr) {
+void ICACHE_FLASH_ATTR operator delete[](void * ptr) {
     os_free(ptr);
 } 
 
@@ -292,6 +292,7 @@ void ICACHE_FLASH_ATTR connected(void *arg)
         writeUartWifi("Sending: ");
         writeUartWifi(clientPtr->queryParam.buffer);
         auto value = espconn_sent(&(clientPtr->connection), (uint8_t *)(clientPtr->queryParam.buffer), os_strlen(clientPtr->queryParam.buffer));
+        clientPtr->busy = false;
     }
         break;
     case QueryParam::GET :
@@ -302,25 +303,14 @@ void ICACHE_FLASH_ATTR connected(void *arg)
 
 void ICACHE_FLASH_ATTR response(void *arg, char *pdata, unsigned short len)
 {
-    writeUartWifi("response:");
     auto clientPtr = ClientManager::getClient((espconn *)arg);
-    clientPtr->busy = false;
+   
     if (clientPtr->queryParam.callback)
     {
-        writeUartWifi("call callback:");
         clientPtr->queryParam.callback(pdata);
     }
 }
 
-void ICACHE_FLASH_ATTR  sentcb(void *arg)
-{
-    writeUartWifi("sentcb:");
-}
-
-void ICACHE_FLASH_ATTR finishWrite(void *arg)
-{
-     writeUartWifi("finishWrite:");
-}
 
 void ICACHE_FLASH_ATTR disconnected(void *arg)
 {
@@ -353,8 +343,6 @@ void ICACHE_FLASH_ATTR dnsResolved(const char *name, ip_addr_t *ipaddr, void *ar
         espconn_regist_connectcb(connection, connected);
         espconn_regist_disconcb(connection, disconnected);
         espconn_regist_recvcb(connection, response);
-        espconn_regist_sentcb(connection, sentcb);
-        espconn_regist_write_finish(connection,finishWrite);
         espconn_connect(connection);
     }
 }
