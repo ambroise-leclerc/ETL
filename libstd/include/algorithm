@@ -31,17 +31,14 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_ALGORITHM_
-#define ETL_LIBSTD_ALGORITHM_
+#pragma once
 
-#include <h/algorithm_sequence.h>
-#include <h/algorithm_modifying.h>
-#include <h/algorithm_partitions.h>
-#include <h/algorithm_sorting.h>
-#include <h/algorithm_binary.h>
-#include <h/algorithm_merge.h>
-#include <h/algorithm_heap.h>
-#include <h/algorithm_minmax.h>
-#include <h/algorithm_other.h>
-
-#endif // ETL_LIBSTD_ALGORITHM_
+#include "h/algorithm_sequence.h"
+#include "h/algorithm_modifying.h"
+#include "h/algorithm_partitions.h"
+#include "h/algorithm_sorting.h"
+#include "h/algorithm_binary.h"
+#include "h/algorithm_merge.h"
+#include "h/algorithm_heap.h"
+#include "h/algorithm_minmax.h"
+#include "h/algorithm_other.h"

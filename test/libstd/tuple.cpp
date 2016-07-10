@@ -1,9 +1,9 @@
-/// @file initializer_list
-/// @data 19/04/2014 22:15:53
+/// @file test/libstd/memory.cpp
+/// @data 06/06/2016 22:23:53
 /// @author Ambroise Leclerc
-/// @brief Initializer list.
+/// @brief BDD tests for <tuple>
 //
-// Copyright (c) 2014, Ambroise Leclerc
+// Copyright (c) 2016, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -30,10 +30,29 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#include <catch.hpp>
 
-#ifndef ETL_LIBSTD_INITIALIZER_LIST_
-#define ETL_LIBSTD_INITIALIZER_LIST_
+namespace etlTest {
+#include <libstd/include/tuple2>
+} // namespace etlTest
 
-#include "h/initializer_list.h"
+using namespace etlTest::std;
 
-#endif // ETL_LIBSTD_INITIALIZER_LIST_
+class TupleTest {
+public:
+    using Etq = const tuple<const char*, int, bool>;
+
+    Etq static findEtiquette(uint8_t id) {
+        switch (id) {
+        case 0: return make_tuple("ADSC", 12, false);
+        case 1: return make_tuple("VTIC", 2, false);
+        }
+        return make_tuple("UNDE", 0, false);
+    }
+};
+
+SCENARIO("std::tuple") {
+    GIVEN("0 class instances") {
+
+    }
+}

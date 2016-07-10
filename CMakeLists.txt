@@ -6,7 +6,7 @@ set(ETL_HEADERS include/etl/debug_policies.h include/etl/freestore.h include/etl
                 include/etl/metautils.h include/etl/watchdog.h)
                 
 set(LIBSTD_HEADERS libstd/include/chrono libstd/include/ratio)
-set(LIBSTD_TESTS test/libstd/chrono.cpp test/libstd/memory.cpp)
+set(LIBSTD_TESTS test/libstd/chrono.cpp test/libstd/memory.cpp test/libstd/tuple.cpp)
                 
 set(ETL_ARCHITECTURE include/etl/architecture/MockCore.h)
 

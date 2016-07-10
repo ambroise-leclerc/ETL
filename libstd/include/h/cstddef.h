@@ -38,16 +38,17 @@
 namespace std {
 #ifdef __GNUG__
     using nullptr_t = decltype(nullptr);
-#elseif
+    using max_align_t = ::max_align_t;
+#else
     using nullptr_t = decltype(__nullptr);
+    using max_align_t = double;
 #endif
 
     using size_t = ::size_t;
 	using ptrdiff_t = ::ptrdiff_t;
-	using max_align_t = ::max_align_t;
 } // namespace std
 
-using std::nullptr_t;
+using ::std::nullptr_t;
 
 
 #endif // ETL_LIBSTD_CSTDDEF_H_

@@ -71,7 +71,7 @@ SCENARIO("std::unique_ptr") {
 }
 
 SCENARIO("std::shared_ptr") {
-    
+        
 
 
 }

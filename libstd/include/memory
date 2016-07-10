@@ -31,10 +31,129 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_MEMORY_
-#define ETL_LIBSTD_MEMORY_
+#pragma once
 #include "h/memory.h"
 #include "h/unique_ptr.h"
 
 
-#endif // ETL_LIBSTD_MEMORY_
+
+// Minimal shared_ptr implementation with a RefCounter from Sébastien Rombauts's https://github.com/SRombauts/shared_ptr/blob/master/include/shared_ptr.hpp
+namespace etlHelper {
+class refCounter {
+public:
+    refCounter() : refCount(nullptr) {}
+    refCounter(const refCounter& count) : refCount(count.refCount) {}
+    void swap(refCounter& lhs) { std::swap(refCount, lhs.refCount); }
+    
+    uint16_t use_count(void) const {
+        uint16_t count = 0;
+        if (nullptr != refCount) {
+            count = *refCount;
+        }
+        return count;
+    }
+    
+    template<typename T> void acquire(T* p) {
+        if (nullptr != p) {
+            if (nullptr == refCount) {
+                refCount = new long(1);
+            }
+        }
+        else {
+            ++(*refCount);
+        }
+    }
+
+    template<typename T> void release(T* p) {
+        if (nullptr != refCount) {
+            --(*refCount);
+            if (0 == *refCount) {
+                delete p;
+                delete refCount;
+            }
+            refCount = nullptr;
+        }
+    }
+
+public:
+    uint16_t* refCount;
+};
+
+
+} //namespace etlHelper
+
+template<typename T>
+class shared_ptr {
+public:
+    using element_type = T;
+
+    shared_ptr(void) throw() : px(nullptr), pn() {}
+    explicit shared_ptr(T* p) : pn() { acquire(p); }
+    template <typename U> shared_ptr(const shared_ptr<U>& ptr, T* p) : pn(ptr.count) { acquire(p); }
+    template <typename U> shared_ptr(const shared_ptr<U>& ptr) : pn(ptr.count) {
+        assert((nullptr == ptr.px) || (0 != ptr.count.use_count()));
+        acquire(static_cast<typename shared_ptr<T>::element_type*>(ptr.px));
+    }
+    shared_ptr(const shared_ptr& ptr) : pn(ptr.pn) {
+        assert((nullptr == ptr.px) || (0 != ptr.pn.use_count()));
+        acquire(ptr.px);
+    }
+    shared_ptr& operator=(shared_ptr ptr) {
+        swap(ptr);
+        return *this;
+    }
+    ~shared_ptr(void) { release(); }
+    void reset(void) { release(); }
+    void reset(T* p) {
+        assert((nullptr == p) || (px != p));
+        release();
+        acquire(p);
+    }
+
+    void swap(shared_ptr& lhs) {
+        std::swap(px, lhs.px);
+        pn.swap(lhs.pn);
+    }
+
+    operator bool() const { return (0 < pn.use_count()); }
+    bool unique(void) const { return (1 == pn.use_count()); }
+    uint16_t use_count(void) const { return pn.use_count(); }
+
+    T& operator*() const {
+        assert(nullptr != px);
+        return *px;
+    }
+    T* operator->() const {
+        SHARED_ASSERT(nullptr != px);
+        return px;
+    }
+    T* get(void) const { return px; }
+
+private:
+    void acquire(T* p) {
+        pn.acquire(p);
+        px = p;
+    }
+
+    void release(void) {
+        pn.release(px);
+        px = nullptr;
+    }
+
+private:
+    template<typename U> friend class shared_ptr;
+    T*                  px;
+    shared_ptr_count    pn;
+};
+
+
+template<typename T, typename U> bool operator==(const shared_ptr<T>& l, const shared_ptr<U>& r) { return (l.get() == r.get()); }
+template<typename T, typename U> bool operator!=(const shared_ptr<T>& l, const shared_ptr<U>& r) { return (l.get() != r.get()); }
+template<typename T, typename U> bool operator<=(const shared_ptr<T>& l, const shared_ptr<U>& r) { return (l.get() <= r.get()); }
+template<typename T, typename U> bool operator<(const shared_ptr<T>& l, const shared_ptr<U>& r) { return (l.get() < r.get()); }
+template<typename T, typename U> bool operator>=(const shared_ptr<T>& l, const shared_ptr<U>& r) { return (l.get() >= r.get()); }
+template<typename T, typename U> bool operator>(const shared_ptr<T>& l, const shared_ptr<U>& r) { return (l.get() > r.get()); }
+template<typename T, typename U>shared_ptr<T> static_pointer_cast(const shared_ptr<U>& ptr) {
+    return shared_ptr<T>(ptr, static_cast<typename shared_ptr<T>::element_type*>(ptr.get()));
+}
+
