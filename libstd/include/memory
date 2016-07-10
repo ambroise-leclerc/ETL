@@ -32,20 +32,37 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#include "h/memory.h"
+#include <../libstd/include/utility>
 #include "h/unique_ptr.h"
 
 
-
-// Minimal shared_ptr implementation with a RefCounter from Sébastien Rombauts's https://github.com/SRombauts/shared_ptr/blob/master/include/shared_ptr.hpp
+namespace std {
 namespace etlHelper {
+// addressof helpers taken from Boost library
+template<typename T> struct addressof_ref {
+    T & v_;
+    addressof_ref(T & v) : v_(v) {}
+    operator T& () const { return v_; }
+
+private:
+    addressof_ref & operator=(const addressof_ref &);
+};
+
+template<typename T> struct addressof_impl {
+    static T * f(T & v, long) {
+        return reinterpret_cast<T*>(&const_cast<char&>(reinterpret_cast<const volatile char &>(v)));
+    }
+    static T * f(T * v, int) { return v; }
+};
+
+
 class refCounter {
 public:
     refCounter() : refCount(nullptr) {}
     refCounter(const refCounter& count) : refCount(count.refCount) {}
     void swap(refCounter& lhs) { std::swap(refCount, lhs.refCount); }
     
-    uint16_t use_count(void) const {
+    uint16_t use_count() const {
         uint16_t count = 0;
         if (nullptr != refCount) {
             count = *refCount;
@@ -75,75 +92,95 @@ public:
         }
     }
 
-public:
     uint16_t* refCount;
 };
 
+template<typename T> struct refCountAndObject : refCounter {
+    T object;
+    template<typename ... Args> refCountAndObject(Args && ...args) : object(args...) { }
+    virtual void dispose() { }
+};
 
 } //namespace etlHelper
+
+template<typename T>
+class allocator {
+public:
+    using value_type = T;
+    using pointer = T*;
+    using const_pointer = const T*;
+    using reference = T&;
+    using const_reference = const T&;
+    using size_type = std::size_t;
+    using difference_type = std::ptrdiff_t;
+    using propagate_on_container_move_assignment = std::true_type;
+
+    template<typename T2> struct rebind { typedef allocator<T2> other; };
+
+    allocator() noexcept {}
+    allocator(const allocator&) noexcept {};
+    template<typename T2> allocator(const allocator<T2>&) noexcept {};
+
+    /// Constructs an object of type T in allocated uninitialized storage using placement new.
+    template<typename T2, typename... Args>
+    static void construct(T2* p, Args&&... value) {
+        ::new(reinterpret_cast<void*>(p)) T2(std::forward<Args>(value)...);
+    }
+
+    // destroy helper to invoke destructor explicitly.
+    static void destroy(const_reference t) {
+        t.~T(); // T must support non-throwing destructor
+    }
+};
+
+template<typename T> T* addressof(T& arg) {
+    return etlHelper::addressof_impl<T>::f(etlHelper::addressof_ref<T>(arg), 0);
+}
+
 
 template<typename T>
 class shared_ptr {
 public:
     using element_type = T;
 
-    shared_ptr(void) throw() : px(nullptr), pn() {}
-    explicit shared_ptr(T* p) : pn() { acquire(p); }
-    template <typename U> shared_ptr(const shared_ptr<U>& ptr, T* p) : pn(ptr.count) { acquire(p); }
-    template <typename U> shared_ptr(const shared_ptr<U>& ptr) : pn(ptr.count) {
-        assert((nullptr == ptr.px) || (0 != ptr.count.use_count()));
-        acquire(static_cast<typename shared_ptr<T>::element_type*>(ptr.px));
-    }
-    shared_ptr(const shared_ptr& ptr) : pn(ptr.pn) {
-        assert((nullptr == ptr.px) || (0 != ptr.pn.use_count()));
-        acquire(ptr.px);
-    }
-    shared_ptr& operator=(shared_ptr ptr) {
-        swap(ptr);
-        return *this;
-    }
-    ~shared_ptr(void) { release(); }
-    void reset(void) { release(); }
-    void reset(T* p) {
-        assert((nullptr == p) || (px != p));
-        release();
-        acquire(p);
-    }
+    shared_ptr() throw() : pointee(nullptr), counter() {}
+    explicit shared_ptr(T* p) : counter() { acquire(p); }
+    template <typename U> shared_ptr(const shared_ptr<U>& ptr, T* p) : counter(ptr.count) { acquire(p); }
+    template <typename U> shared_ptr(const shared_ptr<U>& ptr) : counter(ptr.count) { acquire(static_cast<typename shared_ptr<T>::element_type*>(ptr.pointee)); }
+    shared_ptr(const shared_ptr& ptr) : counter(ptr.counter) { acquire(ptr.pointee); }
+    ~shared_ptr()       { release(); }
+
+    void reset()        { release(); }
+    void reset(T* p)    { release(); acquire(p); }
+    shared_ptr& operator=(shared_ptr ptr) { swap(ptr);  return *this; }
 
     void swap(shared_ptr& lhs) {
-        std::swap(px, lhs.px);
-        pn.swap(lhs.pn);
+        std::swap(pointee, lhs.pointee);
+        counter.swap(lhs.counter);
     }
 
-    operator bool() const { return (0 < pn.use_count()); }
-    bool unique(void) const { return (1 == pn.use_count()); }
-    uint16_t use_count(void) const { return pn.use_count(); }
-
-    T& operator*() const {
-        assert(nullptr != px);
-        return *px;
-    }
-    T* operator->() const {
-        SHARED_ASSERT(nullptr != px);
-        return px;
-    }
-    T* get(void) const { return px; }
+    operator bool()     const { return (0 < counter.use_count()); }
+    bool unique()       const { return (1 == counter.use_count()); }
+    long use_count()    const { return counter.use_count(); }
+    T& operator*()      const { return *pointee; }
+    T* operator->()     const { return pointee; }
+    T* get(void)        const { return pointee; }
 
 private:
     void acquire(T* p) {
-        pn.acquire(p);
-        px = p;
+        counter.acquire(p);
+        pointee = p;
     }
 
-    void release(void) {
-        pn.release(px);
-        px = nullptr;
+    void release() {
+        counter.release(pointee);
+        pointee = nullptr;
     }
 
 private:
     template<typename U> friend class shared_ptr;
-    T*                  px;
-    shared_ptr_count    pn;
+    T*                      pointee;
+    etlHelper::refCounter   counter;
 };
 
 
@@ -157,3 +194,13 @@ template<typename T, typename U>shared_ptr<T> static_pointer_cast(const shared_p
     return shared_ptr<T>(ptr, static_cast<typename shared_ptr<T>::element_type*>(ptr.get()));
 }
 
+template<typename T, typename ... Args> shared_ptr<T> make_shared(Args && ... args) {
+    shared_ptr<T> ptr;
+    auto tmpObject = new etlHelper::refCountAndObject<T>(args...);
+    ptr._obj_ptr = &tmp_object->object;
+    ptr._ref_counter = tmp_object;
+
+    return ptr;
+}
+
+} // namespace std

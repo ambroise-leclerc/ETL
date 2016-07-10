@@ -71,7 +71,19 @@ SCENARIO("std::unique_ptr") {
 }
 
 SCENARIO("std::shared_ptr") {
-        
+    GIVEN("0 class instances") {
+        MyClass::instances = 0;
+        WHEN("a shared_ptr is created") {
+            THEN("") {
+                auto obj = make_shared<MyClass>(123456);
+                REQUIRE(MyClass::instances == 1);
+                auto obj2 = obj;
+                REQUIRE(MyClass::instances == 2);
+                REQUIRE(obj2->id == 123456);
+            }
+            REQUIRE(MyClass::instances == 0);
+        }
+    }
 
 
 }

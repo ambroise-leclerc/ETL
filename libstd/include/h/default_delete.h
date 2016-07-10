@@ -32,39 +32,29 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_DEFAULT_DELETE_H
-#define ETL_LIBSTD_DEFAULT_DELETE_H
+#pragma once
 
 namespace std {
   
-template<typename T>
-struct default_delete {
-  /// Default constructor.
-  constexpr default_delete() noexcept = default;
+template<typename T> struct default_delete {
+    /// Default constructor.
+    constexpr default_delete() noexcept = default;
   
-  /// Converting constructor from another type.
-  template<typename T2>
-  constexpr default_delete(const default_delete<T2>&) noexcept { }
+    /// Converting constructor from another type.
+    template<typename T2> constexpr default_delete(const default_delete<T2>&) noexcept { }
     
-  void operator()(T* pointer) {
-    delete pointer;
-  }
+    void operator()(T* pointer) { delete pointer; }
 };
 
 /// std::default_delete specialization for arrays
-template<typename T>
-struct default_delete<T[]> {
-  /// Default constructor.
-  constexpr default_delete() noexcept = default;
+template<typename T> struct default_delete<T[]> {
+    /// Default constructor.
+    constexpr default_delete() noexcept = default;
   
-  /// Converting constructor from another type.
-  template<typename T2>
-  constexpr default_delete(const default_delete<T2[]>&) noexcept { }
+    /// Converting constructor from another type.
+    template<typename T2> constexpr default_delete(const default_delete<T2[]>&) noexcept { }
     
-  void operator()(T* pointer) {
-    delete[] pointer;
-  }
+    void operator()(T* pointer) { delete[] pointer; }
 };
 
 } // namespace std
-#endif // ETL_LIBSTD_DEFAULT_DELETE_H
