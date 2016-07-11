@@ -90,7 +90,7 @@ namespace etl {
         static void start(CharReceiver<> receiverP) {
             start();
             receiver = receiverP;
-            new thread(readBoucle);
+            new std::thread(readBoucle);
         }
 
         static void stop() {
