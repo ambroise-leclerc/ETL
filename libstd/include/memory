@@ -119,7 +119,7 @@ namespace etlHelper {
 template<typename T>
 class shared_ptr {
 public:
-    using element_type = T;
+    using element_type = remove_extent_t<T>;
 
     constexpr shared_ptr() : pointee(nullptr), counter(nullptr) {}
     constexpr shared_ptr(std::nullptr_t) : pointee(nullptr), counter(nullptr) {}
