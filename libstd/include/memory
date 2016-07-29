@@ -55,30 +55,6 @@ template<typename T> struct addressof_impl {
     static T * f(T * v, int) { return v; }
 };
 
-
-class refCounter {
-    long count;
-public:
-    refCounter() : count(1) { }
-    virtual ~refCounter() { dispose(); }
-    void inc() { ++count; }
-    void dec() { --count; }
-    long use_count() const { return count; }
-    virtual void dispose() = 0;
-};
-
-template<typename T> struct refCountAndPointer : refCounter {
-    T* pointee;
-    explicit refCountAndPointer(T* p) : pointee(p) { }
-    virtual void dispose() { delete pointee; }
-};
-
-template<typename T> struct refCountAndObject : refCounter {
-    T object;
-    template<typename ... Args> refCountAndObject(Args && ...args) : object(args...) { }
-    virtual void dispose() { }
-};
-
 } //namespace etlHelper
 
 template<typename T>
@@ -115,6 +91,30 @@ template<typename T> T* addressof(T& arg) {
     return etlHelper::addressof_impl<T>::f(etlHelper::addressof_ref<T>(arg), 0);
 }
 
+namespace etlHelper {
+    class refCounter {
+        long count;
+    public:
+        refCounter() : count(1) { }
+        virtual ~refCounter() = default;
+
+        void inc() { ++count; }
+        void dec() { --count; }
+        long use_count() const { return count; }
+    };
+
+    template<typename T> struct refCountAndPointer : refCounter {
+        T* pointee;
+        explicit refCountAndPointer(T* p) : pointee(p) { }
+        ~refCountAndPointer() override { delete pointee; }
+    };
+
+    template<typename T> struct refCountAndObject : refCounter {
+        T object;
+        template<typename ... Args> refCountAndObject(Args && ...args) : object(args...) { }
+    };
+
+} //namespace etlHelper
 
 template<typename T>
 class shared_ptr {
@@ -125,24 +125,27 @@ public:
     constexpr shared_ptr(std::nullptr_t) : pointee(nullptr), counter(nullptr) {}
     explicit shared_ptr(T* p) { createCounter(p); }
     template <typename U> shared_ptr(const shared_ptr<U>& ptr) { *this = other; }
-    shared_ptr(const shared_ptr& ptr) : counter(ptr.counter), pointer(ptr.pointee) { if (use_count() > 0) counter->inc(); }
+    shared_ptr(const shared_ptr& ptr) : counter(ptr.counter), pointee(ptr.pointee) { if (use_count() > 0) counter->inc(); }
     ~shared_ptr()       { release(); }
 
     void reset()        { release(); }
     void reset(T* p)    { release(); createCounter(p); }
 
-    shared_ptr& operator=(const shared_ptr& r) { }
-
-    shared_ptr& operator=(shared_ptr ptr) { swap(ptr);  return *this; }
+    shared_ptr& operator=(const shared_ptr& rhs) { 
+        release();
+        pointee = rhs.pointee;
+        counter = rhs.counter;
+        return *this;
+    }
 
     void swap(shared_ptr& lhs) {
         std::swap(pointee, lhs.pointee);
         std::swap(counter, lhs.counter);
     }
 
-    operator bool()     const { return (0 < counter->use_count()); }
-    bool unique()       const { return (1 == counter->use_count()); }
-    long use_count()    const { return counter->use_count(); }
+    operator bool()     const { return pointee != nullptr; }
+    bool unique()       const { return 1 == use_count(); }
+    long use_count()    const { return counter ? counter->use_count() : 0; }
     T& operator*()      const { return *pointee; }
     T* operator->()     const { return pointee; }
     T* get(void)        const { return pointee; }
@@ -155,12 +158,13 @@ private:
     }
 
     void release() {
-        counter->dec();
-        if (0 == counter->use_count()) {
-            counter->dispose();
-            delete counter;
+        if (counter) {
+            counter->dec();
+            if (0 == counter->use_count()) {
+                delete counter;
+            }
+            counter = nullptr;
         }
-        counter = nullptr;
         pointee = nullptr;
     }
 

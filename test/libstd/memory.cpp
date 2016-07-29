@@ -31,6 +31,7 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #include <catch.hpp>
+#include <iostream>
 
 namespace etlTest {
 #include <libstd/include/memory>
@@ -52,16 +53,16 @@ public:
 };
 
 uint8_t MyClass::instances = 0;
-using namespace etlTest::std;
+//using namespace etlTest::std;
 
 SCENARIO("std::unique_ptr") {
     GIVEN("0 class instances") {
         MyClass::instances = 0;
         WHEN("a unique_ptr is created") {
             THEN("") {
-                auto obj = make_unique<MyClass>(123456);
+                auto obj = etlTest::std::make_unique<MyClass>(123456);
                 REQUIRE(MyClass::instances == 1);
-                auto obj2 = move(obj);
+                auto obj2 = etlTest::std::move(obj);
                 REQUIRE(MyClass::instances == 1);
                 REQUIRE(obj2->id == 123456);
             }
@@ -71,19 +72,38 @@ SCENARIO("std::unique_ptr") {
 }
 
 SCENARIO("std::shared_ptr") {
-    GIVEN("0 class instances") {
+    GIVEN("A shared_ptr constructed by make_shared") {
         MyClass::instances = 0;
-        WHEN("a shared_ptr is created") {
-            THEN("") {
-                auto obj = make_shared<MyClass>(123456);
-                REQUIRE(MyClass::instances == 1);
-                auto obj2 = obj;
-                REQUIRE(MyClass::instances == 2);
-                REQUIRE(obj2->id == 123456);
+        auto obj = etlTest::std::make_shared<MyClass>(123456);
+        REQUIRE(MyClass::instances == 1);
+
+        WHEN("ptr is copied") {
+            auto obj2 = obj;
+            THEN("both points to the same object") {
+                obj->id++;
+                REQUIRE(obj2->id == obj->id);
+                REQUIRE(obj.use_count() == 2);
             }
-            REQUIRE(MyClass::instances == 0);
         }
+
+        WHEN("ptr is copied twice") {
+            auto obj2 = obj;
+            auto obj3 = obj;
+            THEN("3 references are counted")
+                REQUIRE(obj.use_count() == 3);
+            
+            obj = nullptr;
+            THEN("ref count is decreased") 
+                REQUIRE(obj2.use_count() == 2);
+            
+            obj3.reset();
+            REQUIRE(!obj3);
+            REQUIRE(obj2.unique());
+        }
+
     }
+    REQUIRE(MyClass::instances == 0);
+
 
 
 }
