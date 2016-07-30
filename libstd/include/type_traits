@@ -64,7 +64,7 @@ namespace etlHelper {
     template<> struct cond_and<> : public true_type { };
     template<typename T> struct cond_and<T> : public T { };
     template<typename T, typename U> struct cond_and<T, U> : public conditional<T::value, U, T>::type { };
-    template<typename T, typename U, typename V, typename... Z> struct cond_and<T, U, V, Z...> : public conditional<T::value, cond_and<T, U, V...>, T>::type { };
+    template<typename T, typename U, typename V, typename... Z> struct cond_and<T, U, V, Z...> : public conditional<T::value, cond_and<U, V, Z...>, T>::type { };
     template<typename T> struct cond_not : public integral_constant<bool, !T::value> { };
 
 
