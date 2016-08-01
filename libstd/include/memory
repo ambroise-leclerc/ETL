@@ -124,7 +124,7 @@ public:
     constexpr shared_ptr() : pointee(nullptr), counter(nullptr) {}
     constexpr shared_ptr(std::nullptr_t) : pointee(nullptr), counter(nullptr) {}
     explicit shared_ptr(T* p) { createCounter(p); }
-    template <typename U> shared_ptr(const shared_ptr<U>& ptr) { *this = other; }
+    template <typename U> shared_ptr(const shared_ptr<U>& ptr) { *this = ptr; }
     shared_ptr(const shared_ptr& ptr) : counter(ptr.counter), pointee(ptr.pointee) { if (use_count() > 0) counter->inc(); }
     ~shared_ptr()       { release(); }
 
