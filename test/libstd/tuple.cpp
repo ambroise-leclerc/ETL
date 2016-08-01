@@ -33,11 +33,11 @@
 #include <catch.hpp>
 
 namespace etlTest {
-#include <libstd/include/tuple2>
+#include <libstd/include/tuple>
 } // namespace etlTest
 
 using namespace etlTest::std;
-
+/*
 class TupleTest {
 public:
     using Etq = const tuple<const char*, int, bool>;
@@ -50,7 +50,7 @@ public:
         return make_tuple("UNDE", 0, false);
     }
 };
-
+*/
 SCENARIO("std::tuple") {
     GIVEN("0 class instances") {
 
