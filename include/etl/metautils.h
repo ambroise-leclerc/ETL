@@ -1,14 +1,12 @@
-/*
+ /*
  * metautils.h
  *
  * Created: 27/01/2014 16:02:47
  *  Author: Ambroise Leclerc
  */ 
 
-
-#ifndef ETL_METAUTILS_H_
-#define ETL_METAUTILS_H_
-#include <cstdint>
+#pragma once 
+#include <../libstd/include/cstdint>
 
 
 
@@ -109,4 +107,3 @@ constexpr auto OffsetOf() {
 
 
 } // namespace etl
-#endif // ETL_METAUTILS_H_

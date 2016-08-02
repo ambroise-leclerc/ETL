@@ -34,9 +34,9 @@
 #ifndef ETL_LIBSTD_ARRAY_H_
 #define ETL_LIBSTD_ARRAY_H_
 
-#include <iterator>
-#include <algorithm>
-#include <stdexcept>
+#include <../libstd/include/iterator>
+#include <../libstd/include/algorithm>
+#include <../libstd/include/stdexcept>
 
 namespace std {
 
@@ -127,7 +127,7 @@ struct array<T, 0> {
   reference operator[](size_type)                       { RangeError(); return elems_; }
   constexpr const_reference operator[](size_type) const { RangeError(); return elems_; }   
   reference at(size_type)                               { RangeError(); return elems_; }
-  constexpr const_reference at(size_type)               { RangeError(); return elems_; }
+  constexpr const_reference at(size_type) const         { RangeError(); return elems_; }
   reference front()                                     { RangeError(); return elems_; }
   constexpr const_reference front() const               { RangeError(); return elems_; }
   reference back()                                      { RangeError(); return elems_; }

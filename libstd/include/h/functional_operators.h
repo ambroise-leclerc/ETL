@@ -301,11 +301,13 @@ struct bit_not {
   constexpr T operator()(const T& arg) const { return ~arg; }
 };
 
+#ifdef __GNUG__
 template<> struct bit_not<void> {
   template<typename T>
   constexpr auto operator()(T&& arg) const -> decltype(~std::forward<T>(arg));
   typedef etlHelper::unspecified is_transparent  __attribute__((__unused__));
-};  
+};
+#endif
 
 } // namespace std
 

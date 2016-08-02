@@ -34,7 +34,6 @@
 #ifndef ETL_LIBSTD_ITERATOR_REVERSE_H_
 #define ETL_LIBSTD_ITERATOR_REVERSE_H_
 
-#include <initializer_list>
 
 namespace std {
   
