@@ -45,13 +45,13 @@ struct pair {
   constexpr pair(const T1& x, const T2& y) : first(x), second(y) {}
     
   template<typename U1, typename U2>
-  constexpr pair(U1&& x, U2&& y) : first(std::forward<U1>(x)), second(std::forward<U2>(y)){}
+  constexpr pair(U1&& x, U2&& y) : first(forward<U1>(x)), second(forward<U2>(y)){}
     
   template<typename U1, typename U2>
   constexpr pair( const pair<U1, U2>& p) : first(p.first), second(p.second) {}
     
   template<typename U1, typename U2>
-  constexpr pair(pair<U1, U2>&& p) : first(std::move<U1>(p.first)), second(std::move<U2>(p.second)) {} 
+  constexpr pair(pair<U1, U2>&& p) : first(move<U1>(p.first)), second(move<U2>(p.second)) {} 
   
   /*template<typename... Args1, typename... Args2 >
   pair( std::piecewise_construct_t, std::tuple<Args1...> first_args, std::tuple<Args2...> second_args );*/
@@ -90,7 +90,7 @@ template<typename T1, typename T2>
 constexpr auto make_pair(T1&& x, T2&& y)
  -> pair<typename etlHelper::make_pair_return_type<T1>::type, typename etlHelper::make_pair_return_type<T2>::type> {
   return pair<typename etlHelper::make_pair_return_type<T1>::type,
-              typename etlHelper::make_pair_return_type<T2>::type>(std::forward<T1>(x), std::forward<T2>(y));
+              typename etlHelper::make_pair_return_type<T2>::type>(forward<T1>(x), forward<T2>(y));
 }
 
 } // namespace std  

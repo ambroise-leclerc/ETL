@@ -51,6 +51,12 @@ public:
     }
 };
 */
+
+SCENARIO("std::integer_sequence") {
+    //auto seq = make_integer_sequence<int, 5>;
+
+}
+
 SCENARIO("std::tuple") {
     GIVEN("0 class instances") {
 

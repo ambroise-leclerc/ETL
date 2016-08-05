@@ -35,7 +35,6 @@
 
 #include <../libstd/include/type_traits>
 #include "h/utility_declval.h"
-#include "h/utility_swap.h"
 #include "h/utility_pair.h"
 
 
@@ -94,5 +93,12 @@ using index_sequence = integer_sequence<size_t, Ints...>;
 
 template<std::size_t N>
 using make_index_sequence = make_integer_sequence<std::size_t, N>;
+
+
+template<typename T> void swap(T& a, T& b) {
+    T tmp = move(a);
+    a = move(b);
+    b = move(tmp);
+}
 
 } // namespace std
