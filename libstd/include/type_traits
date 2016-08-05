@@ -38,8 +38,8 @@
 #include "h/traits_primary_types.h"
 #include "h/traits_references.h"
 #include "h/traits_add.h"
-#include "h/utility_declval.h"
 #include "h/traits_utils.h"
+#include <../libstd/include/utility>
 
 namespace std {
 
