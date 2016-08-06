@@ -59,9 +59,7 @@ namespace etlHelper {
 /// Checks whether T is a void type. is_void< >::value equals true if T is of
 /// type void, const void, volatile void, or const volatile void.
 template<typename T>
-struct is_void
- : integral_constant<bool, is_same<void, typename remove_cv<T>::type>::value>
-{};
+struct is_void : integral_constant<bool, is_same<void, typename remove_cv<T>::type>::value> {};
 
 /// Checks if T is an union.
 /// is_union::value is true if T is an union, false otherwise.                         

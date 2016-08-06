@@ -32,7 +32,10 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <../libstd/include/type_traits>
+//#include "h/utility_declval.h"
+//#include <../libstd/include/type_traits>
+#include "h/traits_operations.h"
+#include "h/traits_add.h"
 
 namespace std {
 
@@ -84,11 +87,8 @@ struct make_integer_sequence
 //struct make_integer_sequence<T, 0> : integer_sequence<T> { };
 //struct make_integer_sequence<T, 1> : integer_sequence<T, 0> { };
 
-template<size_t... Ints>
-using index_sequence = integer_sequence<size_t, Ints...>;
-
-template<std::size_t N>
-using make_index_sequence = make_integer_sequence<std::size_t, N>;
+template<size_t... Ints> using index_sequence = integer_sequence<size_t, Ints...>;
+template<size_t N> using make_index_sequence = make_integer_sequence<std::size_t, N>;
 
 
 template<typename T> void swap(T& a, T& b) {
@@ -139,7 +139,7 @@ namespace etlHelper {
     };
     */
     template<typename T> struct make_pair_return_type {
-        using type = typename make_pair_decay<typename std::decay<T>::type>::type;
+        using type = typename make_pair_decay<typename decay<T>::type>::type;
     };
 
     template<typename T> struct declval {

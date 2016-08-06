@@ -31,9 +31,10 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_TRAITS_ADD_H
-#define ETL_LIBSTD_TRAITS_ADD_H
+#include "h/traits_primary_types.h"
+#include "h/traits_references.h"
 
 namespace std {
 
@@ -44,14 +45,14 @@ namespace etlHelper {
 
 // Obtains a pointer on type T or on the referred type.
 template<typename T> struct add_pointer {
-  using type = typename std::remove_reference<T>::type*;
+  using type = typename remove_reference<T>::type*;
 };
 template<typename T> using add_pointer_t = typename add_pointer<T>::type;
 
   
 template<typename T> struct add_rvalue_reference {
   typedef typename etlHelper::rvalue_reference_type< 
-    T, (std::is_void<T>::value == false && std::is_reference<T>::value == false)>::type type;
+    T, (is_void<T>::value == false && is_reference<T>::value == false)>::type type;
 };
 template<typename T> struct add_lvalue_reference   { using type = T; };
     
@@ -60,25 +61,21 @@ template<typename T> using add_lvalue_reference_t = typename add_lvalue_referenc
 
 /// Handles array decay and reference deferencing.
 template<typename T> struct decay {
-  using U = typename std::remove_reference<T>::type;
-  using type =  typename std::conditional< 
-				          std::is_array<U>::value,
-			            typename std::remove_extent<U>::type*,
-                  typename std::conditional< 
-                    std::is_function<U>::value,
-                    typename std::add_pointer<U>::type,
-                    typename std::remove_cv<U>::type
-                  >::type
-                >::type;
+  using U = typename remove_reference<T>::type;
+  using type =  typename conditional<is_array<U>::value,
+                                     typename remove_extent<U>::type*,
+                                     typename conditional<  is_function<U>::value,
+                                                            typename add_pointer<U>::type,
+                                                            typename remove_cv<U>::type     >::type
+                                    >::type;
 };
 
-template<typename T> using decay_t = typename std::decay<T>::type;
+template<typename T> using decay_t = typename decay<T>::type;
 template<typename T> using add_pointer_t = typename add_pointer<T>::type;
 
 template<typename T> struct add_const     { using type = const T; };
 template<typename T> struct add_volatile  { using type = volatile T; };
-template<typename T> struct add_cv        { using type = typename std::add_volatile<typename std::add_const<T>::type>::type; };
+template<typename T> struct add_cv        { using type = typename add_volatile<typename add_const<T>::type>::type; };
 
 }  
 
-#endif // ETL_LIBSTD_TRAITS_ADD_H
