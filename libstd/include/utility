@@ -88,7 +88,7 @@ struct make_integer_sequence
 //struct make_integer_sequence<T, 1> : integer_sequence<T, 0> { };
 
 template<size_t... Ints> using index_sequence = integer_sequence<size_t, Ints...>;
-template<size_t N> using make_index_sequence = make_integer_sequence<std::size_t, N>;
+template<size_t N> using make_index_sequence = make_integer_sequence<size_t, N>;
 
 
 template<typename T> void swap(T& a, T& b) {
@@ -115,7 +115,7 @@ struct pair {
     constexpr pair(pair<U1, U2>&& p) : first(move<U1>(p.first)), second(move<U2>(p.second)) {}
 
     /*template<typename... Args1, typename... Args2 >
-    pair( std::piecewise_construct_t, std::tuple<Args1...> first_args, std::tuple<Args2...> second_args );*/
+    pair( piecewise_construct_t, tuple<Args1...> first_args, tuple<Args2...> second_args );*/
 
     pair(const pair& p) = default;
 
@@ -134,7 +134,7 @@ namespace etlHelper {
         using type = T;
     };
     /*
-    template<typename T> struct make_pair_decay<std::reference_wrapper<T>> {
+    template<typename T> struct make_pair_decay<reference_wrapper<T>> {
         using type = T&;
     };
     */
@@ -144,7 +144,7 @@ namespace etlHelper {
 
     template<typename T> struct declval {
         static const bool never_use = false;
-        static typename std::add_rvalue_reference<T>::type ret();
+        static typename add_rvalue_reference<T>::type ret();
     };
 } // namespace etlHelper
 
@@ -154,7 +154,7 @@ template<typename T1, typename T2> constexpr auto make_pair(T1&& x, T2&& y)
         typename etlHelper::make_pair_return_type<T2>::type>(forward<T1>(x), forward<T2>(y));
 }
 
-template<typename T> typename std::add_rvalue_reference<T>::type declval() noexcept {
+template<typename T> typename add_rvalue_reference<T>::type declval() noexcept {
     static_assert(etlHelper::declval<T>::never_use, "std::declval() return value must never be used (ISO §20.2.4).");
     return etlHelper::declval<T>::ret();
 }
