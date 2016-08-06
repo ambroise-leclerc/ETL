@@ -33,8 +33,8 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include "h/traits_primary_types.h"
-#include "h/traits_references.h"
+#include "traits_primary_types.h"
+#include "traits_references.h"
 
 namespace std {
 

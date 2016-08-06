@@ -31,9 +31,7 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
-#ifndef ETL_LIBSTD_TRAITS_REFERENCE_H
-#define ETL_LIBSTD_TRAITS_REFERENCE_H
+#pragma once
 
 namespace std {
   template<typename T> struct is_reference             : std::false_type {};
@@ -53,5 +51,3 @@ namespace std {
   template<typename T> struct is_lvalue_reference<T&>  : std::true_type  { };
   
 } // namespace std 
-
-#endif // ETL_LIBSTD_TRAITS_REFERENCE_H

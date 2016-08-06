@@ -32,8 +32,7 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_TRAITS_OPERATIONS_H
-#define ETL_LIBSTD_TRAITS_OPERATIONS_H
+#pragma once
 
 namespace std {
 /// Base class for type traits. Wraps a static constant of specified type.
@@ -88,4 +87,3 @@ template<typename T> using remove_extent_t = typename remove_extent<T>::type;
 
 
 } // namespace std
-#endif // ETL_LIBSTD_TRAITS_OPERATIONS_H
