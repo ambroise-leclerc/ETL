@@ -32,6 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 #include <../libstd/include/climits>
+#include <../libstd/include/type_traits>
 
 namespace std {
 enum float_round_style {
@@ -86,13 +87,12 @@ struct numeric_limits {
 
 
 namespace etlHelper {
-    template<typename T> constexpr auto typeIsSigned() { return static_cast<T>(-1) < 0; }
-    template<typename T> constexpr auto typeDigits() { return (sizeof(T) * CHAR_BIT - typeIsSigned<T>()); }
+    template<typename T> constexpr auto typeDigits() { return (sizeof(T) * CHAR_BIT - is_signed<T>()); }
     template<typename T> constexpr auto typeDigits10() { return typeDigits<T>() * 643L/2136; }
-    template<typename T> constexpr T typeMax() { return typeIsSigned<T>() ?
+    template<typename T> constexpr T typeMax() { return is_signed<T>() ?
                                                     ((((static_cast<T>(1) << (typeDigits<T>() - 1)) -1) << 1) + 1) :
                                                     ~static_cast<T>(0); }
-    template<typename T> constexpr T typeMin() { return typeIsSigned<T>() ? -typeMax<T>() - 1 : static_cast<T>(0); }
+    template<typename T> constexpr T typeMin() { return is_signed<T>() ? -typeMax<T>() - 1 : static_cast<T>(0); }
 
     template<typename T> class numericLimitsBase {
     protected:
@@ -107,7 +107,7 @@ namespace etlHelper {
         static constexpr int digits =				typeDigits<type>();
         static constexpr int digits10 =				typeDigits10<type>();;
         static constexpr int max_digits10 = 0;
-        static constexpr bool is_signed =			typeIsSigned<type>();
+        static constexpr bool is_signed =			is_signed_v<type>;
         static constexpr bool is_integer = true;
         static constexpr bool is_exact = true;
         static constexpr int radix = 2;

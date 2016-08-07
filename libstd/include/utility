@@ -32,8 +32,6 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-//#include "h/utility_declval.h"
-//#include <../libstd/include/type_traits>
 #include "h/traits_operations.h"
 #include "h/traits_add.h"
 
