@@ -66,7 +66,7 @@ template <typename T, T... Ints>
 struct integer_sequence {
     using type = integer_sequence;
     using value_type = size_t;
-    static constexpr std::size_t size() noexcept { return sizeof...(Ints); }
+    static constexpr size_t size() noexcept { return sizeof...(Ints); }
 };
 
 namespace etlHelper {
