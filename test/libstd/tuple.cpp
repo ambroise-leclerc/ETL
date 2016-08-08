@@ -53,7 +53,7 @@ public:
 */
 
 SCENARIO("std::integer_sequence") {
-    //auto seq = make_integer_sequence<int, 5>;
+    auto seq = make_integer_sequence<int, 5>{};
 
 }
 

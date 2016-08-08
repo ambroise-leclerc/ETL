@@ -76,14 +76,12 @@ namespace etlHelper {
 } // namespace etlHelper
 
 template<typename T, T N>
-struct make_integer_sequence
-    : etlHelper::merge_integer_seq<T, typename make_integer_sequence<T, N / 2>::type,
-    typename make_integer_sequence<T, N - N / 2>::type>
-{ };
+struct make_integer_sequence : etlHelper::merge_integer_seq<T,  typename make_integer_sequence<T, N / 2>::type,
+                                                                typename make_integer_sequence<T, N - N / 2>::type> { };
 
 
-//struct make_integer_sequence<T, 0> : integer_sequence<T> { };
-//struct make_integer_sequence<T, 1> : integer_sequence<T, 0> { };
+template<> struct make_integer_sequence<int, 0> : integer_sequence<int, 0> { };
+template<> struct make_integer_sequence<int, 1> : integer_sequence<int, 0> { };
 
 template<size_t... Ints> using index_sequence = integer_sequence<size_t, Ints...>;
 template<size_t N> using make_index_sequence = make_integer_sequence<size_t, N>;

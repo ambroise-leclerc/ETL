@@ -38,6 +38,17 @@ namespace etlTest {
 
 using namespace etlTest::std;
 
-SCENARIO("std::numerir_limits") {
-    REQUIRE(numeric_limits<uint8_t>::is_signed == true);
+SCENARIO("std::numeric_limits") {
+    REQUIRE(numeric_limits<uint8_t>::is_signed == false);
+    REQUIRE(numeric_limits<uint8_t>::is_exact == true);
+    REQUIRE(numeric_limits<uint8_t>::is_integer == true);
+    REQUIRE(numeric_limits<uint8_t>::digits == 8);
+    REQUIRE(numeric_limits<uint8_t>::digits10 == 2);
+    REQUIRE(numeric_limits<uint8_t>::max_digits10 == 0);
+
+    REQUIRE(numeric_limits<uint8_t>::min() == 0);
+    REQUIRE(numeric_limits<uint8_t>::max() == 255);
+
+    REQUIRE(numeric_limits<int8_t>::is_signed == true);
+    
 }
