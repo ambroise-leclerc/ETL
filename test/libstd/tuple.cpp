@@ -52,9 +52,20 @@ public:
 };
 */
 
-SCENARIO("std::integer_sequence") {
-    auto seq = make_integer_sequence<int, 5>{};
+template<typename T, T num>
+using integer_sequence_t = decltype(make_integer_sequence<T, num>);
 
+SCENARIO("std::integer_sequence") {
+    static_assert(is_integral<signed char>::value, "not an integral type");
+
+    using seq5 = make_integer_sequence<int, 5>;
+    using seq10 = make_index_sequence<10>;
+    using seq18 = make_integer_sequence<char, 18>;
+    using seq140 = make_integer_sequence<uint64_t, 140>;
+    REQUIRE(seq5::size() == 5);
+    REQUIRE(seq10::size() == 10);
+    REQUIRE(seq18::size() == 18);
+    REQUIRE(seq140::size() == 140);
 }
 
 SCENARIO("std::tuple") {
