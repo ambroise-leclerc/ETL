@@ -20,6 +20,14 @@ matrix:
           packages:
             - g++-5
       env: COMPILER=g++-5
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env: COMPILER=g++-6
       
 before_install:
   - sudo apt-get update -qq
@@ -27,6 +35,7 @@ before_install:
 script:
   - mkdir build
   - cd build
+  - $COMPILER -version
   - cmake -DCMAKE_CXX_COMPILER=$COMPILER .. && make
   - ./TestsETL
 
