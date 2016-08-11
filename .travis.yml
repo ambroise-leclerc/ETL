@@ -35,7 +35,7 @@ before_install:
 script:
   - mkdir build
   - cd build
-  - $COMPILER -version
+  - $COMPILER --version
   - cmake -DCMAKE_CXX_COMPILER=$COMPILER .. && make
   - ./TestsETL
 
