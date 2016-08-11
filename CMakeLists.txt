@@ -20,7 +20,7 @@ add_executable( TestsETL test/test.cpp test/SetClearTest.cpp test/InterruptsTest
 
 #target_compile_features(etltest PUBLIC cxx_binary_literals)
 if(UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 endif()
 
 include_directories(include 3rdParty test .)
