@@ -33,6 +33,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 #include <../libstd/include/cstdint>
+#include <../libstd/include/cstddef>
 
 namespace std {
 namespace etlHelper {
