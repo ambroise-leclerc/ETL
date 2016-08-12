@@ -50,6 +50,6 @@ SCENARIO("std::numeric_limits") {
     REQUIRE(numeric_limits<uint8_t>::max() == 255);
 
     REQUIRE(numeric_limits<int8_t>::is_signed == true);
-    REQUIRE(is_signed_v<int32_t>);
+    REQUIRE(is_signed<int32_t>::value);
     
 }
