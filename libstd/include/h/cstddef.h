@@ -30,18 +30,15 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
-
-#ifndef ETL_LIBSTD_CSTDDEF_H_
-#define ETL_LIBSTD_CSTDDEF_H_
+#pragma once
 
 namespace std {
-#ifdef __GNUG__
+#ifdef _WIN32
+using nullptr_t = decltype(__nullptr);
+using max_align_t = double;
+#else
     using nullptr_t = decltype(nullptr);
     using max_align_t = ::max_align_t;
-#else
-    using nullptr_t = decltype(__nullptr);
-    using max_align_t = double;
 #endif
 
     using size_t = ::size_t;
@@ -49,6 +46,3 @@ namespace std {
 } // namespace std
 
 using ::std::nullptr_t;
-
-
-#endif // ETL_LIBSTD_CSTDDEF_H_
