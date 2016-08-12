@@ -107,7 +107,7 @@ namespace etlHelper {
         static constexpr int digits =				typeDigits<type>();
         static constexpr int digits10 =				typeDigits10<type>();;
         static constexpr int max_digits10 = 0;
-        static constexpr bool is_signed =			is_signed<type>::value;
+        static constexpr bool is_signed =			type_is_signed<type>::value;
         static constexpr bool is_integer = true;
         static constexpr bool is_exact = true;
         static constexpr int radix = 2;
