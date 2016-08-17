@@ -133,7 +133,9 @@ namespace etlHelper {
         static constexpr bool tinyness_before = false;
         static constexpr float_round_style round_style = round_toward_zero;
     };
-    
+
+//    template<> class numericLimitsBase<unsigned char>;
+
 } // namespace etlHelper
 
 
@@ -148,7 +150,10 @@ template<> struct numeric_limits<bool>  : public etlHelper::numericLimitsBase<bo
 
 template<> struct numeric_limits<char>  : public etlHelper::numericLimitsBase<char> {};
 template<> struct numeric_limits<signed char> : public etlHelper::numericLimitsBase<signed char> {};
-template<> struct numeric_limits<uint8_t> : public etlHelper::numericLimitsBase<uint8_t> {};
+template<> struct numeric_limits<unsigned char> : public etlHelper::numericLimitsBase<unsigned char> {
+    static constexpr int digits10 = 2;
+
+};
 template<> struct numeric_limits<wchar_t> : public etlHelper::numericLimitsBase<wchar_t> {};
 template<> struct numeric_limits<short int> : public etlHelper::numericLimitsBase<short int> {};
 template<> struct numeric_limits<int> : public etlHelper::numericLimitsBase<int> {};
