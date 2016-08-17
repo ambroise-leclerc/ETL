@@ -168,7 +168,7 @@ template<typename T1, typename T2> constexpr auto make_pair(T1&& x, T2&& y)
 }
 
 template<typename T> typename add_rvalue_reference<T>::type declval() noexcept {
-    static_assert(etlHelper::declval<T>::never_use, "std::declval() return value must never be used (ISO §20.2.4).");
+    static_assert(etlHelper::declval<T>::never_use, "std::declval() return value must never be used (ISO 20.2.4).");
     return etlHelper::declval<T>::ret();
 }
 
