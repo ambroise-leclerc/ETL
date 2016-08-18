@@ -134,7 +134,7 @@ namespace etlHelper {
         static constexpr float_round_style round_style = round_toward_zero;
     };
 
-//    template<> class numericLimitsBase<unsigned char>;
+    template class numericLimitsBase<unsigned char>;
 
 } // namespace etlHelper
 
