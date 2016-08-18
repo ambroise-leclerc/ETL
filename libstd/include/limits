@@ -87,7 +87,7 @@ struct numeric_limits {
 */
 
 namespace etlHelper {
-    template<typename T> constexpr auto typeDigits() { return (sizeof(T) * CHAR_BIT - is_signed<T>()); }
+    template<typename T> constexpr auto typeDigits() { return (sizeof(T) * CHAR_BIT - type_is_signed<T>()); }
     template<typename T> constexpr auto typeDigits10() { return typeDigits<T>() * 643L/2136; }
     template<typename T> constexpr T typeMax() { return type_is_signed<T>() ?
                                                     ((((static_cast<T>(1) << (typeDigits<T>() - 1)) -1) << 1) + 1) :
