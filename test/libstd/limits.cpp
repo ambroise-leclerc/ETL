@@ -1,5 +1,5 @@
-/// @file test/libstd/memory.cpp
-/// @data 06/06/2016 22:23:53
+/// @file test/libstd/limits.cpp
+/// @data 10/06/2016 22:23:53
 /// @author Ambroise Leclerc
 /// @brief BDD tests for <limits>
 //
@@ -55,5 +55,8 @@ SCENARIO("std::numeric_limits") {
     auto s6 = numeric_limits<uint8_t>::max_digits10;    REQUIRE(s6 == 0);
     auto s7 = numeric_limits<uint8_t>::min();           REQUIRE(s7 == 0);
     auto s8 = numeric_limits<uint8_t>::max();           REQUIRE(s8 == 255);
-    auto s9 = numeric_limits<int8_t>::is_signed;        REQUIRE(s9 == true); 
+    auto s9 = numeric_limits<int8_t>::is_signed;        REQUIRE(s9 == true);
+
+    auto t1 = numeric_limits<int64_t>::is_signed;       REQUIRE(t1 == true);
+    auto t2 = numeric_limits<int64_t>::digits10;        REQUIRE(t2 == 18);
 }

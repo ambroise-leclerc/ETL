@@ -48,43 +48,6 @@ enum float_denorm_style {
     denorm_absent = 0,
     denorm_present = 1
 };
-/*
-template<typename T>
-struct numeric_limits {
-    static constexpr bool is_specialized = false;
-    static constexpr T min() noexcept           { return T(); }
-    static constexpr T max() noexcept           { return T(); }
-    static constexpr T lowest() noexcept        { return T(); }
-    static constexpr int digits = 0;
-    static constexpr int digits10 = 0;
-    static constexpr int max_digits10 = 0;
-    static constexpr bool is_signed = false;
-    static constexpr bool is_integer = false;
-    static constexpr bool is_exact = false;
-    static constexpr int radix = 0;
-    static constexpr T epsilon() noexcept       { return T(); }
-    static constexpr T round_error() noexcept   { return T(); }
-    static constexpr int min_exponent = 0;
-    static constexpr int min_exponent10 = 0;
-    static constexpr int max_exponent = 0;
-    static constexpr int max_exponent10 = 0;
-    static constexpr bool has_infinity = false;
-    static constexpr bool has_quiet_NaN = false;
-    static constexpr bool has_signaling_NaN = false;
-    static constexpr float_denorm_style has_denorm = denorm_absent;
-    static constexpr bool has_denorm_loss = false;
-    static constexpr T infinity() noexcept      { return T(); }
-    static constexpr T quiet_NaN() noexcept     { return T(); }
-    static constexpr T signaling_NaN() noexcept { return T(); }
-    static constexpr T denorm_min() noexcept    { return T(); }
-    static constexpr bool is_iec559 = false;
-    static constexpr bool is_bounded = false;
-    static constexpr bool is_modulo = false;
-    static constexpr bool traps = false;
-    static constexpr bool tinyness_before = false;
-    static constexpr float_round_style round_style = round_toward_zero;
-};
-*/
 
 namespace etlHelper {
     template<typename T> constexpr auto typeDigits() { return (sizeof(T) * CHAR_BIT - type_is_signed<T>()); }
@@ -148,22 +111,5 @@ template<> struct numeric_limits<bool>  : public etlHelper::numericLimitsBase<bo
     static constexpr int digits = 1;
     static constexpr int digits10 = 0;
 };
-
-//template etlHelper::numericLimitsBase<unsigned char>;
-/*
-template<> struct numeric_limits<char>  : public etlHelper::numericLimitsBase<char> {};
-template<> struct numeric_limits<signed char> : public etlHelper::numericLimitsBase<signed char> {};
-template<> struct numeric_limits<unsigned char> : public etlHelper::numericLimitsBase<unsigned char> {};
-
-template<> struct numeric_limits<wchar_t> : public etlHelper::numericLimitsBase<wchar_t> {};
-template<> struct numeric_limits<short int> : public etlHelper::numericLimitsBase<short int> {};
-template<> struct numeric_limits<int> : public etlHelper::numericLimitsBase<int> {};
-template<> struct numeric_limits<long int> : public etlHelper::numericLimitsBase<long int> {};
-template<> struct numeric_limits<long long int> : public etlHelper::numericLimitsBase<long long int> {};
-template<> struct numeric_limits<unsigned short int> : public etlHelper::numericLimitsBase<unsigned short int> {};
-template<> struct numeric_limits<unsigned int> : public etlHelper::numericLimitsBase<unsigned int> {};
-template<> struct numeric_limits<unsigned long int> : public etlHelper::numericLimitsBase<unsigned long int> {};
-template<> struct numeric_limits<unsigned long long int> : public etlHelper::numericLimitsBase<unsigned long long int> {};
-*/
 
 }  // namespace std
