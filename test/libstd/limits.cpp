@@ -145,6 +145,13 @@ template<> struct numeric_limits<bool> : public etlHelper::numericLimitsBase<boo
 using namespace etlTest::std;
 
 SCENARIO("std::numeric_limits") {
+    REQUIRE(numeric_limits<uint32_t>::is_signed == false);
+    REQUIRE(numeric_limits<uint32_t>::is_exact == true);
+    REQUIRE(numeric_limits<uint32_t>::is_integer == true);
+    REQUIRE(numeric_limits<uint32_t>::digits == 32);
+    REQUIRE(numeric_limits<uint32_t>::digits10 == 9);
+    REQUIRE(numeric_limits<uint32_t>::max_digits10 == 0);
+
     REQUIRE(numeric_limits<uint8_t>::is_signed == false);
     REQUIRE(numeric_limits<uint8_t>::is_exact == true);
     REQUIRE(numeric_limits<uint8_t>::is_integer == true);
