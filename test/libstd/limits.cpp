@@ -158,14 +158,14 @@ SCENARIO("std::numeric_limits") {
     std::cout << numeric_limits<uint8_t>::max() << "== 255\n";
 
     std::cout << numeric_limits<int8_t>::is_signed << "== true\n";
-    /*
+    
     REQUIRE(numeric_limits<uint32_t>::is_signed == false);
     REQUIRE(numeric_limits<uint32_t>::is_exact == true);
     REQUIRE(numeric_limits<uint32_t>::is_integer == true);
     REQUIRE(numeric_limits<uint32_t>::digits == 32);
     REQUIRE(numeric_limits<uint32_t>::digits10 == 9);
     REQUIRE(numeric_limits<uint32_t>::max_digits10 == 0);
-
+    /*
     REQUIRE(numeric_limits<uint8_t>::is_signed == false);
     REQUIRE(numeric_limits<uint8_t>::is_exact == true);
     REQUIRE(numeric_limits<uint8_t>::is_integer == true);
