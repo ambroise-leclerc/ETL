@@ -53,11 +53,7 @@ SCENARIO("std::numeric_limits") {
     auto s4 = numeric_limits<uint8_t>::digits;          REQUIRE(s4 == 8);
     auto s5 = numeric_limits<uint8_t>::digits10;        REQUIRE(s5 == 2);
     auto s6 = numeric_limits<uint8_t>::max_digits10;    REQUIRE(s6 == 0);
-    /*
-    REQUIRE(numeric_limits<uint8_t>::min() == 0);
-    REQUIRE(numeric_limits<uint8_t>::max() == 255);
-
-    REQUIRE(numeric_limits<int8_t>::is_signed == true);
-    //REQUIRE(is_signed<int32_t>::value);
-   */ 
+    auto s7 = numeric_limits<uint8_t>::min();           REQUIRE(s7 == 0);
+    auto s8 = numeric_limits<uint8_t>::max();           REQUIRE(s8 == 255);
+    auto s9 = numeric_limits<int8_t>::is_signed;        REQUIRE(s9 == true); 
 }
