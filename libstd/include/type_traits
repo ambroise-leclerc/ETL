@@ -108,8 +108,10 @@ namespace etlHelper {
 } // namespace etlHelper
 
 template<typename T> struct is_signed : etlHelper::type_is_signed<T>::type {};
+
 //#if (__cplusplus > 201402L)
-template<typename T> constexpr bool is_signed_v = is_signed<T>::value;
+template<typename T> bool is_signed_v = is_signed<T>::value;
 //#endif
+
 } // namespace std
 

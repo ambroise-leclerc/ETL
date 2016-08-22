@@ -38,11 +38,11 @@ namespace std {
 /// Base class for type traits. Wraps a static constant of specified type.
 template<typename T, T v>
 struct integral_constant {
-  static constexpr T value = v;
-  using value_type = T;
-  using type = integral_constant;
-  constexpr operator value_type() const { return value; }
-  constexpr value_type operator()() const { return value; }
+    static constexpr T value = v;
+    using value_type = T;
+    using type = integral_constant;
+    constexpr operator value_type() const { return value; }
+    constexpr value_type operator()() const { return value; }
 };
 
 using true_type =   integral_constant<bool, true>;	///> Specialization for type bool
