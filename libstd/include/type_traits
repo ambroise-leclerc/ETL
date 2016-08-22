@@ -109,7 +109,7 @@ namespace etlHelper {
 
 template<typename T> struct is_signed : etlHelper::type_is_signed<T>::type {};
 
-#if !defined(__GNU_G__) || (__GNUC__ > 4)
+#if (__GNUC__ > 4) || !defined(__GNU_G__) 
 template<typename T> constexpr bool is_signed_v = is_signed<T>::value;
 #endif
 
