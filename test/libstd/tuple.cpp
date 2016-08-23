@@ -36,6 +36,7 @@ namespace etlTest {
 #include <libstd/include/tuple>
 } // namespace etlTest
 
+#include <string>
 using namespace etlTest::std;
 /*
 class TupleTest {
@@ -52,6 +53,23 @@ public:
 };
 */
 
+#include <iostream>
+
+
+class Serializer {
+public:
+    std::string output;
+
+    void f(etlTest::std::size_t s) { output += std::to_string(s); }
+
+    template<typename T, T... Indices>
+    void transform(integer_sequence<T, Indices...>) {
+        int ignore[]{ (f(Indices), 0)... };
+        (void)ignore; // silence compiler warnings about the unused local variable
+    }
+
+};
+
 SCENARIO("std::integer_sequence") {
     using seq5 = make_integer_sequence<int, 5>;
     using seq10 = make_index_sequence<10>;
@@ -61,6 +79,17 @@ SCENARIO("std::integer_sequence") {
     REQUIRE(seq10::size() == 10);
     REQUIRE(seq18::size() == 18);
     REQUIRE(seq140::size() == 140);
+
+
+    Serializer s;
+    s.transform(index_sequence<4, 2, 3, 1, 5>{});
+    REQUIRE(s.output == "42315");
+
+    s.transform(make_integer_sequence<uint8_t, 12>{});
+    REQUIRE(s.output == "4231501234567891011");
+
+    s.transform(make_index_sequence<13>{});
+    REQUIRE(s.output == "42315012345678910110123456789101112");
 }
 
 SCENARIO("std::tuple") {

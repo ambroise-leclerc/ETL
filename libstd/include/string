@@ -35,9 +35,33 @@
 #define ETL_LIBSTD_STRING_
 
 #include "h/char_traits.h"
-#include "h/basic_string.h"
+#include <vector>
+#include <memory>
 
 namespace std {
+
+
+template<typename CharT, typename Traits = std::char_traits<CharT>, typename Allocator = std::allocator<CharT>>
+class basic_string {
+public:
+    using traits_type = Traits;
+    using value_type = Traits::char_type;
+    using allocator_type = Allocator;
+    using size_type = std::size_t;
+    using difference_type = std::ptrdiff_t;
+    using reference = value_type&;
+    using const_reference = const value_type&;
+    using pointer = std::allocator_traits<Allocator>::pointer;
+    using const_pointer = std::allocator_traits<Allocator>::const_pointer;
+    using iterator = std::vector<CharT, Allocator>;
+    using const_iterator = std::vector<CharT, Allocator>;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
+    static const size_type npos = -1;
+
+
+};
 
 using string = basic_string<char>;
 
