@@ -30,9 +30,7 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
-#ifndef ETL_LIBSTD_TUPLE_
-#define ETL_LIBSTD_TUPLE_
+#pragma once
 #include <../libstd/include/functional>
 #include <../libstd/include/type_traits>
 #include <../libstd/include/utility>
@@ -40,6 +38,26 @@
 
 namespace std {
 
+//////// New tuple implementation
+template<size_t, typename T>
+struct tuple_element {
+    T value;
+};
+
+template<typename Sequences, typename... Types>
+struct tuple_impl;
+
+template<size_t... Indices, typename... Types>
+struct tuple_impl<index_sequence<Indices...>, Types...> : tuple_element<Indices, Types>... {
+};
+
+template<typename... Types>
+class tuple : tuple_impl<typename make_index_sequence<sizeof...(Types)>::type, Types...> {
+};
+
+//////// End new tuple implementation
+
+/*
 template <typename... Types>
 class tuple {
 public:
@@ -117,8 +135,6 @@ template<typename... Types>
 	constexpr std::tuple<typename etlHelper::deep_decay_t<Types>...> make_tuple(Types&&... args) {
 		return std::tuple<etlHelper::deep_decay_t<Types>...>(std::forward<Types>(args)...);
 	}
-
+    */
 } // namespace std
 
-
-#endif // ETL_LIBSTD_TUPLE_

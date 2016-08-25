@@ -6,7 +6,7 @@ set(ETL_HEADERS include/etl/debug_policies.h include/etl/freestore.h include/etl
                 include/etl/metautils.h include/etl/watchdog.h)
                 
 set(LIBSTD_HEADERS libstd/include/chrono libstd/include/ratio libstd/include/limits libstd/include/memory libstd/include/utility
-                   libstd/include/type_traits libstd/include/string libstd/include/vector)
+                   libstd/include/type_traits libstd/include/string libstd/include/vector libstd/include/tuple)
 set(LIBSTD_TESTS test/libstd/chrono.cpp test/libstd/limits.cpp test/libstd/memory.cpp test/libstd/tuple.cpp test/libstd/type_traits.cpp)
                 
 set(ETL_ARCHITECTURE include/etl/architecture/MockCore.h)

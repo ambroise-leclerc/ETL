@@ -65,7 +65,7 @@ public:
     template<typename T, T... Indices>
     void transform(integer_sequence<T, Indices...>) {
         int ignore[]{ (f(Indices), 0)... };
-        (void)ignore; // silence compiler warnings about the unused local variable
+        (void)ignore;                       // avoid 'unused' warning
     }
 
 };
