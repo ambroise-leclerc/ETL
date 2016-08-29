@@ -21,24 +21,7 @@ extern "C"
 
 
 using uartWifi =   etl::Uart1<>;
-void ICACHE_FLASH_ATTR writeUartWifi(sint8 s)
-{
-    uartWifi::write((char)(s+48));
-    uartWifi::write('\r');
-    uartWifi::write('\n');
-}
 
-void ICACHE_FLASH_ATTR writeUartWifi(const char * string)
-{
-    auto i = 0;
-    while (string[i] != '\0')
-    {
-        uartWifi::write(string[i]);
-        i++;
-    }    
-    uartWifi::write('\r');
-    uartWifi::write('\n');
-}
 
 extern "C" ICACHE_FLASH_ATTR void abort() {
     while (true)
@@ -118,34 +101,34 @@ void ICACHE_FLASH_ATTR response(void *arg, char *pdata, unsigned short len);
 using responseReceived = void(*)(char * receivedData);
 
 
-class QueryParam {
+class  QueryParam {
 public:
-    auto& setPath(const char* pathP) {
+	auto&  setPath(const char* pathP) {
         path = pathP;
         return *this;
     }
 
-    auto& setData(const char* dataP) {
+	auto&  setData(const char* dataP) {
         data = dataP;
         return *this;
     }
 
-    auto& setContentType(const char* contentpeP) {
+	auto&  setContentType(const char* contentpeP) {
         contentype = contentpeP;
         return *this;
     }
     
-    auto& setCallBack(responseReceived callBackP) {
+	auto&  setCallBack(responseReceived callBackP) {
         callback = callBackP;
         return *this;
     }
     
-    void setPost()
+	void  setPost()
     {
         currentyType = QueryParam::POST;
     }
     
-    void setGet()
+	void  setGet()
     {
         currentyType = QueryParam::GET;
     }
@@ -273,14 +256,12 @@ int ClientManager::clientIndex = 0;
 
 void ICACHE_FLASH_ATTR connected(void *arg)
 {
-    writeUartWifi("tcp_connected");
     auto clientPtr = ClientManager::getClient((espconn *)arg);
     auto currentyType = clientPtr->queryParam.currentyType;
     switch (currentyType)
     {
     case QueryParam::POST :
     {
-        writeUartWifi("POST");
         os_sprintf(clientPtr->queryParam.buffer,
             "POST %s HTTP/1.1 \r\nHost: %s \r\nCache-Control: no-cache \r\nContent-Type: %s \r\nContent-Length: %d \r\n\r\n%s",
             clientPtr->queryParam.path,
@@ -289,8 +270,6 @@ void ICACHE_FLASH_ATTR connected(void *arg)
             os_strlen(clientPtr->queryParam.data),
             clientPtr->queryParam.data);
     
-        writeUartWifi("Sending: ");
-        writeUartWifi(clientPtr->queryParam.buffer);
         auto value = espconn_sent(&(clientPtr->connection), (uint8_t *)(clientPtr->queryParam.buffer), os_strlen(clientPtr->queryParam.buffer));
         clientPtr->busy = false;
     }
@@ -314,24 +293,19 @@ void ICACHE_FLASH_ATTR response(void *arg, char *pdata, unsigned short len)
 
 void ICACHE_FLASH_ATTR disconnected(void *arg)
 {
-    writeUartWifi("tcp_disconnected");
 }
 
 void ICACHE_FLASH_ATTR dnsResolved(const char *name, ip_addr_t *ipaddr, void *arg)
 {
     if (ipaddr == NULL) 
     {
-        writeUartWifi("DNS lookup failed\n");
         wifi_station_disconnect();
     }
     else  if (arg == NULL) 
     {
-         writeUartWifi("arg null");
     }
     else
     {
-        writeUartWifi("Connecting dnsResolved...");
-        writeUartWifi(name);
         auto clientPtr = ClientManager::getClient(name);
         auto connection = &(clientPtr->connection);
         connection->type = ESPCONN_TCP;
@@ -359,7 +333,7 @@ public:
         wifi_station_set_config(&config);
     }
     
-    static void connect(const char * ssid, const char * password, wifi_event_handler_cb_t handler)
+	static void connect(const char * ssid, const char * password, wifi_event_handler_cb_t handler)
     {
        for(int i = 0 ; i < 10 ; i++){
             clientTab[i] = nullptr;

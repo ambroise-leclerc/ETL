@@ -1862,7 +1862,7 @@ void Uart0Driver::Isr::receiveComplete() {
     }
 }
 
-template<uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT, typename CharType>
+template<uint32_t BAUD_RATE = 9600, FrameFormat FRAME_FORMAT = _8N1, typename CharType = char>
 class Uart0 : public Uart0Driver {
 public:
     using ReceiveCallback = void(*)(CharType);
@@ -1880,7 +1880,11 @@ public:
         start();
     }
 
-static void write(CharType datum) { }
+static void write(CharType datum) { 
+	while (!(UCSR0A & (1<<UDRE0))) { }
+	UDR0 = datum;
+	
+	}
 };
 
 template<> struct is_uart_rxd_capable<PinD2> : std::true_type {};
@@ -1984,7 +1988,7 @@ public:
         start();
     }
 
-static void write(CharType datum) { }
+static void write(CharType datum) { writeAsync(datum); }
 };
 #ifdef PCICR
 struct PinChangeControlRegister {
