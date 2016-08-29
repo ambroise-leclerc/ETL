@@ -1,10 +1,9 @@
-/// @file default_delete.h
-/// @data 07/03/2014 11:35:53
+/// @file test/libstd/memory.cpp
+/// @data 06/06/2016 22:23:53
 /// @author Ambroise Leclerc
-/// @brief Default destruction policy used by std::unique_ptr when no deleter is specified.
+/// @brief BDD tests for <tuple>
 //
-// Embedded Template Library
-// Copyright (c) 2014, Ambroise Leclerc
+// Copyright (c) 2016, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -31,30 +30,29 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#include <catch.hpp>
 
-#pragma once
+namespace etlTest {
+#include <libstd/include/tuple>
+} // namespace etlTest
 
-namespace std {
-  
-template<typename T> struct default_delete {
-    /// Default constructor.
-    constexpr default_delete() noexcept = default;
-  
-    /// Converting constructor from another type.
-    template<typename T2> constexpr default_delete(const default_delete<T2>&) noexcept { }
-    
-    void operator()(T* pointer) { delete pointer; }
+using namespace etlTest::std;
+/*
+class TupleTest {
+public:
+    using Etq = const tuple<const char*, int, bool>;
+
+    Etq static findEtiquette(uint8_t id) {
+        switch (id) {
+        case 0: return make_tuple("ADSC", 12, false);
+        case 1: return make_tuple("VTIC", 2, false);
+        }
+        return make_tuple("UNDE", 0, false);
+    }
 };
+*/
+SCENARIO("std::tuple") {
+    GIVEN("0 class instances") {
 
-/// std::default_delete specialization for arrays
-template<typename T> struct default_delete<T[]> {
-    /// Default constructor.
-    constexpr default_delete() noexcept = default;
-  
-    /// Converting constructor from another type.
-    template<typename T2> constexpr default_delete(const default_delete<T2[]>&) noexcept { }
-    
-    void operator()(T* pointer) { delete[] pointer; }
-};
-
-} // namespace std
+    }
+}

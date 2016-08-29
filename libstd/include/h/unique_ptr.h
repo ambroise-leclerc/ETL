@@ -33,7 +33,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once 
-    
+
 #include <../libstd/include/utility>
 #include <../libstd/include/cstddef>
 #include <../libstd/include/h/default_delete.h>

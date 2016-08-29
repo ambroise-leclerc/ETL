@@ -34,7 +34,7 @@
 #ifndef ETL_LIBSTD_ARRAY_H_
 #define ETL_LIBSTD_ARRAY_H_
 
-#include <../libstd/include/cstddef>
+
 #include <../libstd/include/iterator>
 #include <../libstd/include/algorithm>
 #include <../libstd/include/stdexcept>
@@ -128,7 +128,11 @@ struct array<T, 0> {
   reference operator[](size_type)                       { RangeError(); return elems_; }
   constexpr const_reference operator[](size_type) const { RangeError(); return elems_; }   
   reference at(size_type)                               { RangeError(); return elems_; }
+<<<<<<< HEAD
   constexpr const_reference at(size_type)  const        { RangeError(); return elems_; }
+=======
+  constexpr const_reference at(size_type) const         { RangeError(); return elems_; }
+>>>>>>> 8c35d3201f5cda4fde6edfa687379ba3afadf971
   reference front()                                     { RangeError(); return elems_; }
   constexpr const_reference front() const               { RangeError(); return elems_; }
   reference back()                                      { RangeError(); return elems_; }

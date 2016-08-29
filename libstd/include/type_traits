@@ -48,6 +48,41 @@ template<typename T>                struct enable_if<true, T>   { using type = T
 
 template<bool B, typename T = void> using enable_if_t = typename enable_if<B, T>::type;
 
+//#ifdef __GNU_G__
+template<typename T> struct is_empty : public integral_constant<bool, __is_empty(T)> {};
+//#else
+
+namespace etlHelper {
+	// Conditional logical helpers from GNU libstdc++;
+    template<bool, typename, typename> struct conditional;
+    template<typename...> struct cond_or;
+    template<> struct cond_or<> : public false_type { };
+    template<typename T> struct cond_or<T> : public T { };
+    template<typename T, typename U> struct cond_or<T, U> : public conditional<T::value, T, U>::type { };
+    template<typename T, typename U, typename V, typename... Z> struct cond_or<T, U, V, Z...> : public conditional<T::value, U, cond_or<U, V, Z...>>::type { };
+    template<typename...> struct cond_and;
+    template<> struct cond_and<> : public true_type { };
+    template<typename T> struct cond_and<T> : public T { };
+    template<typename T, typename U> struct cond_and<T, U> : public conditional<T::value, U, T>::type { };
+    template<typename T, typename U, typename V, typename... Z> struct cond_and<T, U, V, Z...> : public conditional<T::value, cond_and<U, V, Z...>, T>::type { };
+    template<typename T> struct cond_not : public integral_constant<bool, !T::value> { };
+
+
+    template<typename From, typename To, bool = cond_or<is_void<From>, is_function<To>,  is_array<To>> ::value> struct is_convertible {
+        using type = typename is_void<To>::type;
+    };
+  
+    template<typename From, typename To> class is_convertible<From, To, false> {
+        template<typename To1> static void __test_aux(To1);
+        template<typename From1, typename To1, typename = decltype(__test_aux<To1>(std::declval<From1>()))> static true_type __test(int);
+        template<typename, typename> static false_type __test(...);
+    public:
+        typedef decltype(__test<From, To>(0)) type;
+    };
+} // namespace etlHelper
+
+template<typename From, typename To> struct is_convertible : public etlHelper::is_convertible<From, To>::type { };
+//#endif
 //template<typename Base, Derived> struct is_base_of : public integral_constant<bool, is_class<Base>::value && sizeof(etlHelper::is_base_of(Base, Derived)> {};
 
 

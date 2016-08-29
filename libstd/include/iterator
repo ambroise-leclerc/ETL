@@ -31,14 +31,12 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_ITERATOR_
-#define ETL_LIBSTD_ITERATOR_
 
+#pragma once
+#include <../libstd/include/initializer_list>
+#include "h/iterator_traits.h"
+#include "h/iterator.h"
+#include "h/iterator_reverse.h"
+#include "h/iterator_move.h"
+#include "h/iterator_utils.h"
 
-#include <../libstd/include/h/iterator_traits.h>
-#include <../libstd/include/h/iterator.h>
-#include <../libstd/include/h/iterator_reverse.h>
-#include <../libstd/include/h/iterator_move.h>
-#include <../libstd/include/h/iterator_utils.h>
-
-#endif // ETL_LIBSTD_ITERATOR_

@@ -45,13 +45,13 @@ public:
     using type = T;
 
     /// Constructor : stores a reference to x.
-    reference_wrapper(T& x) noexcept : data(std::addressof(x)) {}
+    reference_wrapper(T& x) noexcept : data(addressof(x)) {}
 
     /// Move constructor : deleted, construction from a temporary object is not allowed.
     reference_wrapper(T&&) = delete;
 
     /// Copy constructor : stores a reference to other.get().
-    reference_wrapper(const reference_wrapper<T>& other) noexcept : data(std::addressof(other.get())) {}
+    reference_wrapper(const reference_wrapper<T>& other) noexcept : data(addressof(other.get())) {}
 
     operator T& () const noexcept { return *data; }
     T& get() const noexcept { return *data; }

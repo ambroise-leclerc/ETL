@@ -44,12 +44,12 @@ class tuple {
 public:
     constexpr tuple();
     explicit constexpr tuple(const Types&... args);
+    template<typename... UTypes> explicit constexpr tuple(UTypes&&... args) {}
     template<typename... UTypes> constexpr tuple(tuple<UTypes...>& other)
     {
     }
     
-    template <typename... UTypes>
-    explicit constexpr tuple(UTypes&&... args);
+    //template <typename... UTypes> explicit constexpr tuple(UTypes&&... args);
 };
 
 // "Some implementations of std::tuple use recursive inheritance. But the good ones don't. ;-)"

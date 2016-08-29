@@ -32,24 +32,20 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-
-#ifndef ETL_LIBSTD_UTILITY_DECLVAL_H_
-#define ETL_LIBSTD_UTILITY_DECLVAL_H_
+#pragma once
 
 namespace std {
 namespace etlHelper {
-
-  template<typename T> struct declval {
-    static const bool never_use = false;
-    static typename std::add_rvalue_reference<T>::type ret();
-  };
-}
+    template<typename T> struct declval {
+        static const bool never_use = false;
+        static typename std::add_rvalue_reference<T>::type ret();
+    };
+} // namespace etlHelper
 
   
 template<typename T> typename std::add_rvalue_reference<T>::type declval() noexcept {
-  static_assert(etlHelper::declval<T>::never_use, "std::declval() return value must never be used (ISO §20.2.4).");
-  return etlHelper::declval<T>::ret();
+    static_assert(etlHelper::declval<T>::never_use, "std::declval() return value must never be used (ISO §20.2.4).");
+    return etlHelper::declval<T>::ret();
 }
 
-}
-#endif // ETL_LIBSTD_UTILITY_DECLVAL_H_
+} // namspace std
