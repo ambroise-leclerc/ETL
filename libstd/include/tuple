@@ -39,20 +39,62 @@
 namespace std {
 
 //////// New tuple implementation
-template<size_t, typename T>
-struct tuple_element {
-    T value;
-};
 
-template<typename Sequences, typename... Types>
-struct tuple_impl;
+namespace etlHelper {
+    
+    template<size_t, typename T>
+    struct tupleElement {
+        T value;
+        tupleElement() = default;
+        tupleElement(tupleElement const&) = default;
+        tupleElement(tupleElement&&) = default;
+        tupleElement& operator=(tupleElement const& rhs) = default;
+        tupleElement& operator=(tupleElement&&) = default;
+    };
 
-template<size_t... Indices, typename... Types>
-struct tuple_impl<index_sequence<Indices...>, Types...> : tuple_element<Indices, Types>... {
-};
+    template<typename Sequences, typename... Types>
+    struct tupleImpl;
+
+    template<typename> struct isTupleImpl : std::false_type {};
+    template<size_t... Indices, typename... Types> struct isTupleImpl<tupleImpl<index_sequence<Indices...>, Types...>> : std::true_type {};
+
+    template<template <class> typename> constexpr bool isAnyOf() { return false; }
+    template<template <class> typename Op, typename Head, typename... Tail>
+    constexpr bool isAnyOf() { return Op<Head>::value || isAnyOf<Op, Tail...>(); }
+
+    template<size_t... Indices, typename... Types>
+    struct tupleImpl<index_sequence<Indices...>, Types...> : tupleElement<Indices, Types>... {
+        tupleImpl() = default;
+        template<typename... OtherTypes,
+            typename = typename enable_if<
+            !isAnyOf<isTupleImpl, typename std::decay<OtherTypes>::type...>() >::type >
+        explicit tupleImpl(OtherTypes&&... elements) : tupleImpl<Indices, Types>(std::forward<OtherTypes>(elements))... {}
+        tupleImpl(tupleImpl const&) = default;
+        tupleImpl(tupleImpl&&) = default;
+        tupleImpl& operator=(tupleImpl const& rhs) = default;
+        tupleImpl& operator=(tupleImpl&&) = default;
+    };
+} // namespace etlHelper
 
 template<typename... Types>
-class tuple : tuple_impl<typename make_index_sequence<sizeof...(Types)>::type, Types...> {
+class tuple : etlHelper::tupleImpl<typename make_index_sequence<sizeof...(Types)>::type, Types...> {
+public:
+    tuple() = default;
+    template<typename... OtherTypes,
+        typename = typename std::enable_if<
+        sizeof...(OtherTypes) == sizeof...(Types)>::type>
+    explicit tuple(OtherTypes&&... elements) : etlHelper::tupleImpl(std::forward<OtherTypes>(elements)...) {}
+    
+    template<typename... OtherTypes>
+    explicit tuple(tuple<OtherTypes...> const& rhs) : etlHelper::tupleImpl(rhs) {}
+
+    template <typename... OtherTypes>
+    explicit tuple(tuple<OtherTypes...>&& rhs) : etlHelper::tupleImpl(std::move(rhs)) {}
+
+    tuple(tuple const&) = default;
+    tuple(tuple&&) = default;
+    tuple& operator=(tuple const& rhs) = default;
+    tuple& operator=(tuple&&) = default;
 };
 
 //////// End new tuple implementation
