@@ -92,6 +92,7 @@ public:
     }
     static const size_t sramSize = 10000;
     using RegisterType = uint16_t;
+    using OffType = uint64_t;
 
     static const uint8_t NB_PORTS = 4;
 

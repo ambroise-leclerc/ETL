@@ -31,9 +31,9 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_FREESTORE_H_
-#define ETL_FREESTORE_H_
-#include <cstddef>
+#pragma once
+#include <../libstd/include/cstddef>
+
 
 namespace etl {
 
@@ -208,5 +208,3 @@ class FreeStore : public FreeStoreTracePolicy {
 FreeStore::Chunk* FreeStore::free_chunk_ = reinterpret_cast<FreeStore::Chunk*>(__malloc_heap_start);
 
 } // namespace etl
-
-#endif // ETL_FREESTORE_H_

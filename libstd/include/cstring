@@ -1,9 +1,10 @@
-/// @file etl.h
-/// @date 21/02/2014 23:06:23
+/// @file cstring
+/// @data 08/06/2016 22:55:53
 /// @author Ambroise Leclerc
-/// @brief Embedded Template Library
+/// @brief Fixed width integer types.
 //
-// Copyright (c) 2014, Ambroise Leclerc
+// Embedded Template Library
+// Copyright (c) 2016, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -29,28 +30,12 @@
 //  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-//  POSSIBILITY OF SUCH DAMAGE./*
+//  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
+#include <string.h>
 
-#include <stdlib.h>
-#include <etl/debug_policies.h>
-#include <etl/metautils.h>
-#include <etl/ioports.h>
-#include <etl/freestore.h>
-#include <memory>
-#include <new>
+namespace std {
 
-namespace etl {
-  
-class HardwareInitializer {
-  static bool freestore_initialized_;
-};
-bool HardwareInitializer::freestore_initialized_ = FreeStore::Initialize();
+#include <string.h>
 
-struct Architecture {
-  constexpr static uint16_t kDefaultBufferSize = 10;
-  using off_type = uint16_t;
-};  
-
-
-} // namespace etl
+} // namespace std

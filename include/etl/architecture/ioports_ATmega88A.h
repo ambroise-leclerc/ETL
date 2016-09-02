@@ -50,6 +50,7 @@ public:
     static const auto eepromSize = 512;
     static const auto sramSize = 1024;
     static const auto architectureWidth = 8;
+    using OffType = uint16_t;
     static const uint32_t McuFrequency = F_CPU;
 
     /// Enables interrupts by setting the global interrupt mask.

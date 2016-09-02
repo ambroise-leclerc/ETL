@@ -32,7 +32,9 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <algorithm>
+#include <libstd/include/algorithm>
+#include <libstd/include/cstring>
+#include <etl.h>
 
 namespace std {
 
@@ -40,8 +42,8 @@ template<typename CharT>
 struct char_traits {
     using char_type	  = CharT;
     using int_type    = CharT;
-    using off_type    = etl::architecture::off_type;
-    using pos_type    = etl::architecture::off_type;
+    using off_type    = etl::Device::OffType;
+    using pos_type    = etl::Device::OffType;
     using state_type  = CharT;
 
     static void assign(char_type& r, const char_type& a) noexcept                       { r = a; }

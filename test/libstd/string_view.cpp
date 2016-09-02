@@ -1,9 +1,9 @@
-/// @file etl.h
-/// @date 21/02/2014 23:06:23
+/// @file test/libstd/memory.cpp
+/// @data 06/06/2016 22:23:53
 /// @author Ambroise Leclerc
-/// @brief Embedded Template Library
+/// @brief BDD tests for <string_view>
 //
-// Copyright (c) 2014, Ambroise Leclerc
+// Copyright (c) 2016, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -29,28 +29,18 @@
 //  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-//  POSSIBILITY OF SUCH DAMAGE./*
-#pragma once
+//  POSSIBILITY OF SUCH DAMAGE.
+#include <catch.hpp>
 
-#include <stdlib.h>
-#include <etl/debug_policies.h>
-#include <etl/metautils.h>
-#include <etl/ioports.h>
-#include <etl/freestore.h>
-#include <memory>
-#include <new>
+namespace etlTest {
+#define __Mock_Mock__
+#include <libstd/include/string_view>
+} // namespace etlTest
 
-namespace etl {
-  
-class HardwareInitializer {
-  static bool freestore_initialized_;
-};
-bool HardwareInitializer::freestore_initialized_ = FreeStore::Initialize();
+using namespace etlTest::std;
 
-struct Architecture {
-  constexpr static uint16_t kDefaultBufferSize = 10;
-  using off_type = uint16_t;
-};  
+SCENARIO("string_view") {
+    string_view str1("FromLitteral");
 
 
-} // namespace etl
+}
