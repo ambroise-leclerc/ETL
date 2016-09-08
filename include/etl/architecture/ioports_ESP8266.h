@@ -32,7 +32,8 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <../libstd/include/cstdint>
+#include <ratio>
+#include <chrono>
 extern "C" {
 #include "eagle_soc.h"
 #include "user_interface.h"
