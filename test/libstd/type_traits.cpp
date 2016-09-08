@@ -1,9 +1,9 @@
-/// @file cstddef.h
-/// @data 05/03/2014 18:23:53
+/// @file test/libstd/type_traits.cpp
+/// @data 19/08/2016 17:40:53
 /// @author Ambroise Leclerc
-/// @brief
+/// @brief BDD tests for <type_traits>
 //
-// Copyright (c) 2014, Ambroise Leclerc
+// Copyright (c) 2016, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -30,25 +30,34 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#include <catch.hpp>
 
+namespace etlTest {
+#include <libstd/include/type_traits>
+} // namespace etlTest
 
-#ifndef ETL_LIBSTD_CSTDDEF_H_
-#define ETL_LIBSTD_CSTDDEF_H_
+using namespace etlTest::std;
 
-namespace std {
-#ifdef __GNUG__
-    using nullptr_t = decltype(nullptr);
-    using max_align_t = ::max_align_t;
-#else
-    using nullptr_t = decltype(__nullptr);
-    using max_align_t = double;
+SCENARIO("std::signed") {
+    auto s1 = is_signed<uint8_t>::value;    REQUIRE(s1 == false);
+    auto s2 = is_signed<char>::value;       REQUIRE(s2 == true);
+    auto s3 = is_signed<int32_t>::value;    REQUIRE(s3 == true);
+    auto s4 = is_signed<uint64_t>::value;   REQUIRE(s4 == false);
+    REQUIRE(is_signed<uint8_t>::value == false);
+
+#if (__GNUC__ > 4) 
+    REQUIRE(is_signed_v<int16_t> == true);
+    REQUIRE(is_signed_v<uint32_t> == false);
 #endif
+}
 
-    using size_t = ::size_t;
-	using ptrdiff_t = ::ptrdiff_t;
-} // namespace std
+SCENARIO("std::common_type, std::same_type") {
+    class Base {};
+    class Incarnation1 : Base {};
+    class Incarnation2 : Base {};
 
-using ::std::nullptr_t;
-
-
-#endif // ETL_LIBSTD_CSTDDEF_H_
+    //using CommonType = common_type<Incarnation1, Incarnation2>::type;
+#if defined(__GNU_G__)
+    auto test = is_same<Base, common_type<Incarnation1, Incarnation2>::type >::value == true;
+#endif
+}

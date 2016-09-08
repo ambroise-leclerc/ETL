@@ -1,10 +1,9 @@
-/// @file traits_utils.h
-/// @data 13/03/2014 22:55:53
+/// @file test/libstd/limits.cpp
+/// @data 10/06/2016 22:23:53
 /// @author Ambroise Leclerc
-/// @brief Type traits operations.
+/// @brief BDD tests for <limits>
 //
-// Embedded Template Library
-// Copyright (c) 2014, Ambroise Leclerc
+// Copyright (c) 2016, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -31,30 +30,33 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#include <catch.hpp>
 
-#ifndef ETL_LIBSTD_TRAITS_UTILS_H
-#define ETL_LIBSTD_TRAITS_UTILS_H
+namespace etlTest {
+#include <libstd/include/limits>
+} // namespace etlTest
 
-namespace std {
+using namespace etlTest::std;
 
-template<typename ...T> struct common_type;
-template<typename T> struct common_type<T> {
-  using type = std::decay_t<T>;
-};
-template<typename... T >
-using common_type_t = typename common_type<T...>::type;
- 
-template<typename T1, typename T2>
-struct common_type<T1, T2> {
-    using type = std::decay_t<decltype(true ? std::declval<T1>() : std::declval<T2>())>;
-};
- 
-template <typename T1, typename T2, typename... T3>
-struct common_type<T1, T2, T3...> {
-    using type = std::common_type_t<std::common_type_t<T1, T2>, T3...>;
-};
-
+SCENARIO("std::numeric_limits") {
   
-}  
+    auto r1 = numeric_limits<uint32_t>::is_signed;      REQUIRE(r1 == false);
+    auto r2 = numeric_limits<uint32_t>::is_exact;       REQUIRE(r2 == true);
+    auto r3 = numeric_limits<uint32_t>::is_integer;     REQUIRE(r3 == true);
+    auto r4 = numeric_limits<uint32_t>::digits;         REQUIRE(r4 == 32);
+    auto r5 = numeric_limits<uint32_t>::digits10;       REQUIRE(r5 == 9);
+    auto r6 = numeric_limits<uint32_t>::max_digits10;   REQUIRE(r6 == 0);
+  
+    auto s1 = numeric_limits<uint8_t>::is_signed;       REQUIRE(s1 == false);
+    auto s2 = numeric_limits<uint8_t>::is_exact;        REQUIRE(s2 == true);
+    auto s3 = numeric_limits<uint8_t>::is_integer;      REQUIRE(s3 == true);
+    auto s4 = numeric_limits<uint8_t>::digits;          REQUIRE(s4 == 8);
+    auto s5 = numeric_limits<uint8_t>::digits10;        REQUIRE(s5 == 2);
+    auto s6 = numeric_limits<uint8_t>::max_digits10;    REQUIRE(s6 == 0);
+    auto s7 = numeric_limits<uint8_t>::min();           REQUIRE(s7 == 0);
+    auto s8 = numeric_limits<uint8_t>::max();           REQUIRE(s8 == 255);
+    auto s9 = numeric_limits<int8_t>::is_signed;        REQUIRE(s9 == true);
 
-#endif // ETL_LIBSTD_TRAITS_UTILS_H
+    auto t1 = numeric_limits<int64_t>::is_signed;       REQUIRE(t1 == true);
+    auto t2 = numeric_limits<int64_t>::digits10;        REQUIRE(t2 == 18);
+}

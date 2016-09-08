@@ -30,10 +30,49 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_VECTOR_
-#define ETL_LIBSTD_VECTOR_
+namespace std {
+template<typename T, typename Allocator = std::allocator<T>>
+class vector {
+public:
+    using value_type = T;
+    using allocator_type = Allocator;
+    using size_type = std::size_t;
+    using difference_type = std::ptrdiff_t;
+    using reference = value_type&;
+    using const_reference = const value_type&;
+    using pointer = std::allocator_traits<Allocator>::pointer;
+    using const_pointer = std::allocator_traits<Allocator>::const_pointer;
+    using iterator = T*;
+    using const_iterator = const T*;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-#include "h/vector.h"
+    // Constructors
+    vector() : vector(Allocator()) {}
+    explicit vector(const Allocator& alloc) : vector(etl::architecture::kDefaultBufferSize, alloc) {}
+    vector(size_type count, const T& value, const Allocator& alloc = Allocator())
+        : size_(ETL_DEFAULT_BUFFER_SIZE + count), buffer_(alloc.allocate(size_), nb_elements_(0), allocator_(alloc) {
+        assign(begin(), end());
+    }
+    explicit vector(size_type count, const Allocator& alloc = Allocator())
+        : size_(count), buffer_(alloc.allocate(size_), nb_elements_(0), allocator_(alloc) {}
+    vector(const vector& other);
+    vector(const vector& other, const Allocator& alloc);
+    vector(vector&& other)
+        vector(vector&& other, const Allocator& alloc);
+    vector(std::initializer_list<T> init, const Allocator& alloc = Allocator());
 
-#endif // ETL_LIBSTD_VECTOR_
+    template<typename InputIt>
+    vector(InputIt first, InputIt last, const Allocator& alloc = Allocator());
+
+
+
+protected:
+    T* buffer_;
+    Allocator allocator_;
+    std::size_t nb_elements_;
+    std::size_t size_;
+};
+} // namespace std

@@ -33,35 +33,35 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 #include <../libstd/include/cstdint>
+#include <../libstd/include/cstddef>
 
 namespace std {
 namespace etlHelper {
-  template<typename> struct is_type_entier         : false_type { };
-  template <> struct is_type_entier<bool>          : true_type { };
-  template <> struct is_type_entier<int8_t>        : true_type { };
-  template <> struct is_type_entier<uint8_t>       : true_type { };
-  template <> struct is_type_entier<int16_t>       : true_type { };
-  template <> struct is_type_entier<uint16_t>      : true_type { };
-  template <> struct is_type_entier<int32_t>       : true_type { };
-  template <> struct is_type_entier<uint32_t>      : true_type { };
-  template <> struct is_type_entier<int64_t>       : true_type { };
-  template <> struct is_type_entier<uint64_t>      : true_type { };
-  template<typename> struct is_type_flottant       : false_type { };
-  template <> struct is_type_flottant<float>       : true_type { };
-  template <> struct is_type_flottant<double>      : true_type { };
-  template <> struct is_type_flottant<long double> : true_type { };
-  template<typename T> struct is_pointeur          : false_type { };
-  template<typename T> struct is_pointeur<T*>      : true_type { };
-  template<typename T> struct is_mb_pointeur       : false_type { };
+  template<typename> struct is_type_entier        : false_type { };
+  template<> struct is_type_entier<bool>          : true_type { };
+  template<> struct is_type_entier<char>          : true_type { };
+  template<> struct is_type_entier<int8_t>        : true_type { };
+  template<> struct is_type_entier<uint8_t>       : true_type { };
+  template<> struct is_type_entier<int16_t>       : true_type { };
+  template<> struct is_type_entier<uint16_t>      : true_type { };
+  template<> struct is_type_entier<int32_t>       : true_type { };
+  template<> struct is_type_entier<uint32_t>      : true_type { };
+  template<> struct is_type_entier<int64_t>       : true_type { };
+  template<> struct is_type_entier<uint64_t>      : true_type { };
+  template<typename> struct is_type_flottant      : false_type { };
+  template<> struct is_type_flottant<float>       : true_type { };
+  template<> struct is_type_flottant<double>      : true_type { };
+  template<> struct is_type_flottant<long double> : true_type { };
+  template<typename T> struct is_pointeur         : false_type { };
+  template<typename T> struct is_pointeur<T*>     : true_type { };
+  template<typename T> struct is_mb_pointeur      : false_type { };
   template<typename T, typename U> struct is_mb_pointeur<T U::*>     : true_type { };
 } // namespace etlHelper 
 
 /// Checks whether T is a void type. is_void< >::value equals true if T is of
 /// type void, const void, volatile void, or const volatile void.
 template<typename T>
-struct is_void
- : integral_constant<bool, is_same<void, typename remove_cv<T>::type>::value>
-{};
+struct is_void : integral_constant<bool, is_same<void, typename remove_cv<T>::type>::value> {};
 
 /// Checks if T is an union.
 /// is_union::value is true if T is an union, false otherwise.                         

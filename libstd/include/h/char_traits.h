@@ -30,9 +30,7 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
-#ifndef ETL_LIBSTD_CHAR_TRAITS_H_
-#define ETL_LIBSTD_CHAR_TRAITS_H_
+#pragma once
 
 #include <algorithm>
 
@@ -40,46 +38,44 @@ namespace std {
 
 template<typename CharT>
 struct char_traits {
-  using char_type	  = CharT;
-  using int_type    = CharT;
-  using off_type    = etl::architecture::off_type;
-	using pos_type    = etl::architecture::off_type;
-	using state_type  = CharT;
+    using char_type	  = CharT;
+    using int_type    = CharT;
+    using off_type    = etl::architecture::off_type;
+    using pos_type    = etl::architecture::off_type;
+    using state_type  = CharT;
 
-  static void assign(char_type& r, const char_type& a) { r = a; }
-  static char_type* assign(char_type* p, std::size_t count, char_type a) { std::fill_n(p, count, a); return p; }    
-	static bool eq(const char_type& c1, const char_type& c2) { return c1 == c2; }
-	static char_type to_char_type(const int_type& i) { return static_cast<char_type>(i); }
-	static int_type to_int_type(const char_type& c) { return static_cast<int_type>(i); }
-	static bool eq_int_type(const int_type& a, const int_type& b) { return a == b; }
-	static bool lt(const char_type& c1, const char_type& c2) { return c1 < c2; }		
-	static char_type* move(char_type* s1, const char_type* s2, size_t n) { std::memmove(s1, s2, n * sizeof(char_type)); return s1; }
-	static char_type* copy(char_type* s1, const char_type* s2, size_t n) { std::memcpy(s1, s2, n * sizeof(char_type)); return s1; }
-	static int compare(const char_type* s1, const char_type* s2, size_t n) {
-    for (std::size_t i=0; i<n; ++i) {
-      if (!eq(s1[i], s2[i])) return s1[i]<s2[i] ? -1 : 1;
+    static void assign(char_type& r, const char_type& a) noexcept                       { r = a; }
+    static char_type* assign(char_type* p, std::size_t count, char_type a)              { std::fill_n(p, count, a); return p; }    
+    static constexpr bool eq(const char_type& c1, const char_type& c2) noexcept         { return c1 == c2; }
+    static constexpr char_type to_char_type(const int_type& i) noexcept                 { return static_cast<char_type>(i); }
+    static constexpr int_type to_int_type(const char_type& c) noexcept                  { return static_cast<int_type>(i); }
+    static constexpr bool eq_int_type(const int_type& a, const int_type& b) noexcept    { return a == b; }
+    static constexpr bool lt(const char_type& c1, const char_type& c2) noexcept         { return c1 < c2; }		
+    static char_type* move(char_type* s1, const char_type* s2, size_t n) { std::memmove(s1, s2, n * sizeof(char_type)); return s1; }
+    static char_type* copy(char_type* s1, const char_type* s2, size_t n) { std::memcpy(s1, s2, n * sizeof(char_type)); return s1; }
+    static int compare(const char_type* s1, const char_type* s2, size_t n) {
+        for (std::size_t i=0; i<n; ++i) {
+            if (!eq(s1[i], s2[i])) return s1[i]<s2[i] ? -1 : 1;
+        }
+        return 0;
     }
-    return 0;
-  }
   
-  static size_t length(const char_type* s) {
-    const char_type null_char = char_type();
-    for (std::size_t i=0; !eq(s[i], null_char); ++i) {}
-		return i;
-	}
+    static size_t length(const char_type* s) {
+        const char_type null_char = char_type();
+        for (std::size_t i=0; !eq(s[i], null_char); ++i) {}
+	        return i;
+    }
 
-	static const char_type* find(const char_type* s, int n, const char_type& a) {
-    for (; n > 0; ++s, --n) {
-      if (eq(*s, c)) return s;
-    }      
-    return 0;
-  }
+    static const char_type* find(const char_type* s, int n, const char_type& a) {
+        for (; n > 0; ++s, --n) {
+            if (eq(*s, c)) return s;
+        }      
+        return 0;
+    }
   
-  static char_type eos() { return static_cast<int_type>(0); }
-	static int_type eof() { return static_cast<int_type>(-1); }
-	static int_type not_eof(const int_type &i) { return !eq_int_type(i, eof()) ? i : 0; }
+    static char_type eos()                                          { return static_cast<int_type>(0); }
+    static constexpr int_type eof() noexcept                        { return static_cast<int_type>(-1); }
+    static constexpr int_type not_eof(const int_type &i) noexcept   { return !eq_int_type(i, eof()) ? i : 0; }
 };  
 
 }
-
-#endif // ETL_LIBSTD_CHAR_TRAITS_H_

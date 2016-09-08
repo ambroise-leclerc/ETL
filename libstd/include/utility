@@ -30,12 +30,146 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_UTILITY_
-#define ETL_LIBSTD_UTILITY_
-#include <../libstd/include/type_traits>
-#include "h/utility_declval.h"
-#include "h/utility.h"
-#include "h/utility_swap.h"
-#include "h/utility_pair.h"
-#endif // ETL_LIBSTD_UTILITY_
+#include "h/traits_operations.h"
+#include "h/traits_add.h"
+
+namespace std {
+
+/// Returns an rvalue reference to arg and converts arg to an xvalue.
+/// @param arg object to be moved
+/// @return rvalue reference to arg
+template<typename T>
+typename remove_reference<T>::type&& move(T&& arg) noexcept {
+    return static_cast<typename remove_reference<T>::type&&>(arg);
+}
+
+/// Forwards arg to another function exactly as it was passed to the calling function
+/// @param arg object to be forwarded
+template<typename T>
+constexpr T&& forward(typename remove_reference<T>::type& arg) noexcept {
+    return static_cast<T&&>(arg);
+}
+
+/// Forwards arg to another function exactly as it was passed to the calling function
+/// @param arg object to be forwarded
+template<typename T>
+constexpr T&& forward(typename remove_reference<T>::type&& arg) noexcept {
+    static_assert(!is_lvalue_reference<T>::value, "not a rvalue reference");
+    return static_cast<T&&>(arg);
+}
+
+template <typename T, T... Ints>
+struct integer_sequence {
+    static_assert(is_integral<T>::value, "not an integral type");
+    using type = integer_sequence;
+    using value_type = size_t;
+    static constexpr size_t size() noexcept { return sizeof...(Ints); }
+};
+
+namespace etlHelper {
+    template<typename T, typename Sequence1, typename Sequence2> struct merge_integer_seq;
+    template<typename T, T... I1, T... I2>
+    struct merge_integer_seq<T, integer_sequence<T, I1...>, integer_sequence<T, I2...>>
+        : integer_sequence<T, I1..., (sizeof...(I1)+I2)...>
+    { };
+} // namespace etlHelper
+
+template<typename T, T N>
+struct make_integer_sequence : etlHelper::merge_integer_seq<T,  typename make_integer_sequence<T, N / 2>::type,
+                                                                typename make_integer_sequence<T, N - N / 2>::type> { };
+
+
+template<> struct make_integer_sequence<char, 0> : integer_sequence<char> { };
+template<> struct make_integer_sequence<char, 1> : integer_sequence<char, 0> { };
+template<> struct make_integer_sequence<int8_t, 0> : integer_sequence<int8_t> { };
+template<> struct make_integer_sequence<int8_t, 1> : integer_sequence<int8_t, 0> { };
+template<> struct make_integer_sequence<uint8_t, 0> : integer_sequence<uint8_t> { };
+template<> struct make_integer_sequence<uint8_t, 1> : integer_sequence<uint8_t, 0> { };
+template<> struct make_integer_sequence<int16_t, 0> : integer_sequence<int16_t> { };
+template<> struct make_integer_sequence<int16_t, 1> : integer_sequence<int16_t, 0> { };
+template<> struct make_integer_sequence<uint16_t, 0> : integer_sequence<uint16_t> { };
+template<> struct make_integer_sequence<uint16_t, 1> : integer_sequence<uint16_t, 0> { };
+template<> struct make_integer_sequence<int32_t, 0> : integer_sequence<int32_t> { };
+template<> struct make_integer_sequence<int32_t, 1> : integer_sequence<int32_t, 0> { };
+template<> struct make_integer_sequence<uint32_t, 0> : integer_sequence<uint32_t> { };
+template<> struct make_integer_sequence<uint32_t, 1> : integer_sequence<uint32_t, 0> { };
+template<> struct make_integer_sequence<int64_t, 0> : integer_sequence<int64_t> { };
+template<> struct make_integer_sequence<int64_t, 1> : integer_sequence<int64_t, 0> { };
+template<> struct make_integer_sequence<uint64_t, 0> : integer_sequence<uint64_t> { };
+template<> struct make_integer_sequence<uint64_t, 1> : integer_sequence<uint64_t, 0> { };
+
+template<size_t... Ints> using index_sequence = integer_sequence<size_t, Ints...>;
+template<size_t N> using make_index_sequence = make_integer_sequence<size_t, N>;
+
+
+template<typename T> void swap(T& a, T& b) {
+    T tmp = move(a);
+    a = move(b);
+    b = move(tmp);
+}
+
+template<typename T1, typename T2>
+struct pair {
+    using first_type = T1;
+    using second_type = T2;
+
+    constexpr pair() : first(T1()), second(T2()) {}
+    constexpr pair(const T1& x, const T2& y) : first(x), second(y) {}
+
+    template<typename U1, typename U2>
+    constexpr pair(U1&& x, U2&& y) : first(forward<U1>(x)), second(forward<U2>(y)) {}
+
+    template<typename U1, typename U2>
+    constexpr pair(const pair<U1, U2>& p) : first(p.first), second(p.second) {}
+
+    template<typename U1, typename U2>
+    constexpr pair(pair<U1, U2>&& p) : first(move<U1>(p.first)), second(move<U2>(p.second)) {}
+
+    /*template<typename... Args1, typename... Args2 >
+    pair( piecewise_construct_t, tuple<Args1...> first_args, tuple<Args2...> second_args );*/
+
+    pair(const pair& p) = default;
+
+    pair(pair&& p) = default;
+
+    T1 first;
+    T2 second;
+};
+
+namespace etlHelper {
+
+    // make_pair : The deduced types V1 and V2 are std::decay<T1>::type and std::decay<T2>::type (the
+    // usual type transformations applied to arguments of functions passed by value) unless application
+    // of std::decay results in std::reference_wrapper<X> for some type X, in which case the deduced type is X&.
+    template<typename T> struct make_pair_decay {
+        using type = T;
+    };
+    /*
+    template<typename T> struct make_pair_decay<reference_wrapper<T>> {
+        using type = T&;
+    };
+    */
+    template<typename T> struct make_pair_return_type {
+        using type = typename make_pair_decay<typename decay<T>::type>::type;
+    };
+
+    template<typename T> struct declval {
+        static const bool never_use = false;
+        static typename add_rvalue_reference<T>::type ret();
+    };
+} // namespace etlHelper
+
+template<typename T1, typename T2> constexpr auto make_pair(T1&& x, T2&& y)
+-> pair<typename etlHelper::make_pair_return_type<T1>::type, typename etlHelper::make_pair_return_type<T2>::type> {
+    return pair<typename etlHelper::make_pair_return_type<T1>::type,
+        typename etlHelper::make_pair_return_type<T2>::type>(forward<T1>(x), forward<T2>(y));
+}
+
+template<typename T> typename add_rvalue_reference<T>::type declval() noexcept {
+    static_assert(etlHelper::declval<T>::never_use, "std::declval() return value must never be used (ISO 20.2.4).");
+    return etlHelper::declval<T>::ret();
+}
+
+} // namespace std

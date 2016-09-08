@@ -106,7 +106,7 @@ private:
     void generateInterrupts() {
         using namespace etl;
         using namespace std;
-        if (!Interrupts::enabled) {
+        if (!Interrupts::enabled()) {
             return;
         }
 
