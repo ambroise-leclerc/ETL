@@ -34,8 +34,14 @@
 
 #include <../libstd/include/cstdint>
 extern "C" {
-    #include "eagle_soc.h"
+#include "eagle_soc.h"
+#include "user_interface.h"
+#include "ets_sys.h"
+#include "osapi.h"
+#include <espmissingincludes.h>
+
 }
+
 static const uint32_t BASE_ADRR = 0x60000000;
 
 static uint32_t* gpcAdress[16] = {
@@ -55,6 +61,27 @@ static uint8_t functionsGpio[16] = {
     3, FUNC_GPIO9, FUNC_GPIO10, 3, FUNC_GPIO12, FUNC_GPIO13, FUNC_GPIO14, FUNC_GPIO15 };
 
 namespace etl {
+    
+    class Device {
+    public:
+        static void delayTicks(uint32_t ticks) {
+            auto freqMultiple = 1;
+            auto freq = system_get_cpu_freq();
+            if (freq == SYS_CPU_160MHZ)
+            {
+                freqMultiple = 2;
+            }
+            os_delay_us(((ticks * 1000000) / freq)*freqMultiple);
+        }
+        static const uint32_t McuFrequency = SYS_CPU_80MHZ;
+        static const auto architectureWidth = 32;
+    };  
+
+      
+using clock_cycles = std::chrono::duration<unsigned long, std::ratio<1, Device::McuFrequency>>;
+constexpr clock_cycles operator ""clks(unsigned long long c)     { return clock_cycles(static_cast<clock_cycles::rep>(c)); }
+
+
 
 class Pin0 {
 public:
