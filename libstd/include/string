@@ -35,8 +35,8 @@
 #define ETL_LIBSTD_STRING_
 
 #include "h/char_traits.h"
-#include <vector>
-#include <memory>
+#include <../libstd/include/vector>
+#include <../libstd/include/memory>
 
 namespace std {
 
@@ -45,7 +45,7 @@ template<typename CharT, typename Traits = std::char_traits<CharT>, typename All
 class basic_string {
 public:
     using traits_type = Traits;
-    using value_type = Traits::char_type;
+    using value_type = typename Traits::char_type;
     using allocator_type = Allocator;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;

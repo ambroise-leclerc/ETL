@@ -51,9 +51,9 @@ public:
 
     // Constructors
     vector() : vector(Allocator()) {}
-    explicit vector(const Allocator& alloc) : vector(etl::architecture::kDefaultBufferSize, alloc) {}
+    explicit vector(const Allocator& alloc) : vector(etl::Device::defaultBufferSize, alloc) {}
     vector(size_type count, const T& value, const Allocator& alloc = Allocator())
-        : size_(ETL_DEFAULT_BUFFER_SIZE + count), buffer_(alloc.allocate(size_), nb_elements_(0), allocator_(alloc) {
+        : size_(etl::Device::defaultBufferSize + count), buffer_(alloc.allocate(size_), nb_elements_(0), allocator_(alloc) {
         assign(begin(), end());
     }
     explicit vector(size_type count, const Allocator& alloc = Allocator())
