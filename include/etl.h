@@ -36,8 +36,8 @@
 #include <etl/debug_policies.h>
 #include <etl/metautils.h>
 #include <etl/ioports.h>
-#include <memory>
-#include <new>
+#include <../libstd/include/memory>
+#include <../libstd/include/new>
 
 namespace etl {
 #ifdef ETL_FREESTORE_H_  
