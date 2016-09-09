@@ -40,16 +40,12 @@
 #include <../libstd/include/new>
 
 namespace etl {
-  
+#ifdef ETL_FREESTORE_H_  
 class HardwareInitializer {
   static bool freestore_initialized_;
 };
 bool HardwareInitializer::freestore_initialized_ = FreeStore::Initialize();
-
-struct Architecture {
-  constexpr static uint16_t kDefaultBufferSize = 10;
-  using off_type = uint16_t;
-};  
+#endif
 
 
 } // namespace etl

@@ -31,24 +31,49 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
+#define ETL_LIBSTD_NEW_
 
-#include <../libstd/include/cstdint>
+
+//#include <ratio>
+//#include <chrono>
 extern "C" {
 #include "eagle_soc.h"
 #include "user_interface.h"
 #include "ets_sys.h"
 #include "osapi.h"
 #include <espmissingincludes.h>
-
 }
+
+#include <chrono>
+
+namespace etl {
+class Device {
+public:
+    static void delayTicks(uint32_t ticks) {
+        auto freqMultiple = 1;;
+        auto freq = system_get_cpu_freq();
+        if (freq == SYS_CPU_160MHZ)
+        {
+            freqMultiple = 2;
+        }
+        os_delay_us(((ticks * 1000000) / freq)*freqMultiple);
+    }
+    static const uint32_t McuFrequency = SYS_CPU_80MHZ;
+    static const auto architectureWidth = 32;
+};
+
+using clock_cycles = std::chrono::duration<unsigned long, std::ratio<1, Device::McuFrequency>>;
+constexpr clock_cycles operator ""clks(unsigned long long c) { return clock_cycles(static_cast<clock_cycles::rep>(c)); }
+
+} // namespace etl
 
 static const uint32_t BASE_ADRR = 0x60000000;
 
 static uint32_t* gpcAdress[16] = {
     (uint32_t *)(BASE_ADRR + 0x328), (uint32_t *)(BASE_ADRR + 0x32C), (uint32_t *)(BASE_ADRR + 0x330), (uint32_t *)(BASE_ADRR + 0x334),
     (uint32_t *)(BASE_ADRR + 0x338), (uint32_t *)(BASE_ADRR + 0x33C), (uint32_t *)(BASE_ADRR + 0x340), (uint32_t *)(BASE_ADRR + 0x344 ),
-    (uint32_t *)(BASE_ADRR + 0x348), (uint32_t *)(BASE_ADRR +0x34C ), (uint32_t *)(BASE_ADRR + 0x350), (uint32_t *) (BASE_ADRR +0x354 ),
-    (uint32_t *)(BASE_ADRR +0x358 ), (uint32_t *)(BASE_ADRR + 0x35C), (uint32_t *)(BASE_ADRR + 0x360), (uint32_t *)(BASE_ADRR +0x364 )        };
+    (uint32_t *)(BASE_ADRR + 0x348), (uint32_t *)(BASE_ADRR + 0x34C), (uint32_t *)(BASE_ADRR + 0x350), (uint32_t *)(BASE_ADRR + 0x354 ),
+    (uint32_t *)(BASE_ADRR + 0x358), (uint32_t *)(BASE_ADRR + 0x35C), (uint32_t *)(BASE_ADRR + 0x360), (uint32_t *)(BASE_ADRR + 0x364 )   };
 
 static uint32_t periphs[16] = {
     PERIPHS_IO_MUX_GPIO0_U, PERIPHS_IO_MUX_U0TXD_U, PERIPHS_IO_MUX_GPIO2_U, PERIPHS_IO_MUX_U0RXD_U,
@@ -62,24 +87,9 @@ static uint8_t functionsGpio[16] = {
 
 namespace etl {
     
-    class Device {
-    public:
-        static void delayTicks(uint32_t ticks) {
-            auto freqMultiple = 1;
-            auto freq = system_get_cpu_freq();
-            if (freq == SYS_CPU_160MHZ)
-            {
-                freqMultiple = 2;
-            }
-            os_delay_us(((ticks * 1000000) / freq)*freqMultiple);
-        }
-        static const uint32_t McuFrequency = SYS_CPU_80MHZ;
-        static const auto architectureWidth = 32;
-    };  
 
       
-using clock_cycles = std::chrono::duration<unsigned long, std::ratio<1, Device::McuFrequency>>;
-constexpr clock_cycles operator ""clks(unsigned long long c)     { return clock_cycles(static_cast<clock_cycles::rep>(c)); }
+
 
 
 
