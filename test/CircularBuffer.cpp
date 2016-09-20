@@ -18,13 +18,13 @@ public:
     }
 
     T pop_front() {
-        T value = buffer[readIndex++];
+        T value = buffer[readIndex];
         readIndex = (readIndex + 1) % N;
             return value;
     }
 
     uint8_t size() {
-        return writeIndex > readIndex ? writeIndex - readIndex : writeIndex + N - readIndex;
+        return writeIndex >= readIndex ? writeIndex - readIndex : writeIndex + N - readIndex;
     }
 
 private:
@@ -43,7 +43,7 @@ SCENARIO("CircularBuffer") {
     REQUIRE(fifo.size() == 0);
 
     fifo.push_back(30);
-    REQUIRE(fifo.size() == 0);
+    REQUIRE(fifo.size() == 1);
     REQUIRE(fifo.pop_front() == 30);
     REQUIRE(fifo.size() == 0);
 
