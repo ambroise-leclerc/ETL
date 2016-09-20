@@ -1,9 +1,9 @@
-/// @file string
-/// @data 17/04/2014 16:31:53
-/// @author Ambroise Leclerc
-/// @brief Strings library.
+/// @file test/libstd/queue.cpp
+/// @data 20/09/2016 17:40:53
+/// @author Ambroise Leclerc and Cécile Gomes
+/// @brief BDD tests for <queue>
 //
-// Copyright (c) 2014, Ambroise Leclerc
+// Copyright (c) 2016, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -30,41 +30,10 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#include <catch.hpp>
 
-#ifndef ETL_LIBSTD_STRING_
-#define ETL_LIBSTD_STRING_
+namespace etlTest {
+#include <libstd/include/queue>
+} // namespace etlTest
 
-#include "h/char_traits.h"
-#include <libstd\include\vector>
-#include <libstd\include\memory>
-
-namespace std {
-
-
-template<typename CharT, typename Traits = std::char_traits<CharT>, typename Allocator = std::allocator<CharT>>
-class basic_string {
-public:
-    using traits_type = Traits;
-    using value_type = Traits::char_type;
-    using allocator_type = Allocator;
-    using size_type = std::size_t;
-    using difference_type = std::ptrdiff_t;
-    using reference = value_type&;
-    using const_reference = const value_type&;
-    using pointer = std::allocator_traits<Allocator>::pointer;
-    using const_pointer = std::allocator_traits<Allocator>::const_pointer;
-    using iterator = std::vector<CharT, Allocator>;
-    using const_iterator = std::vector<CharT, Allocator>;
-    using reverse_iterator = std::reverse_iterator<iterator>;
-    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-
-    static const size_type npos = -1;
-
-
-};
-
-using string = basic_string<char>;
-
-}
-
-#endif // ETL_LIBSTD_STRING_
+using namespace etlTest::std;

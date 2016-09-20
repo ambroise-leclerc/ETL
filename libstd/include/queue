@@ -1,7 +1,7 @@
-/// @file string
-/// @data 17/04/2014 16:31:53
-/// @author Ambroise Leclerc
-/// @brief Strings library.
+/// @file queue
+/// @data 20/09/2016 17:40:53
+/// @author Ambroise Leclerc and Cécile Gomes
+/// @brief Container adapter that gives the functionality of a fifo.
 //
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
@@ -31,40 +31,36 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_LIBSTD_STRING_
-#define ETL_LIBSTD_STRING_
-
-#include "h/char_traits.h"
-#include <libstd\include\vector>
-#include <libstd\include\memory>
+#pragma once
+/*#include <../libstd/include/iterator>
+#include <../libstd/include/algorithm>
+#include <../libstd/include/stdexcept>
+*/
 
 namespace std {
 
-
-template<typename CharT, typename Traits = std::char_traits<CharT>, typename Allocator = std::allocator<CharT>>
-class basic_string {
+template<typename T, typename Container /* TODO = std::deque<T>*/>
+class queue {
 public:
-    using traits_type = Traits;
-    using value_type = Traits::char_type;
-    using allocator_type = Allocator;
-    using size_type = std::size_t;
-    using difference_type = std::ptrdiff_t;
-    using reference = value_type&;
-    using const_reference = const value_type&;
-    using pointer = std::allocator_traits<Allocator>::pointer;
-    using const_pointer = std::allocator_traits<Allocator>::const_pointer;
-    using iterator = std::vector<CharT, Allocator>;
-    using const_iterator = std::vector<CharT, Allocator>;
-    using reverse_iterator = std::reverse_iterator<iterator>;
-    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+    using container_type = Container;
+    using value_type = typename Container::value_type;
+    using size_type = typename Container::size_type;
+    using reference = typename Container::reference;
+    using const_reference = typename Container::const_reference;
+    
+    reference front()               { return c.front(); }
+    const_reference front() const   { return c.front(); }
+    reference back()                { return c.back(); }
+    const_reference back() const    { return c.back(); }
+    bool empty() const              { return c.empty() == 0; }
+    size_type size() const          { return c.size(); }
+    void push(const T& e)           { c.push_back(e); }
+    void emplace()                  {}
+    T pop()                         { return c.pop_front(); }
 
-    static const size_type npos = -1;
-
-
+protected:
+    Container c;
 };
 
-using string = basic_string<char>;
 
-}
-
-#endif // ETL_LIBSTD_STRING_
+} // namespace std
