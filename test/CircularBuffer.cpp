@@ -87,6 +87,10 @@ public:
         container.push(object);
     }
 
+    void swap(Queue& right) {
+       //TODO echanger les container.
+    }
+
 private:
     Container container;
 };
@@ -120,5 +124,5 @@ SCENARIO("CircularBuffer") {
     /*etlQueue.emplace(10);
     REQUIRE(etlQueue.size() == 1);
     REQUIRE(etlQueue.front() == 10);*/
-  //  std::queue<int> myq;
+    std::queue<int> myq;
 }
