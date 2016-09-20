@@ -9,15 +9,13 @@ namespace etl {
 template<typename T, uint8_t N>
 class CircularBuffer {
 public:
-    CircularBuffer() : readIndex(0), writeIndex(0),round(false) {
+    CircularBuffer() : readIndex(0), writeIndex(0) {
     }
 
     void push_back(T elem) {
         buffer[writeIndex] = elem;
         writeIndex = (writeIndex + 1) % N;
-        if (writeIndex == 0 && !round) {
-            round = true;
-        }
+       
     }
 
     T pop_front() {
@@ -32,12 +30,12 @@ public:
     }
 
     T back() {
-        auto index;
-        if (round) {
-            index = (writeIndex+1)%N
+        auto index = 0;
+        if (writeIndex == 0) {
+            index = N-1;
         }
         else {
-            index = 0;
+            index = writeIndex-1;
         }
         T value = buffer[index];
         return value;
@@ -47,10 +45,15 @@ public:
         return writeIndex >= readIndex ? writeIndex - readIndex : writeIndex + N - readIndex;
     }
 
+    void erase(CircularBuffer<T, N>& bufferToSwap) {
+        buffer = bufferToSwap.buffer;
+        readIndex = bufferToSwap.readIndex;
+        writeIndex = bufferToSwap.writeIndex;
+    }
+
 private:
     std::array<T, N> buffer;
     uint8_t readIndex, writeIndex;
-    bool round ;
 };
 
 template<typename T, typename Container = etl::CircularBuffer<T,32> >
@@ -87,8 +90,10 @@ public:
         container.push(object);
     }
 
-    void swap(Queue& right) {
-       //TODO echanger les container.
+    void swap(Queue<T,Container>& right) {
+        Container temp = container;
+        container.erase(right.container);
+        right.container.erase(temp);
     }
 
 private:
@@ -120,6 +125,31 @@ SCENARIO("CircularBuffer") {
     etlQueue.pop();
     REQUIRE(etlQueue.size() == 0);
     REQUIRE(etlQueue.empty());
+
+    etlQueue.push(30);
+    etlQueue.push(20);
+    etlQueue.push(10);
+    REQUIRE(etlQueue.size() == 3);
+    REQUIRE(!etlQueue.empty());
+    REQUIRE(etlQueue.front() == 30);
+    REQUIRE(etlQueue.back() == 10);
+    etlQueue.pop();
+    REQUIRE(etlQueue.front() == 20);
+    REQUIRE(etlQueue.back() == 10);
+    REQUIRE(etlQueue.size() == 2);
+
+    etl::Queue<uint8_t> etlQueue2;
+    etlQueue2.push(18);
+    REQUIRE(etlQueue2.front() == 18);
+    etlQueue.swap(etlQueue2);
+    REQUIRE(etlQueue.front() == 18);
+    REQUIRE(etlQueue.size() == 1);
+    REQUIRE(etlQueue2.front() == 20);
+    REQUIRE(etlQueue2.back() == 10);
+    REQUIRE(etlQueue.front() == 18);
+    REQUIRE(etlQueue.back() == 18);
+    REQUIRE(etlQueue.size() == 1);
+
     //TODO
     /*etlQueue.emplace(10);
     REQUIRE(etlQueue.size() == 1);
