@@ -9,12 +9,13 @@ set(LIBSTD_HEADERS libstd/include/chrono libstd/include/ratio libstd/include/lim
                    libstd/include/type_traits libstd/include/string libstd/include/vector libstd/include/tuple)
 set(LIBSTD_TESTS test/libstd/chrono.cpp test/libstd/limits.cpp test/libstd/memory.cpp test/libstd/tuple.cpp test/libstd/type_traits.cpp)
                 
+set(ETL_TESTS test/test.cpp test/SetClearTest.cpp test/InterruptsTest.cpp test/CircularBuffer.cpp)
 set(ETL_ARCHITECTURE include/etl/architecture/MockCore.h)
 
 set(HEADERS ${ETL_HEADERS} ${ETL_ARCHITECTURE} ${LIBSTD_HEADERS} test/MockDevice.h
             )
             
-add_executable( TestsETL test/test.cpp test/SetClearTest.cpp test/InterruptsTest.cpp
+add_executable( Tests ${ETL_TESTS}
                 ${LIBSTD_TESTS}
                 ${HEADERS} )
 
