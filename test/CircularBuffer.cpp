@@ -45,11 +45,12 @@ public:
         return writeIndex >= readIndex ? writeIndex - readIndex : writeIndex + N - readIndex;
     }
 
-    void erase(CircularBuffer<T, N>& bufferToSwap) {
-        buffer = bufferToSwap.buffer;
-        readIndex = bufferToSwap.readIndex;
-        writeIndex = bufferToSwap.writeIndex;
+    template<typename... Args>
+    void emplace_back(Args&& ... args) {
+        T object(std::forward<Args>(args)...);
+        push_back(object);
     }
+
 
 private:
     std::array<T, N> buffer;
@@ -85,14 +86,15 @@ public:
 
     template<typename... Args>
     void emplace(Args&& ... args) {
-        T object(std::forward<Args>(args)...);
-        container.push_back(object);
+        container.emplace_back(std::forward<Args>(args)...);
     }
 
     void swap(Queue<T,Container>& right) {
-        Container temp = container;
-        container.erase(right.container);
-        right.container.erase(temp);
+        Container* pointeurLeft = &container;
+        Container* pointeurRight = &right.container;
+        Container temp = *pointeurLeft;
+        *pointeurLeft = *pointeurRight;
+        *pointeurRight = temp;
     }
 
 private:
