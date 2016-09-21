@@ -2,6 +2,7 @@
 
 #define __Mock_Mock__
 #include <etl/ioports.h>
+
 #include <queue> 
 #include <iostream>
 
@@ -47,8 +48,9 @@ public:
 
     template<typename... Args>
     void emplace_back(Args&& ... args) {
-        T object(std::forward<Args>(args)...);
-        push_back(object);
+        std::allocator<T> all;
+        all.construct(&buffer[writeIndex], std::forward<Args>(args)...);
+        writeIndex = (writeIndex + 1) % N;
     }
 
 
@@ -97,7 +99,7 @@ public:
         *pointeurRight = temp;
     }
 
-private:
+protected:
     Container container;
 };
 
