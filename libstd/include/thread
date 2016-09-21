@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <../libstd/include/chrono>
+#include <libstd/include/chrono>
 #include <etl/ioports.h>
 
 namespace std {

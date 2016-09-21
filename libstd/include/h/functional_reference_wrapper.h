@@ -30,12 +30,10 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_FUNCTIONAL_REFERENCE_WRAPPER_H_
-#define ETL_LIBSTD_FUNCTIONAL_REFERENCE_WRAPPER_H_
-
-#include <type_traits>
-#include <memory>
+#include <libstd/include/type_traits>
+#include <libstd/include/memory>
 
 namespace std {
 

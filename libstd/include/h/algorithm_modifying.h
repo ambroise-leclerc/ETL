@@ -30,9 +30,7 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
-#ifndef ETL_LIBSTD_ALGORITHM_MODIFYING_H_
-#define ETL_LIBSTD_ALGORITHM_MODIFYING_H_
+#pragma once
 
 namespace std {
 
@@ -327,4 +325,3 @@ ForwardIterator unique_copy(ForwardIterator first, ForwardIterator last, OutputI
 }
 
 } // namespace std
-#endif // ETL_LIBSTD_ALGORITHM_MODIFYING_H_

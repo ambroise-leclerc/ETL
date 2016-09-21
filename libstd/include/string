@@ -30,9 +30,8 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_STRING_
-#define ETL_LIBSTD_STRING_
 
 #include "h/char_traits.h"
 #include <libstd\include\vector>
@@ -66,5 +65,3 @@ public:
 using string = basic_string<char>;
 
 }
-
-#endif // ETL_LIBSTD_STRING_

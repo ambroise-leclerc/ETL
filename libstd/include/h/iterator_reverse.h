@@ -30,10 +30,7 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
-#ifndef ETL_LIBSTD_ITERATOR_REVERSE_H_
-#define ETL_LIBSTD_ITERATOR_REVERSE_H_
-
+#pragma once
 
 namespace std {
   
@@ -108,12 +105,10 @@ bool operator>=(const reverse_iterator<Iterator1>& lhs,
                   
 // Specializations
 template<typename T> 
-constexpr const T* rbegin(initializer_list<T> list) noexcept { return std::reverse_iterator<const T*>(list.end()); }
+constexpr const T* rbegin(initializer_list<T> list) noexcept { return reverse_iterator<const T*>(list.end()); }
   
 template<typename T>
-constexpr const T* rend(initializer_list<T> list) noexcept { return std::reverse_iterator<const T*>(list.begin()); }
+constexpr const T* rend(initializer_list<T> list) noexcept { return reverse_iterator<const T*>(list.begin()); }
   
 }; // namespace std
 
-
-#endif // ETL_LIBSTD_ITERATOR_REVERSE_H_

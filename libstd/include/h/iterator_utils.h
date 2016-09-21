@@ -30,9 +30,8 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_ITERATOR_UTILS_H_
-#define ETL_LIBSTD_ITERATOR_UTILS_H_
 namespace std {
   
 /// Convenience function template that constructs a std::reverse_iterator from
@@ -54,5 +53,3 @@ move_iterator<Iterator> make_move_iterator(Iterator iter) {
 }
   
 } // namespace std  
-
-#endif // ETL_LIBSTD_ITERATOR_UTILS_H_

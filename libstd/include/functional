@@ -33,8 +33,8 @@
 #pragma once
 #include "h/functional.h"
 #include "h/functional_operators.h"
-#include <../libstd/include/type_traits>
-#include <../libstd/include/memory>
+#include <libstd/include/type_traits>
+#include <libstd/include/memory>
 
 namespace std {
 
@@ -77,8 +77,4 @@ namespace etlHelper {
 } // namespace etlHelper
 
 } // namespace std
-
-
-
-#include "h/functional_operators.h"
 

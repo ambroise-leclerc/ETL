@@ -3,7 +3,7 @@
 /// @author Ambroise Leclerc and Cécile Gomes
 /// @brief Container adapter that gives the functionality of a fifo.
 //
-// Copyright (c) 2014, Ambroise Leclerc
+// Copyright (c) 2014, Ambroise Leclerc and Cécile Gomes
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -30,12 +30,8 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
 #pragma once
-/*#include <../libstd/include/iterator>
-#include <../libstd/include/algorithm>
-#include <../libstd/include/stdexcept>
-*/
+#include <libstd/include/utility>
 
 namespace std {
 
@@ -68,7 +64,7 @@ public:
 
     template<typename... Args>
     void emplace(Args&& ... args) {
-        container.emplace_back(std::forward<Args>(args)...);
+        container.emplace_back(forward<Args>(args)...);
     }
 
     void swap(queue<T, Container>& right) {

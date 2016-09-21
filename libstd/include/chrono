@@ -32,8 +32,8 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <../libstd/include/ratio>
-#include <../libstd/include/limits>
+#include <libstd/include/ratio>
+#include <libstd/include/limits>
 
 namespace std {
 namespace chrono {

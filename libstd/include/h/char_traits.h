@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <algorithm>
+#include <libstd/include/algorithm>
 
 namespace std {
 

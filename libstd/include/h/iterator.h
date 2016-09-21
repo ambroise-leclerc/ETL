@@ -30,13 +30,12 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
-#ifndef ETL_LIBSTD_ITERATOR_H_
-#define ETL_LIBSTD_ITERATOR_H_
+#pragma once
+#include <libstd/include/cstddef>
 
 namespace std {
 
-template<typename Category, typename T, typename Distance = std::ptrdiff_t,
+template<typename Category, typename T, typename Distance = ptrdiff_t,
          typename Pointer = T*, typename Reference = T&>
 struct iterator {
   using iterator_category = Category;
@@ -48,5 +47,3 @@ struct iterator {
 
 }; // namespace std
 
-
-#endif // ETL_LIBSTD_ITERATOR_H_

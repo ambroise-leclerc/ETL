@@ -30,9 +30,7 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
-#ifndef ETL_LIBSTD_ALGORITHM_MINMAX_H_
-#define ETL_LIBSTD_ALGORITHM_MINMAX_H_
+#pragma once
 
 namespace std {
   
@@ -142,5 +140,3 @@ bool lexicographical_compare(InputIt1 first1, InputIt1 last1,
 }
 
 } // namespace std  
-
-#endif // ETL_LIBSTD_ALGORITHM_MINMAX_H_

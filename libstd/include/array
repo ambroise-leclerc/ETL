@@ -32,9 +32,9 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#include <../libstd/include/iterator>
-#include <../libstd/include/algorithm>
-#include <../libstd/include/stdexcept>
+#include <libstd/include/iterator>
+#include <libstd/include/algorithm>
+#include <libstd/include/stdexcept>
 
 namespace std {
 

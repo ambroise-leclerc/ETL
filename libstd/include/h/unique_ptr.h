@@ -31,14 +31,13 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
 #pragma once 
 
-#include <../libstd/include/utility>
-#include <../libstd/include/cstddef>
-#include <../libstd/include/h/default_delete.h>
-#include <../libstd/include/type_traits>
-#include <../libstd/include/functional>
+#include <libstd/include/utility>
+#include <libstd/include/cstddef>
+#include <libstd/include/h/default_delete.h>
+#include <libstd/include/type_traits>
+#include <libstd/include/functional>
 
 namespace std {
   
@@ -303,8 +302,8 @@ class unique_ptr<T[], D> {
 
 
 namespace etlHelper {
-  template<typename T> struct unique_if { using non_array = std::unique_ptr<T>; };
-  template<typename T> struct unique_if<T[]> { using runtime_sized = std::unique_ptr<T[]>; };
+  template<typename T> struct unique_if { using non_array = unique_ptr<T>; };
+  template<typename T> struct unique_if<T[]> { using runtime_sized = unique_ptr<T[]>; };
   template<typename T, size_t N> struct unique_if<T[N]> { using compiletime_size = void; };
 }
 

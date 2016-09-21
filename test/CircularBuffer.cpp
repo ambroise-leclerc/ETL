@@ -1,20 +1,17 @@
 #include <catch.hpp>
 
 #define __Mock_Mock__
-#include <etl/ioports.h>
 
-#include <../ETL/libstd/include/queue> 
-#include <../ETL/include/etl/container.h>
-#include <iostream>
- // namespace etl
+namespace etlTest {
+#include <etl/container.h>
+#include <libstd/include/queue> 
+#include <libstd/include/utility>
+} // namespace etlTest
+
+using fifo = etlTest::std::queue<uint8_t, etlTest::etl::CircularBuffer<uint8_t, 32>>;
+
 SCENARIO("CircularBuffer") {
-    using namespace etl;
-    using namespace std;
-
-    using fifo = std::queue<uint8_t, CircularBuffer<uint8_t, 32>>;
-
- 
-
+    
     fifo etlQueue;
     REQUIRE(etlQueue.size() == 0);
     REQUIRE(etlQueue.empty());

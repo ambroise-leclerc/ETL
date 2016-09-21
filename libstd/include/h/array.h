@@ -30,13 +30,11 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_ARRAY_H_
-#define ETL_LIBSTD_ARRAY_H_
-
-#include <../libstd/include/iterator>
-#include <../libstd/include/algorithm>
-#include <../libstd/include/stdexcept>
+#include <libstd/include/iterator>
+#include <libstd/include/algorithm>
+#include <libstd/include/stdexcept>
 
 namespace std {
 
@@ -49,9 +47,9 @@ struct array {
   using const_reference   = const T&;
   using iterator          = T*;
   using const_iterator    = const T*;
-  using size_type         = std::size_t;
-  using difference_type   = std::ptrdiff_t;
-  using reverse_iterator  = std::reverse_iterator<iterator>;
+  using size_type         = size_t;
+  using difference_type   = ptrdiff_t;
+  using reverse_iterator  = reverse_iterator<iterator>;
   using const_reverse_iterator  = std::reverse_iterator<const_iterator>;
   
   // Access
@@ -118,10 +116,10 @@ struct array<T, 0> {
   using const_reference   = const T&;
   using iterator          = T*;
   using const_iterator    = const T*;
-  using size_type         = std::size_t;
-  using difference_type   = std::ptrdiff_t;
-  using reverse_iterator  = std::reverse_iterator<iterator>;
-  using const_reverse_iterator  = std::reverse_iterator<const_iterator>;
+  using size_type         = size_t;
+  using difference_type   = ptrdiff_t;
+  using reverse_iterator  = reverse_iterator<iterator>;
+  using const_reverse_iterator  = reverse_iterator<const_iterator>;
   
   // Access
   reference operator[](size_type)                       { RangeError(); return elems_; }
@@ -174,35 +172,34 @@ struct array<T, 0> {
 };
 
 // non-member functions
-template<typename T, std::size_t N >
+template<typename T, size_t N >
 bool operator==(const array<T,N>& x, const array<T,N>& y) {
-  return std::equal( x.cbegin(), x.cend(), y.cbegin());
+  return equal( x.cbegin(), x.cend(), y.cbegin());
 }
   
-template<typename T, std::size_t N >
+template<typename T, size_t N >
 bool operator!=(const array<T,N>& x, const array<T,N>& y) {
   return !(x == y);
 }  
 
-template<typename T, std::size_t N >
+template<typename T, size_t N >
 bool operator<(const array<T,N>& x, const array<T,N>& y) {
-  return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
+  return lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
 }  
 
-template<typename T, std::size_t N >
+template<typename T, size_t N >
 bool operator<=(const array<T,N>& x, const array<T,N>& y) {
   return !(y < x);
 }  
 
-template<typename T, std::size_t N >
+template<typename T, size_t N >
 bool operator>(const array<T,N>& x, const array<T,N>& y) {
   return y < x;
 }  
 
-template<typename T, std::size_t N >
+template<typename T, size_t N >
 bool operator>=(const array<T,N>& x, const array<T,N>& y) {
   return !(x < y);
 }  
 
 } // namespace std
-#endif // ETL_LIBSTD_ARRAY_H_

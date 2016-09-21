@@ -30,10 +30,9 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
-#ifndef ETL_LIBSTD_ALGORITHM_SEQUENCE_H_
-#define ETL_LIBSTD_ALGORITHM_SEQUENCE_H_
-#include <iterator>
+#pragma once
+#include <libstd/include/utility>
+#include <libstd/include/iterator>
 
 namespace std {
 
@@ -171,7 +170,7 @@ typename iterator_traits<InputIterator>::difference_type count_if(InputIterator 
 }
 
 template<typename InputIterator1, typename InputIterator2>
-std::pair<InputIterator1, InputIterator2> mismatch(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2) {
+pair<InputIterator1, InputIterator2> mismatch(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2) {
   while (first1 != last1 && *first1 == *first2) {
     ++first1, ++first2;
   }
@@ -282,5 +281,3 @@ ForwardIterator adjacent_find(ForwardIterator first, ForwardIterator last, Binar
 }
 
 } // namespace std
-
-#endif // ETL_LIBSTD_ALGORITHM_SEQUENCE_H_

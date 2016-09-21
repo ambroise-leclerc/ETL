@@ -33,12 +33,12 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <../libstd/include/cstddef>
+#include <libstd/include/cstddef>
 #include "h/traits_operations.h"
 #include "h/traits_primary_types.h"
 #include "h/traits_references.h"
 #include "h/traits_add.h"
-#include <../libstd/include/utility>
+#include <libstd/include/utility>
 
 namespace std {
 

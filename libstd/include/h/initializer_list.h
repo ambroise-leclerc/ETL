@@ -30,9 +30,7 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
-#ifndef ETL_LIBSTD_INITIALIZER_LIST_H_
-#define ETL_LIBSTD_INITIALIZER_LIST_H_
+#pragma once
 
 namespace std {
 template<typename T>
@@ -66,5 +64,3 @@ constexpr const T* end(initializer_list<T> list) noexcept { return list.end(); }
 
   
 } // namespace std  
-
-#endif // ETL_LIBSTD_INITIALIZER_LIST_H_
