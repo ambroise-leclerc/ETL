@@ -42,24 +42,45 @@ namespace std {
 template<typename T, typename Container /* TODO = std::deque<T>*/>
 class queue {
 public:
-    using container_type = Container;
-    using value_type = typename Container::value_type;
-    using size_type = typename Container::size_type;
-    using reference = typename Container::reference;
-    using const_reference = typename Container::const_reference;
-    
-    reference front()               { return c.front(); }
-    const_reference front() const   { return c.front(); }
-    reference back()                { return c.back(); }
-    const_reference back() const    { return c.back(); }
-    bool empty() const              { return c.empty() == 0; }
-    size_type size() const          { return c.size(); }
-    void push(const T& e)           { c.push_back(e); }
-    void emplace()                  {}
-    T pop()                         { return c.pop_front(); }
+    auto empty() {
+        return container.size() == 0;
+    }
+
+    auto size() {
+        return container.size();
+    }
+
+    auto front() {
+        return container.front();
+    }
+
+    void pop() {
+        container.pop_front();
+    }
+
+    auto back() {
+        return container.back();
+    }
+
+    void push(T element) {
+        container.push_back(element);
+    }
+
+    template<typename... Args>
+    void emplace(Args&& ... args) {
+        container.emplace_back(std::forward<Args>(args)...);
+    }
+
+    void swap(queue<T, Container>& right) {
+        Container* pointeurLeft = &container;
+        Container* pointeurRight = &right.container;
+        Container temp = *pointeurLeft;
+        *pointeurLeft = *pointeurRight;
+        *pointeurRight = temp;
+    }
 
 protected:
-    Container c;
+    Container container;
 };
 
 

@@ -77,12 +77,12 @@ public:
 
     /// Constructs an object of type T in allocated uninitialized storage using placement new.
     template<typename T2, typename... Args>
-    static void construct(T2* p, Args&&... value) {
+    void construct(T2* p, Args&&... value) {
         ::new(reinterpret_cast<void*>(p)) T2(std::forward<Args>(value)...);
     }
 
     // destroy helper to invoke destructor explicitly.
-    static void destroy(const_reference t) {
+    void destroy(const_reference t) {
         t.~T(); // T must support non-throwing destructor
     }
 };

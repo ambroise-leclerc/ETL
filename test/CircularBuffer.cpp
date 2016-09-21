@@ -3,7 +3,7 @@
 #define __Mock_Mock__
 #include <etl/ioports.h>
 
-#include <queue> 
+#include <../ETL/libstd/include/queue> 
 #include <iostream>
 
 namespace etl {
@@ -59,66 +59,17 @@ private:
     uint8_t readIndex, writeIndex;
 };
 
-template<typename T, typename Container = etl::CircularBuffer<T,32> >
-class Queue {
-public:
-    auto empty() {
-        return container.size() == 0;
-    }
-
-    auto size() {
-        return container.size();
-    }
-
-    auto front() {
-        return container.front();
-    }
-
-    void pop() {
-        container.pop_front();
-    }
-
-    auto back() {
-        return container.back();
-    }
-
-    void push(T element) {
-        container.push_back(element);
-    }
-
-    template<typename... Args>
-    void emplace(Args&& ... args) {
-        container.emplace_back(std::forward<Args>(args)...);
-    }
-
-    void swap(Queue<T,Container>& right) {
-        Container* pointeurLeft = &container;
-        Container* pointeurRight = &right.container;
-        Container temp = *pointeurLeft;
-        *pointeurLeft = *pointeurRight;
-        *pointeurRight = temp;
-    }
-
-protected:
-    Container container;
-};
 
 } // namespace etl
-
 SCENARIO("CircularBuffer") {
     using namespace etl;
     using namespace std;
 
-    CircularBuffer<uint8_t, 5> fifo;
+    using fifo = CircularBuffer<uint8_t, 32>;
 
-    REQUIRE(fifo.size() == 0);
+ 
 
-    fifo.push_back(30);
-    REQUIRE(fifo.size() == 1);
-    REQUIRE(fifo.pop_front() == 30);
-    REQUIRE(fifo.size() == 0);
-
-    etl::Queue<uint8_t> etlQueue;
+    std::queue<uint8_t, fifo > etlQueue;
     REQUIRE(etlQueue.size() == 0);
     REQUIRE(etlQueue.empty());
     etlQueue.push(30);
@@ -140,8 +91,8 @@ SCENARIO("CircularBuffer") {
     REQUIRE(etlQueue.front() == 20);
     REQUIRE(etlQueue.back() == 10);
     REQUIRE(etlQueue.size() == 2);
-
-    etl::Queue<uint8_t> etlQueue2;
+    
+    std::queue<uint8_t, fifo > etlQueue2;
     etlQueue2.push(18);
     REQUIRE(etlQueue2.front() == 18);
     etlQueue.swap(etlQueue2);
@@ -153,12 +104,8 @@ SCENARIO("CircularBuffer") {
     REQUIRE(etlQueue.back() == 18);
     REQUIRE(etlQueue.size() == 1);
 
-    //TODO
     etlQueue.emplace(10);
     REQUIRE(etlQueue.size() == 2);
     REQUIRE(etlQueue.back() == 10);
-    std::queue<int> myq;
-    myq.emplace(10);
-    REQUIRE(myq.size() == 1);
-    REQUIRE(myq.front() == 10);
+  
 }
