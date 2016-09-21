@@ -11,11 +11,11 @@ SCENARIO("CircularBuffer") {
     using namespace etl;
     using namespace std;
 
-    using fifo = CircularBuffer<uint8_t, 32>;
+    using fifo = std::queue<uint8_t, CircularBuffer<uint8_t, 32>>;
 
  
 
-    std::queue<uint8_t, fifo > etlQueue;
+    fifo etlQueue;
     REQUIRE(etlQueue.size() == 0);
     REQUIRE(etlQueue.empty());
     etlQueue.push(30);
@@ -38,7 +38,7 @@ SCENARIO("CircularBuffer") {
     REQUIRE(etlQueue.back() == 10);
     REQUIRE(etlQueue.size() == 2);
     
-    std::queue<uint8_t, fifo > etlQueue2;
+    fifo etlQueue2;
     etlQueue2.push(18);
     REQUIRE(etlQueue2.front() == 18);
     etlQueue.swap(etlQueue2);
