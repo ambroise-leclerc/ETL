@@ -85,9 +85,8 @@ public:
 
     template<typename... Args>
     void emplace(Args&& ... args) {
-        //TODO
-        T object = new T(args);
-        container.push(object);
+        T object(std::forward<Args>(args)...);
+        container.push_back(object);
     }
 
     void swap(Queue<T,Container>& right) {
@@ -151,8 +150,11 @@ SCENARIO("CircularBuffer") {
     REQUIRE(etlQueue.size() == 1);
 
     //TODO
-    /*etlQueue.emplace(10);
-    REQUIRE(etlQueue.size() == 1);
-    REQUIRE(etlQueue.front() == 10);*/
+    etlQueue.emplace(10);
+    REQUIRE(etlQueue.size() == 2);
+    REQUIRE(etlQueue.back() == 10);
     std::queue<int> myq;
+    myq.emplace(10);
+    REQUIRE(myq.size() == 1);
+    REQUIRE(myq.front() == 10);
 }
