@@ -34,6 +34,49 @@
 
 namespace etlTest {
 #include <libstd/include/queue>
+#include <libstd/include/cstddef>
 } // namespace etlTest
 
 using namespace etlTest::std;
+
+uint32_t mockStatus;
+
+class SequenceContainerMock {
+public:
+    using value_type = uint8_t;
+    using size_type = etlTest::std::size_t;
+    using reference = value_type&;
+    using const_reference = const value_type&;
+
+    SequenceContainerMock() : elemF(8), elemB(2), contSize(0) { mockStatus = 0; }
+    void empty() const { mockStatus += Empty; }
+    size_type size() const { mockStatus += Size; return contSize; }
+    reference front() { mockStatus += Front; return elemF; }
+    reference back() { mockStatus += Back; return elemB; }
+    void push_back(reference) { mockStatus += PushBack; contSize++; }
+    void pop_front() { mockStatus += PopFront; contSize--; }
+
+    enum method { Size = 1, Front = 10, Back = 100, PushBack = 1000, PopFront = 10000, Empty = 100000 };
+protected:
+    value_type elemF, elemB;
+    size_type contSize;
+};
+
+SCENARIO("Queue") {
+    using Fifo = queue<uint8_t, SequenceContainerMock>;
+    GIVEN("An empty Fifo") {
+        Fifo fifo;
+        REQUIRE(fifo.size() == 0);
+
+        while (fifo.size() < fifo.front())
+            fifo.push(0);
+        REQUIRE(mockStatus == 8100);
+
+        while (fifo.size() > fifo.back())
+            fifo.pop();
+        REQUIRE(mockStatus == 68807);
+        
+        fifo.empty();
+        REQUIRE(mockStatus == 168807);
+    }
+}

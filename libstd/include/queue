@@ -38,24 +38,25 @@ namespace std {
 template<typename T, typename Container /* TODO = std::deque<T>*/>
 class queue {
 public:
-    auto empty() {
-        return container.size() == 0;
-    }
+    using container_type = Container;
+    using value_type = typename Container::value_type;
+    using size_type = typename Container::size_type;
+    using reference = typename Container::reference;
+    using const_reference = typename Container::const_reference;
 
-    auto size() {
+    auto empty() const { return container.empty(); }
+
+    auto size() const {
         return container.size();
     }
 
-    auto front() {
-        return container.front();
-    }
+    reference front()				{ return container.front(); }
+	const_reference front() const	{ return container.front(); }
+	reference back()				{ return container.back(); }
+	const_reference back() const	{ return container.back(); }
 
     void pop() {
         container.pop_front();
-    }
-
-    auto back() {
-        return container.back();
     }
 
     void push(T element) {
@@ -79,5 +80,10 @@ protected:
     Container container;
 };
 
+
+template<typename T, typename Container>
+void swap(queue<T,Container>& lhs, queue<T,Container>& rhs) { lhs.swap(rhs); }
+
+	
 
 } // namespace std

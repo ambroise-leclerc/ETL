@@ -5,9 +5,15 @@
 
 
 namespace etl {
+
 template<typename T, uint8_t N>
 class CircularBuffer {
 public:
+    using value_type = T;
+    using size_type = uint8_t;
+    using reference = value_type&;
+    using const_reference = const value_type&;
+
     CircularBuffer() : readIndex(0), writeIndex(0) {
     }
 
@@ -17,18 +23,21 @@ public:
 
     }
 
-    T pop_front() {
-        T value = buffer[readIndex];
+    reference pop_front() {
+        auto& value = buffer[readIndex];
         readIndex = (readIndex + 1) % N;
         return value;
     }
 
-    T front() {
-        T value = buffer[readIndex];
-        return value;
+    const_reference front() const {
+        return buffer[readIndex];
     }
 
-    T back() {
+    reference front() {
+        return buffer[readIndex];
+    }
+
+    reference back() {
         auto index = 0;
         if (writeIndex == 0) {
             index = N - 1;
@@ -36,13 +45,14 @@ public:
         else {
             index = writeIndex - 1;
         }
-        T value = buffer[index];
-        return value;
+        return buffer[index];
     }
 
-    uint8_t size() {
+    uint8_t size() const {
         return writeIndex >= readIndex ? writeIndex - readIndex : writeIndex + N - readIndex;
     }
+
+    bool empty() const { return writeIndex == readIndex; }
 
     template<typename... Args>
     void emplace_back(Args&& ... args) {

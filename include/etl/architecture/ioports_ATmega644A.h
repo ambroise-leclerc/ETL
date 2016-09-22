@@ -37,7 +37,7 @@
 #include <avr/interrupt.h>
 #include <chrono>
 #include <queue>
-#include <etl/container.h>
+#include <etl/CircularBuffer.h>
 
 extern void __builtin_avr_delay_cycles(unsigned long);
 
