@@ -38,14 +38,11 @@ public:
     }
 
     reference back() {
-        auto index = 0;
-        if (writeIndex == 0) {
-            index = N - 1;
-        }
-        else {
-            index = writeIndex - 1;
-        }
-        return buffer[index];
+        return buffer[writeIndex == 0 ? N - 1 : writeIndex - 1];
+    }
+
+    const_reference back() const {
+        return buffer[writeIndex == 0 ? N - 1 : writeIndex - 1];
     }
 
     uint8_t size() const {
