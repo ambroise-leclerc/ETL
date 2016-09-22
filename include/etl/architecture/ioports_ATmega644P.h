@@ -46,10 +46,12 @@ namespace etl {
 class Device {
 public:
     static void delayTicks(uint32_t ticks)            { __builtin_avr_delay_cycles(ticks); }
-    static const auto flashSize = 65536;
-    static const auto eepromSize = 2048;
-    static const auto sramSize = 4096;
-    static const auto architectureWidth = 8;
+    static const size_t flashSize = 65536;
+    static const size_t eepromSize = 2048;
+    static const size_t sramSize = 4096;
+    static const size_t architectureWidth = 8;
+    static const size_t defaultBufferSize = 8;
+    using OffType = uint16_t;
     static const uint32_t McuFrequency = F_CPU;
 
     /// Enables interrupts by setting the global interrupt mask.

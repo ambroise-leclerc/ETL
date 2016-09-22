@@ -1,9 +1,9 @@
 /// @file ioports_ESP8266.h
-/// @date 15/09/16 16:57
-/// @author Ambroise Leclerc and Cécile Gomes
+/// @date 21/09/16 22:36
+/// @author Ambroise Leclerc and CÃ©cile Gomes
 /// @brief Espressif ESP 32-bit microcontrollers peripherals handling classes
 //
-// Copyright (c) 2016, Ambroise Leclerc and Cécile Gomes
+// Copyright (c) 2016, Ambroise Leclerc and CÃ©cile Gomes
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -35,37 +35,6 @@
 #include <../libstd/include/cstdint>
 extern "C" {
     #include "eagle_soc.h"
-    #include "user_interface.h"
-    #include "osapi.h"
-int atoi(const char *nptr);
-void ets_install_putc1(void *routine);
-void ets_isr_attach(int intr, void *handler, void *arg);
-void ets_isr_mask(unsigned intr);
-void ets_isr_unmask(unsigned intr);
-void ets_delay_us(unsigned delay);	//SAM
-int ets_memcmp(const void *s1, const void *s2, size_t n);
-void *ets_memcpy(void *dest, const void *src, size_t n);
-void *ets_memset(void *s, int c, size_t n);
-int ets_sprintf(char *str, const char *format, ...)  __attribute__ ((format (printf, 2, 3)));
-int ets_str2macaddr(void *, void *);
-int ets_strcmp(const char *s1, const char *s2);
-char *ets_strcpy(char *dest, const char *src);
-size_t ets_strlen(const char *s);
-int ets_strncmp(const char *s1, const char *s2, int len);
-char *ets_strncpy(char *dest, const char *src, size_t n);
-char *ets_strstr(const char *haystack, const char *needle);
-void ets_timer_arm_new(ETSTimer *a, int b, int c, int isMstimer);
-void ets_timer_disarm(ETSTimer *a);
-void ets_timer_setfn(ETSTimer *t, ETSTimerFunc *fn, void *parg);
-int os_printf(const char *format, ...)  __attribute__ ((format (printf, 1, 2)));
-int os_snprintf(char *str, size_t size, const char *format, ...) __attribute__ ((format (printf, 3, 4)));
-void pvPortFree(void *ptr);
-void *pvPortMalloc(size_t xWantedSize);
-void *pvPortZalloc(size_t);
-void uart_div_modify(int no, unsigned int freq);
-void vPortFree(void *ptr);
-void *vPortMalloc(size_t xWantedSize);
-int os_printf_plus(const char *format, ...)  __attribute__ ((format (printf, 1, 2)));
 }
 static const uint32_t BASE_ADRR = 0x60000000;
 
@@ -86,17 +55,6 @@ static uint8_t functionsGpio[16] = {
     3, FUNC_GPIO9, FUNC_GPIO10, 3, FUNC_GPIO12, FUNC_GPIO13, FUNC_GPIO14, FUNC_GPIO15 };
 
 namespace etl {
-class Device {
-public:
- static ICACHE_FLASH_ATTR void delayTicks(uint32_t ticks) {
-            os_delay_us(((ticks * 1000000) / McuFrequency));
-        }
- static const uint32_t McuFrequency = SYS_CPU_80MHZ*1000000;
-  static const auto architectureWidth = 32;
-};
-
-using clock_cycles = std::chrono::duration<unsigned long, std::ratio<1, Device::McuFrequency>>;
-constexpr clock_cycles operator ""clks(unsigned long long c)     { return clock_cycles(static_cast<clock_cycles::rep>(c)); }
 
 class Pin0 {
 public:
