@@ -1813,7 +1813,7 @@ protected:
         UCSR0B = (1<<RXEN0) | (1<<TXEN0) | (1<<RXCIE0);
      }
 	 
-	using Queue = std::queue<uint8_t,etl::CircularBuffer<uint8_t,BufferSize>>;
+	using Queue =  etl::CircularBuffer<uint8_t,BufferSize>;
     static Queue fifo;
     using ReceiveCallback = void(*)(uint8_t);
     static ReceiveCallback receiveCallback;
@@ -1824,7 +1824,7 @@ public:
             UDR0 = datum;
         }
         else {
-			fifo.push(datum);
+			fifo.push_back(datum);
             UCSR0B |= 1<<UDRIE0;
         }
     }
@@ -1848,8 +1848,7 @@ Uart0Driver::ReceiveCallback Uart0Driver::receiveCallback = nullptr;
 void Uart0Driver::Isr::fifoEmpty() {
      if (!fifo.empty()) {
 		while((UCSR0A & (1<<UDRE0)) && !fifo.empty()) {
-				UDR0 =  fifo.front();
-				fifo.pop();
+				UDR0 =  fifo.pop_front();
 		}
     }
     else {
