@@ -71,7 +71,7 @@ class reverse_iterator : public iterator< typename iterator_traits<Iterator>::it
   reverse_iterator<Iterator>& operator++(int) const { reverse_iterator<Iterator> tmp = *this; --current_; return tmp; }
   reverse_iterator<Iterator>& operator--(int) const { reverse_iterator<Iterator> tmp = *this; ++current_; return tmp; }
     
-  pointer operator->() const { return std::addressof(operator*()); }
+  pointer operator->() const { return addressof(operator*()); }
   reference operator[](difference_type n) const { return *(*this + n); }
       
  protected:
