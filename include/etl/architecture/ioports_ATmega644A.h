@@ -36,6 +36,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <chrono>
+#include <queue>
+#include <etl/container.h>
 
 extern void __builtin_avr_delay_cycles(unsigned long);
 
@@ -1786,6 +1788,7 @@ template<> struct is_uart_txd_capable<PinD1> : std::true_type {};
 
 class Uart0Driver {
     static const uint8_t BufferSize = 32;
+	
     static uint8_t circularBuffer[BufferSize];
     static uint8_t readIndex, writeIndex;
 protected:
@@ -1809,7 +1812,9 @@ protected:
         UCSR0C = (nbBits1<<UCSZ01) | (nbBits0<<UCSZ00) | (parity0<<UPM00) | (parity1<<UPM01) | (stopBit<<USBS0);
         UCSR0B = (1<<RXEN0) | (1<<TXEN0) | (1<<RXCIE0);
      }
-
+	 
+	using Queue = std::queue<uint8_t,etl::CircularBuffer<uint8_t,BufferSize>>;
+    static Queue fifo;
     using ReceiveCallback = void(*)(uint8_t);
     static ReceiveCallback receiveCallback;
 
@@ -1819,12 +1824,7 @@ public:
             UDR0 = datum;
         }
         else {
-            circularBuffer[writeIndex] = datum;
-            if (writeIndex == (BufferSize - 1)) {
-                writeIndex = 0;
-            } else {
-                writeIndex++;
-            }
+			fifo.push(datum);
             UCSR0B |= 1<<UDRIE0;
         }
     }
@@ -1842,16 +1842,15 @@ public:
 uint8_t Uart0Driver::readIndex = 0;
 uint8_t Uart0Driver::writeIndex = 0;
 uint8_t Uart0Driver::circularBuffer[32];
+Uart0Driver::Queue Uart0Driver::fifo;
 Uart0Driver::ReceiveCallback Uart0Driver::receiveCallback = nullptr;
 
 void Uart0Driver::Isr::fifoEmpty() {
-     if (readIndex != writeIndex) {
-        UDR0 = circularBuffer[readIndex];
-        if (readIndex == (BufferSize - 1)) {
-            readIndex = 0;
-        } else {
-            readIndex++;
-        }
+     if (!fifo.empty()) {
+		while((UCSR0A & (1<<UDRE0)) && !fifo.empty()) {
+				UDR0 =  fifo.front();
+				fifo.pop();
+		}
     }
     else {
         UCSR0B &= ~(1<<UDRIE0);
@@ -1882,7 +1881,13 @@ public:
         start();
     }
 
-static void write(CharType datum) { }
+static void write(CharType datum) {
+	while(fifo.size() >= (BufferSize-1)){
+		Device::delayTicks(50);
+	}
+    writeAsync(datum);
+	
+}
 };
 
 template<> struct is_uart_rxd_capable<PinD2> : std::true_type {};
