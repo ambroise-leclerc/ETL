@@ -1882,7 +1882,7 @@ public:
 
 static void write(CharType datum) {
 	while(fifo.size() >= (BufferSize-1)){
-		Device::delayTicks(50);
+		Device::delayTicks(Device::McuFrequency/(BAUD_RATE/8));
 	}
     writeAsync(datum);
 	
