@@ -39,7 +39,7 @@ class initializer_list {
   using value_type      = T;
   using reference       = const T&;
   using const_reference = const T&;
-  using size_type       = std::size_t;
+  using size_type       = size_t;
   using iterator        = const T*;
   using const_iterator  = const T*;
   
