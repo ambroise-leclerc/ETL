@@ -122,14 +122,14 @@ struct array<T, 0> {
     using const_reverse_iterator  = std::reverse_iterator<const_iterator>;
   
     // Access
-    reference operator[](size_type)                       { RangeError(); return elems_; }
-    constexpr const_reference operator[](size_type) const { RangeError(); return elems_; }   
-    reference at(size_type)                               { RangeError(); return elems_; }
-    constexpr const_reference at(size_type) const         { RangeError(); return elems_; }
-    reference front()                                     { RangeError(); return elems_; }
-    constexpr const_reference front() const               { RangeError(); return elems_; }
-    reference back()                                      { RangeError(); return elems_; }
-    constexpr const_reference back() const                { RangeError(); return elems_; }
+    reference operator[](size_type)                       { RangeError(); return elems; }
+    constexpr const_reference operator[](size_type) const { RangeError(); return elems; }   
+    reference at(size_type)                               { RangeError(); return elems; }
+    constexpr const_reference at(size_type) const         { RangeError(); return elems; }
+    reference front()                                     { RangeError(); return elems; }
+    constexpr const_reference front() const               { RangeError(); return elems; }
+    reference back()                                      { RangeError(); return elems; }
+    constexpr const_reference back() const                { RangeError(); return elems; }
     pointer data() noexcept                               { return nullptr; }
     constexpr const_pointer data() const noexcept         { return nullptr; }
     
