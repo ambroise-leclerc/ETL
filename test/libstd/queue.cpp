@@ -35,6 +35,7 @@
 namespace etlTest {
 #include <libstd/include/queue>
 #include <libstd/include/cstddef>
+#include <libstd/include/memory>
 } // namespace etlTest
 
 using namespace etlTest::std;
@@ -48,15 +49,17 @@ public:
     using reference = value_type&;
     using const_reference = const value_type&;
 
-    SequenceContainerMock() : elemF(8), elemB(2), contSize(0) { mockStatus = 0; }
+    SequenceContainerMock() : elemF(8), elemB(2), contSize(0) { }
     void empty() const { mockStatus += Empty; }
     size_type size() const { mockStatus += Size; return contSize; }
     reference front() { mockStatus += Front; return elemF; }
     reference back() { mockStatus += Back; return elemB; }
-    void push_back(reference) { mockStatus += PushBack; contSize++; }
+    void push_back(reference elem) { mockStatus += PushBack; contSize++; elemB = elem; }
     void pop_front() { mockStatus += PopFront; contSize--; }
-
-    enum method { Size = 1, Front = 10, Back = 100, PushBack = 1000, PopFront = 10000, Empty = 100000 };
+    template<typename... Args>
+    void emplace_back(Args&& ... args) { mockStatus += Emplace; new(&elemB) uint8_t(std::forward<Args>(args)...); }
+    enum method { Size = 1, Front = 10, Back = 100, PushBack = 1000, PopFront = 10000,
+                  Empty = 100000, Emplace = 1000000, Swap = 10000000 };
 protected:
     value_type elemF, elemB;
     size_type contSize;
@@ -66,10 +69,11 @@ SCENARIO("Queue") {
     using Fifo = queue<uint8_t, SequenceContainerMock>;
     GIVEN("An empty Fifo") {
         Fifo fifo;
+        mockStatus = 0;
         REQUIRE(fifo.size() == 0);
 
         while (fifo.size() < fifo.front())
-            fifo.push(0);
+            fifo.push(2);
         REQUIRE(mockStatus == 8100);
 
         while (fifo.size() > fifo.back())
@@ -78,5 +82,16 @@ SCENARIO("Queue") {
         
         fifo.empty();
         REQUIRE(mockStatus == 168807);
+
+        fifo.emplace(150);
+        REQUIRE(fifo.back() == 150);
+        REQUIRE(mockStatus == 1168907);
+
+        Fifo fifo2;
+        fifo2.swap(fifo);
+        REQUIRE(fifo2.back() == 150);
+        REQUIRE(fifo.back() == 2);
+        REQUIRE(mockStatus == 1169107);
+        
     }
 }

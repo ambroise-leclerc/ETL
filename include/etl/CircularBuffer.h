@@ -6,7 +6,7 @@
 
 namespace etl {
 
-template<typename T, uint8_t N>
+template<typename T, uint8_t N, typename Allocator = std::allocator<T>>
 class CircularBuffer {
 public:
     using value_type = T;
@@ -53,7 +53,7 @@ public:
 
     template<typename... Args>
     void emplace_back(Args&& ... args) {
-        std::allocator<T> all;
+        Allocator all;
         all.construct(&buffer[writeIndex], std::forward<Args>(args)...);
         writeIndex = (writeIndex + 1) % N;
     }
