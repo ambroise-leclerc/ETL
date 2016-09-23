@@ -16,7 +16,7 @@ set(ETL_ARCHITECTURE include/etl/architecture/MockCore.h)
 set(HEADERS ${ETL_HEADERS} ${ETL_ARCHITECTURE} ${LIBSTD_HEADERS} test/MockDevice.h
             )
             
-add_executable( Tests ${ETL_TESTS}
+add_executable( TestsETL ${ETL_TESTS}
                 ${LIBSTD_TESTS}
                 ${HEADERS} )
 
