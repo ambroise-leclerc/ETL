@@ -36,6 +36,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <chrono>
+#include <queue>
+#include <etl/CircularBuffer.h>
 
 extern void __builtin_avr_delay_cycles(unsigned long);
 
@@ -1786,7 +1788,6 @@ template<> struct is_uart_txd_capable<PinD1> : std::true_type {};
 
 class Uart0Driver {
     static const uint8_t BufferSize = 32;
-    static uint8_t circularBuffer[BufferSize];
     static uint8_t readIndex, writeIndex;
 protected:
     static void start(uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT) {
@@ -1810,6 +1811,8 @@ protected:
         UCSR0B = (1<<RXEN0) | (1<<TXEN0) | (1<<RXCIE0);
      }
 
+    using Queue =  etl::CircularBuffer<uint8_t,BufferSize>;
+    static Queue fifo;
     using ReceiveCallback = void(*)(uint8_t);
     static ReceiveCallback receiveCallback;
 
@@ -1819,19 +1822,11 @@ public:
             UDR0 = datum;
         }
         else {
-            circularBuffer[writeIndex] = datum;
-            if (writeIndex == (BufferSize - 1)) {
-                writeIndex = 0;
-            } else {
-                writeIndex++;
-            }
+            fifo.push_back(datum);
             UCSR0B |= 1<<UDRIE0;
         }
     }
 
-    static uint8_t getRemainingBufferSize() {
-        return writeIndex > readIndex ? writeIndex - readIndex : writeIndex + BufferSize - readIndex;
-    }
 
     struct Isr {
         static void receiveComplete() IOPORTS_IRQ_HANDLER(USART0_RX_vect, signal);
@@ -1841,22 +1836,18 @@ public:
 
 uint8_t Uart0Driver::readIndex = 0;
 uint8_t Uart0Driver::writeIndex = 0;
-uint8_t Uart0Driver::circularBuffer[32];
+Uart0Driver::Queue Uart0Driver::fifo;
 Uart0Driver::ReceiveCallback Uart0Driver::receiveCallback = nullptr;
 
 void Uart0Driver::Isr::fifoEmpty() {
-     if (readIndex != writeIndex) {
-        UDR0 = circularBuffer[readIndex];
-        if (readIndex == (BufferSize - 1)) {
-            readIndex = 0;
-        } else {
-            readIndex++;
-        }
-    }
-    else {
+      if (!fifo.empty()) {
+        while((UCSR0A & (1<<UDRE0)) && !fifo.empty()) {
+            UDR0 =  fifo.pop_front();
+         }
+       } else {
         UCSR0B &= ~(1<<UDRIE0);
-    }
-}
+       }
+  }
 
 void Uart0Driver::Isr::receiveComplete() {
     if (receiveCallback) {
@@ -1882,7 +1873,12 @@ public:
         start();
     }
 
-static void write(CharType datum) { }
+static void write(CharType datum) {
+   while(fifo.size() >= (BufferSize-1)){
+     Device::delayTicks(Device::McuFrequency/(BAUD_RATE/8));
+   }
+ writeAsync(datum);
+}
 };
 
 template<> struct is_uart_rxd_capable<PinD2> : std::true_type {};
@@ -1890,7 +1886,6 @@ template<> struct is_uart_txd_capable<PinD3> : std::true_type {};
 
 class Uart1Driver {
     static const uint8_t BufferSize = 32;
-    static uint8_t circularBuffer[BufferSize];
     static uint8_t readIndex, writeIndex;
 protected:
     static void start(uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT) {
@@ -1914,6 +1909,8 @@ protected:
         UCSR1B = (1<<RXEN1) | (1<<TXEN1) | (1<<RXCIE1);
      }
 
+    using Queue =  etl::CircularBuffer<uint8_t,BufferSize>;
+    static Queue fifo;
     using ReceiveCallback = void(*)(uint8_t);
     static ReceiveCallback receiveCallback;
 
@@ -1923,19 +1920,11 @@ public:
             UDR1 = datum;
         }
         else {
-            circularBuffer[writeIndex] = datum;
-            if (writeIndex == (BufferSize - 1)) {
-                writeIndex = 0;
-            } else {
-                writeIndex++;
-            }
+            fifo.push_back(datum);
             UCSR1B |= 1<<UDRIE1;
         }
     }
 
-    static uint8_t getRemainingBufferSize() {
-        return writeIndex > readIndex ? writeIndex - readIndex : writeIndex + BufferSize - readIndex;
-    }
 
     struct Isr {
         static void receiveComplete() IOPORTS_IRQ_HANDLER(USART1_RX_vect, signal);
@@ -1945,22 +1934,18 @@ public:
 
 uint8_t Uart1Driver::readIndex = 0;
 uint8_t Uart1Driver::writeIndex = 0;
-uint8_t Uart1Driver::circularBuffer[32];
+Uart1Driver::Queue Uart1Driver::fifo;
 Uart1Driver::ReceiveCallback Uart1Driver::receiveCallback = nullptr;
 
 void Uart1Driver::Isr::fifoEmpty() {
-     if (readIndex != writeIndex) {
-        UDR1 = circularBuffer[readIndex];
-        if (readIndex == (BufferSize - 1)) {
-            readIndex = 0;
-        } else {
-            readIndex++;
-        }
-    }
-    else {
+      if (!fifo.empty()) {
+        while((UCSR1A & (1<<UDRE1)) && !fifo.empty()) {
+            UDR1 =  fifo.pop_front();
+         }
+       } else {
         UCSR1B &= ~(1<<UDRIE1);
-    }
-}
+       }
+  }
 
 void Uart1Driver::Isr::receiveComplete() {
     if (receiveCallback) {
@@ -1986,7 +1971,12 @@ public:
         start();
     }
 
-static void write(CharType datum) { }
+static void write(CharType datum) {
+   while(fifo.size() >= (BufferSize-1)){
+     Device::delayTicks(Device::McuFrequency/(BAUD_RATE/8));
+   }
+ writeAsync(datum);
+}
 };
 #ifdef PCICR
 struct PinChangeControlRegister {
