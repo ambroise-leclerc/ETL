@@ -34,8 +34,8 @@
 
 
 #include "h/char_traits.h"
-#include <libstd\include\vector>
-#include <libstd\include\memory>
+#include <libstd/include/vector>
+#include <libstd/include/memory>
 #include <libstd/include/iterator>
 
 namespace ETLSTD {
