@@ -2,13 +2,13 @@
 
 #define __Mock_Mock__
 
-namespace etlTest {
+
+#define ETLSTD etlstd
 #include <etl/CircularBuffer.h>
 #include <libstd/include/queue> 
 #include <libstd/include/utility>
-} // namespace etlTest
 
-using fifo = etlTest::std::queue<uint8_t, etlTest::etl::CircularBuffer<uint8_t, 32>>;
+using fifo = ETLSTD::queue<uint8_t, etl::CircularBuffer<uint8_t, 32>>;
 
 SCENARIO("CircularBuffer") {
     
@@ -52,3 +52,4 @@ SCENARIO("CircularBuffer") {
     REQUIRE(etlQueue.back() == 10);
   
 }
+

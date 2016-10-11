@@ -32,7 +32,9 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <../libstd/include/cstdint>
+#include <libstd/include/cstdint>
+#include "ETLDevice_ESP07.h"
+
 extern "C" {
     #include "eagle_soc.h"
 }

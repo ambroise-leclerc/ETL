@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-namespace std {
+namespace ETLSTD {
 
 template<typename IntType = int>
 struct uniform_int_distribution {

@@ -34,7 +34,7 @@
 #include <libstd/include/type_traits>
 #include <libstd/include/utility>
 
-namespace std {
+namespace ETLSTD {
 
 namespace etlHelper { /*
 	template<typename Base, typename T, typename Derived, typename... Args>
@@ -119,5 +119,5 @@ template<typename F> struct result_of {};
 template<typename F, typename... ArgTypes> struct result_of<F(ArgTypes...)> : etlHelper::result_of<F(ArgTypes...)> {};
 
 
-} // namespace std  
+} // namespace ETLSTD  
 

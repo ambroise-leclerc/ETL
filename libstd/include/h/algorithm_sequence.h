@@ -34,7 +34,7 @@
 #include <libstd/include/utility>
 #include <libstd/include/iterator>
 
-namespace std {
+namespace ETLSTD {
 
 template<typename ForwardIterator1, typename ForwardIterator2>
 ForwardIterator1 search(ForwardIterator1 first, ForwardIterator1 last, ForwardIterator2 s_first, ForwardIterator2 s_last) {
@@ -280,4 +280,4 @@ ForwardIterator adjacent_find(ForwardIterator first, ForwardIterator last, Binar
   return last;
 }
 
-} // namespace std
+} // namespace ETLSTD

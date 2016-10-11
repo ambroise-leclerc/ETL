@@ -32,14 +32,13 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #include <catch.hpp>
 
-namespace etlTest {
+
+#define ETLSTD etlstd
 #include <libstd/include/chrono>
-} // namespace etlTest
 
 SCENARIO("std::chrono") {
-
-    using namespace etlTest::std::chrono;
-    using namespace etlTest::std::chrono_literals;    
+    using namespace ETLSTD::chrono;
+    using namespace ETLSTD::chrono_literals;
     auto dur_ns = 2153123456ns;
     GIVEN("a duration in ns") {
         REQUIRE(duration_cast<nanoseconds>(dur_ns) == 2153123456ns);

@@ -33,9 +33,9 @@
 #pragma once
 #include <libstd/include/utility>
 
-namespace std {
+namespace ETLSTD {
 
-template<typename T, typename Container /* TODO = std::deque<T>*/>
+template<typename T, typename Container /* TODO = ETLSTD::deque<T>*/>
 class queue {
 public:
     using container_type = Container;
@@ -86,4 +86,4 @@ void swap(queue<T,Container>& lhs, queue<T,Container>& rhs) { lhs.swap(rhs); }
 
 	
 
-} // namespace std
+} // namespace ETLSTD

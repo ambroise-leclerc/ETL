@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-namespace std {
+namespace ETLSTD {
   
 namespace etlHelper {
 	struct unspecified; // is_transparent type member is specified as *unspecified* in C++14 standard.
@@ -306,4 +306,4 @@ template<> struct bit_not<void> {
 };
 #endif
 
-} // namespace std
+} // namespace ETLSTD

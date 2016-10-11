@@ -35,35 +35,16 @@
 #include <util/delay.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <chrono>
+#include <libstd/include/chrono>
+#include <libstd/include/queue>
+#include <etl/CircularBuffer.h>
+#include "ETLDevice_ATmega328P.h"
 
 extern void __builtin_avr_delay_cycles(unsigned long);
 
 namespace etl {
 #define IOPORTS_TO_STRING(name) #name
 #define IOPORTS_IRQ_HANDLER(vector, type) asm(IOPORTS_TO_STRING(vector)) __attribute__ ((type, __INTR_ATTRS))
-
-class Device {
-public:
-    static void delayTicks(uint32_t ticks)            { __builtin_avr_delay_cycles(ticks); }
-    static const size_t flashSize = 32768;
-    static const size_t eepromSize = 1024;
-    static const size_t sramSize = 2048;
-    static const size_t architectureWidth = 8;
-    static const size_t defaultBufferSize = 8;
-    using OffType = uint16_t;
-    static const uint32_t McuFrequency = F_CPU;
-
-    /// Enables interrupts by setting the global interrupt mask.
-    /// This function generates a single 'sei' instruction with
-    /// no overhead.
-    static void enableInterrupts() { asm volatile("sei" ::: "memory"); }
-
-    /// Disables interrupts by clearing the global interrupt mask.
-    /// This function generates a single 'cli' instruction with
-    /// no overhead.
-    static void disableInterrupts() { asm volatile("cli" ::: "memory"); }
-};
 
 using clock_cycles = std::chrono::duration<unsigned long, std::ratio<1, Device::McuFrequency>>;
 constexpr clock_cycles operator ""clks(unsigned long long c)     { return clock_cycles(static_cast<clock_cycles::rep>(c)); }
@@ -1377,15 +1358,15 @@ template<> struct is_uart_txd_capable<PinD1> : std::true_type {};
 
 class Uart0Driver {
     static const uint8_t BufferSize = 32;
-    static uint8_t circularBuffer[BufferSize];
     static uint8_t readIndex, writeIndex;
 protected:
     static void start(uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT) {
         readIndex = 0;
         writeIndex = 0;
-        uint16_t spd = (Device::McuFrequency / (BAUD_RATE << 4)) - 1;
-        UBRR0H = static_cast<uint8_t>(spd>>8);
-        UBRR0L = static_cast<uint8_t>(spd);
+        float speedRate = BAUD_RATE > 57600 ? BAUD_RATE * 8 : BAUD_RATE * 16;
+        auto spd = static_cast<uint16_t>(((Device::McuFrequency / speedRate)) - 0.5);
+        UBRR0H = spd>>8 &0b1111;
+        UBRR0L = spd;
         
         auto nbBits = (FRAME_FORMAT & FrameFormat::NbBitsMask) >> 3;
         auto nbBits1 = (nbBits & 0b10) == 0b10;
@@ -1397,10 +1378,14 @@ protected:
          
         auto stopBit = (FRAME_FORMAT & FrameFormat::StopBitMask) >> 0;
         
+        if (BAUD_RATE > 57600)
+            UCSR0A = 1<<U2X0;
         UCSR0C = (nbBits1<<UCSZ01) | (nbBits0<<UCSZ00) | (parity0<<UPM00) | (parity1<<UPM01) | (stopBit<<USBS0);
         UCSR0B = (1<<RXEN0) | (1<<TXEN0) | (1<<RXCIE0);
      }
 
+    using Queue =  etl::CircularBuffer<uint8_t,BufferSize>;
+    static Queue fifo;
     using ReceiveCallback = void(*)(uint8_t);
     static ReceiveCallback receiveCallback;
 
@@ -1410,19 +1395,11 @@ public:
             UDR0 = datum;
         }
         else {
-            circularBuffer[writeIndex] = datum;
-            if (writeIndex == (BufferSize - 1)) {
-                writeIndex = 0;
-            } else {
-                writeIndex++;
-            }
+            fifo.push_back(datum);
             UCSR0B |= 1<<UDRIE0;
         }
     }
 
-    static uint8_t getRemainingBufferSize() {
-        return writeIndex > readIndex ? writeIndex - readIndex : writeIndex + BufferSize - readIndex;
-    }
 
     struct Isr {
         static void receiveComplete() IOPORTS_IRQ_HANDLER(USART0_RX_vect, signal);
@@ -1432,22 +1409,18 @@ public:
 
 uint8_t Uart0Driver::readIndex = 0;
 uint8_t Uart0Driver::writeIndex = 0;
-uint8_t Uart0Driver::circularBuffer[32];
+Uart0Driver::Queue Uart0Driver::fifo;
 Uart0Driver::ReceiveCallback Uart0Driver::receiveCallback = nullptr;
 
 void Uart0Driver::Isr::fifoEmpty() {
-     if (readIndex != writeIndex) {
-        UDR0 = circularBuffer[readIndex];
-        if (readIndex == (BufferSize - 1)) {
-            readIndex = 0;
-        } else {
-            readIndex++;
-        }
-    }
-    else {
+      if (!fifo.empty()) {
+        while((UCSR0A & (1<<UDRE0)) && !fifo.empty()) {
+            UDR0 =  fifo.pop_front();
+         }
+       } else {
         UCSR0B &= ~(1<<UDRIE0);
-    }
-}
+       }
+  }
 
 void Uart0Driver::Isr::receiveComplete() {
     if (receiveCallback) {
@@ -1473,7 +1446,12 @@ public:
         start();
     }
 
-static void write(CharType datum) { }
+static void write(CharType datum) {
+   while(fifo.size() >= (BufferSize-1)){
+     Device::delayTicks(Device::McuFrequency/(BAUD_RATE/8));
+   }
+ writeAsync(datum);
+}
 };
 
 template<> struct is_uart_rxd_capable<PinD2> : std::true_type {};
@@ -1481,15 +1459,15 @@ template<> struct is_uart_txd_capable<PinD3> : std::true_type {};
 
 class Uart1Driver {
     static const uint8_t BufferSize = 32;
-    static uint8_t circularBuffer[BufferSize];
     static uint8_t readIndex, writeIndex;
 protected:
     static void start(uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT) {
         readIndex = 0;
         writeIndex = 0;
-        uint16_t spd = (Device::McuFrequency / (BAUD_RATE << 4)) - 1;
-        UBRR1H = static_cast<uint8_t>(spd>>8);
-        UBRR1L = static_cast<uint8_t>(spd);
+        float speedRate = BAUD_RATE > 57600 ? BAUD_RATE * 8 : BAUD_RATE * 16;
+        auto spd = static_cast<uint16_t>(((Device::McuFrequency / speedRate)) - 0.5);
+        UBRR1H = spd>>8 &0b1111;
+        UBRR1L = spd;
         
         auto nbBits = (FRAME_FORMAT & FrameFormat::NbBitsMask) >> 3;
         auto nbBits1 = (nbBits & 0b10) == 0b10;
@@ -1501,10 +1479,14 @@ protected:
          
         auto stopBit = (FRAME_FORMAT & FrameFormat::StopBitMask) >> 0;
         
+        if (BAUD_RATE > 57600)
+            UCSR1A = 1<<U2X1;
         UCSR1C = (nbBits1<<UCSZ11) | (nbBits0<<UCSZ10) | (parity0<<UPM10) | (parity1<<UPM11) | (stopBit<<USBS1);
         UCSR1B = (1<<RXEN1) | (1<<TXEN1) | (1<<RXCIE1);
      }
 
+    using Queue =  etl::CircularBuffer<uint8_t,BufferSize>;
+    static Queue fifo;
     using ReceiveCallback = void(*)(uint8_t);
     static ReceiveCallback receiveCallback;
 
@@ -1514,19 +1496,11 @@ public:
             UDR1 = datum;
         }
         else {
-            circularBuffer[writeIndex] = datum;
-            if (writeIndex == (BufferSize - 1)) {
-                writeIndex = 0;
-            } else {
-                writeIndex++;
-            }
+            fifo.push_back(datum);
             UCSR1B |= 1<<UDRIE1;
         }
     }
 
-    static uint8_t getRemainingBufferSize() {
-        return writeIndex > readIndex ? writeIndex - readIndex : writeIndex + BufferSize - readIndex;
-    }
 
     struct Isr {
         static void receiveComplete() IOPORTS_IRQ_HANDLER(USART1_RX_vect, signal);
@@ -1536,22 +1510,18 @@ public:
 
 uint8_t Uart1Driver::readIndex = 0;
 uint8_t Uart1Driver::writeIndex = 0;
-uint8_t Uart1Driver::circularBuffer[32];
+Uart1Driver::Queue Uart1Driver::fifo;
 Uart1Driver::ReceiveCallback Uart1Driver::receiveCallback = nullptr;
 
 void Uart1Driver::Isr::fifoEmpty() {
-     if (readIndex != writeIndex) {
-        UDR1 = circularBuffer[readIndex];
-        if (readIndex == (BufferSize - 1)) {
-            readIndex = 0;
-        } else {
-            readIndex++;
-        }
-    }
-    else {
+      if (!fifo.empty()) {
+        while((UCSR1A & (1<<UDRE1)) && !fifo.empty()) {
+            UDR1 =  fifo.pop_front();
+         }
+       } else {
         UCSR1B &= ~(1<<UDRIE1);
-    }
-}
+       }
+  }
 
 void Uart1Driver::Isr::receiveComplete() {
     if (receiveCallback) {
@@ -1577,7 +1547,12 @@ public:
         start();
     }
 
-static void write(CharType datum) { }
+static void write(CharType datum) {
+   while(fifo.size() >= (BufferSize-1)){
+     Device::delayTicks(Device::McuFrequency/(BAUD_RATE/8));
+   }
+ writeAsync(datum);
+}
 };
 #ifdef PCICR
 struct PinChangeControlRegister {

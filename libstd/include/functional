@@ -36,7 +36,7 @@
 #include <libstd/include/type_traits>
 #include <libstd/include/memory>
 
-namespace std {
+namespace ETLSTD {
 
 
 template<typename T>
@@ -76,5 +76,5 @@ namespace etlHelper {
     template<typename T> using is_reference_wrapper_v = typename is_reference_wrapper<T>::value;
 } // namespace etlHelper
 
-} // namespace std
+} // namespace ETLSTD
 

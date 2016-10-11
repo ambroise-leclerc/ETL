@@ -33,75 +33,9 @@
 #pragma once
 
 #include <MockDevice.h>
-#include <thread>
+#include "ETLDevice_Mock.h"
 
 namespace etl {
-
-static uint16_t& GP0_OUT         = MockDevice::getInstance().registers[0];
-static uint16_t& GP1_OUT         = MockDevice::getInstance().registers[1];
-static uint16_t& GPSimuA_OUT     = MockDevice::getInstance().registers[2];
-static uint16_t& GPSimuB_OUT     = MockDevice::getInstance().registers[3];
-static uint16_t& GP0_IN          = MockDevice::getInstance().registers[4];
-static uint16_t& GP1_IN          = MockDevice::getInstance().registers[5];
-static uint16_t& GPSimuA_IN      = MockDevice::getInstance().registers[6];
-static uint16_t& GPSimuB_IN      = MockDevice::getInstance().registers[7];
-static uint16_t& GP0_DIR         = MockDevice::getInstance().registers[8];
-static uint16_t& GP1_DIR         = MockDevice::getInstance().registers[9];
-static uint16_t& GPSimuA_DIR     = MockDevice::getInstance().registers[10];
-static uint16_t& GPSimuB_DIR     = MockDevice::getInstance().registers[11];
-static uint16_t& GP0_OUT_SET     = MockDevice::getInstance().registers[12];
-static uint16_t& GP1_OUT_SET     = MockDevice::getInstance().registers[13];
-static uint16_t& GPSimuA_OUT_SET = MockDevice::getInstance().registers[14];
-static uint16_t& GPSimuB_OUT_SET = MockDevice::getInstance().registers[15];
-static uint16_t& GP0_OUT_CLR     = MockDevice::getInstance().registers[16];
-static uint16_t& GP1_OUT_CLR     = MockDevice::getInstance().registers[17];
-static uint16_t& GPSimuA_OUT_CLR = MockDevice::getInstance().registers[18];
-static uint16_t& GPSimuB_OUT_CLR = MockDevice::getInstance().registers[19];
-static uint16_t& GP0_DIR_SET     = MockDevice::getInstance().registers[20];
-static uint16_t& GP1_DIR_SET     = MockDevice::getInstance().registers[21];
-static uint16_t& GPSimuA_DIR_SET = MockDevice::getInstance().registers[22];
-static uint16_t& GPSimuB_DIR_SET = MockDevice::getInstance().registers[23];
-static uint16_t& GP0_DIR_CLR     = MockDevice::getInstance().registers[24];
-static uint16_t& GP1_DIR_CLR     = MockDevice::getInstance().registers[25];
-static uint16_t& GPSimuA_DIR_CLR = MockDevice::getInstance().registers[26];
-static uint16_t& GPSimuB_DIR_CLR = MockDevice::getInstance().registers[27];
-
-struct Pragma {
-    Pragma(const std::string command) : paramsList(command) {}
-    Pragma& reg(const uint16_t& r)          { paramsList += " " + std::to_string(&r - &GP0_OUT); return *this; }
-    Pragma& bit(const uint8_t bitNumber)    { paramsList += " " + std::to_string(1<<bitNumber); return *this; }
-    Pragma& bitmask(const uint16_t bitmask) { paramsList += " " + std::to_string(bitmask); return *this; }
-
-    std::string paramsList;
-};
-class Device {
-public:
-    static int64_t pragma(const Pragma& param) { return MockDevice::getInstance().pragma(param.paramsList); }
-    static int64_t pragma(std::string pragma)  { return MockDevice::getInstance().pragma(pragma); }
-    static void initialize()                   { MockDevice::getInstance().configure(NB_PORTS); }
-    static void delay_us(uint32_t us)          { std::this_thread::sleep_for(std::chrono::microseconds(us)); }
-    static void delay_ms(uint32_t ms)          { std::this_thread::sleep_for(std::chrono::milliseconds(ms)); }
-    static void yield()                        { MockDevice::getInstance().yield(); }
-    static void addOnChangeCallback(const std::function<void()> handler, uint16_t& triggerRegister, uint16_t mask) {
-        auto index = &triggerRegister - MockDevice::getInstance().registers.data();
-        MockDevice::getInstance().addOnChangeCallback(handler, index, mask);
-    }
-    static void removeOnChangeCallback(uint16_t& triggerRegister, uint16_t mask) {
-        auto index = &triggerRegister - MockDevice::getInstance().registers.data();
-        MockDevice::getInstance().clearAddOnChangeCallback(index, mask);
-    }
-    static const size_t sramSize = 10000;
-    using RegisterType = uint16_t;
-    static const size_t defaultBufferSize = 32;
-    using OffType = uint64_t;
-
-    static const uint8_t NB_PORTS = 4;
-
-    static const uint8_t OUT_REG_CYCLES = 3;
-    static const uint8_t OUTCLR_REG_CYCLES = 1;
-    static const uint8_t OUTSET_REG_CYCLES = 1;
-};
-
 struct PinChangeIRQ0;
 struct PinChangeIRQ1;
 struct PinChangeIRQSimuA;

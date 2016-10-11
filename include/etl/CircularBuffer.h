@@ -6,7 +6,7 @@
 
 namespace etl {
 
-template<typename T, uint8_t N, typename Allocator = std::allocator<T>>
+template<typename T, uint8_t N, typename Allocator = ETLSTD::allocator<T>>
 class CircularBuffer {
 public:
     using value_type = T;
@@ -54,13 +54,13 @@ public:
     template<typename... Args>
     void emplace_back(Args&& ... args) {
         Allocator all;
-        all.construct(&buffer[writeIndex], std::forward<Args>(args)...);
+        all.construct(&buffer[writeIndex], ETLSTD::forward<Args>(args)...);
         writeIndex = (writeIndex + 1) % N;
     }
 
 
 private:
-    std::array<T, N> buffer;
+    ETLSTD::array<T, N> buffer;
     uint8_t readIndex, writeIndex;
 };
 

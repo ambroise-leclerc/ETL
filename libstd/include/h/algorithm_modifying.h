@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-namespace std {
+namespace ETLSTD {
 
 template<typename InputIterator, typename OutputIterator>
 OutputIterator copy(InputIterator first, InputIterator last, OutputIterator d_first) {
@@ -324,4 +324,4 @@ ForwardIterator unique_copy(ForwardIterator first, ForwardIterator last, OutputI
   return ++d_first;
 }
 
-} // namespace std
+} // namespace ETLSTD

@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-namespace std {
+namespace ETLSTD {
 template<typename T>
 class initializer_list {
  public:
@@ -63,4 +63,4 @@ constexpr const T* end(initializer_list<T> list) noexcept { return list.end(); }
 
 
   
-} // namespace std  
+} // namespace ETLSTD  

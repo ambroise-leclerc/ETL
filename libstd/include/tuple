@@ -36,7 +36,7 @@
 #include <libstd/include/utility>
 
 
-namespace std {
+namespace ETLSTD {
 
 //////// New tuple implementation
 template<size_t, typename T>
@@ -136,5 +136,5 @@ template<typename... Types>
 		return std::tuple<etlHelper::deep_decay_t<Types>...>(std::forward<Types>(args)...);
 	}
     */
-} // namespace std
+} // namespace ETLSTD
 

@@ -39,7 +39,7 @@
 #include <libstd/include/type_traits>
 #include <libstd/include/functional>
 
-namespace std {
+namespace ETLSTD {
   
 template <class T, class D = default_delete<T>>
 class unique_ptr {
@@ -385,4 +385,4 @@ bool operator>=(const unique_ptr<T, D>& x, nullptr_t);
 template <class T, class D>
 bool operator>=(nullptr_t, const unique_ptr<T, D>& y);
 
-} // namespace std
+} // namespace ETLSTD

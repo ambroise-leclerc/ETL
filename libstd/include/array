@@ -36,7 +36,7 @@
 #include <libstd/include/algorithm>
 #include <libstd/include/stdexcept>
 
-namespace std {
+namespace ETLSTD {
 
 template<typename T, std::size_t N>
 struct array {
@@ -202,4 +202,4 @@ bool operator>=(const array<T,N>& x, const array<T,N>& y) {
   return !(x < y);
 }  
 
-} // namespace std
+} // namespace ETLSTD

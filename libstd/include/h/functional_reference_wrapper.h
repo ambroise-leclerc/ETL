@@ -35,7 +35,7 @@
 #include <libstd/include/type_traits>
 #include <libstd/include/memory>
 
-namespace std {
+namespace ETLSTD {
 
 template<typename T>
 class reference_wrapper /*: public etlHelper::reference_wrapper_base<typename std::remove_cv<T>::type> */{
@@ -55,7 +55,7 @@ class reference_wrapper /*: public etlHelper::reference_wrapper_base<typename st
 };  
   
   
-} // namespace std  
+} // namespace ETLSTD  
 
 
 #endif // ETL_LIBSTD_FUNCTIONAL_REFERENCE_WRAPPER_H_

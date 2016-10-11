@@ -35,8 +35,7 @@
 #include <libstd/include/utility>
 #include "h/unique_ptr.h"
 
-
-namespace std {
+namespace ETLSTD {
 namespace etlHelper {
 // addressof helpers taken from Boost library
 template<typename T> struct addressof_ref {
@@ -65,9 +64,9 @@ public:
     using const_pointer = const T*;
     using reference = T&;
     using const_reference = const T&;
-    using size_type = std::size_t;
-    using difference_type = std::ptrdiff_t;
-    using propagate_on_container_move_assignment = std::true_type;
+    using size_type = size_t;
+    using difference_type = ptrdiff_t;
+    using propagate_on_container_move_assignment = true_type;
 
     template<typename T2> struct rebind { typedef allocator<T2> other; };
 
@@ -85,6 +84,22 @@ public:
     void destroy(const_reference t) {
         t.~T(); // T must support non-throwing destructor
     }
+};
+
+template<typename Alloc>
+struct allocator_traits {
+    using allocator_type = Alloc;
+    using value_type = typename Alloc::value_type;
+    using pointer = typename Alloc::pointer;
+    using const_pointer = typename Alloc::const_pointer;
+    using void_pointer = typename Alloc::void_pointer;
+    using const_void_pointer = typename Alloc::const_void_pointer;
+    using difference_type = typename Alloc::difference_type;
+    using size_type = typename Alloc::size_type;
+    using propagate_on_container_copy_assignment = typename Alloc::propagate_on_container_copy_assignment;
+    using propagate_on_container_move_assignment = typename Alloc::propagate_on_container_move_assignment;
+    using propagate_on_container_swap = typename Alloc::propagate_on_container_swap;
+    using is_always_equal = typename Alloc::is_always_equal;
 };
 
 template<typename T> constexpr T* addressof(T& arg) {
@@ -195,4 +210,4 @@ template<typename T, typename ... Args> shared_ptr<T> make_shared(Args && ... ar
     return ptr;
 }
 
-} // namespace std
+} // namespace ETLSTD

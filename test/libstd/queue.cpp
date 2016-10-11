@@ -32,20 +32,19 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #include <catch.hpp>
 
-namespace etlTest {
+#define ETLSTD etlstd
 #include <libstd/include/queue>
 #include <libstd/include/cstddef>
 #include <libstd/include/memory>
-} // namespace etlTest
 
-using namespace etlTest::std;
+using namespace ETLSTD;
 
 uint32_t mockStatus;
 
 class SequenceContainerMock {
 public:
     using value_type = uint8_t;
-    using size_type = etlTest::std::size_t;
+    using size_type = ETLSTD::size_t;
     using reference = value_type&;
     using const_reference = const value_type&;
 
@@ -66,7 +65,7 @@ protected:
 };
 
 SCENARIO("Queue") {
-    using Fifo = queue<uint8_t, SequenceContainerMock>;
+    using Fifo = ETLSTD::queue<uint8_t, SequenceContainerMock>;
     GIVEN("An empty Fifo") {
         Fifo fifo;
         mockStatus = 0;

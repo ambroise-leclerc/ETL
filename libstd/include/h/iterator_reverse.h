@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-namespace std {
+namespace ETLSTD {
   
 template<typename Iterator>
 class reverse_iterator : public iterator< typename iterator_traits<Iterator>::iterator_category,
@@ -42,9 +42,9 @@ class reverse_iterator : public iterator< typename iterator_traits<Iterator>::it
                                           typename iterator_traits<Iterator>::reference > {
  public:
   using iterator_type   = Iterator;
-  using difference_type = typename std::iterator_traits<iterator_type>::difference_type;
-  using pointer         = typename std::iterator_traits<iterator_type>::pointer;
-  using reference       = typename std::iterator_traits<iterator_type>::reference;
+  using difference_type = typename iterator_traits<iterator_type>::difference_type;
+  using pointer         = typename iterator_traits<iterator_type>::pointer;
+  using reference       = typename iterator_traits<iterator_type>::reference;
   
   /// Constructs a reverse iterator that points to no object.
   reverse_iterator() : current_() {}
@@ -110,5 +110,5 @@ constexpr const T* rbegin(initializer_list<T> list) noexcept { return reverse_it
 template<typename T>
 constexpr const T* rend(initializer_list<T> list) noexcept { return reverse_iterator<const T*>(list.begin()); }
   
-}; // namespace std
+}; // namespace ETLSTD
 

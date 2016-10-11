@@ -32,11 +32,14 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #include <catch.hpp>
 
-namespace etlTest {
-#include <libstd/include/limits>
-} // namespace etlTest
+#define ETLSTD etlstd
 
-using namespace etlTest::std;
+#include <libstd/include/limits>
+
+using namespace ETLSTD;
+using ETLSTD::size_t;
+
+
 
 SCENARIO("std::numeric_limits") {
   
