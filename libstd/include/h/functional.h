@@ -110,8 +110,8 @@ namespace etlHelper { /*
 /// @param[in] f Callable to be invoked
 /// @param[in] args arguments to pass to f
 template <typename F, typename... ArgTypes>
-auto invoke(F&& f, ArgTypes&&... args) noexcept(noexcept(etlHelper::invoke(std::forward<F>(f), std::forward<ArgTypes>(args)...))) {
-    return etlHelper::invoke(std::forward<F>(f), std::forward<ArgTypes>(args)...);
+auto invoke(F&& f, ArgTypes&&... args) noexcept(noexcept(etlHelper::invoke(forward<F>(f), forward<ArgTypes>(args)...))) {
+    return etlHelper::invoke(forward<F>(f), forward<ArgTypes>(args)...);
 }
 
 /// Deduces the return type of a function call expression at compile time.    
