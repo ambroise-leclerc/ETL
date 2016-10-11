@@ -90,12 +90,12 @@ constexpr const T& max(const T& a, const T& b, Compare comp) {
 
 template<typename T>
 constexpr T max( std::initializer_list<T> ilist ) {
-  return *std::max_element(ilist.begin(), ilist.end());
+  return *max_element(ilist.begin(), ilist.end());
 }  
 
 template<typename T, typename Compare>
 constexpr T max( std::initializer_list<T> ilist, Compare comp) {
-  return *std::max_element(ilist.begin(), ilist.end(), comp);
+  return *max_element(ilist.begin(), ilist.end(), comp);
 }
 
 template<typename  T> 
@@ -110,12 +110,12 @@ constexpr const T& min(const T& a, const T& b, Compare comp) {
   
 template<typename T>
 constexpr T min(std::initializer_list<T> ilist) {
-  return *std::min_element(ilist.begin(), ilist.end());
+  return *min_element(ilist.begin(), ilist.end());
 }
   
 template<typename T, typename Compare>
 constexpr T min(std::initializer_list<T> ilist, Compare comp) {
-  return *std::min_element(ilist.begin(), ilist.end(), comp);
+  return *min_element(ilist.begin(), ilist.end(), comp);
 }  
 
 template<typename InputIt1, typename InputIt2>

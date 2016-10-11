@@ -75,7 +75,7 @@ BidirectionalIterator2 copy_backward(BidirectionalIterator1 first, Bidirectional
 template<typename InputIterator, typename OutputIterator>
 OutputIterator move(InputIterator first, InputIterator last, OutputIterator d_first) {
   while (first != last) {
-    *d_first++ = std::move(*first++);
+    *d_first++ = move(*first++);
   }
   return d_first;
 }
@@ -83,7 +83,7 @@ OutputIterator move(InputIterator first, InputIterator last, OutputIterator d_fi
 template<typename BidirectionalIterator1, typename BidirectionalIterator2>
 BidirectionalIterator2 move_backward(BidirectionalIterator1 first, BidirectionalIterator1 last, BidirectionalIterator2 d_last) {
   while (first != last) {
-    *(--d_last) = std::move(*(--last));
+    *(--d_last) = move(*(--last));
   }
   return d_last;
 }
@@ -136,21 +136,21 @@ OutputIterator generate_n(OutputIterator first, Size count, Generator g) {
 
 template<typename ForwardIterator, typename T >
 ForwardIterator remove(ForwardIterator first, ForwardIterator last, const T& value) {
-  first = std::find(first, last, value);
+  first = find(first, last, value);
   if (first != last)
     for(ForwardIterator i = first; ++i != last; )
       if (!(*i == value))
-        *first++ = std::move(*i);
+        *first++ = move(*i);
   return first;
 }
 
 template<typename ForwardIterator, typename UnaryPredicate>
 ForwardIterator remove_if(ForwardIterator first, ForwardIterator last, UnaryPredicate p) {
-  first = std::find_if(first, last, p);
+  first = find_if(first, last, p);
   if (first != last)
     for (ForwardIterator i = first; ++i != last; )
       if (!p(*i))
-        *first++ = std::move(*i);
+        *first++ = move(*i);
   return first;
 }
 
@@ -209,12 +209,12 @@ OutputIterator replace_copy_if(InputIterator first, InputIterator last, OutputIt
 }
 
 template<typename ForwardIterator1, typename ForwardIterator2>
-void iter_swap(ForwardIterator1 a, ForwardIterator2 b) { std::swap(*a, *b); }
+void iter_swap(ForwardIterator1 a, ForwardIterator2 b) { swap(*a, *b); }
 
 template<typename ForwardIterator1, class ForwardIterator2>
 ForwardIterator2 swap_ranges(ForwardIterator1 first1, ForwardIterator1 last1, ForwardIterator2 first2) {
   while (first1 != last1) {
-    std::iter_swap(first1++, first2++);
+    iter_swap(first1++, first2++);
   }
   return first2;
 }
@@ -222,7 +222,7 @@ ForwardIterator2 swap_ranges(ForwardIterator1 first1, ForwardIterator1 last1, Fo
 template<typename BidirectionalIterator>
 void reverse(BidirectionalIterator first, BidirectionalIterator last) {
   while ((first != last) && (first != --last)) {
-    std::swap(*first++, *last);
+    swap(*first++, *last);
   }
 }
 
@@ -238,7 +238,7 @@ template<typename ForwardIterator>
 void rotate(ForwardIterator first, ForwardIterator n_first, ForwardIterator last) {
   ForwardIterator next = n_first;
   while (first != next) {
-    std::iter_swap(first++, next++);
+    iter_swap(first++, next++);
     if (next == last) {
       next = n_first;
     }
@@ -251,24 +251,24 @@ void rotate(ForwardIterator first, ForwardIterator n_first, ForwardIterator last
 
 template<typename ForwardIterator, typename OutputIterator>
 OutputIterator rotate_copy(ForwardIterator first, ForwardIterator n_first, ForwardIterator last, OutputIterator d_first) {
-  d_first = std::copy(n_first, last, d_first);
-  return std::copy(first, n_first, d_first);
+  d_first = copy(n_first, last, d_first);
+  return copy(first, n_first, d_first);
 }
 
 template<typename RandomIterator, typename RandomFunc>
 void random_shuffle(RandomIterator first, RandomIterator last, RandomFunc&& r) {
-  typename std::iterator_traits<RandomIterator>::difference_type i, n;
+  typename iterator_traits<RandomIterator>::difference_type i, n;
   n = last - first;
   for (i = n-1; i > 0; --i) {
-    std::swap(first[i], first[r(i+1)]);
+    swap(first[i], first[r(i+1)]);
   }
 }
 /*
 template<typename RandomAccessIterator, typename UniformRandomNumberGenerator>
 void shuffle(RandomAccessIterator first, RandomAccessIterator last, UniformRandomNumberGenerator&& g) {
   for (auto i = (last-first)-1; i>0; --i) {
-    std::uniform_int_distribution<decltype(i)> distrib(0,i);
-    std::swap(first[i], first[distrib(g)]);
+    uniform_int_distribution<decltype(i)> distrib(0,i);
+    swap(first[i], first[distrib(g)]);
   }
 }
 */
