@@ -71,8 +71,9 @@ SCENARIO("Queue") {
         mockStatus = 0;
         REQUIRE(fifo.size() == 0);
 
+        const uint8_t val = 2;
         while (fifo.size() < fifo.front())
-            fifo.push(2);
+            fifo.push(val);
         REQUIRE(mockStatus == 8100);
 
         while (fifo.size() > fifo.back())

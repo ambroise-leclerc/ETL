@@ -16,12 +16,12 @@ public:
 
     CircularBuffer() : index(0), nbElems(0) {}
 
-    void push_back(const T& elem) {
+    void push_back(const value_type& elem) {
         buffer[(index + nbElems) % N] = elem;
         incNbElems();
     }
 
-    void push_back(T&& elem) {
+    void push_back(value_type&& elem) {
         buffer[(index + nbElems) % N] = move(elem);
         incNbElems();
     }
