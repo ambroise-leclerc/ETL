@@ -7,11 +7,13 @@
 #include <etl/CircularBuffer.h>
 #include <libstd/include/queue> 
 #include <libstd/include/utility>
+#include <iostream>
 
-using fifo = ETLSTD::queue<uint8_t, etl::CircularBuffer<uint8_t, 32>>;
+using namespace ETLSTD;
 
-SCENARIO("CircularBuffer") {
-    
+SCENARIO("CircularBuffer for fifo of bytes") {
+    using fifo = queue<uint8_t, etl::CircularBuffer<uint8_t, 32>>;
+
     fifo etlQueue;
     REQUIRE(etlQueue.size() == 0);
     REQUIRE(etlQueue.empty());
@@ -50,6 +52,34 @@ SCENARIO("CircularBuffer") {
     etlQueue.emplace(10);
     REQUIRE(etlQueue.size() == 2);
     REQUIRE(etlQueue.back() == 10);
-  
+}
+
+
+
+SCENARIO("CircularBuffer holding unique_ptrs") {
+    class Element {
+        uint8_t id;
+    public:
+        Element(uint8_t id) : id(id) {}
+        ~Element() { std::cout << "delete " << +id << "\n"; }
+
+        void dump(std::string text = "") { std::cout << text << " : " << +id << "\n";  }
+
+    };
+
+
+    using Buffer = etl::CircularBuffer<unique_ptr<Element>, 8>;
+
+    Buffer buffer;
+    for (uint8_t i = 0; i < 9; ++i)
+        buffer.push_back(make_unique<Element>(i));
+
+    buffer.front()->dump("front");
+    buffer.back()->dump("back");
+    for (uint8_t i = 0; i < 10; i++) {
+        auto a = move(buffer.pop_front());
+        if (a)
+            a->dump("moved");
+    }
 }
 

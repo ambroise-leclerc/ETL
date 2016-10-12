@@ -17,14 +17,20 @@ public:
     CircularBuffer() : readIndex(0), writeIndex(0) {
     }
 
-    void push_back(T elem) {
+    void push_back(const T& elem) {
         buffer[writeIndex] = elem;
         writeIndex = (writeIndex + 1) % N;
 
     }
 
+    void push_back(T&& elem) {
+        buffer[writeIndex] = move(elem);
+        writeIndex = (writeIndex + 1) % N;
+
+    }
+
     reference pop_front() {
-        auto& value = buffer[readIndex];
+        auto&& value = buffer[readIndex];
         readIndex = (readIndex + 1) % N;
         return value;
     }
