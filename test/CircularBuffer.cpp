@@ -20,6 +20,7 @@ SCENARIO("CircularBuffer for fifo of bytes") {
     etlQueue.push(30);
     REQUIRE(etlQueue.size() == 1);
     REQUIRE(etlQueue.front() == 30);
+    REQUIRE(etlQueue.back() == 30);
     REQUIRE(etlQueue.size() == 1);
     etlQueue.pop();
     REQUIRE(etlQueue.size() == 0);
@@ -63,7 +64,7 @@ SCENARIO("CircularBuffer holding unique_ptrs") {
         Element(uint8_t id) : id(id) {}
         ~Element() { std::cout << "delete " << +id << "\n"; }
 
-        void dump(std::string text = "") { std::cout << text << " : " << +id << "\n";  }
+        void dump(std::string text = "") const { std::cout << text << " : " << +id << "\n";  }
 
     };
 

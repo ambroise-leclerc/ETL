@@ -14,60 +14,52 @@ public:
     using reference = value_type&;
     using const_reference = const value_type&;
 
-    CircularBuffer() : readIndex(0), writeIndex(0) {
-    }
+    CircularBuffer() : index(0), nbElems(0) {}
 
     void push_back(const T& elem) {
-        buffer[writeIndex] = elem;
-        writeIndex = (writeIndex + 1) % N;
-
+        buffer[(index + nbElems) % N] = elem;
+        incNbElems();
     }
 
     void push_back(T&& elem) {
-        buffer[writeIndex] = move(elem);
-        writeIndex = (writeIndex + 1) % N;
-
+        buffer[(index + nbElems) % N] = move(elem);
+        incNbElems();
     }
 
     reference pop_front() {
-        auto&& value = buffer[readIndex];
-        readIndex = (readIndex + 1) % N;
+        auto&& value = buffer[index];
+        index = (index + 1) % N;
+        if (nbElems > 0) --nbElems;
         return value;
     }
 
-    const_reference front() const {
-        return buffer[readIndex];
-    }
-
-    reference front() {
-        return buffer[readIndex];
-    }
-
-    reference back() {
-        return buffer[writeIndex == 0 ? N - 1 : writeIndex - 1];
-    }
-
-    const_reference back() const {
-        return buffer[writeIndex == 0 ? N - 1 : writeIndex - 1];
-    }
-
-    uint8_t size() const {
-        return writeIndex >= readIndex ? writeIndex - readIndex : writeIndex + N - readIndex;
-    }
-
-    bool empty() const { return writeIndex == readIndex; }
+    const_reference front() const { return buffer[index]; }
+    reference front() { return buffer[index];}
+    reference back() { return buffer[(index + nbElems - 1) % N]; }
+    const_reference back() const { return buffer[(index + nbElems - 1) % N]; }
+    uint8_t size() const { return nbElems; }
+    bool empty() const { return nbElems == 0; }
 
     template<typename... Args>
     void emplace_back(Args&& ... args) {
         Allocator all;
-        all.construct(&buffer[writeIndex], ETLSTD::forward<Args>(args)...);
-        writeIndex = (writeIndex + 1) % N;
+        all.construct(&buffer[(index + nbElems) % N], ETLSTD::forward<Args>(args)...);
+        incNbElems();
     }
 
 
 private:
     ETLSTD::array<T, N> buffer;
-    uint8_t readIndex, writeIndex;
+    uint8_t index, nbElems;
+
+    void incNbElems() {
+        if (nbElems < N) {
+            ++nbElems;
+        }
+        else {
+            index = (index + 1) % N;
+        }
+    }
 };
 
 }
