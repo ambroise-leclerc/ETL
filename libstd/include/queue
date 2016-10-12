@@ -1,0 +1,89 @@
+/// @file queue
+/// @data 20/09/2016 17:40:53
+/// @author Ambroise Leclerc and Cécile Gomes
+/// @brief Container adapter that gives the functionality of a fifo.
+//
+// Copyright (c) 2014, Ambroise Leclerc and Cécile Gomes
+//   All rights reserved.
+//
+//   Redistribution and use in source and binary forms, with or without
+//   modification, are permitted provided that the following conditions are met:
+//
+//   * Redistributions of source code must retain the above copyright
+//     notice, this list of conditions and the following disclaimer.
+//   * Redistributions in binary form must reproduce the above copyright
+//     notice, this list of conditions and the following disclaimer in
+//     the documentation and/or other materials provided with the
+//     distribution.
+//   * Neither the name of the copyright holders nor the names of
+//     contributors may be used to endorse or promote products derived
+//     from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+//  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+//  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+//  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+//  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+//  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+//  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+//  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+//  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+//  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+//  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
+#include <libstd/include/utility>
+
+namespace ETLSTD {
+
+template<typename T, typename Container /* TODO = ETLSTD::deque<T>*/>
+class queue {
+public:
+    using container_type = Container;
+    using value_type = typename Container::value_type;
+    using size_type = typename Container::size_type;
+    using reference = typename Container::reference;
+    using const_reference = typename Container::const_reference;
+
+    auto empty() const { return container.empty(); }
+
+    auto size() const {
+        return container.size();
+    }
+
+    reference front()				{ return container.front(); }
+	const_reference front() const	{ return container.front(); }
+	reference back()				{ return container.back(); }
+	const_reference back() const	{ return container.back(); }
+
+    void pop() {
+        container.pop_front();
+    }
+
+    void push(T element) {
+        container.push_back(element);
+    }
+
+    template<typename... Args>
+    void emplace(Args&& ... args) {
+        container.emplace_back(forward<Args>(args)...);
+    }
+
+    void swap(queue<T, Container>& right) {
+        Container* pointeurLeft = &container;
+        Container* pointeurRight = &right.container;
+        Container temp = *pointeurLeft;
+        *pointeurLeft = *pointeurRight;
+        *pointeurRight = temp;
+    }
+
+protected:
+    Container container;
+};
+
+
+template<typename T, typename Container>
+void swap(queue<T,Container>& lhs, queue<T,Container>& rhs) { lhs.swap(rhs); }
+
+	
+
+} // namespace ETLSTD

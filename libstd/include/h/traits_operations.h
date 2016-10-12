@@ -31,10 +31,9 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
 #pragma once
 
-namespace std {
+namespace ETLSTD {
 /// Base class for type traits. Wraps a static constant of specified type.
 template<typename T, T v>
 struct integral_constant {
@@ -86,4 +85,4 @@ template<typename T, size_t N> struct remove_extent<T[N]> { using type = T; };
 template<typename T> using remove_extent_t = typename remove_extent<T>::type;
 
 
-} // namespace std
+} // namespace ETLSTD

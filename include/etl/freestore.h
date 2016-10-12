@@ -31,9 +31,10 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ETL_FREESTORE_H_
+#pragma once
 #define ETL_FREESTORE_H_
-#include <cstddef>
+
+#include <libstd/include/cstddef>
 
 namespace etl {
 
@@ -209,4 +210,3 @@ FreeStore::Chunk* FreeStore::free_chunk_ = reinterpret_cast<FreeStore::Chunk*>(_
 
 } // namespace etl
 
-#endif // ETL_FREESTORE_H_

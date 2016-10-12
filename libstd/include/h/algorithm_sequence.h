@@ -30,12 +30,11 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
+#include <libstd/include/utility>
+#include <libstd/include/iterator>
 
-#ifndef ETL_LIBSTD_ALGORITHM_SEQUENCE_H_
-#define ETL_LIBSTD_ALGORITHM_SEQUENCE_H_
-#include <iterator>
-
-namespace std {
+namespace ETLSTD {
 
 template<typename ForwardIterator1, typename ForwardIterator2>
 ForwardIterator1 search(ForwardIterator1 first, ForwardIterator1 last, ForwardIterator2 s_first, ForwardIterator2 s_last) {
@@ -132,12 +131,12 @@ InputIterator find_if_not(InputIterator first, InputIterator last, UnaryPredicat
 
 template<typename InputIterator, typename UnaryPredicate>
 bool all_of(InputIterator first, InputIterator last, UnaryPredicate p) {
-  return std::find_if_not(first, last, p) == last;
+  return find_if_not(first, last, p) == last;
 }
 
 template<typename InputIterator, typename UnaryPredicate>
 bool any_of(InputIterator first, InputIterator last, UnaryPredicate p) {
-  return std::find_if(first, last, p) != last;
+  return find_if(first, last, p) != last;
 }
 
 template<typename InputIterator, typename UnaryFunction>
@@ -171,11 +170,11 @@ typename iterator_traits<InputIterator>::difference_type count_if(InputIterator 
 }
 
 template<typename InputIterator1, typename InputIterator2>
-std::pair<InputIterator1, InputIterator2> mismatch(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2) {
+pair<InputIterator1, InputIterator2> mismatch(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2) {
   while (first1 != last1 && *first1 == *first2) {
     ++first1, ++first2;
   }
-  return std::make_pair(first1, first2);
+  return make_pair(first1, first2);
 }
 
 template<typename InputIterator1, typename InputIterator2, typename BinaryPredicate>
@@ -183,7 +182,7 @@ std::pair<InputIterator1, InputIterator2> mismatch(InputIterator1 first1, InputI
   while (first1 != last1 && p(*first1, *first2)) {
     ++first1, ++first2;
   }
-  return std::make_pair(first1, first2);
+  return make_pair(first1, first2);
 }
 
 template<typename InputIterator1, typename InputIterator2>
@@ -212,7 +211,7 @@ ForwardIterator1 find_end(ForwardIterator1 first, ForwardIterator1 last, Forward
   if (s_first == s_last) return last;
   ForwardIterator1 result = last;
   while (true) {
-    ForwardIterator1 new_result = std::search(first, last, s_first, s_last);
+    ForwardIterator1 new_result = search(first, last, s_first, s_last);
     if (new_result == last) return result;
     else {
       result = new_result;
@@ -228,7 +227,7 @@ ForwardIterator1 find_end(ForwardIterator1 first, ForwardIterator1 last, Forward
   if (s_first == s_last) return last;
   ForwardIterator1 result = last;
   while (true) {
-    ForwardIterator1 new_result = std::search(first, last, s_first, s_last, p);
+    ForwardIterator1 new_result = search(first, last, s_first, s_last, p);
     if (new_result == last) return result;
     else {
       result = new_result;
@@ -281,6 +280,4 @@ ForwardIterator adjacent_find(ForwardIterator first, ForwardIterator last, Binar
   return last;
 }
 
-} // namespace std
-
-#endif // ETL_LIBSTD_ALGORITHM_SEQUENCE_H_
+} // namespace ETLSTD

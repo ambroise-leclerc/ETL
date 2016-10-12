@@ -30,11 +30,9 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_RANDOM_DISTRIBUTIONS_H_
-#define ETL_LIBSTD_RANDOM_DISTRIBUTIONS_H_
-
-namespace std {
+namespace ETLSTD {
 
 template<typename IntType = int>
 struct uniform_int_distribution {
@@ -93,5 +91,3 @@ struct uniform_int_distribution {
 };
 
 }  
-
-#endif // ETL_LIBSTD_RANDOM_DISTRIBUTIONS_H_

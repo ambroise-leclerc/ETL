@@ -33,14 +33,14 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <../libstd/include/cstddef>
+#include <libstd/include/cstddef>
 #include "h/traits_operations.h"
 #include "h/traits_primary_types.h"
 #include "h/traits_references.h"
 #include "h/traits_add.h"
-#include <../libstd/include/utility>
+#include <libstd/include/utility>
 
-namespace std {
+namespace ETLSTD {
 
 template<bool B, typename T = void> struct enable_if            {};
 template<typename T>                struct enable_if<true, T>   { using type = T; };
@@ -73,7 +73,7 @@ namespace etlHelper {
   
     template<typename From, typename To> class is_convertible<From, To, false> {
         template<typename To1> static void __test_aux(To1);
-        template<typename From1, typename To1, typename = decltype(__test_aux<To1>(std::declval<From1>()))> static true_type __test(int);
+        template<typename From1, typename To1, typename = decltype(__test_aux<To1>(declval<From1>()))> static true_type __test(int);
         template<typename, typename> static false_type __test(...);
     public:
         typedef decltype(__test<From, To>(0)) type;
@@ -105,13 +105,19 @@ struct common_type<T1, T2, T3...> {
 namespace etlHelper {
     template<typename T, bool = is_arithmetic<T>::value> struct type_is_signed : integral_constant<bool, T(-1) < T(0)> {};
     template<typename T> struct type_is_signed<T, false> : false_type {};
+    //false_type negate(true_type) { return{}; }
+    //true_type negate(false_type) { return{}; }
+    //template<typename T, T value> constexpr integral_constant<T, !value> operator ! (integral_constant<T, value>) { return {}; }
 } // namespace etlHelper
 
 template<typename T> struct is_signed : etlHelper::type_is_signed<T>::type {};
+//template<typename T> struct is_unsigned : etlHelper::negate(etlHelper::type_is_signed<T>)::type {};
 
 #if (__GNUC__ > 4)
 template<typename T> constexpr bool is_signed_v = is_signed<T>::value;
 #endif
 
-} // namespace std
+
+
+} // namespace ETLSTD
 

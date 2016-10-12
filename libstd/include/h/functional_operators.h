@@ -30,12 +30,9 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_FUNCTIONAL_OPERATORS_H_
-#define ETL_LIBSTD_FUNCTIONAL_OPERATORS_H_
-
-
-namespace std {
+namespace ETLSTD {
   
 namespace etlHelper {
 	struct unspecified; // is_transparent type member is specified as *unspecified* in C++14 standard.
@@ -309,6 +306,4 @@ template<> struct bit_not<void> {
 };
 #endif
 
-} // namespace std
-
-#endif // ETL_LIBSTD_FUNCTIONAL_OPERATORS_H_
+} // namespace ETLSTD

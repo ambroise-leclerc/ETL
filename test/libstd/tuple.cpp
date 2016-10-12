@@ -31,13 +31,13 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #include <catch.hpp>
+#include <string>
 
-namespace etlTest {
+#define ETLSTD etlstd
 #include <libstd/include/tuple>
-} // namespace etlTest
 
 
-using namespace etlTest::std;
+using namespace ETLSTD;
 /*
 class TupleTest {
 public:
@@ -58,9 +58,9 @@ public:
 
 class Serializer {
 public:
-    std::string output;
+    ::std::string output;
 
-    void f(etlTest::std::size_t s) { output += std::to_string(s); }
+    void f(ETLSTD::size_t s) { output += ::std::to_string(s); }
 
     template<typename T, T... Indices>
     void transform(integer_sequence<T, Indices...>) {
@@ -95,7 +95,8 @@ SCENARIO("std::integer_sequence") {
 SCENARIO("std::tuple") {
     GIVEN("0 class instances") {
         tuple<int, float, int> t1(3, 3.14f, 3);
-        auto t2 = t1;
+        //auto t2 = t1;
         
     }
 }
+

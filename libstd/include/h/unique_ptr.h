@@ -31,16 +31,15 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-
 #pragma once 
 
-#include <../libstd/include/utility>
-#include <../libstd/include/cstddef>
-#include <../libstd/include/h/default_delete.h>
-#include <../libstd/include/type_traits>
-#include <../libstd/include/functional>
+#include <libstd/include/utility>
+#include <libstd/include/cstddef>
+#include <libstd/include/h/default_delete.h>
+#include <libstd/include/type_traits>
+#include <libstd/include/functional>
 
-namespace std {
+namespace ETLSTD {
   
 template <class T, class D = default_delete<T>>
 class unique_ptr {
@@ -303,8 +302,8 @@ class unique_ptr<T[], D> {
 
 
 namespace etlHelper {
-  template<typename T> struct unique_if { using non_array = std::unique_ptr<T>; };
-  template<typename T> struct unique_if<T[]> { using runtime_sized = std::unique_ptr<T[]>; };
+  template<typename T> struct unique_if { using non_array = unique_ptr<T>; };
+  template<typename T> struct unique_if<T[]> { using runtime_sized = unique_ptr<T[]>; };
   template<typename T, size_t N> struct unique_if<T[N]> { using compiletime_size = void; };
 }
 
@@ -386,4 +385,4 @@ bool operator>=(const unique_ptr<T, D>& x, nullptr_t);
 template <class T, class D>
 bool operator>=(nullptr_t, const unique_ptr<T, D>& y);
 
-} // namespace std
+} // namespace ETLSTD

@@ -34,7 +34,7 @@
 
 #pragma once
 
-namespace std {
+namespace ETLSTD {
   
 template<typename T> struct default_delete {
     /// Default constructor.
@@ -57,4 +57,4 @@ template<typename T> struct default_delete<T[]> {
     void operator()(T* pointer) { delete[] pointer; }
 };
 
-} // namespace std
+} // namespace ETLSTD

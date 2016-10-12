@@ -32,11 +32,11 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #include <catch.hpp>
 
-namespace etlTest {
-#include <libstd/include/type_traits>
-} // namespace etlTest
+#define ETLSTD etlstd
 
-using namespace etlTest::std;
+#include <libstd/include/type_traits>
+
+using namespace ETLSTD;
 
 SCENARIO("std::signed") {
     auto s1 = is_signed<uint8_t>::value;    REQUIRE(s1 == false);
@@ -49,6 +49,8 @@ SCENARIO("std::signed") {
     REQUIRE(is_signed_v<int16_t> == true);
     REQUIRE(is_signed_v<uint32_t> == false);
 #endif
+
+//    REQUIRE(is_unsigned)
 }
 
 SCENARIO("std::common_type, std::same_type") {

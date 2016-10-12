@@ -32,7 +32,10 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-namespace std {
+#include <libstd/include/chrono>
+#include <etl/ioports.h>
+
+namespace ETLSTD {
 namespace this_thread {
 
 /// Blocks the execution of the current thread for the specified constant sleepDuration with a 1 cycle resolution.
@@ -53,4 +56,4 @@ void sleep_for(chrono::duration<Rep, Period>& sleepDuration) {
 
 
 } // namespace this_thread
-} // namespace std
+} // namespace ETLSTD

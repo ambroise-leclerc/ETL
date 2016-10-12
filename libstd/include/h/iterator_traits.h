@@ -30,8 +30,9 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-namespace std {
+namespace ETLSTD {
 
 // Iterator_tags : define the category of an iterator.
 struct input_iterator_tag { };
@@ -55,7 +56,7 @@ template<typename T>
 struct iterator_traits<T*> {
   using iterator_category = random_access_iterator_tag;
   using value_type        = T;
-  using difference_type   = std::ptrdiff_t;
+  using difference_type   = ptrdiff_t;
   using pointer           = T*;
   using reference         = T&;
 };
@@ -65,9 +66,9 @@ template<typename T>
 struct iterator_traits<const T*> {
   using iterator_category = random_access_iterator_tag;
   using value_type        = T;
-  using difference_type   = std::ptrdiff_t;
+  using difference_type   = ptrdiff_t;
   using pointer           = const T*;
   using reference         = const T&;
 };
   
-} // namespace std  
+} // namespace ETLSTD  

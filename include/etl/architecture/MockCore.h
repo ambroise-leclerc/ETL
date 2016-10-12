@@ -40,6 +40,7 @@
 #include <etl/metautils.h>
 #include <functional>
 #include <cassert>
+#include <iterator>
 
 namespace etl {
 

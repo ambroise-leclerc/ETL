@@ -43,6 +43,7 @@ script:
   - cd build
   - $COMPILER --version
   - cmake -DCMAKE_CXX_COMPILER=$COMPILER .. && make
+  - ls -l
   - ./TestsETL
 
 

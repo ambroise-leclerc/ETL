@@ -33,21 +33,19 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-namespace std {
-  template<typename T> struct is_reference             : std::false_type {};
-  template<typename T> struct is_reference<T&>         : std::true_type {};
-  template<typename T> struct is_reference<T&&>        : std::true_type {};
-} // namespace std
+namespace ETLSTD {
+template<typename T> struct is_reference             : false_type { };
+template<typename T> struct is_reference<T&>         : true_type  { };
+template<typename T> struct is_reference<T&&>        : true_type  { };
 
 namespace etlHelper {
-  template<typename T> struct is_referenceable
-   : std::integral_constant<bool, (std::is_object<T>::value == true || std::is_reference<T>::value == true)>::type { };     
+    template<typename T> struct is_referenceable
+    : integral_constant<bool, (is_object<T>::value == true || is_reference<T>::value == true)>::type { };     
 } // namespace etlHelper
 
-namespace std {
-  template<typename T> struct is_rvalue_reference      : std::false_type { };
-  template<typename T> struct is_rvalue_reference<T&&> : std::true_type  { };
-  template<typename T> struct is_lvalue_reference      : std::false_type { };
-  template<typename T> struct is_lvalue_reference<T&>  : std::true_type  { };
+template<typename T> struct is_rvalue_reference      : false_type { };
+template<typename T> struct is_rvalue_reference<T&&> : true_type  { };
+template<typename T> struct is_lvalue_reference      : false_type { };
+template<typename T> struct is_lvalue_reference<T&>  : true_type  { };
   
-} // namespace std 
+} // namespace ETLSTD 

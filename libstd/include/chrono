@@ -32,10 +32,10 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <../libstd/include/ratio>
-#include <../libstd/include/limits>
+#include <libstd/include/ratio>
+#include <libstd/include/limits>
 
-namespace std {
+namespace ETLSTD {
 namespace chrono {
 	template<typename Rep, typename Period = ratio<1>> class duration;
 } // namespace chrono
@@ -55,7 +55,7 @@ template<typename Rep> struct duration_values {
 };
 
 namespace etlHelper {
-    template<typename From, typename To, typename Period = std::ratio_divide<typename From::period, typename To::period>,
+    template<typename From, typename To, typename Period = ratio_divide<typename From::period, typename To::period>,
              bool = Period::num == 1, bool = Period::den == 1>
     struct durationCast;
 
@@ -100,7 +100,7 @@ template<typename ToDuration, typename Rep, typename Period> constexpr ToDuratio
 
 template<typename Rep, typename Period>
 class duration {
-    static_assert(std::etlHelper::is_ratio<Period>::value, "duration<Rep, Period> : Period template parameter must be a std::ratio");
+    static_assert(ETLSTD::etlHelper::is_ratio<Period>::value, "duration<Rep, Period> : Period template parameter must be a std::ratio");
 public:
     using rep = Rep;
     using period = Period;
@@ -190,4 +190,4 @@ namespace etlHelper {
     template<typename Rep, typename Period> struct is_duration<const volatile duration<Rep, Period>> : true_type {};
 } // namespace etlHelper
 */
-} // namespace std
+} // namespace ETLSTD

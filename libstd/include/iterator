@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
-#include <../libstd/include/initializer_list>
+#include <libstd/include/initializer_list>
 #include "h/iterator_traits.h"
 #include "h/iterator.h"
 #include "h/iterator_reverse.h"
