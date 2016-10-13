@@ -49,11 +49,11 @@ public:
     using const_reference = const value_type&;
 
     SequenceContainerMock() : elemF(8), elemB(2), contSize(0) { }
-    void empty() const { mockStatus += Empty; }
+    bool empty() const { mockStatus += Empty; return false; }
     size_type size() const { mockStatus += Size; return contSize; }
     reference front() { mockStatus += Front; return elemF; }
     reference back() { mockStatus += Back; return elemB; }
-    void push_back(reference elem) { mockStatus += PushBack; contSize++; elemB = elem; }
+    void push_back(const_reference elem) { mockStatus += PushBack; contSize++; elemB = elem; }
     void pop_front() { mockStatus += PopFront; contSize--; }
     template<typename... Args>
     void emplace_back(Args&& ... args) { mockStatus += Emplace; new(&elemB) uint8_t(std::forward<Args>(args)...); }
@@ -71,9 +71,8 @@ SCENARIO("Queue") {
         mockStatus = 0;
         REQUIRE(fifo.size() == 0);
 
-        const uint8_t val = 2;
         while (fifo.size() < fifo.front())
-            fifo.push(val);
+            fifo.push(2);
         REQUIRE(mockStatus == 8100);
 
         while (fifo.size() > fifo.back())
