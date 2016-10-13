@@ -33,10 +33,9 @@
 #include <catch.hpp>
 #include <iostream>
 
-namespace etlTest {
+#define ETLSTD etlstd
 #include <libstd/include/memory>
 #include <libstd/include/utility>
-} // namespace etlTest
 
 class MyClass {
 public:
@@ -60,9 +59,9 @@ SCENARIO("std::unique_ptr") {
         MyClass::instances = 0;
         WHEN("a unique_ptr is created") {
             THEN("") {
-                auto obj = etlTest::std::make_unique<MyClass>(123456);
+                auto obj = ETLSTD::make_unique<MyClass>(123456);
                 REQUIRE(MyClass::instances == 1);
-                auto obj2 = etlTest::std::move(obj);
+                auto obj2 = ETLSTD::move(obj);
                 REQUIRE(MyClass::instances == 1);
                 REQUIRE(obj2->id == 123456);
             }
@@ -74,7 +73,7 @@ SCENARIO("std::unique_ptr") {
 SCENARIO("std::shared_ptr") {
     GIVEN("A shared_ptr constructed by make_shared") {
         MyClass::instances = 0;
-        auto obj = etlTest::std::make_shared<MyClass>(123456);
+        auto obj = ETLSTD::make_shared<MyClass>(123456);
         REQUIRE(MyClass::instances == 1);
 
         WHEN("ptr is copied") {
@@ -103,7 +102,4 @@ SCENARIO("std::shared_ptr") {
 
     }
     REQUIRE(MyClass::instances == 0);
-
-
-
 }

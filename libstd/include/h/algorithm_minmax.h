@@ -30,11 +30,9 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_ALGORITHM_MINMAX_H_
-#define ETL_LIBSTD_ALGORITHM_MINMAX_H_
-
-namespace std {
+namespace ETLSTD {
   
 template<typename ForwardIt>
 ForwardIt max_element(ForwardIt first, ForwardIt last) {
@@ -92,12 +90,12 @@ constexpr const T& max(const T& a, const T& b, Compare comp) {
 
 template<typename T>
 constexpr T max( std::initializer_list<T> ilist ) {
-  return *std::max_element(ilist.begin(), ilist.end());
+  return *max_element(ilist.begin(), ilist.end());
 }  
 
 template<typename T, typename Compare>
 constexpr T max( std::initializer_list<T> ilist, Compare comp) {
-  return *std::max_element(ilist.begin(), ilist.end(), comp);
+  return *max_element(ilist.begin(), ilist.end(), comp);
 }
 
 template<typename  T> 
@@ -112,12 +110,12 @@ constexpr const T& min(const T& a, const T& b, Compare comp) {
   
 template<typename T>
 constexpr T min(std::initializer_list<T> ilist) {
-  return *std::min_element(ilist.begin(), ilist.end());
+  return *min_element(ilist.begin(), ilist.end());
 }
   
 template<typename T, typename Compare>
 constexpr T min(std::initializer_list<T> ilist, Compare comp) {
-  return *std::min_element(ilist.begin(), ilist.end(), comp);
+  return *min_element(ilist.begin(), ilist.end(), comp);
 }  
 
 template<typename InputIt1, typename InputIt2>
@@ -141,6 +139,4 @@ bool lexicographical_compare(InputIt1 first1, InputIt1 last1,
     return (first1 == last1) && (first2 != last2);
 }
 
-} // namespace std  
-
-#endif // ETL_LIBSTD_ALGORITHM_MINMAX_H_
+} // namespace ETLSTD  

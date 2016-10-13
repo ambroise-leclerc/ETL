@@ -34,7 +34,7 @@
 
 #pragma once
 
-namespace std {
+namespace ETLSTD {
 namespace etlHelper {
     template<typename T> struct declval {
         static const bool never_use = false;

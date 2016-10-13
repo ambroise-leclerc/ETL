@@ -35,33 +35,16 @@
 #include <util/delay.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <chrono>
+#include <libstd/include/chrono>
+#include <libstd/include/queue>
+#include <etl/CircularBuffer.h>
+#include "ETLDevice_ATmega32U4.h"
 
 extern void __builtin_avr_delay_cycles(unsigned long);
 
 namespace etl {
 #define IOPORTS_TO_STRING(name) #name
 #define IOPORTS_IRQ_HANDLER(vector, type) asm(IOPORTS_TO_STRING(vector)) __attribute__ ((type, __INTR_ATTRS))
-
-class Device {
-public:
-    static void delayTicks(uint32_t ticks)            { __builtin_avr_delay_cycles(ticks); }
-    static const auto flashSize = 32768;
-    static const auto eepromSize = 1024;
-    static const auto sramSize = 2560;
-    static const auto architectureWidth = 8;
-    static const uint32_t McuFrequency = F_CPU;
-
-    /// Enables interrupts by setting the global interrupt mask.
-    /// This function generates a single 'sei' instruction with
-    /// no overhead.
-    static void enableInterrupts() { asm volatile("sei" ::: "memory"); }
-
-    /// Disables interrupts by clearing the global interrupt mask.
-    /// This function generates a single 'cli' instruction with
-    /// no overhead.
-    static void disableInterrupts() { asm volatile("cli" ::: "memory"); }
-};
 
 using clock_cycles = std::chrono::duration<unsigned long, std::ratio<1, Device::McuFrequency>>;
 constexpr clock_cycles operator ""clks(unsigned long long c)     { return clock_cycles(static_cast<clock_cycles::rep>(c)); }

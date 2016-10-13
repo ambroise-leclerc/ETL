@@ -30,13 +30,11 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_STDEXCEPT_
-#define ETL_LIBSTD_STDEXCEPT_
+#include <libstd/include/exception>
 
-#include <../libstd/include/exception>
-
-namespace std {
+namespace ETLSTD {
 
 class logic_error : public exception {
  public:
@@ -104,6 +102,4 @@ class underflow_error : public runtime_error {
   virtual ~underflow_error() throw() {}
 };
 
-} // namespace std
-
-#endif // ETL_LIBSTD_STDEXCEPT_
+} // namespace ETLSTD

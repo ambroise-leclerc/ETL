@@ -30,12 +30,9 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_ITERATOR_REVERSE_H_
-#define ETL_LIBSTD_ITERATOR_REVERSE_H_
-
-
-namespace std {
+namespace ETLSTD {
   
 template<typename Iterator>
 class reverse_iterator : public iterator< typename iterator_traits<Iterator>::iterator_category,
@@ -45,9 +42,9 @@ class reverse_iterator : public iterator< typename iterator_traits<Iterator>::it
                                           typename iterator_traits<Iterator>::reference > {
  public:
   using iterator_type   = Iterator;
-  using difference_type = typename std::iterator_traits<iterator_type>::difference_type;
-  using pointer         = typename std::iterator_traits<iterator_type>::pointer;
-  using reference       = typename std::iterator_traits<iterator_type>::reference;
+  using difference_type = typename iterator_traits<iterator_type>::difference_type;
+  using pointer         = typename iterator_traits<iterator_type>::pointer;
+  using reference       = typename iterator_traits<iterator_type>::reference;
   
   /// Constructs a reverse iterator that points to no object.
   reverse_iterator() : current_() {}
@@ -74,7 +71,7 @@ class reverse_iterator : public iterator< typename iterator_traits<Iterator>::it
   reverse_iterator<Iterator>& operator++(int) const { reverse_iterator<Iterator> tmp = *this; --current_; return tmp; }
   reverse_iterator<Iterator>& operator--(int) const { reverse_iterator<Iterator> tmp = *this; ++current_; return tmp; }
     
-  pointer operator->() const { return std::addressof(operator*()); }
+  pointer operator->() const { return addressof(operator*()); }
   reference operator[](difference_type n) const { return *(*this + n); }
       
  protected:
@@ -108,12 +105,10 @@ bool operator>=(const reverse_iterator<Iterator1>& lhs,
                   
 // Specializations
 template<typename T> 
-constexpr const T* rbegin(initializer_list<T> list) noexcept { return std::reverse_iterator<const T*>(list.end()); }
+constexpr const T* rbegin(initializer_list<T> list) noexcept { return reverse_iterator<const T*>(list.end()); }
   
 template<typename T>
-constexpr const T* rend(initializer_list<T> list) noexcept { return std::reverse_iterator<const T*>(list.begin()); }
+constexpr const T* rend(initializer_list<T> list) noexcept { return reverse_iterator<const T*>(list.begin()); }
   
-}; // namespace std
+}; // namespace ETLSTD
 
-
-#endif // ETL_LIBSTD_ITERATOR_REVERSE_H_

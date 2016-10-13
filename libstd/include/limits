@@ -31,10 +31,10 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
-#include <../libstd/include/climits>
-#include <../libstd/include/type_traits>
+#include <libstd/include/climits>
+#include <libstd/include/type_traits>
 
-namespace std {
+namespace ETLSTD {
 enum float_round_style {
     round_indeterminate       = -1,
     round_toward_zero         =  0,
@@ -112,4 +112,4 @@ template<> struct numeric_limits<bool>  : public etlHelper::numericLimitsBase<bo
     static constexpr int digits10 = 0;
 };
 
-}  // namespace std
+}  // namespace ETLSTD

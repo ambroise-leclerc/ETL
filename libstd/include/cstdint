@@ -34,8 +34,8 @@
 #pragma once
 #include <stdint.h>
 
-namespace std {
+namespace ETLSTD {
 
 #include <stdint.h>
 
-} // namespace std
+} // namespace ETLSTD

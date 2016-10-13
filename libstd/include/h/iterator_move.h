@@ -30,20 +30,18 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+#pragma once
 
-#ifndef ETL_LIBSTD_ITERATOR_MOVE_H_
-#define ETL_LIBSTD_ITERATOR_MOVE_H_
-
-namespace std {
+namespace ETLSTD {
   
 template<typename Iterator>
 class move_iterator {
  public:
   using iterator_type     = Iterator;
-  using iterator_category = typename std::iterator_traits<iterator_type>::iterator_category;
-  using value_type        = typename std::iterator_traits<iterator_type>::value_type;
-  using difference_type   = typename std::iterator_traits<iterator_type>::difference_type;
-  using pointer           = typename std::iterator_traits<iterator_type>::pointer;
+  using iterator_category = typename iterator_traits<iterator_type>::iterator_category;
+  using value_type        = typename iterator_traits<iterator_type>::value_type;
+  using difference_type   = typename iterator_traits<iterator_type>::difference_type;
+  using pointer           = typename iterator_traits<iterator_type>::pointer;
   using reference         = value_type&&;
   
   /// Constructs a move iterator that points to no object.
@@ -102,7 +100,5 @@ template<typename Iterator1, typename Iterator2>
 bool operator>=(const move_iterator<Iterator1>& lhs,
                 const move_iterator<Iterator2>& rhs) { return lhs.base() <= rhs.base(); }  
 
-}; // namespace std
+}; // namespace ETLSTD
 
-
-#endif // ETL_LIBSTD_ITERATOR_MOVE_H_
