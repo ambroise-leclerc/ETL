@@ -22,7 +22,7 @@ public:
     }
 
     void push_back(value_type&& elem) {
-        buffer[(index + nbElems) % N] = move(elem);
+        buffer[(index + nbElems) % N] = ETLSTD::move(elem);
         incNbElems();
     }
 
