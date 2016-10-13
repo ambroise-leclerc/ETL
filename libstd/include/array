@@ -38,7 +38,7 @@
 
 namespace ETLSTD {
 
-template<typename T, std::size_t N>
+template<typename T, size_t N>
 struct array {
     using value_type        = T;
     using pointer           = T*;
@@ -47,10 +47,10 @@ struct array {
     using const_reference   = const T&;
     using iterator          = T*;
     using const_iterator    = const T*;
-    using size_type         = std::size_t;
-    using difference_type   = std::ptrdiff_t;
-    using reverse_iterator  = std::reverse_iterator<iterator>;
-    using const_reverse_iterator  = std::reverse_iterator<const_iterator>;
+    using size_type         = size_t;
+    using difference_type   = ptrdiff_t;
+    using reverse_iterator  = ETLSTD::reverse_iterator<iterator>;
+    using const_reverse_iterator  = ETLSTD::reverse_iterator<const_iterator>;
   
     // Access
     reference operator[](size_type i) noexcept              { return elems[i]; }
@@ -91,8 +91,8 @@ struct array {
     const_reverse_iterator crend() const noexcept { return const_reverse_iterator(begin()); }
     
     // Operations
-    void fill(const T& value) { std::fill_n(begin(), size(), value); }    
-    void swap(array& other) noexcept { std::swap_ranges(begin(), end(), other.begin()); }
+    void fill(const T& value) { fill_n(begin(), size(), value); }    
+    void swap(array& other) noexcept { swap_ranges(begin(), end(), other.begin()); }
     
 private:
     T elems[N];
@@ -100,7 +100,7 @@ private:
 private:
     void CheckRange(size_type i) {
         if (i >= size()) {
-            std::out_of_range exception("");
+            out_of_range exception("");
             throw(exception);
        }      
     }    
@@ -116,10 +116,10 @@ struct array<T, 0> {
     using const_reference   = const T&;
     using iterator          = T*;
     using const_iterator    = const T*;
-    using size_type         = std::size_t;
-    using difference_type   = std::ptrdiff_t;
-    using reverse_iterator  = std::reverse_iterator<iterator>;
-    using const_reverse_iterator  = std::reverse_iterator<const_iterator>;
+    using size_type         = size_t;
+    using difference_type   = ptrdiff_t;
+    using reverse_iterator  = ETLSTD::reverse_iterator<iterator>;
+    using const_reverse_iterator  = ETLSTD::reverse_iterator<const_iterator>;
   
     // Access
     reference operator[](size_type)                       { RangeError(); return elems; }
@@ -172,32 +172,32 @@ private:
 };
 
 // non-member functions
-template<typename T, std::size_t N >
+template<typename T, size_t N >
 bool operator==(const array<T,N>& x, const array<T,N>& y) {
-  return std::equal( x.cbegin(), x.cend(), y.cbegin());
+  return equal( x.cbegin(), x.cend(), y.cbegin());
 }
   
-template<typename T, std::size_t N >
+template<typename T, size_t N >
 bool operator!=(const array<T,N>& x, const array<T,N>& y) {
   return !(x == y);
 }  
 
-template<typename T, std::size_t N >
+template<typename T, size_t N >
 bool operator<(const array<T,N>& x, const array<T,N>& y) {
-  return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
+  return lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
 }  
 
-template<typename T, std::size_t N >
+template<typename T, size_t N >
 bool operator<=(const array<T,N>& x, const array<T,N>& y) {
   return !(y < x);
 }  
 
-template<typename T, std::size_t N >
+template<typename T, size_t N >
 bool operator>(const array<T,N>& x, const array<T,N>& y) {
   return y < x;
 }  
 
-template<typename T, std::size_t N >
+template<typename T, size_t N >
 bool operator>=(const array<T,N>& x, const array<T,N>& y) {
   return !(x < y);
 }  
