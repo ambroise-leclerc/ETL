@@ -33,7 +33,7 @@
 #pragma once
 #include <libstd/include/cstddef>
 
-namespace std {
+namespace ETLSTD {
 
 template<typename Category, typename T, typename Distance = ptrdiff_t,
          typename Pointer = T*, typename Reference = T&>
@@ -45,5 +45,5 @@ struct iterator {
   using reference         = Reference;
 };
 
-}; // namespace std
+}; // namespace ETLSTD
 

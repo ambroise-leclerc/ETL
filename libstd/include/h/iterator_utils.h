@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-namespace std {
+namespace ETLSTD {
   
 /// Convenience function template that constructs a std::reverse_iterator from
 /// the given iterator iter.
@@ -52,4 +52,4 @@ move_iterator<Iterator> make_move_iterator(Iterator iter) {
   return move_iterator<Iterator>(iter);
 }
   
-} // namespace std  
+} // namespace ETLSTD  

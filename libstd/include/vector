@@ -31,9 +31,10 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
+#include <libstd/include/memory>
 
-namespace std {
-template<typename T, typename Allocator = std::allocator<T>>
+namespace ETLSTD {
+template<typename T, typename Allocator = allocator<T>>
 class vector {
 public:
     using value_type = T;
@@ -42,37 +43,61 @@ public:
     using difference_type = ptrdiff_t;
     using reference = value_type&;
     using const_reference = const value_type&;
-    using pointer = allocator_traits<Allocator>::pointer;
-    using const_pointer = allocator_traits<Allocator>::const_pointer;
+    using pointer = typename allocator_traits<Allocator>::pointer;
+    using const_pointer = typename allocator_traits<Allocator>::const_pointer;
     using iterator = T*;
     using const_iterator = const T*;
-    using reverse_iterator = reverse_iterator<iterator>;
-    using const_reverse_iterator = reverse_iterator<const_iterator>;
+    using const_reverse_iterator = ETLSTD::reverse_iterator<const_iterator>;
+    using reverse_iterator = ETLSTD::reverse_iterator<iterator>;
 
     // Constructors
     vector() : vector(Allocator()) {}
-    explicit vector(const Allocator& alloc) : vector(etl::architecture::kDefaultBufferSize, alloc) {}
+    explicit vector(const Allocator& alloc) : vector(etl::Device::defaultBufferSize, alloc) {}
     vector(size_type count, const T& value, const Allocator& alloc = Allocator())
-        : size_(ETL_DEFAULT_BUFFER_SIZE + count), buffer_(alloc.allocate(size_), nb_elements_(0), allocator_(alloc) {
-        assign(begin(), end());
+        : allocator(alloc), size(etl::Device::defaultBufferSize + count), capacity(0), buffer(allocator.allocate(size)) {
+        assign(size, value);
     }
     explicit vector(size_type count, const Allocator& alloc = Allocator())
-        : size_(count), buffer_(alloc.allocate(size_), nb_elements_(0), allocator_(alloc) {}
+        : allocator(alloc), size(count), capacity(0), buffer(allocator.allocate(size)) {}
     vector(const vector& other);
     vector(const vector& other, const Allocator& alloc);
-    vector(vector&& other)
-        vector(vector&& other, const Allocator& alloc);
-    vector(std::initializer_list<T> init, const Allocator& alloc = Allocator());
+    vector(vector&& other);
+    vector(vector&& other, const Allocator& alloc);
+    vector(initializer_list<T> init, const Allocator& alloc = Allocator());
 
     template<typename InputIt>
     vector(InputIt first, InputIt last, const Allocator& alloc = Allocator());
 
+	template <class InputIterator>
+	void assign(InputIterator first, InputIterator last) {
+		
+	}
 
+	void assign(size_type n, const value_type& val) {
+		resize(n);
+	}
 
+	void assign(initializer_list<value_type> il);
+
+	void resize(size_type count) {
+		reserve(count);
+		size = count;
+	}
+
+	void resize(size_type count, const value_type& value);
+
+	void reserve(size_type new_cap) {
+		auto oldBuffer = move(buffer);
+		buffer = make_unique<T>(new_cap);
+		memcpy(buffer.get(), oldBuffer.get(), size);
+		capacity = count;
+	}
+
+	
 protected:
-    T* buffer_;
-    Allocator allocator_;
-    size_t nb_elements_;
-    size_t size_;
+    Allocator allocator;
+    size_type size;
+    size_type capacity;
+	unique_ptr<T> buffer;
 };
-} // namespace std
+} // namespace ETLSTD

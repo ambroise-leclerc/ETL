@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-namespace std {
+namespace ETLSTD {
   
 template<typename Iterator>
 class move_iterator {
@@ -100,5 +100,5 @@ template<typename Iterator1, typename Iterator2>
 bool operator>=(const move_iterator<Iterator1>& lhs,
                 const move_iterator<Iterator2>& rhs) { return lhs.base() <= rhs.base(); }  
 
-}; // namespace std
+}; // namespace ETLSTD
 

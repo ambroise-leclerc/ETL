@@ -1,15 +1,22 @@
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
+#define ETLSTD etlstd
 
+/*
+namespace etlTest {
 #define __Mock_Mock__
 #include <etl/ioports.h>
 #include <etl/architecture/uart_Mock.h>
-#include <algorithm>
-#include <thread>
+#include <libstd/include/algorithm>
+#include <libstd/include/thread>
+} // namespace etlTest
 
 
 
-using namespace etl;
+using namespace etlTest::etl;
+*/
+
+
 /*
 SCENARIO("GPIO directions", "[DDR]") {
     GIVEN("an MCU with default output gpios") {

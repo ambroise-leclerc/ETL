@@ -33,7 +33,7 @@
 #pragma once
 
 #include <ctype.h>
-namespace std {
+namespace ETLSTD {
   using ::isalnum;
   using ::isalpha;
   using ::islower;
@@ -48,4 +48,4 @@ namespace std {
   using ::ispunct;
   using ::tolower;
   using ::toupper;
-} // namespace std
+} // namespace ETLSTD

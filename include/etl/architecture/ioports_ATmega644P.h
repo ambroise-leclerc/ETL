@@ -35,37 +35,18 @@
 #include <util/delay.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <chrono>
-#include <queue>
+
+#include <libstd/include/chrono>
+#include <libstd/include/queue>
 #include <etl/CircularBuffer.h>
+#include "ETLDevice_ATmega644P.h"
+
 
 extern void __builtin_avr_delay_cycles(unsigned long);
 
 namespace etl {
 #define IOPORTS_TO_STRING(name) #name
 #define IOPORTS_IRQ_HANDLER(vector, type) asm(IOPORTS_TO_STRING(vector)) __attribute__ ((type, __INTR_ATTRS))
-
-class Device {
-public:
-    static void delayTicks(uint32_t ticks)            { __builtin_avr_delay_cycles(ticks); }
-    static const size_t flashSize = 65536;
-    static const size_t eepromSize = 2048;
-    static const size_t sramSize = 4096;
-    static const size_t architectureWidth = 8;
-    static const size_t defaultBufferSize = 8;
-    using OffType = uint16_t;
-    static const uint32_t McuFrequency = F_CPU;
-
-    /// Enables interrupts by setting the global interrupt mask.
-    /// This function generates a single 'sei' instruction with
-    /// no overhead.
-    static void enableInterrupts() { asm volatile("sei" ::: "memory"); }
-
-    /// Disables interrupts by clearing the global interrupt mask.
-    /// This function generates a single 'cli' instruction with
-    /// no overhead.
-    static void disableInterrupts() { asm volatile("cli" ::: "memory"); }
-};
 
 using clock_cycles = std::chrono::duration<unsigned long, std::ratio<1, Device::McuFrequency>>;
 constexpr clock_cycles operator ""clks(unsigned long long c)     { return clock_cycles(static_cast<clock_cycles::rep>(c)); }
@@ -1793,9 +1774,10 @@ protected:
     static void start(uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT) {
         readIndex = 0;
         writeIndex = 0;
-        uint16_t spd = (Device::McuFrequency / (BAUD_RATE << 4)) - 1;
-        UBRR0H = static_cast<uint8_t>(spd>>8);
-        UBRR0L = static_cast<uint8_t>(spd);
+        float speedRate = BAUD_RATE > 57600 ? BAUD_RATE * 8 : BAUD_RATE * 16;
+        auto spd = static_cast<uint16_t>(((Device::McuFrequency / speedRate)) - 0.5);
+        UBRR0H = spd>>8 &0b1111;
+        UBRR0L = spd;
         
         auto nbBits = (FRAME_FORMAT & FrameFormat::NbBitsMask) >> 3;
         auto nbBits1 = (nbBits & 0b10) == 0b10;
@@ -1807,6 +1789,8 @@ protected:
          
         auto stopBit = (FRAME_FORMAT & FrameFormat::StopBitMask) >> 0;
         
+        if (BAUD_RATE > 57600)
+            UCSR0A = 1<<U2X0;
         UCSR0C = (nbBits1<<UCSZ01) | (nbBits0<<UCSZ00) | (parity0<<UPM00) | (parity1<<UPM01) | (stopBit<<USBS0);
         UCSR0B = (1<<RXEN0) | (1<<TXEN0) | (1<<RXCIE0);
      }
@@ -1891,9 +1875,10 @@ protected:
     static void start(uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT) {
         readIndex = 0;
         writeIndex = 0;
-        uint16_t spd = (Device::McuFrequency / (BAUD_RATE << 4)) - 1;
-        UBRR1H = static_cast<uint8_t>(spd>>8);
-        UBRR1L = static_cast<uint8_t>(spd);
+        float speedRate = BAUD_RATE > 57600 ? BAUD_RATE * 8 : BAUD_RATE * 16;
+        auto spd = static_cast<uint16_t>(((Device::McuFrequency / speedRate)) - 0.5);
+        UBRR1H = spd>>8 &0b1111;
+        UBRR1L = spd;
         
         auto nbBits = (FRAME_FORMAT & FrameFormat::NbBitsMask) >> 3;
         auto nbBits1 = (nbBits & 0b10) == 0b10;
@@ -1905,6 +1890,8 @@ protected:
          
         auto stopBit = (FRAME_FORMAT & FrameFormat::StopBitMask) >> 0;
         
+        if (BAUD_RATE > 57600)
+            UCSR1A = 1<<U2X1;
         UCSR1C = (nbBits1<<UCSZ11) | (nbBits0<<UCSZ10) | (parity0<<UPM10) | (parity1<<UPM11) | (stopBit<<USBS1);
         UCSR1B = (1<<RXEN1) | (1<<TXEN1) | (1<<RXCIE1);
      }

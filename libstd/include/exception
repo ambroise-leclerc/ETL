@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-namespace std {
+namespace ETLSTD {
 
 class exception {
  public:
@@ -53,4 +53,4 @@ class bad_exception : public exception {
 using terminate_handler = void(*)();
 using unexpected_handler = void(*)();
 
-} // namespace std
+} // namespace ETLSTD

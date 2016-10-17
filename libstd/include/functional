@@ -36,7 +36,7 @@
 #include <libstd/include/type_traits>
 #include <libstd/include/memory>
 
-namespace std {
+namespace ETLSTD {
 
 
 template<typename T>
@@ -57,7 +57,7 @@ public:
     T& get() const noexcept { return *data; }
     
     template<typename... Args> typename result_of<T&(Args&&...) >::type operator() (Args&&... args) const {
-        return std::invoke(get(), std::forward<Args>(args)...);
+        return invoke(get(), forward<Args>(args)...);
     }
 private:
     T* data;
@@ -67,7 +67,7 @@ template<typename T> reference_wrapper<T> ref(T& t) { return reference_wrapper<T
 template<typename T> reference_wrapper<T> ref(reference_wrapper<T> t) { return ref(t.get()); }
 template<typename T> void ref(const T&&) = delete;
 template<typename T> reference_wrapper<const T> cref(const T& t) { return reference_wrapper<const T>(t); }
-template<typename T> reference_wrapper<const T> cref(std::reference_wrapper<T> t) { return cref(t.get()); }
+template<typename T> reference_wrapper<const T> cref(reference_wrapper<T> t) { return cref(t.get()); }
 template<typename T> void cref(const T&&) = delete;
 
 namespace etlHelper {
@@ -76,5 +76,5 @@ namespace etlHelper {
     template<typename T> using is_reference_wrapper_v = typename is_reference_wrapper<T>::value;
 } // namespace etlHelper
 
-} // namespace std
+} // namespace ETLSTD
 

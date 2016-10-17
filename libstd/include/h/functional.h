@@ -34,7 +34,7 @@
 #include <libstd/include/type_traits>
 #include <libstd/include/utility>
 
-namespace std {
+namespace ETLSTD {
 
 namespace etlHelper { /*
 	template<typename Base, typename T, typename Derived, typename... Args>
@@ -110,8 +110,8 @@ namespace etlHelper { /*
 /// @param[in] f Callable to be invoked
 /// @param[in] args arguments to pass to f
 template <typename F, typename... ArgTypes>
-auto invoke(F&& f, ArgTypes&&... args) noexcept(noexcept(etlHelper::invoke(std::forward<F>(f), std::forward<ArgTypes>(args)...))) {
-    return etlHelper::invoke(std::forward<F>(f), std::forward<ArgTypes>(args)...);
+auto invoke(F&& f, ArgTypes&&... args) noexcept(noexcept(etlHelper::invoke(forward<F>(f), forward<ArgTypes>(args)...))) {
+    return etlHelper::invoke(forward<F>(f), forward<ArgTypes>(args)...);
 }
 
 /// Deduces the return type of a function call expression at compile time.    
@@ -119,5 +119,5 @@ template<typename F> struct result_of {};
 template<typename F, typename... ArgTypes> struct result_of<F(ArgTypes...)> : etlHelper::result_of<F(ArgTypes...)> {};
 
 
-} // namespace std  
+} // namespace ETLSTD  
 

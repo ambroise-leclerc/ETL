@@ -35,7 +35,7 @@
 #include <libstd/include/cstdint>
 #include <libstd/include/cstddef>
 
-namespace std {
+namespace ETLSTD {
 namespace etlHelper {
   template<typename> struct is_type_entier        : false_type { };
   template<> struct is_type_entier<bool>          : true_type { };
@@ -127,4 +127,4 @@ template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) vo
 template<typename Ret, typename... Args> struct is_function<Ret(Args..., ...) const volatile &&>: true_type {};
 
 template<typename T> using is_function_v = typename is_function<T>::value;
-} // namespace std
+} // namespace ETLSTD

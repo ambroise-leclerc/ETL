@@ -33,9 +33,9 @@
 #pragma once
 #include <libstd/include/utility>
 
-namespace std {
+namespace ETLSTD {
 
-template<typename T, typename Container /* TODO = std::deque<T>*/>
+template<typename T, typename Container /* TODO = ETLSTD::deque<T>*/>
 class queue {
 public:
     using container_type = Container;
@@ -44,23 +44,21 @@ public:
     using reference = typename Container::reference;
     using const_reference = typename Container::const_reference;
 
-    auto empty() const { return container.empty(); }
-
-    auto size() const {
-        return container.size();
-    }
-
+    bool empty() const              { return container.empty(); }
+    size_type size() const          { return container.size(); }
     reference front()				{ return container.front(); }
 	const_reference front() const	{ return container.front(); }
 	reference back()				{ return container.back(); }
 	const_reference back() const	{ return container.back(); }
 
-    void pop() {
-        container.pop_front();
+    void pop()                      { container.pop_front(); }
+
+    void push(const value_type& element) {
+        container.push_back(element);
     }
 
-    void push(T element) {
-        container.push_back(element);
+    void push(value_type&& element) {
+        container.push_back(move(element));
     }
 
     template<typename... Args>
@@ -68,7 +66,7 @@ public:
         container.emplace_back(forward<Args>(args)...);
     }
 
-    void swap(queue<T, Container>& right) {
+    void swap(queue& right) {
         Container* pointeurLeft = &container;
         Container* pointeurRight = &right.container;
         Container temp = *pointeurLeft;
@@ -86,4 +84,4 @@ void swap(queue<T,Container>& lhs, queue<T,Container>& rhs) { lhs.swap(rhs); }
 
 	
 
-} // namespace std
+} // namespace ETLSTD

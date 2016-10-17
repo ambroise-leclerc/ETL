@@ -34,28 +34,28 @@
 
 
 #include "h/char_traits.h"
-#include <libstd\include\vector>
-#include <libstd\include\memory>
+#include <libstd/include/vector>
+#include <libstd/include/memory>
+#include <libstd/include/iterator>
 
-namespace std {
+namespace ETLSTD {
 
-
-template<typename CharT, typename Traits = std::char_traits<CharT>, typename Allocator = std::allocator<CharT>>
+template<typename CharT, typename Traits = char_traits<CharT>, typename Allocator = allocator<CharT>>
 class basic_string {
 public:
     using traits_type = Traits;
-    using value_type = Traits::char_type;
+    using value_type = typename Traits::char_type;
     using allocator_type = Allocator;
-    using size_type = std::size_t;
-    using difference_type = std::ptrdiff_t;
+    using size_type = size_t;
+    using difference_type = ptrdiff_t;
     using reference = value_type&;
     using const_reference = const value_type&;
-    using pointer = std::allocator_traits<Allocator>::pointer;
-    using const_pointer = std::allocator_traits<Allocator>::const_pointer;
-    using iterator = std::vector<CharT, Allocator>;
-    using const_iterator = std::vector<CharT, Allocator>;
-    using reverse_iterator = std::reverse_iterator<iterator>;
-    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+    using pointer = typename allocator_traits<Allocator>::pointer;
+    using const_pointer = typename allocator_traits<Allocator>::const_pointer;
+    using iterator = vector<CharT, Allocator>;
+    using const_iterator = vector<CharT, Allocator>;
+    using const_reverse_iterator = ETLSTD::reverse_iterator<const_iterator>;
+    using reverse_iterator = ETLSTD::reverse_iterator<iterator>;
 
     static const size_type npos = -1;
 

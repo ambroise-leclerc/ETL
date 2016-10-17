@@ -36,7 +36,7 @@
 #include "traits_primary_types.h"
 #include "traits_references.h"
 
-namespace std {
+namespace ETLSTD {
 
 namespace etlHelper {
   template<typename T, bool b> struct rvalue_reference_type { using type = T; };
@@ -77,5 +77,5 @@ template<typename T> struct add_const     { using type = const T; };
 template<typename T> struct add_volatile  { using type = volatile T; };
 template<typename T> struct add_cv        { using type = typename add_volatile<typename add_const<T>::type>::type; };
 
-} // namespace std
+} // namespace ETLSTD
 

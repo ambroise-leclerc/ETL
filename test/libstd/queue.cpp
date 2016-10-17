@@ -32,29 +32,28 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #include <catch.hpp>
 
-namespace etlTest {
+#define ETLSTD etlstd
 #include <libstd/include/queue>
 #include <libstd/include/cstddef>
 #include <libstd/include/memory>
-} // namespace etlTest
 
-using namespace etlTest::std;
+using namespace ETLSTD;
 
 uint32_t mockStatus;
 
 class SequenceContainerMock {
 public:
     using value_type = uint8_t;
-    using size_type = etlTest::std::size_t;
+    using size_type = ETLSTD::size_t;
     using reference = value_type&;
     using const_reference = const value_type&;
 
     SequenceContainerMock() : elemF(8), elemB(2), contSize(0) { }
-    void empty() const { mockStatus += Empty; }
+    bool empty() const { mockStatus += Empty; return false; }
     size_type size() const { mockStatus += Size; return contSize; }
     reference front() { mockStatus += Front; return elemF; }
     reference back() { mockStatus += Back; return elemB; }
-    void push_back(reference elem) { mockStatus += PushBack; contSize++; elemB = elem; }
+    void push_back(const_reference elem) { mockStatus += PushBack; contSize++; elemB = elem; }
     void pop_front() { mockStatus += PopFront; contSize--; }
     template<typename... Args>
     void emplace_back(Args&& ... args) { mockStatus += Emplace; new(&elemB) uint8_t(std::forward<Args>(args)...); }
@@ -66,7 +65,7 @@ protected:
 };
 
 SCENARIO("Queue") {
-    using Fifo = queue<uint8_t, SequenceContainerMock>;
+    using Fifo = ETLSTD::queue<uint8_t, SequenceContainerMock>;
     GIVEN("An empty Fifo") {
         Fifo fifo;
         mockStatus = 0;
