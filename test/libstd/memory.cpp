@@ -36,14 +36,19 @@
 #define ETLSTD etlstd
 #include <libstd/include/memory>
 #include <libstd/include/utility>
+#include <libstd/include/array>
+#include <libstd/include/queue>
+#include <etl/CircularBuffer.h>
 
 class MyClass {
 public:
     MyClass(uint32_t id) : id(id) {
+        std::cout << "" << id << "\n";
         instances++;
     }
 
     ~MyClass() {
+        std::cout << "~" << id << "\n";
         instances--;
     }
 public:
@@ -52,21 +57,94 @@ public:
 };
 
 uint8_t MyClass::instances = 0;
-//using namespace etlTest::std;
+using namespace ETLSTD;
 
 SCENARIO("std::unique_ptr") {
     GIVEN("0 class instances") {
         MyClass::instances = 0;
         WHEN("a unique_ptr is created") {
             THEN("") {
-                auto obj = ETLSTD::make_unique<MyClass>(123456);
+                auto obj = make_unique<MyClass>(123456);
                 REQUIRE(MyClass::instances == 1);
-                auto obj2 = ETLSTD::move(obj);
+                auto obj2 = move(obj);
                 REQUIRE(MyClass::instances == 1);
                 REQUIRE(obj2->id == 123456);
             }
             REQUIRE(MyClass::instances == 0);
         }
+    }
+    GIVEN("A fifo of unique_ptrs") {
+        using Fifo = queue<unique_ptr<MyClass>, etl::CircularBuffer<unique_ptr<MyClass>, 16>>;
+        Fifo fifo;
+        WHEN("ptrs are pushed and consumed") {
+            std::string output;
+            for (uint8_t i = 0; i < 10; ++i)
+                fifo.push(make_unique<MyClass>(i));
+            REQUIRE(MyClass::instances == 10);
+
+            for (uint8_t i = 0; i < 10; ++i) {
+                fifo.push(make_unique<MyClass>(i + 10));
+                output += std::to_string(fifo.front()->id);
+                fifo.pop();
+            }
+            //REQUIRE(MyClass::instances == 10);
+            REQUIRE(output == "0123456789");
+
+            for (uint8_t i = 0; i < 10; ++i) {
+                output += std::to_string(fifo.front()->id);
+                fifo.pop();
+            }
+            REQUIRE(MyClass::instances == 0);
+            REQUIRE(output == "012345678910111213141516171819");
+        }
+    }
+    GIVEN("array of unique_ptrs") {
+        array<unique_ptr<MyClass>, 64> arrayOfPtrs;
+
+        for (uint8_t i=0; i<64; ++i) {
+            arrayOfPtrs[i] = make_unique<MyClass>(i);
+        }
+        REQUIRE(MyClass::instances == 64);
+        REQUIRE(arrayOfPtrs[10]->id == 10);
+        REQUIRE(arrayOfPtrs[25]->id == 25);
+        REQUIRE(arrayOfPtrs[42]->id == 42);
+
+        array<unique_ptr<MyClass>, 64> otherArrayOfPtrs;
+        for (uint8_t i=0; i<64; ++i) {
+            otherArrayOfPtrs[63 - i] = move(arrayOfPtrs[i]);
+        }
+        REQUIRE(MyClass::instances == 64);
+        REQUIRE(otherArrayOfPtrs[10]->id == 53);
+        REQUIRE(otherArrayOfPtrs[25]->id == 38);
+        REQUIRE(otherArrayOfPtrs[42]->id == 21);
+
+        etl::CircularBuffer<unique_ptr<MyClass>, 50> buffer;
+        for (auto&& elem : arrayOfPtrs) {
+            buffer.push_back(move(elem));
+        }
+        REQUIRE(MyClass::instances == 64);
+
+        for (auto&& elem : otherArrayOfPtrs) {
+            buffer.push_back(move(elem));
+        }
+        REQUIRE(MyClass::instances == 50);
+        REQUIRE(buffer.front()->id == 49);
+        buffer.front()->id *= 2;
+        REQUIRE(buffer.front()->id == 98);
+        buffer.pop_front();
+        REQUIRE(MyClass::instances == 49);
+
+        auto elem100 = make_unique<MyClass>(100);
+        REQUIRE(MyClass::instances == 50);
+        buffer.front().swap(elem100);
+        REQUIRE(MyClass::instances == 50);
+        {
+            auto elem = move(buffer.front());
+            REQUIRE(elem->id == 100);
+            REQUIRE(MyClass::instances == 50);
+            buffer.pop_front();
+        }
+        REQUIRE(MyClass::instances == 49);
     }
 }
 

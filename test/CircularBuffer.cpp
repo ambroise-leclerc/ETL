@@ -81,7 +81,8 @@ SCENARIO("CircularBuffer holding unique_ptrs") {
     
     auto sum = 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8;
     for (uint8_t i = 0; i < 10; i++) {
-        auto a = move(buffer.pop_front());
+        auto a = move(buffer.front());
+        buffer.pop_front();
         if (a)
             sum -= a->getId();
     }

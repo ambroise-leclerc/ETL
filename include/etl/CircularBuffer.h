@@ -26,11 +26,11 @@ public:
         incNbElems();
     }
 
-    reference pop_front() {
-        auto&& value = buffer[index];
+    void pop_front() {
+        Allocator all;
+        all.destroy(buffer[index]);
         index = (index + 1) % N;
         if (nbElems > 0) --nbElems;
-        return value;
     }
 
     const_reference front() const { return buffer[index]; }
