@@ -294,6 +294,34 @@ private:
 template <typename HD44780>
 class HD44780Printer {
 public:
+ 
+    uint16_t puissance10(uint8_t exposant){
+		uint16_t returnPuissance = 1;
+		for(auto i = 0 ; i < exposant ; i++){
+			returnPuissance *= 10;
+		}
+		return returnPuissance;
+	}
+ 
+   void print(HD44780& h,uint32_t num) {
+       	if(num == 0){
+			 h.display('0');
+		}
+		else 
+		{
+			auto sizeDigit = 0;
+			auto paramTemp = num;
+			while(paramTemp != 0){
+				paramTemp /= 10;
+				sizeDigit++;
+			}
+			for(auto i = puissance10(sizeDigit-1) ; i>0 ; i/=10){
+				auto digit = (num / i) % (10);
+                h.display(48+digit);
+			}
+		
+		}
+    }
     static void print(HD44780& h,const char str[]) {
         for (auto i = 0; str[i] != '\0'; i++) {
             h.display(str[i]);

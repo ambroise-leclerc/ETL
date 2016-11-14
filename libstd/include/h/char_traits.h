@@ -74,8 +74,8 @@ struct char_traits {
 
     static const char_type* find(const char_type* s, int n, const char_type& c) {
         for (; n > 0; ++s, --n) {
-            if (eq(*s, a)) return s;
-        }      
+            if (eq(*s, c)) return s;
+        }
         return 0;
     }
   
