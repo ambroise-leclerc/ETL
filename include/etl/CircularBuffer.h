@@ -50,7 +50,7 @@ class CircularBuffer {
 
     private:
     ETLSTD::array<T, N> buffer;
-    uint32_t index, nbElems;
+    size_t index, nbElems;
 
     void incNbElems() {
         if (nbElems < N) {
