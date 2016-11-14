@@ -6,9 +6,9 @@
 
 namespace etl {
 
-template<typename T, uint8_t N, typename Allocator = ETLSTD::allocator<T>>
+template<typename T, uint32_t N, typename Allocator = ETLSTD::allocator<T>>
 class CircularBuffer {
-public:
+    public:
     using value_type = T;
     using size_type = uint8_t;
     using reference = value_type&;
@@ -37,7 +37,7 @@ public:
     reference front() { return buffer[index];}
     reference back() { return buffer[(index + nbElems - 1) % N]; }
     const_reference back() const { return buffer[(index + nbElems - 1) % N]; }
-    uint8_t size() const { return nbElems; }
+    uint32_t size() const { return nbElems; }
     bool empty() const { return nbElems == 0; }
 
     template<typename... Args>
@@ -48,9 +48,9 @@ public:
     }
 
 
-private:
+    private:
     ETLSTD::array<T, N> buffer;
-    uint8_t index, nbElems;
+    size_t index, nbElems;
 
     void incNbElems() {
         if (nbElems < N) {
@@ -61,5 +61,4 @@ private:
         }
     }
 };
-
 }

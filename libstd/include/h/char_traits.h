@@ -41,8 +41,10 @@ template<typename CharT>
 struct char_traits {
     using char_type	  = CharT;
     using int_type    = CharT;
+
     using off_type    = etl::Device::OffType;
     using pos_type    = etl::Device::OffType;
+
     using state_type  = CharT;
 
     static void assign(char_type& r, const char_type& a) noexcept                       { r = a; }
@@ -52,8 +54,10 @@ struct char_traits {
     static constexpr int_type to_int_type(const char_type& c) noexcept                  { return static_cast<int_type>(c); }
     static constexpr bool eq_int_type(const int_type& a, const int_type& b) noexcept    { return a == b; }
     static constexpr bool lt(const char_type& c1, const char_type& c2) noexcept         { return c1 < c2; }		
+
     static char_type* move(char_type* s1, const char_type* s2, size_t n)                { memmove(s1, s2, n * sizeof(char_type)); return s1; }
     static char_type* copy(char_type* s1, const char_type* s2, size_t n)                { memcpy(s1, s2, n * sizeof(char_type)); return s1; }
+
     static int compare(const char_type* s1, const char_type* s2, size_t n) {
         for (size_t i=0; i<n; ++i) {
             if (!eq(s1[i], s2[i])) return s1[i]<s2[i] ? -1 : 1;
@@ -71,7 +75,7 @@ struct char_traits {
     static const char_type* find(const char_type* s, int n, const char_type& c) {
         for (; n > 0; ++s, --n) {
             if (eq(*s, c)) return s;
-        }      
+        }
         return 0;
     }
   
