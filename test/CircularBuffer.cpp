@@ -102,3 +102,10 @@ SCENARIO("CircularBuffer holding unique_ptrs") {
         fifo.push(move(elem));
 }
 
+SCENARIO("CircularBuffer overhead") {
+    REQUIRE(sizeof(etl::CircularBuffer<uint8_t, 1>) == 1 + 2);
+    REQUIRE(sizeof(etl::CircularBuffer<uint8_t, 100>) == 100 + 2);
+    REQUIRE(sizeof(etl::CircularBuffer<uint8_t, 1000>) == 1000 + 4);
+    REQUIRE(sizeof(etl::CircularBuffer<uint8_t, 10000>) == 10000 + 4);
+    REQUIRE(sizeof(etl::CircularBuffer<uint8_t, 100000>) == 100000 + 8);
+}
