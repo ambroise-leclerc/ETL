@@ -2,15 +2,18 @@
 
 #include <libstd/include/array>
 #include <libstd/include/memory>
+#include <libstd/include/type_traits>
+#include <libstd/include/limits>
 
 
 namespace etl {
 
-template<typename T, uint32_t N, typename Allocator = ETLSTD::allocator<T>>
+template<typename T, size_t N, typename Allocator = ETLSTD::allocator<T>>
 class CircularBuffer {
-    public:
+public:
     using value_type = T;
-    using size_type = uint8_t;
+    using size_type = typename std::conditional_t<N < 256, uint8_t,
+                                                  std::conditional_t<N < 65536, uint16_t, uint32_t>>;
     using reference = value_type&;
     using const_reference = const value_type&;
 
@@ -37,7 +40,7 @@ class CircularBuffer {
     reference front() { return buffer[index];}
     reference back() { return buffer[(index + nbElems - 1) % N]; }
     const_reference back() const { return buffer[(index + nbElems - 1) % N]; }
-    uint32_t size() const { return nbElems; }
+    size_type size() const { return nbElems; }
     bool empty() const { return nbElems == 0; }
 
     template<typename... Args>
@@ -50,7 +53,7 @@ class CircularBuffer {
 
     private:
     ETLSTD::array<T, N> buffer;
-    size_t index, nbElems;
+    size_type index, nbElems;
 
     void incNbElems() {
         if (nbElems < N) {
