@@ -1,9 +1,9 @@
 /// @file ioports_ATtiny84.h
 /// @date 21/09/2016 21:17:16
-/// @author Ambroise Leclerc and Cécile Gomes
+/// @author Ambroise Leclerc and Cecile Thiebaut
 /// @brief Microcontrollers peripherals handling classes
 //
-// Copyright (c) 2016, Ambroise Leclerc and Cécile Gomes
+// Copyright (c) 2017, Ambroise Leclerc and Cecile Thiebaut
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
