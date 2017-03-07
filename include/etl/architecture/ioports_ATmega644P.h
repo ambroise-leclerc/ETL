@@ -1,9 +1,9 @@
 /// @file ioports_ATmega644P.h
 /// @date 18/06/2016 18:17:16
-/// @author Ambroise Leclerc and Cécile Gomes
+/// @author Ambroise Leclerc and Cecile Thiebaut
 /// @brief Atmel AVR 8-bit microcontrollers peripherals handling classes
 //
-// Copyright (c) 2016, Ambroise Leclerc and Cécile Gomes
+// Copyright (c) 2017, Ambroise Leclerc and Cecile Thiebaut
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -35,12 +35,10 @@
 #include <util/delay.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-
 #include <libstd/include/chrono>
 #include <libstd/include/queue>
 #include <etl/CircularBuffer.h>
 #include "ETLDevice_ATmega644P.h"
-
 
 extern void __builtin_avr_delay_cycles(unsigned long);
 
