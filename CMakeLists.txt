@@ -23,8 +23,8 @@ add_executable( TestsETL ${ETL_TESTS}
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT TestsETL)
 
 #target_compile_features(etltest PUBLIC cxx_binary_literals)
-if(UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+if (NOT(CMAKE_CXX_COMPILER MATCHES "MSVC"))
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 endif()
 
 include_directories(include 3rdParty test .)
