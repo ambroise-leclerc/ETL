@@ -1,9 +1,9 @@
 /// @file ETLDevice_ATmega32U4.h
 /// @date 11/05/2014 19:28:16
-/// @author Ambroise Leclerc and Cécile Gomes
+/// @author Ambroise Leclerc and Cecile Thiebaut
 /// @brief Atmel AVR 8-bit microcontrollers architecture specifications and low level functions.
 //
-// Copyright (c) 2016, Ambroise Leclerc and Cécile Gomes
+// Copyright (c) 2017, Ambroise Leclerc and Cecile Thiebaut
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without

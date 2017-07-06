@@ -1,6 +1,6 @@
 /// @file etl.h
 /// @date 21/02/2014 23:06:23
-/// @author Ambroise Leclerc
+/// @author Ambroise Leclerc and Cecile Thiebaut
 /// @brief Embedded Template Library
 //
 // Copyright (c) 2014, Ambroise Leclerc

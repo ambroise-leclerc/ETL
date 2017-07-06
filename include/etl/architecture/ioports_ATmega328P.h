@@ -1,9 +1,9 @@
 /// @file ioports_ATmega328P.h
 /// @date 12/05/2014 09:34:16
-/// @author Ambroise Leclerc and Cécile Gomes
+/// @author Ambroise Leclerc and Cecile Thiebaut
 /// @brief Atmel AVR 8-bit microcontrollers peripherals handling classes
 //
-// Copyright (c) 2016, Ambroise Leclerc and Cécile Gomes
+// Copyright (c) 2017, Ambroise Leclerc and Cecile Thiebaut
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without

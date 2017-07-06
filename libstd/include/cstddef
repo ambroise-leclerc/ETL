@@ -34,7 +34,7 @@
 #include <stddef.h>
 
 namespace ETLSTD {
-#ifdef _WIN32
+#ifdef _MSC_VER
     using nullptr_t = decltype(__nullptr);
     using max_align_t = double;
 #else
