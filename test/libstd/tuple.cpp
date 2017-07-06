@@ -36,6 +36,7 @@
 #define ETLSTD etlstd
 #include <libstd/include/tuple>
 
+
 using namespace ETLSTD;
 /*
 class TupleTest {
@@ -93,7 +94,9 @@ SCENARIO("std::integer_sequence") {
 
 SCENARIO("std::tuple") {
     GIVEN("0 class instances") {
-
+        tuple<int, float, int> t1(3, 3.14f, 3);
+        //auto t2 = t1;
+        
     }
 }
 
