@@ -10,10 +10,9 @@ static std::string testString;
 
 struct TestInterrupt {
 
-    static void work()
-    {
+    static void work() {
         testString.append("I");
-       std::cout << testString << '\n';
+        std::cout << testString << '\n';
     }
 };
 
@@ -40,21 +39,16 @@ SCENARIO("TEST InterruptManager") {
     REQUIRE(testString.length() == 2);
 }
 
-
-template <typename Strobe, typename Clk, typename Data>
-class Client {
+template <typename Strobe, typename Clk, typename Data> class Client {
 public:
     bool currentBit;
 
-    void init() {
-        currentBit = false;
-    }
+    void init() { currentBit = false; }
 
     void strobeChangedISR() {
         if (Strobe::test()) {
             std::cout << "Strobe interrupt received : RISING EDGE\n";
-        }
-        else {
+        } else {
             std::cout << "Strobe interrupt received : FALLING EDGE\n";
         }
     }
@@ -63,8 +57,7 @@ public:
         if (Clk::test()) {
             currentBit = Data::test();
             std::cout << "Clock interrupt received : RISING EDGE\n";
-        }
-        else {
+        } else {
             std::cout << "Clock interrupt received : FALLING EDGE\n";
         }
     }
@@ -72,7 +65,8 @@ public:
 
 SCENARIO("Test dual interruptions on strobe and clock") {
     using namespace etl;
-    GIVEN("MCU with output pins 0, 1, 2 linked to input pins 3, 4, 5 with interrupt enables on change for pins 3, 4, 5") {
+    GIVEN("MCU with output pins 0, 1, 2 linked to input pins 3, 4, 5 with "
+          "interrupt enables on change for pins 3, 4, 5") {
         using Strobe = Pin0;
         using Clk = Pin1;
         using Data = Pin2;
@@ -82,16 +76,24 @@ SCENARIO("Test dual interruptions on strobe and clock") {
 
         Client<ClientStrobe, ClientClk, ClientData> simu;
 
-        Device::pragma(Pragma("BitLink").reg(Strobe::Port::getOutputRegister()).bit(Strobe::bit())
-                                        .reg(ClientStrobe::Port::getInputRegister()).bit(ClientStrobe::bit()));
-        Device::pragma(Pragma("BitLink").reg(Clk::Port::getOutputRegister()).bit(Clk::bit())
-                                        .reg(ClientClk::Port::getInputRegister()).bit(ClientClk::bit()));
-        Device::pragma(Pragma("BitLink").reg(Data::Port::getOutputRegister()).bit(Data::bit())
-                                        .reg(ClientData::Port::getInputRegister()).bit(ClientData::bit()));
+        Device::pragma(Pragma("BitLink")
+                           .reg(Strobe::Port::getOutputRegister())
+                           .bit(Strobe::bit())
+                           .reg(ClientStrobe::Port::getInputRegister())
+                           .bit(ClientStrobe::bit()));
+        Device::pragma(Pragma("BitLink")
+                           .reg(Clk::Port::getOutputRegister())
+                           .bit(Clk::bit())
+                           .reg(ClientClk::Port::getInputRegister())
+                           .bit(ClientClk::bit()));
+        Device::pragma(Pragma("BitLink")
+                           .reg(Data::Port::getOutputRegister())
+                           .bit(Data::bit())
+                           .reg(ClientData::Port::getInputRegister())
+                           .bit(ClientData::bit()));
 
         ClientClk::onChange([&simu]() -> void { simu.clockChangedISR(); });
-        ClientStrobe::onChange([&simu]()-> void { simu.strobeChangedISR(); });  
-
+        ClientStrobe::onChange([&simu]() -> void { simu.strobeChangedISR(); });
 
         WHEN("Issueing clock signals") {
             simu.init();
@@ -99,12 +101,9 @@ SCENARIO("Test dual interruptions on strobe and clock") {
 
             Data::set();
             Clk::pulseHigh();
-            THEN("client is notified of a new data") {
-                REQUIRE(simu.currentBit == true);
-            }
+            THEN("client is notified of a new data") { REQUIRE(simu.currentBit == true); }
 
             Strobe::pulseHigh();
-
         }
     }
 }

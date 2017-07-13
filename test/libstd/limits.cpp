@@ -39,27 +39,42 @@
 using namespace ETLSTD;
 using ETLSTD::size_t;
 
-
-
 SCENARIO("std::numeric_limits") {
-  
-    auto r1 = numeric_limits<uint32_t>::is_signed;      REQUIRE(r1 == false);
-    auto r2 = numeric_limits<uint32_t>::is_exact;       REQUIRE(r2 == true);
-    auto r3 = numeric_limits<uint32_t>::is_integer;     REQUIRE(r3 == true);
-    auto r4 = numeric_limits<uint32_t>::digits;         REQUIRE(r4 == 32);
-    auto r5 = numeric_limits<uint32_t>::digits10;       REQUIRE(r5 == 9);
-    auto r6 = numeric_limits<uint32_t>::max_digits10;   REQUIRE(r6 == 0);
-  
-    auto s1 = numeric_limits<uint8_t>::is_signed;       REQUIRE(s1 == false);
-    auto s2 = numeric_limits<uint8_t>::is_exact;        REQUIRE(s2 == true);
-    auto s3 = numeric_limits<uint8_t>::is_integer;      REQUIRE(s3 == true);
-    auto s4 = numeric_limits<uint8_t>::digits;          REQUIRE(s4 == 8);
-    auto s5 = numeric_limits<uint8_t>::digits10;        REQUIRE(s5 == 2);
-    auto s6 = numeric_limits<uint8_t>::max_digits10;    REQUIRE(s6 == 0);
-    auto s7 = numeric_limits<uint8_t>::min();           REQUIRE(s7 == 0);
-    auto s8 = numeric_limits<uint8_t>::max();           REQUIRE(s8 == 255);
-    auto s9 = numeric_limits<int8_t>::is_signed;        REQUIRE(s9 == true);
 
-    auto t1 = numeric_limits<int64_t>::is_signed;       REQUIRE(t1 == true);
-    auto t2 = numeric_limits<int64_t>::digits10;        REQUIRE(t2 == 18);
+    auto r1 = numeric_limits<uint32_t>::is_signed;
+    REQUIRE(r1 == false);
+    auto r2 = numeric_limits<uint32_t>::is_exact;
+    REQUIRE(r2 == true);
+    auto r3 = numeric_limits<uint32_t>::is_integer;
+    REQUIRE(r3 == true);
+    auto r4 = numeric_limits<uint32_t>::digits;
+    REQUIRE(r4 == 32);
+    auto r5 = numeric_limits<uint32_t>::digits10;
+    REQUIRE(r5 == 9);
+    auto r6 = numeric_limits<uint32_t>::max_digits10;
+    REQUIRE(r6 == 0);
+
+    auto s1 = numeric_limits<uint8_t>::is_signed;
+    REQUIRE(s1 == false);
+    auto s2 = numeric_limits<uint8_t>::is_exact;
+    REQUIRE(s2 == true);
+    auto s3 = numeric_limits<uint8_t>::is_integer;
+    REQUIRE(s3 == true);
+    auto s4 = numeric_limits<uint8_t>::digits;
+    REQUIRE(s4 == 8);
+    auto s5 = numeric_limits<uint8_t>::digits10;
+    REQUIRE(s5 == 2);
+    auto s6 = numeric_limits<uint8_t>::max_digits10;
+    REQUIRE(s6 == 0);
+    auto s7 = numeric_limits<uint8_t>::min();
+    REQUIRE(s7 == 0);
+    auto s8 = numeric_limits<uint8_t>::max();
+    REQUIRE(s8 == 255);
+    auto s9 = numeric_limits<int8_t>::is_signed;
+    REQUIRE(s9 == true);
+
+    auto t1 = numeric_limits<int64_t>::is_signed;
+    REQUIRE(t1 == true);
+    auto t2 = numeric_limits<int64_t>::digits10;
+    REQUIRE(t2 == 18);
 }

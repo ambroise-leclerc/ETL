@@ -2,12 +2,11 @@
 
 #define __Mock_Mock__
 
-
 #define ETLSTD etlstd
 #include <etl/CircularBuffer.h>
-#include <libstd/include/queue> 
-#include <libstd/include/utility>
 #include <iostream>
+#include <libstd/include/queue>
+#include <libstd/include/utility>
 
 using namespace ETLSTD;
 
@@ -37,7 +36,7 @@ SCENARIO("CircularBuffer for fifo of bytes") {
     REQUIRE(etlQueue.front() == 20);
     REQUIRE(etlQueue.back() == 10);
     REQUIRE(etlQueue.size() == 2);
-    
+
     fifo etlQueue2;
     etlQueue2.push(18);
     REQUIRE(etlQueue2.front() == 18);
@@ -57,8 +56,13 @@ SCENARIO("CircularBuffer for fifo of bytes") {
 
 class Element {
     uint8_t id;
+
 public:
-    Element(uint8_t id) : id(id) { ++nbCreated; ++nbActive; std::cout << +id << "(" << +nbCreated << ", " << +nbActive << ") - ";  }
+    Element(uint8_t id) : id(id) {
+        ++nbCreated;
+        ++nbActive;
+        std::cout << +id << "(" << +nbCreated << ", " << +nbActive << ") - ";
+    }
     ~Element() { --nbActive; }
     auto getId() { return id; }
 
@@ -77,8 +81,7 @@ SCENARIO("CircularBuffer holding unique_ptrs") {
     REQUIRE(Element::nbActive == 8);
     REQUIRE(buffer.front()->getId() == 1);
     REQUIRE(buffer.back()->getId() == 8);
-    
-    
+
     auto sum = 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8;
     for (uint8_t i = 0; i < 10; i++) {
         auto a = move(buffer.pop_front());
@@ -89,16 +92,15 @@ SCENARIO("CircularBuffer holding unique_ptrs") {
     REQUIRE(Element::nbActive == 0);
     REQUIRE(buffer.empty());
 
-
     array<unique_ptr<Element>, 15> source;
     for (uint8_t i = 0; i < 15; i++)
         source[i] = make_unique<Element>(100 + i);
 
     REQUIRE(Element::nbCreated == 24);
     REQUIRE(Element::nbActive == 15);
-    
+
     queue<uint8_t, Buffer> fifo;
-    for (auto&& elem : source)
+    for (auto &&elem : source)
         fifo.push(move(elem));
 }
 
