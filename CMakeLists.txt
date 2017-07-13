@@ -8,10 +8,10 @@ set(ETL_HEADERS include/etl/debug_policies.h include/etl/freestore.h include/etl
                 include/etl/metautils.h include/etl/watchdog.h)
                 
 set(LIBSTD_HEADERS  libstd/include/algorithm libstd/include/array libstd/include/cassert libstd/include/cctype libstd/include/cerrno
-        libstd/include/cfenv libstd/include/cfloat libstd/include/  libstd/include/chrono libstd/include/climits libstd/include/clocale
+        libstd/include/cfenv libstd/include/cfloat libstd/include/chrono libstd/include/climits libstd/include/clocale
         libstd/include/cstddef libstd/include/cstdint libstd/include/exception libstd/include/functional libstd/include/initializer_list
         libstd/include/iterator libstd/include/limits libstd/include/memory libstd/include/new libstd/include/queue libstd/include/random
-        libstd/include/ratio libstd/include/stdexcept libstd/include/string libstd/include/thread libstd/include/tuple libstd/include/tuple2
+        libstd/include/ratio libstd/include/stdexcept libstd/include/string libstd/include/thread libstd/include/tuple
         libstd/include/type_traits libstd/include/utility libstd/include/vector)
 set(LIBSTD_TESTS test/libstd/chrono.cpp test/libstd/limits.cpp test/libstd/memory.cpp test/libstd/tuple.cpp test/libstd/type_traits.cpp
 				 test/libstd/queue.cpp test/libstd/string.cpp)
