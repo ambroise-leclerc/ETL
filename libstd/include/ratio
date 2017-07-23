@@ -36,115 +36,140 @@
 namespace ETLSTD {
 
 namespace etlHelper {
-    template<intmax_t A, intmax_t B> struct PGCD { static const intmax_t value = PGCD<B, A%B>::value; };
-    template<intmax_t A>             struct PGCD<A, 0> { static const intmax_t value = A; };
-    template<>                       struct PGCD<0, 0> { static const intmax_t value = 1; };
+template <intmax_t A, intmax_t B> struct PGCD { static const intmax_t value = PGCD<B, A % B>::value; };
+template <intmax_t A> struct PGCD<A, 0> { static const intmax_t value = A; };
+template <> struct PGCD<0, 0> { static const intmax_t value = 1; };
 
-    template<intmax_t A, intmax_t B> struct PPCM { static const intmax_t value = A / PGCD<A, B>::value * B; };
-    template<intmax_t X>             struct Abs { static const intmax_t value = X < 0 ? -X : X; };
-    template<intmax_t X>             struct Sign { static const intmax_t value = X == 0 ? 0 : (X < 0 ? -1 : 1); };
+template <intmax_t A, intmax_t B> struct PPCM { static const intmax_t value = A / PGCD<A, B>::value * B; };
+template <intmax_t X> struct Abs { static const intmax_t value = X < 0 ? -X : X; };
+template <intmax_t X> struct Sign { static const intmax_t value = X == 0 ? 0 : (X < 0 ? -1 : 1); };
 } // namespace etlHelper
 
-
-template<intmax_t Num, intmax_t Denom = 1>
-class ratio {
+template <intmax_t Num, intmax_t Denom = 1> class ratio {
 public:
     using type = ratio<Num, Denom>;
-    static constexpr intmax_t num = (etlHelper::Sign<Num>::value * etlHelper::Sign<Denom>::value) * etlHelper::Abs<Num>::value / etlHelper::PGCD<etlHelper::Abs<Num>::value, etlHelper::Abs<Denom>::value>::value;
-    static constexpr intmax_t den = etlHelper::Abs<Denom>::value / etlHelper::PGCD<etlHelper::Abs<Num>::value, etlHelper::Abs<Denom>::value>::value;
+    static constexpr intmax_t num = (etlHelper::Sign<Num>::value * etlHelper::Sign<Denom>::value) * etlHelper::Abs<Num>::value /
+                                    etlHelper::PGCD<etlHelper::Abs<Num>::value, etlHelper::Abs<Denom>::value>::value;
+    static constexpr intmax_t den =
+        etlHelper::Abs<Denom>::value / etlHelper::PGCD<etlHelper::Abs<Num>::value, etlHelper::Abs<Denom>::value>::value;
 };
 
-using atto  = ratio<1, 1000000000000000000>;
+using atto = ratio<1, 1000000000000000000>;
 using femto = ratio<1, 1000000000000000>;
-using pico  = ratio<1, 1000000000000>;
-using nano  = ratio<1, 1000000000>;
+using pico = ratio<1, 1000000000000>;
+using nano = ratio<1, 1000000000>;
 using micro = ratio<1, 1000000>;
 using milli = ratio<1, 1000>;
 using centi = ratio<1, 100>;
-using deci  = ratio<1, 10>;
-using deca  = ratio<10, 1>;
+using deci = ratio<1, 10>;
+using deca = ratio<10, 1>;
 using hecto = ratio<100, 1>;
-using kilo  = ratio<1000, 1>;
-using mega  = ratio<1000000, 1>;
-using giga  = ratio<1000000000, 1>;
-using tera  = ratio<1000000000000, 1>;
-using peta  = ratio<1000000000000000, 1>;
-using exa   = ratio<1000000000000000000, 1>;
+using kilo = ratio<1000, 1>;
+using mega = ratio<1000000, 1>;
+using giga = ratio<1000000000, 1>;
+using tera = ratio<1000000000000, 1>;
+using peta = ratio<1000000000000000, 1>;
+using exa = ratio<1000000000000000000, 1>;
 
 namespace etlHelper {
-    template<typename T>                    struct is_ratio : false_type {};
-    template<intmax_t Num, intmax_t Denom>  struct is_ratio<ratio<Num, Denom>> : true_type {};
+template <typename T> struct is_ratio : false_type {};
+template <intmax_t Num, intmax_t Denom> struct is_ratio<ratio<Num, Denom>> : true_type {};
 
-    template<typename R1, typename R2> class ratio_multiply {
-        static const intmax_t pgcdND = PGCD<R1::num, R2::den>::value;
-        static const intmax_t pgcdDN = PGCD<R1::den, R2::num>::value;
-    public:
-        using type = typename ratio<(R1::num / pgcdND)*(R2::num / pgcdDN), (R2::den / pgcdND)*(R1::den / pgcdDN)>::type;
-    };
+template <typename R1, typename R2>
+class ratio_multiply {
+    static const intmax_t pgcdND = PGCD<R1::num, R2::den>::value;
+    static const intmax_t pgcdDN = PGCD<R1::den, R2::num>::value;
 
-    template<typename R1, typename R2> class ratio_divide {
-        static const intmax_t pgcdNum = PGCD<R1::num, R2::num>::value;
-        static const intmax_t pgcdDen = PGCD<R1::den, R2::den>::value;
-    public:
-        using type = typename ratio<(R1::num / pgcdNum)*(R2::den / pgcdDen), (R2::num / pgcdNum)*(R1::den / pgcdDen)>::type;
-    };
+public:
+    using type = typename ratio<(R1::num / pgcdND) * (R2::num / pgcdDN), (R2::den / pgcdND) * (R1::den / pgcdDN)>::type;
+};
 
-    template<typename R1, typename R2> class ratio_add {
-        static const intmax_t pgcdNum = PGCD<R1::num, R2::num>::value;
-        static const intmax_t pgcdDen = PGCD<R1::den, R2::den>::value;
-    public:
-        using type = typename ratio_multiply<
-            ratio<pgcdNum, R1::den / pgcdDen>,
-            ratio<((R1::num / pgcdNum)*(R2::den / pgcdDen)) + ((R2::num / pgcdNum)*(R1::den / pgcdDen)), R2::den>>::type;
-    };
+template <typename R1, typename R2>
+class ratio_divide {
+    static const intmax_t pgcdNum = PGCD<R1::num, R2::num>::value;
+    static const intmax_t pgcdDen = PGCD<R1::den, R2::den>::value;
 
-    template<typename R1, typename R2> class ratio_substract {
-        static const intmax_t pgcdNum = PGCD<R1::num, R2::num>::value;
-        static const intmax_t pgcdDen = PGCD<R1::den, R2::den>::value;
-    public:
-        using type = typename ratio_multiply<
-            ratio<pgcdNum, R1::den / pgcdDen>,
-            ratio<((R1::num / pgcdNum)*(R2::den / pgcdDen)) - ((R2::num / pgcdNum)*(R1::den / pgcdDen)), R2::den>>::type;
-    };
+public:
+    using type = typename ratio<(R1::num / pgcdNum) * (R2::den / pgcdDen), (R2::num / pgcdNum) * (R1::den / pgcdDen)>::type;
+};
 
-	template<typename R1, typename R2> struct ratio_PGCD {
-		using type = ratio<PGCD<R1::num, R2::num>::value, PPCM<R1::den, R2::den>::value>;
-	};
+template <typename R1, typename R2>
+class ratio_add {
+    static const intmax_t pgcdNum = PGCD<R1::num, R2::num>::value;
+    static const intmax_t pgcdDen = PGCD<R1::den, R2::den>::value;
 
-    template<typename R1, typename R2, bool Odd = false,
-             intmax_t Q1 = R1::num / R1::den, intmax_t M1 = R1::num % R1::den,
-             intmax_t Q2 = R2::num / R2::den, intmax_t M2 = R2::num % R2::den>
-    struct ratio_less_EO { static const bool value = Odd ? Q2 < Q1 : Q1 < Q2; };
+public:
+    using type = typename ratio_multiply<
+        ratio<pgcdNum, R1::den / pgcdDen>,
+        ratio<((R1::num / pgcdNum) * (R2::den / pgcdDen)) + ((R2::num / pgcdNum) * (R1::den / pgcdDen)), R2::den>>::type;
+};
 
-    template<typename R1, typename R2, bool Odd, intmax_t Qp>                           struct ratio_less_EO<R1, R2, Odd, Qp, 0, Qp, 0>     { static const bool value = false; };
-    template<typename R1, typename R2, bool Odd, intmax_t Qp, intmax_t M2>              struct ratio_less_EO<R1, R2, Odd, Qp, 0, Qp, M2>    { static const bool value = !Odd; };
-    template<typename R1, typename R2, bool Odd, intmax_t Qp, intmax_t M1>              struct ratio_less_EO<R1, R2, Odd, Qp, M1, Qp, 0>    { static const bool value = Odd; };
-    template<typename R1, typename R2, bool Odd, intmax_t Qp, intmax_t M1, intmax_t M2> struct ratio_less_EO<R1, R2, Odd, Qp, M1, Qp, M2>   { static const bool value = ratio_less_EO<ratio<R1::den, M1>, ratio<R2::den, M2>, !Odd>::value; };
+template <typename R1, typename R2>
+class ratio_substract {
+    static const intmax_t pgcdNum = PGCD<R1::num, R2::num>::value;
+    static const intmax_t pgcdDen = PGCD<R1::den, R2::den>::value;
 
-    template<typename R1, typename R2, intmax_t S1 = Sign<R1::num>::value, intmax_t S2 = Sign<R2::num>::value> struct ratio_less { static const bool value = S1 < S2; };
-    template<typename R1, typename R2> struct ratio_less<R1, R2, 1LL, 1LL>      { static const bool value = ratio_less_EO<R1, R2>::value; };
-    template<typename R1, typename R2> struct ratio_less<R1, R2, -1LL, -1LL>    { static const bool value = ratio_less_EO<ratio<-R2::num, R2::den>, ratio<-R1::num, R1::den>>::value; };
+public:
+    using type = typename ratio_multiply<
+        ratio<pgcdNum, R1::den / pgcdDen>,
+        ratio<((R1::num / pgcdNum) * (R2::den / pgcdDen)) - ((R2::num / pgcdNum) * (R1::den / pgcdDen)), R2::den>>::type;
+};
+
+template <typename R1, typename R2> struct ratio_PGCD {
+    using type = ratio<PGCD<R1::num, R2::num>::value, PPCM<R1::den, R2::den>::value>;
+};
+
+template <typename R1, typename R2, bool Odd = false, intmax_t Q1 = R1::num / R1::den, intmax_t M1 = R1::num % R1::den,
+          intmax_t Q2 = R2::num / R2::den, intmax_t M2 = R2::num % R2::den>
+struct ratio_less_EO {
+    static const bool value = Odd ? Q2 < Q1 : Q1 < Q2;
+};
+
+template <typename R1, typename R2, bool Odd, intmax_t Qp> struct ratio_less_EO<R1, R2, Odd, Qp, 0, Qp, 0> {
+    static const bool value = false;
+};
+template <typename R1, typename R2, bool Odd, intmax_t Qp, intmax_t M2> struct ratio_less_EO<R1, R2, Odd, Qp, 0, Qp, M2> {
+    static const bool value = !Odd;
+};
+template <typename R1, typename R2, bool Odd, intmax_t Qp, intmax_t M1> struct ratio_less_EO<R1, R2, Odd, Qp, M1, Qp, 0> {
+    static const bool value = Odd;
+};
+template <typename R1, typename R2, bool Odd, intmax_t Qp, intmax_t M1, intmax_t M2>
+struct ratio_less_EO<R1, R2, Odd, Qp, M1, Qp, M2> {
+    static const bool value = ratio_less_EO<ratio<R1::den, M1>, ratio<R2::den, M2>, !Odd>::value;
+};
+
+template <typename R1, typename R2, intmax_t S1 = Sign<R1::num>::value, intmax_t S2 = Sign<R2::num>::value> struct ratio_less {
+    static const bool value = S1 < S2;
+};
+template <typename R1, typename R2> struct ratio_less<R1, R2, 1LL, 1LL> {
+    static const bool value = ratio_less_EO<R1, R2>::value;
+};
+template <typename R1, typename R2> struct ratio_less<R1, R2, -1LL, -1LL> {
+    static const bool value = ratio_less_EO<ratio<-R2::num, R2::den>, ratio<-R1::num, R1::den>>::value;
+};
 } // namespace etlHelper
 
+template <typename R1, typename R2> using ratio_add = typename etlHelper::ratio_add<R1, R2>::type;
+template <typename R1, typename R2> using ratio_substract = typename etlHelper::ratio_substract<R1, R2>::type;
+template <typename R1, typename R2> using ratio_multiply = typename etlHelper::ratio_multiply<R1, R2>::type;
+template <typename R1, typename R2> using ratio_divide = typename etlHelper::ratio_divide<R1, R2>::type;
 
-template<typename R1, typename R2> using ratio_add			= typename etlHelper::ratio_add<R1, R2>::type;
-template<typename R1, typename R2> using ratio_substract	= typename etlHelper::ratio_substract<R1, R2>::type;
-template<typename R1, typename R2> using ratio_multiply		= typename etlHelper::ratio_multiply<R1, R2>::type;
-template<typename R1, typename R2> using ratio_divide		= typename etlHelper::ratio_divide<R1, R2>::type;
-
-template<typename R1, typename R2> struct ratio_equal           : public integral_constant<bool, R1::num == R2::num && R1::den == R2::den> {};
-template<typename R1, typename R2> struct ratio_not_equal       : public integral_constant<bool, !ratio_equal<R1, R2>::value> {};
-template<typename R1, typename R2> struct ratio_less            : public integral_constant<bool, etlHelper::ratio_less<R1, R2>::value> {};
-template<typename R1, typename R2> struct ratio_less_equal      : public integral_constant<bool, !ratio_less<R2, R1>::value> {};
-template<typename R1, typename R2> struct ratio_greater         : public integral_constant<bool, ratio_less<R2, R1>::value> {};
-template<typename R1, typename R2> struct ratio_greater_equal   : public integral_constant<bool, !ratio_greater<R2, R1>::value> {};
+template <typename R1, typename R2>
+struct ratio_equal : public integral_constant<bool, R1::num == R2::num && R1::den == R2::den> {};
+template <typename R1, typename R2> struct ratio_not_equal : public integral_constant<bool, !ratio_equal<R1, R2>::value> {};
+template <typename R1, typename R2> struct ratio_less : public integral_constant<bool, etlHelper::ratio_less<R1, R2>::value> {};
+template <typename R1, typename R2> struct ratio_less_equal : public integral_constant<bool, !ratio_less<R2, R1>::value> {};
+template <typename R1, typename R2> struct ratio_greater : public integral_constant<bool, ratio_less<R2, R1>::value> {};
+template <typename R1, typename R2>
+struct ratio_greater_equal : public integral_constant<bool, !ratio_greater<R2, R1>::value> {};
 
 // C++17 helpers - "using ..._v = typename ...::value" instead of "constepxr bool ..._v = ...::value" for gcc 4.9
-template<typename R1, typename R2> using ratio_equal_v         = typename ratio_equal<R1, R2>::value;
-template<typename R1, typename R2> using ratio_not_equal_v     = typename ratio_not_equal<R1, R2>::value;
-template<typename R1, typename R2> using ratio_less_v          = typename ratio_less<R1, R2>::value;
-template<typename R1, typename R2> using ratio_less_equal_v    = typename ratio_less_equal<R1, R2>::value;
-template<typename R1, typename R2> using ratio_greater_v       = typename ratio_greater<R1, R2>::value;
-template<typename R1, typename R2> using ratio_greater_equal_v = typename ratio_greater_equal<R1, R2>::value;
+template <typename R1, typename R2> using ratio_equal_v = typename ratio_equal<R1, R2>::value;
+template <typename R1, typename R2> using ratio_not_equal_v = typename ratio_not_equal<R1, R2>::value;
+template <typename R1, typename R2> using ratio_less_v = typename ratio_less<R1, R2>::value;
+template <typename R1, typename R2> using ratio_less_equal_v = typename ratio_less_equal<R1, R2>::value;
+template <typename R1, typename R2> using ratio_greater_v = typename ratio_greater<R1, R2>::value;
+template <typename R1, typename R2> using ratio_greater_equal_v = typename ratio_greater_equal<R1, R2>::value;
 
 } // namespace ETLSTD
