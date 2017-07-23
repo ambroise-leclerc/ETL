@@ -75,7 +75,8 @@ namespace etlHelper {
 template <typename T> struct is_ratio : false_type {};
 template <intmax_t Num, intmax_t Denom> struct is_ratio<ratio<Num, Denom>> : true_type {};
 
-template <typename R1, typename R2> class ratio_multiply {
+template <typename R1, typename R2>
+class ratio_multiply {
     static const intmax_t pgcdND = PGCD<R1::num, R2::den>::value;
     static const intmax_t pgcdDN = PGCD<R1::den, R2::num>::value;
 
@@ -83,7 +84,8 @@ public:
     using type = typename ratio<(R1::num / pgcdND) * (R2::num / pgcdDN), (R2::den / pgcdND) * (R1::den / pgcdDN)>::type;
 };
 
-template <typename R1, typename R2> class ratio_divide {
+template <typename R1, typename R2>
+class ratio_divide {
     static const intmax_t pgcdNum = PGCD<R1::num, R2::num>::value;
     static const intmax_t pgcdDen = PGCD<R1::den, R2::den>::value;
 
@@ -91,7 +93,8 @@ public:
     using type = typename ratio<(R1::num / pgcdNum) * (R2::den / pgcdDen), (R2::num / pgcdNum) * (R1::den / pgcdDen)>::type;
 };
 
-template <typename R1, typename R2> class ratio_add {
+template <typename R1, typename R2>
+class ratio_add {
     static const intmax_t pgcdNum = PGCD<R1::num, R2::num>::value;
     static const intmax_t pgcdDen = PGCD<R1::den, R2::den>::value;
 
@@ -101,7 +104,8 @@ public:
         ratio<((R1::num / pgcdNum) * (R2::den / pgcdDen)) + ((R2::num / pgcdNum) * (R1::den / pgcdDen)), R2::den>>::type;
 };
 
-template <typename R1, typename R2> class ratio_substract {
+template <typename R1, typename R2>
+class ratio_substract {
     static const intmax_t pgcdNum = PGCD<R1::num, R2::num>::value;
     static const intmax_t pgcdDen = PGCD<R1::den, R2::den>::value;
 
