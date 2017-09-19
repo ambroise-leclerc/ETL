@@ -48,15 +48,8 @@ public:
     constexpr bitset(unsigned long long val) {
         for (auto byte = nbBytes; byte > 0; --byte) {
             data[byte - 1] = static_cast<uint8_t>(val >> ((byte-1) << 3));
-            std::cout << "data[" << byte - 1 << "]" << " = " << std::hex << "0x" << +data[byte - 1] << "\n";
         }
         trimSuperfluousBits();
-
-      /*  for (auto byte = 0; byte < nbBytes; ++byte) {
-            data[byte - 1] = static_cast<uint8_t>(val >> ((nbBytes - byte) << 3));
-            std::cout << "data[" << byte - 1 << "]" << " = " << std::hex << "0x" << +data[byte - 1] << "\n";
-        }
-        */
     }
         
     template<typename CharT>
@@ -71,15 +64,9 @@ public:
     
     unsigned long to_ulong() const noexcept {
         unsigned long value = 0;
- /*       for (size_t index = 0; index < nbBytes; ++index) {
-            value <<= 8;
-            value |= data[index];
-        }
- */
         for (size_t index = nbBytes; index > 0; --index) {
             value <<= 8;
             value |= data[index - 1];
-            std::cout << "data[" << std::dec << index - 1 << "]" << " = " << std::hex << "0x" << +data[index - 1] << " -> value=" << value << "\n";
         }
         return value;
     }
@@ -192,7 +179,11 @@ public:
     }
 
     size_t count() const noexcept {
-
+        size_t bitsCount = 0;
+        for (auto byte = 0; byte < nbBytes; ++byte)
+            bitsCount += countBits(data[byte]);
+            
+            return bitsCount;
     }
 
 private:
@@ -202,6 +193,11 @@ private:
 
     void trimSuperfluousBits() {
         data[nbBytes - 1] &= bitmaskOfLastByte;
+    }
+
+    auto countBits(uint8_t byte) const {
+        static const uint8_t oneBits[] = { 0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4 };
+        return oneBits[byte & 0b1111] + oneBits[byte >> 4];
     }
 };
    

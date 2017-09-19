@@ -68,15 +68,20 @@ SCENARIO("bitset") {
     bitset<23> bits1(0b00001111000011111111111);
     REQUIRE(bits1.size() == 23);
     REQUIRE(sizeof(bits1) == 3);    // 23 bits should not take more than 3 bytes
+    REQUIRE(bits1.count() == 15);
     REQUIRE(bits1.to_ulong() == 0b00001111000011111111111);
     bits1.set(22);
     REQUIRE(bits1.to_ulong() == 0b10001111000011111111111);
+    REQUIRE(bits1.count() == 16);
     bits1.reset().set(0).set(22);
     REQUIRE(bits1.to_ulong() == 0b10000000000000000000001);
-    bits1.set().reset(21).set(1, false); 
+    REQUIRE(bits1.count() == 2);
+    bits1.set().reset(21).set(1, false);
     REQUIRE(bits1.to_ulong() == 0b10111111111111111111101);
+    REQUIRE(bits1.count() == 21);
     bits1.flip().flip(22).flip(0);
     REQUIRE(bits1.to_ulong() == 0b11000000000000000000011);
+    REQUIRE(bits1.count() == 4);
     bits1.flip(3).flip(19);
     REQUIRE(bits1[3]);
     REQUIRE(bits1[19]);
@@ -139,14 +144,17 @@ SCENARIO("bitset") {
         REQUIRE(bits.all());
         REQUIRE(!bits.none());
         REQUIRE(bits.any());
+        REQUIRE(bits.count() == 27);
 
         bits[0].flip();
         REQUIRE(!bits.all());
+        REQUIRE(bits.count() == 26);
 
         bits.reset();
         REQUIRE(!bits.all());
         REQUIRE(bits.none());
         REQUIRE(!bits.any());
+        REQUIRE(bits.count() == 0);
 
         bits[0].flip();
         REQUIRE(bits.any());
