@@ -1,0 +1,208 @@
+/// @file bitset
+/// @data 29/08/2017 7:39:53
+/// @author Ambroise Leclerc
+/// @brief Fixed-size sequence of bits.
+//
+// Copyright (c) 2017, Ambroise Leclerc
+//   All rights reserved.
+//
+//   Redistribution and use in source and binary forms, with or without
+//   modification, are permitted provided that the following conditions are met:
+//
+//   * Redistributions of source code must retain the above copyright
+//     notice, this list of conditions and the following disclaimer.
+//   * Redistributions in binary form must reproduce the above copyright
+//     notice, this list of conditions and the following disclaimer in
+//     the documentation and/or other materials provided with the
+//     distribution.
+//   * Neither the name of the copyright holders nor the names of
+//     contributors may be used to endorse or promote products derived
+//     from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+//  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+//  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+//  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+//  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+//  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+//  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+//  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+//  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+//  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+//  POSSIBILITY OF SUCH DAMAGE.
+
+#pragma once
+#include <libstd/include/array>
+#include <libstd/include/string>
+
+#include <iostream>
+namespace ETLSTD {
+
+template<size_t N>
+class bitset {
+public:
+    constexpr bitset() {
+        data.fill(0);
+    }
+
+    constexpr bitset(unsigned long long val) {
+        for (auto byte = nbBytes; byte > 0; --byte) {
+            data[byte - 1] = static_cast<uint8_t>(val >> ((byte-1) << 3));
+            std::cout << "data[" << byte - 1 << "]" << " = " << std::hex << "0x" << +data[byte - 1] << "\n";
+        }
+        trimSuperfluousBits();
+
+      /*  for (auto byte = 0; byte < nbBytes; ++byte) {
+            data[byte - 1] = static_cast<uint8_t>(val >> ((nbBytes - byte) << 3));
+            std::cout << "data[" << byte - 1 << "]" << " = " << std::hex << "0x" << +data[byte - 1] << "\n";
+        }
+        */
+    }
+        
+    template<typename CharT>
+    explicit bitset(const CharT* str,
+        typename basic_string<CharT>::size_type n = basic_string<CharT>::npos,
+        CharT zero = CharT('0'),
+        CharT one = CharT('1')) {
+    }
+
+
+    constexpr size_t size() const noexcept { return N; }
+    
+    unsigned long to_ulong() const noexcept {
+        unsigned long value = 0;
+ /*       for (size_t index = 0; index < nbBytes; ++index) {
+            value <<= 8;
+            value |= data[index];
+        }
+ */
+        for (size_t index = nbBytes; index > 0; --index) {
+            value <<= 8;
+            value |= data[index - 1];
+            std::cout << "data[" << std::dec << index - 1 << "]" << " = " << std::hex << "0x" << +data[index - 1] << " -> value=" << value << "\n";
+        }
+        return value;
+    }
+
+    bitset<N>& set() {
+        data.fill(0xFF);
+        trimSuperfluousBits();
+        return *this;
+    }
+
+    bitset<N>& set(size_t pos, bool value = true) {
+        auto byte = pos >> 3;
+        auto bit = pos % 8;
+        if (value)
+            data[byte] |= 1 << bit;
+        else
+            data[byte] &= ~(1 << bit);
+
+        return *this;
+    }
+
+    bitset<N>& reset() {
+        data.fill(0);
+        return *this;
+    }
+
+    bitset<N>& reset(size_t pos) {
+        data[pos >> 3] &= ~(1 << (pos % 8));
+        
+        return *this;
+    }
+
+    bitset<N>& flip() {
+        for (auto& byte : data)
+            byte = ~byte;
+        trimSuperfluousBits();
+        return *this;
+    }
+
+    bitset<N>& flip(size_t pos) {
+        data[pos >> 3] ^= 1 << (pos % 8);
+        return *this;
+    }
+
+    class reference {
+        bitset<N>& set;
+        size_t bitpos;
+    public:
+        reference(bitset<N>& set, size_t bitpos) : set(set), bitpos(bitpos) {}
+        
+        reference& operator=(bool value) noexcept {
+            if (value)
+                set.data[bitpos >> 3] |= 1 << (bitpos % 8);
+            else
+                set.data[bitpos >> 3] &= ~(1 << (bitpos % 8));
+
+            return *this;
+        }
+
+        operator bool() const noexcept {
+            return set.data[bitpos >> 3] & 1 << (bitpos % 8);
+        }
+
+        bool operator ~() const noexcept {
+            return (set.data[bitpos >> 3] & 1 << (bitpos % 8)) == 0;
+        }
+
+        reference& flip() noexcept {
+            set.data[bitpos >> 3] ^= 1 << (bitpos % 8);
+
+            return *this;
+        }
+    };
+
+    constexpr bool operator[](size_t pos) const {
+        return data[pos >> 3] & (1 << (pos % 8));
+    }
+
+    reference operator[](size_t pos) {
+        return reference(*this, pos);
+    }
+
+    bool test(size_t pos) const {
+        return data[pos >> 3] & 1 << (pos % 8);
+    }
+
+    bool all() const noexcept {
+        if (data[nbBytes - 1] == bitmaskOfLastByte) {
+            if (nbBytes > 1)
+                for (auto byte = 0; byte < nbBytes - 1; ++byte)
+                    if (data[byte] != 0xFF)
+                        return false;
+            return true;
+        }
+        return false;
+    }
+
+    bool none() const noexcept {
+        for (auto byte = 0; byte < nbBytes; ++byte)
+            if (data[byte] != 0)
+                return false;
+        return true;
+    }
+
+    bool any() const noexcept {
+        for (auto byte = 0; byte < nbBytes; ++byte)
+            if (data[byte] != 0)
+                return true;
+        return false;
+    }
+
+    size_t count() const noexcept {
+
+    }
+
+private:
+    static constexpr size_t nbBytes = (N / 8) + 1;
+    array<uint8_t, nbBytes> data;
+    static constexpr uint8_t bitmaskOfLastByte = (1 << (N % 8)) - 1;
+
+    void trimSuperfluousBits() {
+        data[nbBytes - 1] &= bitmaskOfLastByte;
+    }
+};
+   
+} // namespace ETLSTD

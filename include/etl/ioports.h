@@ -68,5 +68,7 @@
 #include "architecture/ioports_ATmega644A.h"
 #elif defined (__AVR_ATtiny84__)
 #include "architecture/ioports_ATtiny84.h"
+#else
+#include "architecture/ioports_Mock.h"
 #endif
 
