@@ -1,7 +1,5 @@
 #include <catch.hpp>
 
-#define __Mock_Mock__
-
 #define ETLSTD etlstd
 #include <etl/CircularBuffer.h>
 #include <iostream>
