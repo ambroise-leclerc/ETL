@@ -1,4 +1,4 @@
-/// @file etl.h
+/// @file metautils.h
 /// @date 27/01/2014 16:02:23
 /// @author Ambroise Leclerc and Cecile Thiebaut
 /// @brief Embedded Template Library
@@ -42,8 +42,10 @@ namespace etl {
 /// used to generate hashcodes from litterals using the "_hash" suffix.
 /// Example with switch on strings :
 ///
+/// using namespace etl;
+///
 /// void switchOnStrings(std::string command) {
-///     switch (StringHash.calc(command.c_str())) {
+///     switch (StringHash::calc(command.c_str())) {
 ///     case "Start"_hash:
 ///        ...
 ///     case "Stop"_hash:
