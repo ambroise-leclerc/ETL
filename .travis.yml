@@ -10,8 +10,8 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-5
-      env: COMPILER=g++-5
+            - g++-7
+      env: COMPILER=g++-7
     - compiler: gcc
       addons:
         apt:
@@ -24,8 +24,8 @@ matrix:
       addons:
         apt:
           sources: ["ubuntu-toolchain-r-test", "llvm-toolchain-precise-3.8"]
-          packages: ["clang-3.8", "valgrind"]
-      env: COMPILER=clang++-3.8 MEMCHECK=VALGRIND
+          packages: ["clang-4.1", "valgrind"]
+      env: COMPILER=clang++-4.1 MEMCHECK=VALGRIND
 
 before_install:
   - sudo apt-get update -qq
