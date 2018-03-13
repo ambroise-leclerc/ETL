@@ -28,11 +28,12 @@ add_executable( TestsETL ${ETL_TESTS}
                 ${HEADERS} )
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT TestsETL)
+set_property(TARGET TestsETL PROPERTY CXX_STANDARD 17)
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+target_link_libraries(TestsETL Threads::Threads)
 #target_compile_features(etltest PUBLIC cxx_binary_literals)
-if (NOT(CMAKE_CXX_COMPILER MATCHES "MSVC"))
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -std=c++14")
-endif()
 
 
 
