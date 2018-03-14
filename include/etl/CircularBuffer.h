@@ -12,8 +12,8 @@ template<typename T, size_t N, typename Allocator = ETLSTD::allocator<T>>
 class CircularBuffer {
 public:
     using value_type = T;
-    using size_type = typename std::conditional_t<N < 256, uint8_t,
-                                                  std::conditional_t<N < 65536, uint16_t, uint32_t>>;
+    using size_type = typename ETLSTD::conditional_t<N < 256, uint8_t,
+                                                  ETLSTD::conditional_t<N < 65536, uint16_t, uint32_t>>;
     using reference = value_type&;
     using const_reference = const value_type&;
 
@@ -46,12 +46,12 @@ public:
     template<typename... Args>
     void emplace_back(Args&& ... args) {
         Allocator all;
-        all.construct(&buffer[(index + nbElems) % N], ETLSTD::forward<Args>(args)...);
+        ETLSTD::allocator_traits<Allocator>::construct(all, &buffer[(index + nbElems) % N], ETLSTD::forward<Args>(args)...);
         incNbElems();
     }
 
 
-    private:
+private:
     ETLSTD::array<T, N> buffer;
     size_type index, nbElems;
 
