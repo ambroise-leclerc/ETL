@@ -10,10 +10,10 @@ set(LIBSTD_HEADERS  libstd/include/algorithm libstd/include/array libstd/include
         libstd/include/cfenv libstd/include/cfloat libstd/include/chrono libstd/include/climits libstd/include/clocale
         libstd/include/cstddef libstd/include/cstdint libstd/include/exception libstd/include/functional libstd/include/initializer_list
         libstd/include/iterator libstd/include/limits libstd/include/memory libstd/include/new libstd/include/queue libstd/include/random
-        libstd/include/ratio libstd/include/stdexcept libstd/include/string libstd/include/thread libstd/include/tuple
-        libstd/include/type_traits libstd/include/utility libstd/include/vector)
+        libstd/include/ratio libstd/include/stdexcept libstd/include/thread libstd/include/tuple
+        libstd/include/type_traits libstd/include/utility)
 set(LIBSTD_TESTS test/libstd/bitset.cpp test/libstd/chrono.cpp test/libstd/limits.cpp test/libstd/memory.cpp test/libstd/tuple.cpp test/libstd/type_traits.cpp
-				 test/libstd/queue.cpp test/libstd/string.cpp test/libstd/vector.cpp)
+				 test/libstd/queue.cpp)
                 
 set(ETL_TESTS test/test.cpp test/SetClearTest.cpp test/InterruptsTest.cpp test/CircularBuffer.cpp)
 set(ETL_ARCHITECTURE include/etl/architecture/MockCore.h)
