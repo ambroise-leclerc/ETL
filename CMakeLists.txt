@@ -15,7 +15,7 @@ set(LIBSTD_HEADERS  libstd/include/algorithm libstd/include/array libstd/include
 set(LIBSTD_TESTS test/libstd/bitset.cpp test/libstd/chrono.cpp test/libstd/limits.cpp test/libstd/memory.cpp test/libstd/tuple.cpp test/libstd/type_traits.cpp
 				 test/libstd/queue.cpp)
                 
-set(ETL_TESTS test/test.cpp test/SetClearTest.cpp test/InterruptsTest.cpp test/CircularBuffer.cpp)
+set(ETL_TESTS test/test.cpp test/SetClearTest.cpp test/InterruptsTest.cpp )
 set(ETL_ARCHITECTURE include/etl/architecture/MockCore.h)
 set(ETL_DRIVERS include/etl/drivers/hd44780.h include/etl/drivers/tm1638.h)
 
