@@ -37,26 +37,29 @@
 
 namespace ETLSTD {
 namespace etlHelper {
-template<typename> struct is_type_entier                : false_type { };
-template<> struct is_type_entier<bool>          : true_type { };
-template<> struct is_type_entier<char>          : true_type { };
-template<> struct is_type_entier<int8_t>        : true_type { };
-template<> struct is_type_entier<uint8_t>       : true_type { };
-template<> struct is_type_entier<int16_t>       : true_type { };
-template<> struct is_type_entier<uint16_t>      : true_type { };
-template<> struct is_type_entier<int32_t>       : true_type { };
-template<> struct is_type_entier<uint32_t>      : true_type { };
-template<> struct is_type_entier<int64_t>       : true_type { };
-template<> struct is_type_entier<uint64_t>      : true_type { };
-template<typename> struct is_type_flottant              : false_type { };
-template<> struct is_type_flottant<float>       : true_type { };
-template<> struct is_type_flottant<double>      : true_type { };
-template<> struct is_type_flottant<long double> : true_type { };
-template<typename T> struct is_pointeur                  : false_type { };
-template<typename T> struct is_pointeur<T*>              : true_type { };
-template<typename T> struct is_mb_pointeur               : false_type { };
-template<typename T, typename U> struct is_mb_pointeur<T U::*>     : true_type { };
-} // namespace etlHelper 
+template<typename> struct is_type_entier        : false_type { };
+template<> struct is_type_entier<bool>          : true_type  { };
+template<> struct is_type_entier<char>          : true_type  { };
+template<> struct is_type_entier<int8_t>        : true_type  { };
+template<> struct is_type_entier<uint8_t>       : true_type  { };
+template<> struct is_type_entier<int16_t>       : true_type  { };
+template<> struct is_type_entier<uint16_t>      : true_type  { };
+template<> struct is_type_entier<int32_t>       : true_type  { };
+template<> struct is_type_entier<uint32_t>      : true_type  { };
+template<> struct is_type_entier<int64_t>       : true_type  { };
+template<> struct is_type_entier<uint64_t>      : true_type  { };
+template<typename> struct is_type_flottant      : false_type { };
+template<> struct is_type_flottant<float>       : true_type  { };
+template<> struct is_type_flottant<double>      : true_type  { };
+template<> struct is_type_flottant<long double> : true_type  { };
+template<typename T> struct is_pointeur         : false_type { };
+template<typename T> struct is_pointeur<T*>     : true_type  { };
+template<typename T> struct is_mb_pointeur      : false_type { };
+template<typename T, typename U> struct is_mb_pointeur<T U::*> : true_type { };
+template<typename T> struct is_mb_fonction_pointeur : std::false_type {};
+template<typename T, typename U> struct is_mb_fonction_pointeur<T U::*> : std::is_function<T> {}
+
+;} // namespace etlHelper
 
 
 template<typename T> struct is_void : integral_constant<bool, is_same<void, remove_cv_t<T>>::value> { };
@@ -75,8 +78,10 @@ template<typename T> struct is_pointer : etlHelper::is_pointeur<remove_cv_t<T>> 
 template<typename T> inline constexpr bool is_pointer_v = is_pointer<T>::value;
 template<typename T> struct is_member_pointer : etlHelper::is_mb_pointeur<remove_cv_t<T>> {};
 template<typename T> inline constexpr bool is_member_pointer_v = is_member_pointer<T>::value;
-
-
+template<typename T > struct is_member_function_pointer : etlHelper::is_mb_fonction_pointeur<remove_cv_t<T>> {};
+template<typename T> inline constexpr bool is_member_function_pointer_v = is_member_function_pointer<T>::value;
+template<typename T> struct is_member_object_pointer : integral_constant<bool, is_member_pointer_v<T> && !is_member_function_pointer_v<T>> {};
+template<typename T> inline constexpr bool is_member_object_pointer_v = is_member_object_pointer<T>::value;
 template<typename T> struct is_arithmetic : integral_constant<bool, is_integral<T>::value || is_floating_point<T>::value> { };
 template<typename T> inline constexpr bool is_arithmetic_v = is_arithmetic<T>::value;
 
@@ -89,7 +94,6 @@ template<typename T> struct is_array                  : false_type { };
 template<typename T> struct is_array<T[]>             : true_type { };
 template<typename T, size_t N> struct is_array<T[N]>   : true_type { };
 template<typename T> inline constexpr bool is_array_v = is_array<T>::value;
-
 
 template<typename T> struct is_object : integral_constant<bool, is_scalar<T>::value || is_array<T>::value || is_union<T>::value || is_class<T>::value> { };
 template<typename T> inline constexpr bool is_object_v = is_object<T>::value;
@@ -128,6 +132,5 @@ template<typename T> inline constexpr bool is_const_v = is_const<T>::value;
 template<typename T> struct is_volatile             : false_type {};
 template<typename T> struct is_volatile<volatile T> : true_type {};
 template<typename T> inline constexpr bool is_volatile_v = is_const<T>::value;
-
 
 } // namespace ETLSTD
