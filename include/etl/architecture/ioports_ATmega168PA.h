@@ -47,7 +47,7 @@ namespace etl {
 #define IOPORTS_IRQ_HANDLER(vector, type) asm(IOPORTS_TO_STRING(vector)) __attribute__ ((type, __INTR_ATTRS))
 
 using clock_cycles = std::chrono::duration<unsigned long, std::ratio<1, Device::McuFrequency>>;
-constexpr clock_cycles operator ""clks(unsigned long long c)     { return clock_cycles(static_cast<clock_cycles::rep>(c)); }
+constexpr clock_cycles operator ""_clks(unsigned long long c)     { return clock_cycles(static_cast<clock_cycles::rep>(c)); }
 struct PinChangeIRQ0;
 struct PinChangeIRQ1;
 struct PinChangeIRQ2;

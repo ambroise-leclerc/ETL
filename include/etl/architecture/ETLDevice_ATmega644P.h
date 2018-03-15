@@ -39,7 +39,7 @@ namespace etl {
 class Device {
 public:
     static void delayTicks(uint32_t ticks)            { __builtin_avr_delay_cycles(ticks); }
-    static const size_t flashSize = 65536;
+    static const size_t flashSize = 65535;
     static const size_t eepromSize = 2048;
     static const size_t sramSize = 4096;
     static const size_t architectureWidth = 8;

@@ -10,12 +10,12 @@ set(LIBSTD_HEADERS  libstd/include/algorithm libstd/include/array libstd/include
         libstd/include/cfenv libstd/include/cfloat libstd/include/chrono libstd/include/climits libstd/include/clocale
         libstd/include/cstddef libstd/include/cstdint libstd/include/exception libstd/include/functional libstd/include/initializer_list
         libstd/include/iterator libstd/include/limits libstd/include/memory libstd/include/new libstd/include/queue libstd/include/random
-        libstd/include/ratio libstd/include/stdexcept libstd/include/thread libstd/include/tuple
-        libstd/include/type_traits libstd/include/utility)
+        libstd/include/ratio libstd/include/stdexcept libstd/include/string libstd/include/thread libstd/include/tuple
+        libstd/include/type_traits libstd/include/utility libstd/include/vector)
 set(LIBSTD_TESTS test/libstd/bitset.cpp test/libstd/chrono.cpp test/libstd/limits.cpp test/libstd/memory.cpp test/libstd/tuple.cpp test/libstd/type_traits.cpp
-				 test/libstd/queue.cpp)
+				 test/libstd/queue.cpp test/libstd/string.cpp test/libstd/vector.cpp)
                 
-set(ETL_TESTS test/test.cpp test/SetClearTest.cpp test/InterruptsTest.cpp )
+set(ETL_TESTS test/test.cpp test/SetClearTest.cpp test/InterruptsTest.cpp test/CircularBuffer.cpp)
 set(ETL_ARCHITECTURE include/etl/architecture/MockCore.h)
 set(ETL_DRIVERS include/etl/drivers/hd44780.h include/etl/drivers/tm1638.h)
 
@@ -32,10 +32,11 @@ set_property(TARGET TestsETL PROPERTY CXX_STANDARD 17)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 target_link_libraries(TestsETL Threads::Threads)
+
 #target_compile_features(etltest PUBLIC cxx_binary_literals)
-if (NOT(CMAKE_CXX_COMPILER MATCHES "MSVC"))
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-endif()
+#if (NOT(CMAKE_CXX_COMPILER MATCHES "MSVC"))
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}-std=c++17")
+#endif()
 
 
 

@@ -1,9 +1,9 @@
-/// @file ETLDevice_ATmega644A.h
-/// @date 18/06/2016 18:17:16
-/// @author Ambroise Leclerc and Cecile Thiebaut
-/// @brief Atmel AVR 8-bit microcontrollers architecture specifications and low level functions.
+/// @file test/libstd/vector.cpp
+/// @data 28/09/2017 17:49:53
+/// @author Ambroise Leclerc
+/// @brief BDD tests for <vector>
 //
-// Copyright (c) 2017, Ambroise Leclerc and Cecile Thiebaut
+// Copyright (c) 2017, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -19,7 +19,7 @@
 //     contributors may be used to endorse or promote products derived
 //     from this software without specific prior written permission.
 //
-//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' 
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
 //  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 //  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 //  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
@@ -30,32 +30,16 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-#pragma once
+#include <catch.hpp>
+
+#define __Mock_Mock__
+#include "MockDevice.h"
+#include <libstd/include/algorithm>
+#include <libstd/include/vector>
 
 
-extern void __builtin_avr_delay_cycles(unsigned long);
+SCENARIO("vector") {
+    ETLSTD::vector<char> vec1;
+    //REQUIRE(vec1.size() == 0);
+}
 
-namespace etl {
-class Device {
-public:
-    static void delayTicks(uint32_t ticks)            { __builtin_avr_delay_cycles(ticks); }
-    static const size_t flashSize = 65535;
-    static const size_t eepromSize = 2048;
-    static const size_t sramSize = 4096;
-    static const size_t architectureWidth = 8;
-    static const size_t defaultBufferSize = 8;
-    using OffType = uint16_t;
-    static const uint32_t McuFrequency = F_CPU;
-
-    /// Enables interrupts by setting the global interrupt mask.
-    /// This function generates a single 'sei' instruction with
-    /// no overhead.
-    static void enableInterrupts() { asm volatile("sei" ::: "memory"); }
-
-    /// Disables interrupts by clearing the global interrupt mask.
-    /// This function generates a single 'cli' instruction with
-    /// no overhead.
-    static void disableInterrupts() { asm volatile("cli" ::: "memory"); }
-};
-
-} // namespace etl

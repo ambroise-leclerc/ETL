@@ -32,6 +32,9 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 #include <libstd/include/memory>
+#include <libstd/include/iterator>
+
+#include <etl/ETLDevice.h>
 
 namespace ETLSTD {
 template<typename T, typename Allocator = allocator<T>>
@@ -54,11 +57,11 @@ public:
     vector() : vector(Allocator()) {}
     explicit vector(const Allocator& alloc) : vector(etl::Device::defaultBufferSize, alloc) {}
     vector(size_type count, const T& value, const Allocator& alloc = Allocator())
-        : allocator(alloc), size(etl::Device::defaultBufferSize + count), capacity(0), buffer(allocator.allocate(size)) {
-        assign(size, value);
+        : allocator(alloc), bufferSize(etl::Device::defaultBufferSize + count), capacity(0), buffer(allocator.allocate(bufferSize)) {
+        assign(bufferSize, value);
     }
     explicit vector(size_type count, const Allocator& alloc = Allocator())
-        : allocator(alloc), size(count), capacity(0), buffer(allocator.allocate(size)) {}
+        : allocator(alloc), bufferSize(count), capacity(0), buffer(allocator.allocate(bufferSize)) {}
     vector(const vector& other);
     vector(const vector& other, const Allocator& alloc);
     vector(vector&& other);
@@ -81,7 +84,7 @@ public:
 
 	void resize(size_type count) {
 		reserve(count);
-		size = count;
+		bufferSize = count;
 	}
 
 	void resize(size_type count, const value_type& value);
@@ -89,14 +92,17 @@ public:
 	void reserve(size_type new_cap) {
 		auto oldBuffer = move(buffer);
 		buffer = make_unique<T>(new_cap);
-		memcpy(buffer.get(), oldBuffer.get(), size);
+		memcpy(buffer.get(), oldBuffer.get(), bufferSize);
 		capacity = count;
 	}
+
+    // Capacity
+    size_type size() const noexcept { return bufferSize; }
 
 	
 protected:
     Allocator allocator;
-    size_type size;
+    size_type bufferSize;
     size_type capacity;
 	unique_ptr<T> buffer;
 };

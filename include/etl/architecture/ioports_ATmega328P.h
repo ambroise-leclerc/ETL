@@ -47,7 +47,7 @@ namespace etl {
 #define IOPORTS_IRQ_HANDLER(vector, type) asm(IOPORTS_TO_STRING(vector)) __attribute__ ((type, __INTR_ATTRS))
 
 using clock_cycles = std::chrono::duration<unsigned long, std::ratio<1, Device::McuFrequency>>;
-constexpr clock_cycles operator ""clks(unsigned long long c)     { return clock_cycles(static_cast<clock_cycles::rep>(c)); }
+constexpr clock_cycles operator ""_clks(unsigned long long c)     { return clock_cycles(static_cast<clock_cycles::rep>(c)); }
 struct PinChangeIRQ0;
 struct PinChangeIRQ1;
 struct PinChangeIRQ2;
@@ -1445,13 +1445,13 @@ public:
         receiveCallback = static_cast<Uart0Driver::ReceiveCallback>(func);
         start();
     }
-
-static void write(CharType datum) {
-   while(fifo.size() >= (BufferSize-1)){
-     Device::delayTicks(Device::McuFrequency/(BAUD_RATE/8));
-   }
- writeAsync(datum);
-}
+    
+    static void write(CharType datum) {
+        while(fifo.size() >= (BufferSize-1)) {
+            Device::delayTicks(Device::McuFrequency/(BAUD_RATE/8));
+        }
+        writeAsync(datum);
+    }
 };
 
 template<> struct is_uart_rxd_capable<PinD2> : std::true_type {};
@@ -1546,13 +1546,13 @@ public:
         receiveCallback = static_cast<Uart1Driver::ReceiveCallback>(func);
         start();
     }
-
-static void write(CharType datum) {
-   while(fifo.size() >= (BufferSize-1)){
-     Device::delayTicks(Device::McuFrequency/(BAUD_RATE/8));
-   }
- writeAsync(datum);
-}
+    
+    static void write(CharType datum) {
+        while(fifo.size() >= (BufferSize-1)) {
+            Device::delayTicks(Device::McuFrequency/(BAUD_RATE/8));
+        }
+        writeAsync(datum);
+    }
 };
 #ifdef PCICR
 struct PinChangeControlRegister {
