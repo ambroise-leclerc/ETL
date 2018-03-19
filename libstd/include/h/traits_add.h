@@ -76,6 +76,9 @@ template<typename T> using add_pointer_t = typename add_pointer<T>::type;
 template<typename T> struct add_const     { using type = const T; };
 template<typename T> struct add_volatile  { using type = volatile T; };
 template<typename T> struct add_cv        { using type = typename add_volatile<typename add_const<T>::type>::type; };
+template<typename T> using add_cv_t = typename add_cv<T>::type;
+template<typename T> using add_const_t = typename add_const<T>::type;
+template<typename T> using add_volatile_t = typename add_volatile<T>::type;
 
 } // namespace ETLSTD
 

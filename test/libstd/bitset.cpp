@@ -160,4 +160,7 @@ SCENARIO("bitset") {
         REQUIRE(bits.any());
     }
 
+    WHEN("constructing from a string") {
+
+    }
 }

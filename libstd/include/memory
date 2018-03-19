@@ -32,7 +32,10 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
+#include <libstd/include/cstddef>
+#include <libstd/include/type_traits>
 #include <libstd/include/utility>
+
 #include "h/unique_ptr.h"
 
 namespace ETLSTD {
@@ -53,53 +56,88 @@ template<typename T> struct addressof_impl {
     }
     static T * f(T * v, int) { return v; }
 };
-
 } //namespace etlHelper
 
 template<typename T>
 class allocator {
 public:
     using value_type = T;
-    using pointer = T*;
-    using const_pointer = const T*;
-    using reference = T&;
-    using const_reference = const T&;
-    using size_type = size_t;
-    using difference_type = ptrdiff_t;
     using propagate_on_container_move_assignment = true_type;
+    using is_always_equal = true_type;
 
-    template<typename T2> struct rebind { typedef allocator<T2> other; };
+public:
+    template<typename U> struct rebind { using other = allocator<U>; };
 
     allocator() noexcept {}
     allocator(const allocator&) noexcept {};
     template<typename T2> allocator(const allocator<T2>&) noexcept {};
+    ~allocator() {};
 
-    /// Constructs an object of type T in allocated uninitialized storage using placement new.
-    template<typename T2, typename... Args>
-    void construct(T2* p, Args&&... value) {
-        ::new(reinterpret_cast<void*>(p)) T2(std::forward<Args>(value)...);
-    }
-
-    // destroy helper to invoke destructor explicitly.
-    void destroy(const_reference t) {
-        t.~T(); // T must support non-throwing destructor
-    }
+    T* allocate(size_t n) { return reinterpret_cast<T*>(::operator new(n * sizeof(T))); }
+    void deallocate(T* p, size_t) { ::operator delete(p); }
+    bool operator==(allocator const&) { return true; }
+    bool operator!=(allocator const& a) { return !operator==(a); }
 };
+
+namespace etlHelper {
+template<typename T> using hasDiffT = decltype(T::difference_type);
+template<typename T> using hasRebind = typename T::template rebind<T>;
+template<typename T> using hasPointer = decltype(T::pointer);
+template<typename T> using hasConstPointer = decltype(T::const_pointer);
+template<typename T> using hasDifferenceType = decltype(T::difference_type);
+template<typename T> using hasSizeType = decltype(T::size_type);
+template<typename T> using hasVoidPointer = decltype(T::void_pointer);
+template<typename T> using hasConstVoidPointer = decltype(T::const_void_pointer);
+template<typename T> using hasPropagateCopy = decltype(T::propagate_on_container_copy_assignment);
+template<typename T> using hasPropagateMove = decltype(T::propagate_on_container_move_assignment);
+template<typename T> using hasPropagateSwap = decltype(T::propagate_on_container_swap);
+template<typename T> using hasIsAlwaysEqual = decltype(T::is_always_equal);
+template<typename T> using hasConstruct = decltype(T::construct);
+} // namespace etlHelper
+
+template<typename Ptr>
+struct pointer_traits {
+    using pointer = Ptr;
+    using element_type = typename Ptr::element_type;
+    using difference_type = detected_or_t<ptrdiff_t, etlHelper::hasDiffT, Ptr>;
+    template<typename U> using rebind = detected_or_t<U*, etlHelper::hasRebind, U>;
+};
+
+template<typename T>
+struct pointer_traits<T*> {
+    using pointer = T*;
+    using element_type = T;
+    using difference_type = ptrdiff_t;
+    template <typename U> using rebind = U*;
+};
+
 
 template<typename Alloc>
 struct allocator_traits {
-    using allocator_type = Alloc;
     using value_type = typename Alloc::value_type;
-    using pointer = typename Alloc::pointer;
-    using const_pointer = typename Alloc::const_pointer;
-    using void_pointer = typename Alloc::void_pointer;
-    using const_void_pointer = typename Alloc::const_void_pointer;
-    using difference_type = typename Alloc::difference_type;
-    using size_type = typename Alloc::size_type;
-    using propagate_on_container_copy_assignment = typename Alloc::propagate_on_container_copy_assignment;
-    using propagate_on_container_move_assignment = typename Alloc::propagate_on_container_move_assignment;
-    using propagate_on_container_swap = typename Alloc::propagate_on_container_swap;
-    using is_always_equal = typename Alloc::is_always_equal;
+    using allocator_type = Alloc;
+    //using pointer = detected_or_t<value_type*, etlHelper::hasPointer, allocator_type>;
+    using pointer = value_type*;
+    using const_pointer = detected_or_t<typename pointer_traits<pointer>::template rebind<const value_type>, etlHelper::hasConstPointer, allocator_type>;
+    using void_pointer = detected_or_t<typename pointer_traits<pointer>::template rebind<void>, etlHelper::hasVoidPointer, allocator_type>;
+    using const_void_pointer = detected_or_t<typename pointer_traits<pointer>::template rebind<const void>, etlHelper::hasConstVoidPointer, allocator_type>;
+    using difference_type = detected_or_t<typename pointer_traits<pointer>::difference_type, etlHelper::hasDifferenceType, allocator_type>;
+    using size_type = detected_or_t < make_unsigned_t<difference_type>, etlHelper::hasSizeType, allocator_type>;
+    using propagate_on_container_copy_assignment = detected_or_t<false_type, etlHelper::hasPropagateCopy, allocator_type>;
+    using propagate_on_container_move_assignment = detected_or_t<false_type, etlHelper::hasPropagateMove, allocator_type>;
+    using propagate_on_container_swap = detected_or_t<false_type, etlHelper::hasPropagateSwap, allocator_type>;
+    using is_always_equal = detected_or_t<typename is_empty<allocator_type>::type, etlHelper::hasIsAlwaysEqual, allocator_type>;
+
+
+    template<typename T, typename... Args, typename DummyInt = uint8_t, enable_if_t<!is_detected_v<etlHelper::hasConstruct, allocator_type>, DummyInt> = 0>
+    static void construct(Alloc& a, T* p, Args&&... args) {
+        ::new (static_cast<void*>(p)) T(std::forward<Args>(args)...);
+    }
+
+    template<typename T, typename... Args, typename DummyInt = uint8_t, enable_if_t<is_detected_v<etlHelper::hasConstruct, allocator_type>, DummyInt> = 0>
+    static void construct(Alloc& a, T* p, Args&&... args) {
+        allocator_type::construct(p, forward<Args>(args)...);
+    }
 };
 
 template<typename T> constexpr T* addressof(T& arg) {
@@ -107,28 +145,27 @@ template<typename T> constexpr T* addressof(T& arg) {
 }
 
 namespace etlHelper {
-    class refCounter {
-        long count;
-    public:
-        refCounter() : count(1) { }
-        virtual ~refCounter() = default;
+class refCounter {
+    long count;
+public:
+    refCounter() : count(1) { }
+    virtual ~refCounter() = default;
 
-        void inc() { ++count; }
-        void dec() { --count; }
-        long use_count() const { return count; }
-    };
+    void inc() { ++count; }
+    void dec() { --count; }
+    long use_count() const { return count; }
+};
 
-    template<typename T> struct refCountAndPointer : refCounter {
-        T* pointee;
-        explicit refCountAndPointer(T* p) : pointee(p) { }
-        ~refCountAndPointer() override { delete pointee; }
-    };
+template<typename T> struct refCountAndPointer : refCounter {
+    T* pointee;
+    explicit refCountAndPointer(T* p) : pointee(p) { }
+    ~refCountAndPointer() override { delete pointee; }
+};
 
-    template<typename T> struct refCountAndObject : refCounter {
-        T object;
-        template<typename ... Args> refCountAndObject(Args && ...args) : object(args...) { }
-    };
-
+template<typename T> struct refCountAndObject : refCounter {
+    T object;
+    template<typename ... Args> refCountAndObject(Args && ...args) : object(args...) { }
+};
 } //namespace etlHelper
 
 template<typename T>

@@ -3,7 +3,7 @@
 /// @author Ambroise Leclerc and Cecile Thiebaut
 /// @brief Atmel AVR 8-bit microcontrollers architecture specifications and low level functions.
 //
-// Copyright (c) 2017, Ambroise Leclerc and Cecile Thiebaut
+// Copyright (c) 2018, Ambroise Leclerc and Cecile Thiebaut
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@ namespace etl {
 class Device {
 public:
     static void delayTicks(uint32_t ticks)            { __builtin_avr_delay_cycles(ticks); }
-    static const size_t flashSize = 65536;
+    static const size_t flashSize = 65535;
     static const size_t eepromSize = 2048;
     static const size_t sramSize = 4096;
     static const size_t architectureWidth = 8;

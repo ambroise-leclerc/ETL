@@ -35,7 +35,6 @@
 #include <libstd/include/array>
 #include <libstd/include/string>
 
-#include <iostream>
 namespace ETLSTD {
 
 template<size_t N>

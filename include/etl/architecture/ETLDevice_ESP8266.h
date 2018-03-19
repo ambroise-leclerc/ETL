@@ -1,9 +1,9 @@
 /// @file ETLDevice_ESP8266.h
-/// @date 30/08/17 17:34
+/// @date 19/03/18 08:01
 /// @author Ambroise Leclerc and Cecile Thiebaut
 /// @brief Atmel Espressif ESP microcontrollers architecture specifications and low level functions.
 //
-// Copyright (c) 2017, Ambroise Leclerc and Cecile Thiebaut
+// Copyright (c) 2018, Ambroise Leclerc and Cecile Thiebaut
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without

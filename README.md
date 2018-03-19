@@ -3,7 +3,7 @@ ETL
 
 [![Build Status](https://travis-ci.org/ambroise-leclerc/ETL.svg?branch=master)](https://travis-ci.org/ambroise-leclerc/ETL)
 
-*C++14 Embedded Template Library for Atmel AVR 8-bit and Espressif ESP 32-bit microcontrollers.*
+*C++17 Embedded Template Library for Atmel AVR 8-bit and Espressif ESP 32-bit microcontrollers.*
 
 **ETL** is a header only template library geared towards the size and performance constraints of embedded applications.
 Its main objective is to take advantage of the efficiency of generic programming to produce the fastest possible binaries from an elegant and expressive code.
@@ -89,7 +89,8 @@ which now produces this code when all the pins belong to the same PORT, providin
 ```
 
 
-###Using ETL in an Atmel Studio 7 project
+Using ETL in an Atmel Studio 7 project
+======================================
 
 1. Create a new C++ project :
   - 'File' -> 'New Project' -> 'GCC C++ Executable Project'

@@ -44,11 +44,12 @@ namespace ETLSTD {
 
 template<bool B, typename T = void> struct enable_if            {};
 template<typename T>                struct enable_if<true, T>   { using type = T; };
-
 template<bool B, typename T = void> using enable_if_t = typename enable_if<B, T>::type;
+
 
 //#ifdef __GNU_G__
 template<typename T> struct is_empty : public integral_constant<bool, __is_empty(T)> {};
+template<typename T> constexpr bool is_empty_v = is_empty<T>::value;
 //#else
 
 namespace etlHelper {
@@ -82,6 +83,7 @@ namespace etlHelper {
 
 template<typename From, typename To> struct is_convertible : public etlHelper::is_convertible<From, To>::type { };
 //#endif
+
 //template<typename Base, Derived> struct is_base_of : public integral_constant<bool, is_class<Base>::value && sizeof(etlHelper::is_base_of(Base, Derived)> {};
 
 
@@ -103,21 +105,156 @@ struct common_type<T1, T2, T3...> {
 };
 
 namespace etlHelper {
-    template<typename T, bool = is_arithmetic<T>::value> struct type_is_signed : integral_constant<bool, T(-1) < T(0)> {};
-    template<typename T> struct type_is_signed<T, false> : false_type {};
-    //false_type negate(true_type) { return{}; }
-    //true_type negate(false_type) { return{}; }
-    //template<typename T, T value> constexpr integral_constant<T, !value> operator ! (integral_constant<T, value>) { return {}; }
+    template<typename T, bool = is_arithmetic<T>::value> struct TypeIsSigned : integral_constant<bool, T(-1) < T(0)> {};
+    template<typename T> struct TypeIsSigned<T, false> : false_type {};
+
+    template<typename T, bool = is_arithmetic<T>::value> struct TypeIsUnsigned : integral_constant<bool, T(0) < T(-1)> {};
+    template<typename T> struct TypeIsUnsigned<T, false> : false_type {};
+
 } // namespace etlHelper
 
-template<typename T> struct is_signed : etlHelper::type_is_signed<T>::type {};
-//template<typename T> struct is_unsigned : etlHelper::negate(etlHelper::type_is_signed<T>)::type {};
+template<typename T> struct is_signed : etlHelper::TypeIsSigned<T>::type {};
+template<typename T> struct is_unsigned : etlHelper::TypeIsUnsigned<T>::type {};
 
-#if (__GNUC__ > 4)
 template<typename T> constexpr bool is_signed_v = is_signed<T>::value;
-#endif
+template<typename T> constexpr bool is_unsigned_v = is_unsigned<T>::value;
+
+template<typename... > using void_t = void;
+
+namespace etlHelper {
+template<typename Default, typename AlwaysVoid, template<typename...> typename Op, typename... Args>
+struct detector {
+    using value_t = false_type;
+    using type = Default;
+};
+
+template<typename Default, template<typename...> typename Op, typename... Args>
+struct detector<Default, void_t<Op<Args...>>, Op, Args...> {
+    using value_t = true_type;
+    using type = Op<Args...>;
+};
+
+} // namespace etlHelper
+
+namespace experimental {
+struct nonesuch {
+    nonesuch() = delete;
+    ~nonesuch() = delete;
+    nonesuch(nonesuch const&) = delete;
+    void operator=(nonesuch const&) = delete;
+};
+} // namespace nonesuch
+
+template<template<typename...> typename Op, typename... Args>
+using is_detected = typename etlHelper::detector<experimental::nonesuch, void, Op, Args...>::value_t;
+
+template<template<typename...> typename Op, typename... Args>
+using detected_t = typename etlHelper::detector<experimental::nonesuch, void, Op, Args...>::type;
+
+template<typename Default, template<typename...> typename Op, typename... Args>
+using detected_or = etlHelper::detector<Default, void, Op, Args...>;
+/*
+namespace detail {
+    template <template <class...> class Trait, class Enabler, class... Args>
+    struct is_detected : std::false_type {};
+
+    template <template <class...> class Trait, class... Args>
+    struct is_detected<Trait, void_t<Trait<Args...>>, Args...> : std::true_type {};
+}
+
+template<template <typename...> typename Trait, typename... Args>
+using is_detected = typename detail::is_detected<Trait, void, Args...>::type;
+
+template<template <typename...> typename Trait, typename... Args>
+using is_detected = typename detail::is_detected<Trait, void, Args...>::type;
+
+template<template <typename...> typename Trait, typename... Args>
+using is_detected = typename detail::is_detected<Trait, void, Args...>::type;
+*/
+template<template<typename...> typename Op, typename... Args >
+constexpr bool is_detected_v = is_detected<Op, Args...>::value;
+
+template<typename Default, template<typename...> typename Op, typename... Args>
+using detected_or_t = typename detected_or<Default, Op, Args...>::type;
+
+template<typename Expected, template<typename...> typename Op, typename... Args>
+using is_detected_exact = is_same<Expected, detected_t<Op, Args...>>;
+
+template<typename Expected, template<typename...> typename Op, typename... Args>
+constexpr bool is_detected_exact_v = is_detected_exact<Expected, Op, Args...>::value;
+
+template<typename To, template<typename...> typename Op, typename... Args>
+using is_detected_convertible = is_convertible<detected_t<Op, Args...>, To>;
+
+template<typename To, template<typename...> typename Op, typename... Args>
+constexpr bool is_detected_convertible_v = is_detected_convertible<To, Op, Args...>::value;
+
+namespace etlHelper {
+/// Apply constness and volatileness of type T to type U
+template<typename T, typename U, bool = is_const<remove_reference_t<T>>::value,
+                                 bool = is_volatile<remove_reference_t<T>>::value >
+struct forward_cv { using type = U; };
+template<typename T, typename U> struct forward_cv<T, U, true, false> { using type = const U; };
+template<typename T, typename U> struct forward_cv<T, U, false, true> { using type = volatile U; };
+template<typename T, typename U> struct forward_cv<T, U, true, true> { using type = const volatile U; };
+template<typename T, typename U> struct forward_cv<T&, U, false, false> { using type = U&; };
+template<typename T, typename U> struct forward_cv<T&, U, true, false> { using type = const U&; };
+template<typename T, typename U> struct forward_cv<T&, U, false, true> { using type = volatile U&; };
+template<typename T, typename U> struct forward_cv<T&, U, true, true> { using type = const volatile U&; };
+
+template<typename T, bool = is_integral<T>::value || is_enum<T>::value> struct makeSigned {};
+template<> struct makeSigned<bool, true> {};
+template<> struct makeSigned<char, true>                { using type = signed char; };
+template<> struct makeSigned<signed char, true>         { using type = signed char; };
+template<> struct makeSigned<unsigned char, true>       { using type = signed char; };
+template<> struct makeSigned<signed short, true>        { using type = short; };
+template<> struct makeSigned<unsigned short, true>      { using type = short; };
+template<> struct makeSigned<signed int, true>          { using type = int; };
+template<> struct makeSigned<unsigned int, true>        { using type = int; };
+template<> struct makeSigned<signed long, true>         { using type = long; };
+template<> struct makeSigned<unsigned long, true>       { using type = long; };
+template<> struct makeSigned<signed long long, true>    { using type = long long; };
+template<> struct makeSigned<unsigned long long, true>  { using type = long long; };
 
 
+template<typename T, bool = is_integral<T>::value || is_enum<T>::value> struct makeUnsigned {};
+template<> struct makeUnsigned<bool, true> {};
+template<> struct makeUnsigned<char, true> { using type = unsigned char; };
+template<> struct makeUnsigned<signed char, true> { using type = unsigned char; };
+template<> struct makeUnsigned<unsigned char, true> { using type = unsigned char; };
+template<> struct makeUnsigned<signed short, true> { using type = unsigned short; };
+template<> struct makeUnsigned<unsigned short, true> { using type = unsigned short; };
+template<> struct makeUnsigned<signed int, true> { using type = unsigned int; };
+template<> struct makeUnsigned<unsigned int, true> { using type = unsigned int; };
+template<> struct makeUnsigned<signed long, true> { using type = unsigned long; };
+template<> struct makeUnsigned<unsigned long, true> { using type = unsigned long; };
+template<> struct makeUnsigned<signed long long, true> { using type = unsigned long long; };
+template<> struct makeUnsigned<unsigned long long, true> { using type = unsigned long long; };
+
+} // namespace etlHelper
+
+
+template<typename T>
+struct make_signed {
+/*    static_assert(  ((is_integral_v<T> || is_enum_v<T>) && !is_same_v<T, bool>),
+                    "make_signed<T> requires that T shall be an integral type or enumeration but not a bool type.");
+*/  
+    
+    using Signed = typename etlHelper::makeSigned<remove_cv_t<T>>::type;
+
+    using type = typename etlHelper::forward_cv<T, Signed>::type;
+};
+
+template<typename T>
+struct make_unsigned {
+    static_assert(  ((is_integral<T>::value || is_enum<T>::value) && !is_same<T, bool>::value),
+                    "make_unsigned<T> requires that T shall be an integral type or enumeration but not a bool type.");
+    using type = typename etlHelper::forward_cv<T, typename etlHelper::makeUnsigned<remove_cv_t<T>>::type>::type;
+};
+
+
+template<typename T> using make_signed_t = typename make_signed<T>::type;
+template<typename T> using make_unsigned_t = typename make_unsigned<T>::type;
 
 } // namespace ETLSTD
 

@@ -3,7 +3,7 @@
 /// @author Ambroise Leclerc and Cecile Thiebaut
 /// @brief Microcontrollers architecture definitions
 //
-// Copyright (c) 2017, Ambroise Leclerc and Cecile Thiebaut
+// Copyright (c) 2018, Ambroise Leclerc and Cecile Thiebaut
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -37,36 +37,36 @@
 
 #if defined (__AVR_Dummy__)
 #elif defined (__ESP_ESP8266__)
-#include "architecture/etldevice_ESP8266.h"
+#include "architecture/ETLDevice_ESP8266.h"
 #elif defined (__ESP_ESP07__)
-#include "architecture/etldevice_ESP07.h"
+#include "architecture/ETLDevice_ESP07.h"
 #elif defined (__Mock_Mock__)
-#include "architecture/etldevice_Mock.h"
+#include "architecture/ETLDevice_Mock.h"
 #elif defined (__AVR_ATmega32U4__)
-#include "architecture/etldevice_ATmega32U4.h"
+#include "architecture/ETLDevice_ATmega32U4.h"
 #elif defined (__AVR_ATmega48A__)
-#include "architecture/etldevice_ATmega48A.h"
+#include "architecture/ETLDevice_ATmega48A.h"
 #elif defined (__AVR_ATmega48PA__)
-#include "architecture/etldevice_ATmega48PA.h"
+#include "architecture/ETLDevice_ATmega48PA.h"
 #elif defined (__AVR_ATmega88A__)
-#include "architecture/etldevice_ATmega88A.h"
+#include "architecture/ETLDevice_ATmega88A.h"
 #elif defined (__AVR_ATmega88PA__)
-#include "architecture/etldevice_ATmega88PA.h"
+#include "architecture/ETLDevice_ATmega88PA.h"
 #elif defined (__AVR_ATmega168A__)
-#include "architecture/etldevice_ATmega168A.h"
+#include "architecture/ETLDevice_ATmega168A.h"
 #elif defined (__AVR_ATmega168PA__)
-#include "architecture/etldevice_ATmega168PA.h"
+#include "architecture/ETLDevice_ATmega168PA.h"
 #elif defined (__AVR_ATmega168P__)
-#include "architecture/etldevice_ATmega168P.h"
+#include "architecture/ETLDevice_ATmega168P.h"
 #elif defined (__AVR_ATmega328__)
-#include "architecture/etldevice_ATmega328.h"
+#include "architecture/ETLDevice_ATmega328.h"
 #elif defined (__AVR_ATmega328P__)
-#include "architecture/etldevice_ATmega328P.h"
+#include "architecture/ETLDevice_ATmega328P.h"
 #elif defined (__AVR_ATmega644P__)
-#include "architecture/etldevice_ATmega644P.h"
+#include "architecture/ETLDevice_ATmega644P.h"
 #elif defined (__AVR_ATmega644A__)
-#include "architecture/etldevice_ATmega644A.h"
+#include "architecture/ETLDevice_ATmega644A.h"
 #elif defined (__AVR_ATtiny84__)
-#include "architecture/etldevice_ATtiny84.h"
+#include "architecture/ETLDevice_ATtiny84.h"
 #endif
 

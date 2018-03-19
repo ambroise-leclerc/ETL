@@ -143,19 +143,12 @@ template<> struct modulus<void> {
   }    
 };
 
-/// Negation.
-/// @param[in] x argument to negate
-/// @return the negation of the argument.
 template<typename T = void> struct negate {
   constexpr T operator()(const T& x) const {
     return -x;
   };    
-  using first_argument_type = T;
-  using second_argument_type = T;
-  using result_type = T;
 };  
 
-/// std::negate<void> specialization with member type is_transparent
 template<> struct negate<void> {
   template<typename T>
   auto operator()(T&& x) const -> decltype(-std::forward<T>(x)) {
@@ -164,9 +157,6 @@ template<> struct negate<void> {
   }    
 };
 
-/// Checks whether x is less than y.
-/// @param[in] x,y values to compare
-/// @return true if x < y, false otherwise.
 template<typename T = void> struct less {
   constexpr bool operator()(const T& x, const T& y) const {
     return x < y;
