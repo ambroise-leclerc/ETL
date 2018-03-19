@@ -30,7 +30,6 @@ before_install:
 script:
   - mkdir build
   - cd build
-  - $COMPILER --version
   - cmake .. && make
   - ls -l
   - ./TestsETL
