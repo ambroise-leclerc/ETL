@@ -172,4 +172,7 @@ template<typename T> typename add_rvalue_reference<T>::type declval() noexcept {
     return etlHelper::declval<T>::ret();
 }
 
+template<typename T> constexpr add_const_t<T>& as_const(T& t) noexcept { return t; }
+template<typename T> void as_const(const T&&) = delete;
+
 } // namespace ETLSTD

@@ -44,13 +44,12 @@ SCENARIO("std::signed") {
     auto s3 = is_signed<int32_t>::value;    REQUIRE(s3 == true);
     auto s4 = is_signed<uint64_t>::value;   REQUIRE(s4 == false);
     REQUIRE(is_signed<uint8_t>::value == false);
+	REQUIRE(is_unsigned<uint8_t>::value == true);
 
-#if (__GNUC__ > 4) 
     REQUIRE(is_signed_v<int16_t> == true);
     REQUIRE(is_signed_v<uint32_t> == false);
-#endif
-
-//    REQUIRE(is_unsigned)
+	REQUIRE(is_unsigned_v<uint8_t> == true);
+	REQUIRE(is_unsigned_v<int64_t> == false);
 }
 
 SCENARIO("std::common_type, std::same_type") {
@@ -63,3 +62,83 @@ SCENARIO("std::common_type, std::same_type") {
     auto test = is_same<Base, common_type<Incarnation1, Incarnation2>::type >::value == true;
 #endif
 }
+
+
+SCENARIO("std::make_signed, std::make_unsigned") {
+    auto comp = is_same_v<make_signed_t<uint16_t>, int16_t>;
+    REQUIRE(comp == true);
+
+    auto comp2 = is_const_v<make_signed_t<const int32_t>>;
+    REQUIRE(comp2 == true);
+
+    REQUIRE(is_volatile_v<make_unsigned_t<volatile const int16_t>> == true);
+}
+
+
+
+
+SCENARIO("Primary types _v") {
+    REQUIRE(is_void_v<void>);
+    REQUIRE(!is_void_v<double>);
+
+    union UnionType {
+        int a;
+        char b;
+    };
+    UnionType value;
+    REQUIRE(is_union_v<decltype(value)>);
+    REQUIRE(!is_union_v<float>);
+
+    enum EnumType { One, Two, Three };
+    REQUIRE(is_enum_v<EnumType>);
+    REQUIRE(!is_enum_v<void>);
+
+    class ClassType {
+        ClassType() = default;
+        int a;
+    };
+    REQUIRE(is_class_v<ClassType>);
+    REQUIRE(!is_class_v<UnionType>);
+    REQUIRE(!is_class_v<EnumType>);
+
+    REQUIRE(is_integral_v<uint64_t>);
+    REQUIRE(is_integral_v<char>);
+    REQUIRE(!is_integral_v<ClassType>);
+    REQUIRE(!is_integral_v<UnionType>);
+
+    REQUIRE(is_floating_point_v<float>);
+    REQUIRE(is_floating_point_v<double>);
+    REQUIRE(!is_floating_point_v<char>);
+    REQUIRE(!is_floating_point_v<ClassType>);
+
+    REQUIRE(is_pointer_v<float*>);
+    REQUIRE(is_pointer_v<EnumType*>);
+    REQUIRE(!is_pointer_v<float>);
+
+
+
+   // REQUIRE(is_member_pointer_v<ClassType::*>);
+
+
+    struct A {
+        void function() {};
+        uint8_t member;
+    };
+    void(A::*functionPointer)() = &A::function;
+    uint8_t A::* memberPointer = &A::member;
+
+    REQUIRE(!is_member_pointer_v<A*>);
+    REQUIRE(is_member_pointer_v<uint8_t A::*>);
+    REQUIRE(is_member_pointer_v<void(A::*)()>);
+    REQUIRE(is_member_pointer_v<decltype(memberPointer)>);
+
+    REQUIRE(is_member_function_pointer_v<void(A::*)()>);
+    REQUIRE(!is_member_function_pointer_v<A*>);
+    REQUIRE(is_member_function_pointer_v<decltype(functionPointer)>);
+
+    REQUIRE(!is_member_object_pointer_v<A*>);
+    REQUIRE(is_member_object_pointer_v<int A::*>);
+    REQUIRE(is_member_object_pointer<decltype(memberPointer)>::value);
+
+}
+

@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 project(ETL)
-
 include_directories(include 3rdParty test .)
 
 set(ETL_HEADERS include/etl/debug_policies.h include/etl/freestore.h include/etl/interrupts.h include/etl/ioports.h
@@ -14,7 +13,7 @@ set(LIBSTD_HEADERS  libstd/include/algorithm libstd/include/array libstd/include
         libstd/include/ratio libstd/include/stdexcept libstd/include/string libstd/include/thread libstd/include/tuple
         libstd/include/type_traits libstd/include/utility libstd/include/vector)
 set(LIBSTD_TESTS test/libstd/bitset.cpp test/libstd/chrono.cpp test/libstd/limits.cpp test/libstd/memory.cpp test/libstd/tuple.cpp test/libstd/type_traits.cpp
-				 test/libstd/queue.cpp test/libstd/string.cpp)
+				 test/libstd/queue.cpp test/libstd/string.cpp test/libstd/vector.cpp)
                 
 set(ETL_TESTS test/test.cpp test/SetClearTest.cpp test/InterruptsTest.cpp test/CircularBuffer.cpp)
 set(ETL_ARCHITECTURE include/etl/architecture/MockCore.h)
@@ -28,11 +27,16 @@ add_executable( TestsETL ${ETL_TESTS}
                 ${HEADERS} )
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT TestsETL)
+set_property(TARGET TestsETL PROPERTY CXX_STANDARD 17)
+
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+target_link_libraries(TestsETL Threads::Threads)
 
 #target_compile_features(etltest PUBLIC cxx_binary_literals)
-if (NOT(CMAKE_CXX_COMPILER MATCHES "MSVC"))
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -std=c++14")
-endif()
+#if (NOT(CMAKE_CXX_COMPILER MATCHES "MSVC"))
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}-std=c++17")
+#endif()
 
 
 

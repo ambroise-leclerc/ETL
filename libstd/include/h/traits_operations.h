@@ -34,7 +34,7 @@
 #pragma once
 
 namespace ETLSTD {
-/// Base class for type traits. Wraps a static constant of specified type.
+
 template<typename T, T v>
 struct integral_constant {
     static constexpr T value = v;
@@ -44,45 +44,40 @@ struct integral_constant {
     constexpr value_type operator()() const { return value; }
 };
 
-using true_type =   integral_constant<bool, true>;	///> Specialization for type bool
-using false_type =  integral_constant<bool, false>;  ///> Specialization for type bool
+template<bool B>
+using bool_constant = integral_constant<bool, B>;
+using true_type =   bool_constant<true>;
+using false_type =  bool_constant<false>;
 
-/// Determines whether the two given types are equivalent.
 template<typename T, typename U> struct is_same       : false_type {};
-template<typename T>             struct is_same<T, T> : true_type {};  
+template<typename T>             struct is_same<T, T> : true_type {};
+template<typename T, typename U> constexpr bool is_same_v = is_same<T, U>::value;
  
-/// Provides member typedef type, which is defined as T if B is true at
-/// compile time, or as F if B is false.
-template<bool, typename T, typename F>  struct conditional { using type = T; };
-template<typename T, typename F>        struct conditional<false, T, F> { using type = F; };
+template<bool, typename T, typename F>    struct conditional { using type = T; };
+template<typename T, typename F>          struct conditional<false, T, F> { using type = F; };
+template<bool B, typename T, typename F > using conditional_t = typename conditional<B, T, F>::type;
 
-/// Obtains the type T without const qualification.
 template<typename T> struct remove_const          { using type = T; };
 template<typename T> struct remove_const<const T> { using type = T; };
 template<typename T> using remove_const_t = typename remove_const<T>::type;
 
-/// Obtains the type T without volatile qualification. 
 template<typename T> struct remove_volatile             { using type = T; };
 template<typename T> struct remove_volatile<volatile T> { using type = T; };
 template<typename T> using remove_volatile_t = typename remove_volatile<T>::type;
 
-/// Obtains the type T without const or volatile qualification.
 template<typename T> struct remove_cv {
-    using type = typename std::remove_volatile<typename std::remove_const<T>::type>::type;
+    using type = typename remove_volatile<typename remove_const<T>::type>::type;
 };
 template<typename T> using remove_cv_t = typename remove_cv<T>::type;
 
-/// Obtains the type T whithout reference.
 template<typename T> struct remove_reference      { using type = T; };
 template<typename T> struct remove_reference<T&>  { using type = T; };
 template<typename T> struct remove_reference<T&&> { using type = T; };
 template<typename T> using remove_reference_t = typename remove_reference<T>::type;
   
-/// Obtains the type T without the eventual first array dimension.
 template<typename T> struct remove_extent { using type = T; };
 template<typename T> struct remove_extent<T[]> { using type = T; };
 template<typename T, size_t N> struct remove_extent<T[N]> { using type = T; };
 template<typename T> using remove_extent_t = typename remove_extent<T>::type;
-
 
 } // namespace ETLSTD
