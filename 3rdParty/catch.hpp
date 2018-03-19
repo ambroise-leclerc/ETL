@@ -19,6 +19,7 @@
 
 #ifdef __clang__
 #    pragma clang system_header
+#    define CATCH_CONFIG_NO_CPP17_UNCAUGHT_EXCEPTIONS
 #elif defined __GNUC__
 #    pragma GCC system_header
 #endif
