@@ -33,10 +33,6 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 target_link_libraries(TestsETL Threads::Threads)
 
-#target_compile_features(etltest PUBLIC cxx_binary_literals)
-#if (NOT(CMAKE_CXX_COMPILER MATCHES "MSVC"))
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}-std=c++17")
-#endif()
-
-
-
+if (NOT(CMAKE_CXX_COMPILER MATCHES "MSVC"))
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-literal-suffix")
+endif()
