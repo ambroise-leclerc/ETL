@@ -88,6 +88,33 @@ which now produces this code when all the pins belong to the same PORT, providin
 85 b9    out 0x05, r24       ; 1 cycle
 ```
 
+C++21 Support
+=============
+- `std::string_view::starts_width/end_width`
+
+C++17 Support
+=============
+- `std::string_view`    _string-like objects with resources in Flash memory and no freestore allocations_
+- `std::...\_v traits`  _std::is_const_v, std::is_same_v, std::is_object_v, std::is_pod_v, ..._
+
+C++14 Support
+=============
+- `std::integer_sequence`
+
+C++11 Support
+=============
+- `std::move`, `std::forward` _needed for xvalue support, move semantics and perfect forwading_
+- `std::unique_ptr`, `std::make_unique`
+- `<array>`
+- `<bitset>`
+- `<cstddef>`
+- `<exception>`
+- `<functional>`
+- `<iterator>`
+- `<initializer_list>`
+- `<type_traits>`
+- `<utility>`
+
 
 Using ETL in an Atmel Studio 7 project
 ======================================
