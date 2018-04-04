@@ -41,7 +41,7 @@ using namespace ETLSTD;
   /*
 SCENARIO("char_traits") {
 
-    REQUIRE(char_traits<char>::length("Test string") == 11);
+    REQUIRE(char_traits<char>::stringLength("Test string") == 11);
 }
 */
 

@@ -100,8 +100,7 @@ private:
 private:
     void CheckRange(size_type i) {
         if (i >= size()) {
-            out_of_range exception("");
-            throw(exception);
+            throw out_of_range();
        }      
     }    
 };

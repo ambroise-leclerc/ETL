@@ -33,73 +33,73 @@
 #pragma once
 
 #include <libstd/include/exception>
+#include <libstd/include/string>
 
 namespace ETLSTD {
 
 class logic_error : public exception {
- public:
-  logic_error() throw();
-  explicit logic_error(const char* /*what_arg*/) {}
-  virtual ~logic_error() throw() {}
-  virtual const char* what() const throw() { return nullptr; }
-};	
+public:
+    logic_error() = default;
+    explicit logic_error(const char*) : exception() {}
+    explicit logic_error(const string&) : exception() {}
+};
 
 class domain_error : public logic_error {
- public:
-  domain_error() : logic_error() {}
-  explicit domain_error(const char* what_arg) : logic_error(what_arg) {}
-  virtual ~domain_error() throw() {}
+public:
+    domain_error() = default;
+    explicit domain_error(const char* what_arg) : logic_error(what_arg) {}
+    explicit domain_error(const string& what_arg) : logic_error(what_arg) {}
 };
 
 class invalid_argument : public logic_error {
- public:
-  invalid_argument() : logic_error() {}
-  explicit invalid_argument(const char* what_arg) : logic_error(what_arg) {}
-  virtual ~invalid_argument() throw() {}
+public:
+    invalid_argument() = default;
+    explicit invalid_argument(const char* what_arg) : logic_error(what_arg) {}
+    explicit invalid_argument(const string& what_arg) : logic_error(what_arg) {}
 };
 
 class length_error : public logic_error {
- public:
-  length_error() : logic_error() {}
-  explicit length_error(const char* what_arg) : logic_error(what_arg){}
-  virtual ~length_error() throw() {}
+public:
+    length_error() = default;
+    explicit length_error(const char* what_arg) : logic_error(what_arg) {}
+    explicit length_error(const string& what_arg) : logic_error(what_arg) {}
 };
 
-class out_of_range : public logic_error{
- public:
-  out_of_range();
-  explicit out_of_range(const char* what_arg);
-  virtual ~out_of_range() throw() {}
+class out_of_range : public logic_error {
+public:
+    out_of_range() = default;
+    explicit out_of_range(const char* what_arg) : logic_error(what_arg) {}
+    explicit out_of_range(const string& what_arg) : logic_error(what_arg) {}
 };
 
 class runtime_error : public exception {
- public:
-  runtime_error();
-  explicit runtime_error(const char* /*what_arg*/) {}
-  virtual ~runtime_error() throw() {}
-  virtual const char* what() const throw() { return nullptr; };
+public:
+    runtime_error() = default;
+    explicit runtime_error(const char*) : exception() {}
+    explicit runtime_error(const string&) : exception() {}
+
 };
 
 class range_error : public runtime_error {
- public:
-  range_error() : runtime_error() {}
-  explicit range_error(const char* what_arg) : runtime_error(what_arg) {}
-  virtual ~range_error() throw() {}
+public:
+    range_error() = default;
+    explicit range_error(const char* what_arg) : runtime_error(what_arg) {}
+    explicit range_error(const string& what_arg) : runtime_error(what_arg) {}
 };
 
 
 class overflow_error : public runtime_error {
- public:
-  overflow_error() : runtime_error() {}
-  explicit overflow_error(const char* what_arg) : runtime_error(what_arg) {}
-  virtual ~overflow_error() throw() {}
+public:
+    overflow_error() = default;
+    explicit overflow_error(const char* what_arg) : runtime_error(what_arg) {}
+    explicit overflow_error(const string& what_arg) : runtime_error(what_arg) {}
 };
 
 class underflow_error : public runtime_error {
- public:
-  underflow_error() : runtime_error() {}
-  explicit underflow_error(const char* what_arg) : runtime_error(what_arg) {}
-  virtual ~underflow_error() throw() {}
+public:
+    underflow_error() = default;
+    explicit underflow_error(const char* what_arg) : runtime_error(what_arg) {}
+    explicit underflow_error(const string& what_arg) : runtime_error(what_arg) {}
 };
 
 } // namespace ETLSTD

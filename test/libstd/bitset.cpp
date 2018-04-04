@@ -161,6 +161,21 @@ SCENARIO("bitset") {
     }
 
     WHEN("constructing from a string") {
+        bitset<20> bits("10110011100011110000");
+        REQUIRE(bits.to_ulong() == 0b10110011100011110000);
+
+        bitset<30> bits2("111000110010");
+        REQUIRE(bits2.to_ulong() == 0b111000110010);
+
+        bitset<30> bits3("111000110010", 10);
+        REQUIRE(bits3.to_ulong() == 0b1110001100);
+
+        bitset<30> bits4("AAAoooAAooAo", 12, 'o', 'A');
+        REQUIRE(bits4.to_ulong() == 0b111000110010);
+
+        bitset<12> bits5("AAAoooAAooAo", 12, 'A', 'o');
+        bits5.flip();
+        REQUIRE(bits5.to_ulong() == 0b111000110010);
 
     }
 }

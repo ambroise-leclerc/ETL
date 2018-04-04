@@ -1,5 +1,5 @@
 /// @file ETLDevice_ESP8266.h
-/// @date 19/03/18 08:01
+/// @date 28/03/18 07:53
 /// @author Ambroise Leclerc and Cecile Thiebaut
 /// @brief Atmel Espressif ESP microcontrollers architecture specifications and low level functions.
 //
@@ -38,3 +38,15 @@ namespace etl {
 class Device {
 public:
     static void delayTicks(uint32_t ticks)            {}
+    static const size_t flashSize = 524288;
+    static const size_t eepromSize = 0;
+    static const size_t sramSize = 98304;
+    static const size_t architectureWidth = 32;
+    static const size_t defaultBufferSize = 16;
+    using OffType = uint32_t;
+    static const uint32_t McuFrequency = F_CPU;
+    static void enableInterrupts() { }
+    static void disableInterrupts() {  }
+};
+
+} // namespace etl

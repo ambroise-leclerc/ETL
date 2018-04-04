@@ -20,7 +20,7 @@ set(ETL_ARCHITECTURE include/etl/architecture/MockCore.h)
 set(ETL_DRIVERS include/etl/drivers/hd44780.h include/etl/drivers/tm1638.h)
 
 set(HEADERS ${ETL_HEADERS} ${ETL_ARCHITECTURE} ${LIBSTD_HEADERS} ${ETL_DRIVERS} test/MockDevice.h
-            )
+        libstd/include/string_view test/libstd/string_view.cpp)
             
 add_executable( TestsETL ${ETL_TESTS}
                 ${LIBSTD_TESTS}

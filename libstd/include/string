@@ -52,8 +52,8 @@ public:
     using const_reference = const value_type&;
     using pointer = typename allocator_traits<Allocator>::pointer;
     using const_pointer = typename allocator_traits<Allocator>::const_pointer;
-    using iterator = vector<CharT, Allocator>;
-    using const_iterator = vector<CharT, Allocator>;
+    using iterator = typename vector<CharT, Allocator>::iterator ;
+    using const_iterator = typename vector<CharT, Allocator>::const_iterator ;
     using const_reverse_iterator = ETLSTD::reverse_iterator<const_iterator>;
     using reverse_iterator = ETLSTD::reverse_iterator<iterator>;
 
