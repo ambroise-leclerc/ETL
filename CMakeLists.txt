@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 3.10)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(ETL)
 include_directories(include 3rdParty test .)
@@ -27,7 +29,6 @@ add_executable( TestsETL ${ETL_TESTS}
                 ${HEADERS} )
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT TestsETL)
-set_property(TARGET TestsETL PROPERTY CXX_STANDARD 17)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
