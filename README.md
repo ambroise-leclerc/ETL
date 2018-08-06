@@ -3,10 +3,10 @@ ETL
 
 [![Build Status](https://travis-ci.org/ambroise-leclerc/ETL.svg?branch=master)](https://travis-ci.org/ambroise-leclerc/ETL)
 
-*C++17 Embedded Template Library for Atmel AVR 8-bit and Espressif ESP 32-bit microcontrollers.*
+*C++1x Embedded Template Library for Atmel AVR 8-bit and Espressif ESP 32-bit microcontrollers.*
 
 **ETL** is a header only template library geared towards the size and performance constraints of embedded applications.
-Its main objective is to take advantage of the efficiency of generic programming to produce the fastest possible binaries from an elegant and expressive code.
+Its main objective is to take advantage of the efficiency of generic programming and to produce the fastest possible binaries.
 
 **ETL** provides compile-time abstractions whose strongly typed definitions can leverage high-level information and relations about the mcu's peripherals.
 
@@ -15,12 +15,12 @@ For example, type information about the PORT to which belongs a given PIN makes 
 ```C++
 template <typename PinRed, typename PinGreen, typename PinBlue>
 class RGBLed {
-  enum bitColor : uint8_t { Red=1<<0, Green=1<<1, Blue=1<<2 };
+  enum class bitColor : uint8_t { Red=1<<0, Green=1<<1, Blue=1<<2 };
 public:
   void SetColor(uint8_t color) const {
-     if (color & Red) pinRed::Set(); else pinRed::Clear();
-     if (color & Green) pinGreen::Set(); else pinGreen::Clear();
-     if (color & Blue) pinBlue::Set(); else pinBlue::Clear();
+     if (color & bitColor::Red) pinRed::Set(); else pinRed::Clear();
+     if (color & bitColor::Green) pinGreen::Set(); else pinGreen::Clear();
+     if (color & bitColor::Blue) pinBlue::Set(); else pinBlue::Clear();
     }    
 };
 ```
@@ -66,14 +66,14 @@ public:
     if (std::is_same<pinRed::Port, pinGreen::Port>::value &&
         std::is_same<pinRed::Port, pinBlue::Port>::value) {
       pinRed::Port::ChangeBits(pinRed::bitmask() | pinGreen::bitmask() | pinBlue::bitmask(), 
-                                (color & Red ? pinRed::bitmask() : 0) + 
-                                (color & Green ? pinGreen::bitmask() : 0) +
-                                (color & Blue ? pinBlue::bitmask() : 0));
+                                (color & bitColor::Red ? pinRed::bitmask() : 0) + 
+                                (color & bitColor::Green ? pinGreen::bitmask() : 0) +
+                                (color & bitColor::Blue ? pinBlue::bitmask() : 0));
     }      
     else {
-     if (color & Red)   pinRed::Set();    else pinRed::Clear();
-     if (color & Green) pinGreen::Set();  else pinGreen::Clear();
-     if (color & Blue)  pinBlue::Set();   else pinBlue::Clear();
+     if (color & bitColor::Red)   pinRed::Set();    else pinRed::Clear();
+     if (color & bitColor::Green) pinGreen::Set();  else pinGreen::Clear();
+     if (color & bitColor::Blue)  pinBlue::Set();   else pinBlue::Clear();
     }      
   }
 };
