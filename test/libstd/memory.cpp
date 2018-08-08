@@ -33,6 +33,7 @@
 #include <catch.hpp>
 #include <iostream>
 
+#define __Mock_Mock__
 #define ETLSTD etlstd
 #include <libstd/include/memory>
 #include <libstd/include/utility>

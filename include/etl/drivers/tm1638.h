@@ -1,9 +1,9 @@
 /// @file tm1638.h
 /// @date 09/09/2016 17:17:16
-/// @author Ambroise Leclerc and Cécile Gomes
+/// @author Ambroise Leclerc and Cecile Thiebaut
 /// @brief TM1638 led&key board driver
 //
-// Copyright (c) 2016, Ambroise Leclerc and Cécile Gomes
+// Copyright (c) 2016, Ambroise Leclerc and Cecile Thiebaut
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,8 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
+
+#include <cstdint>
 
 namespace etl {
 

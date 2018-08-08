@@ -19,7 +19,7 @@ set(LIBSTD_TESTS test/libstd/bitset.cpp test/libstd/chrono.cpp test/libstd/limit
                 
 set(ETL_TESTS test/test.cpp test/SetClearTest.cpp test/InterruptsTest.cpp test/CircularBuffer.cpp)
 set(ETL_ARCHITECTURE include/etl/architecture/MockCore.h)
-set(ETL_DRIVERS include/etl/drivers/hd44780.h include/etl/drivers/tm1638.h)
+set(ETL_DRIVERS include/etl/drivers/hd44780.h include/etl/drivers/tm1638.h include/etl/drivers/gfx/win32gdi.hpp)
 
 set(HEADERS ${ETL_HEADERS} ${ETL_ARCHITECTURE} ${LIBSTD_HEADERS} ${ETL_DRIVERS} test/MockDevice.h
             )
