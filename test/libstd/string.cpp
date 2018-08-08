@@ -32,7 +32,6 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #//include <catch.hpp>
 #define __Mock_Mock__
-
 #define ETLSTD etlstd
 #include <libstd/include/string>
 using namespace ETLSTD;

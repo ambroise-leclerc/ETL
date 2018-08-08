@@ -32,24 +32,35 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #include <catch.hpp>
 
+#define __Mock_Mock__
 #define ETLSTD etlstd
 
 #include <libstd/include/type_traits>
 
 using namespace ETLSTD;
 
-SCENARIO("std::signed") {
+SCENARIO("std::signed, std_unsigned") {
     auto s1 = is_signed<uint8_t>::value;    REQUIRE(s1 == false);
     auto s2 = is_signed<char>::value;       REQUIRE(s2 == true);
     auto s3 = is_signed<int32_t>::value;    REQUIRE(s3 == true);
     auto s4 = is_signed<uint64_t>::value;   REQUIRE(s4 == false);
     REQUIRE(is_signed<uint8_t>::value == false);
-	REQUIRE(is_unsigned<uint8_t>::value == true);
+    REQUIRE(is_unsigned<uint8_t>::value == true);
 
     REQUIRE(is_signed_v<int16_t> == true);
     REQUIRE(is_signed_v<uint32_t> == false);
-	REQUIRE(is_unsigned_v<uint8_t> == true);
-	REQUIRE(is_unsigned_v<int64_t> == false);
+    REQUIRE(is_signed_v<float> == true);
+    REQUIRE(is_signed_v<double> == true);
+
+    REQUIRE(is_unsigned<uint8_t>::value == true);
+    REQUIRE(is_unsigned<char>::value == false);
+    REQUIRE(is_unsigned<unsigned char>::value == true);
+    REQUIRE(is_unsigned_v<int16_t> == false);
+    REQUIRE(is_unsigned_v<uint32_t> == true);
+    REQUIRE(is_unsigned_v<float> == false);
+    REQUIRE(is_unsigned_v<double> == false);
+    REQUIRE(is_unsigned_v<uint8_t> == true);
+    REQUIRE(is_unsigned_v<int64_t> == false);
 }
 
 SCENARIO("std::common_type, std::same_type") {
