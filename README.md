@@ -88,7 +88,7 @@ which now produces this code when all the pins belong to the same PORT, providin
 85 b9    out 0x05, r24       ; 1 cycle
 ```
 
-C++21 Support
+C++20 Support
 =============
 - `std::string_view::starts_width/end_width`
 
