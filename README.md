@@ -103,7 +103,7 @@ C++14 Support
 
 C++11 Support
 =============
-- `std::move`, `std::forward` _needed for xvalue support, move semantics and perfect forwading_
+- `std::move`, `std::forward` _needed for xvalue support, move semantics and perfect forwarding_
 - `std::unique_ptr`, `std::make_unique`
 - `<array>`
 - `<bitset>`
