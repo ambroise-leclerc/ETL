@@ -3,7 +3,7 @@ ETL
 
 [![Build Status](https://travis-ci.org/ambroise-leclerc/ETL.svg?branch=master)](https://travis-ci.org/ambroise-leclerc/ETL)
 
-*C++1x Embedded Template Library for Atmel AVR 8-bit and Espressif ESP 32-bit microcontrollers.*
+*C++2x Embedded Template Library for Atmel AVR 8-bit microcontrollers.*
 
 **ETL** is a header only template library geared towards the size and performance constraints of embedded applications.
 Its main objective is to take advantage of the efficiency of generic programming and to produce the fastest possible binaries.
