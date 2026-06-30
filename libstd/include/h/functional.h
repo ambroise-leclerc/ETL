@@ -31,93 +31,99 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
+
 #include <libstd/include/type_traits>
 #include <libstd/include/utility>
 
 namespace ETLSTD {
 
-namespace etlHelper { /*
-	template<typename Base, typename T, typename Derived, typename... Args>
-	auto invoke(T Base::*pmf, Derived&& ref, Args&&... args) noexcept(noexcept((std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...)))
-	-> std::enable_if_t<std::is_function_v<T> && std::is_base_of_v<Base, std::decay_t<Derived>>, decltype((std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...))> {
-		return (std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...);
-	}
-	
-	template<typename Base, typename T, typename RefWrap, typename... Args>
-	auto invoke(T Base::*pmf, RefWrap&& ref, Args&&... args) noexcept(noexcept((ref.get().*pmf)(std::forward<Args>(args)...)))
-	-> std::enable_if_t<std::is_function_v<T> && is_reference_wrapper_v<std::decay_t<RefWrap>>, decltype((ref.get().*pmf)(std::forward<Args>(args)...))> {
-		return (ref.get().*pmf)(std::forward<Args>(args)...);
-	}
-	
-	template<typename Base, typename T, typename Pointer, typename... Args>
-	auto invoke(T Base::*pmf, Pointer&& ptr, Args&&... args) noexcept(noexcept(((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...)))
-	-> std::enable_if_t<std::is_function_v<T> && !is_reference_wrapper_v<std::decay_t<Pointer>> && !std::is_base_of_v<Base, std::decay_t<Pointer>>, decltype(((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...))> {
-		return ((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...);
-	}
-	
-	template<typename Base, typename T, typename Derived>
-	auto invoke(T Base::*pmd, Derived&& ref) noexcept(noexcept(std::forward<Derived>(ref).*pmd))
-	-> std::enable_if_t<!std::is_function_v<T> && std::is_base_of_v<Base, std::decay_t<Derived>>, decltype(std::forward<Derived>(ref).*pmd)> {
-		return std::forward<Derived>(ref).*pmd;
-	}
-	
-	template<typename Base, typename T, typename RefWrap>
-	auto invoke(T Base::*pmd, RefWrap&& ref) noexcept(noexcept(ref.get().*pmd))
-	-> std::enable_if_t<!std::is_function_v<T> && is_reference_wrapper_v<std::decay_t<RefWrap>>, decltype(ref.get().*pmd)> {
-		return ref.get().*pmd;
-	}
-	
-	template<typename Base, typename T, typename Pointer>
-	auto invoke(T Base::*pmd, Pointer&& ptr) noexcept(noexcept((*std::forward<Pointer>(ptr)).*pmd))
-	-> std::enable_if_t<!std::is_function_v<T> && !is_reference_wrapper_v<std::decay_t<Pointer>> && !std::is_base_of_v<Base, std::decay_t<Pointer>>, decltype((*std::forward<Pointer>(ptr)).*pmd)> {
-		return (*std::forward<Pointer>(ptr)).*pmd;
-	}
-	
-	template<typename F, typename... Args>
-	auto invoke(F&& f, Args&&... args) noexcept(noexcept(std::forward<F>(f)(std::forward<Args>(args)...)))
-	-> std::enable_if_t<!std::is_member_pointer_v<std::decay_t<F>>, decltype(std::forward<F>(f)(std::forward<Args>(args)...))> {
-		return std::forward<F>(f)(std::forward<Args>(args)...);
-	}
-	*/
-	template <class F, class... Args> inline auto invoke(F&& f, Args&&... args) -> decltype(forward<F>(f)(forward<Args>(args)...)) {
-		return forward<F>(f)(forward<Args>(args)...);
-	}
-	
-	template <class Base, class T, class Derived> inline auto invoke(T Base::*pmd, Derived&& ref) -> decltype(forward<Derived>(ref).*pmd) {
-		return forward<Derived>(ref).*pmd;
-	}
-	
-	template <class PMD, class Pointer> inline auto invoke(PMD&& pmd, Pointer&& ptr) ->	decltype((*forward<Pointer>(ptr)).*forward<PMD>(pmd)) {
-		return (*forward<Pointer>(ptr)).*forward<PMD>(pmd);
-	}
-	
-	template <class Base, class T, class Derived, class... Args> inline auto invoke(T Base::*pmf, Derived&& ref, Args&&... args) ->	decltype((forward<Derived>(ref).*pmf)(forward<Args>(args)...)) {
-		return (forward<Derived>(ref).*pmf)(forward<Args>(args)...);
-	}
-	
-	template <class PMF, class Pointer, class... Args> inline auto INVOKE(PMF&& pmf, Pointer&& ptr, Args&&... args) -> decltype(((*forward<Pointer>(ptr)).*forward<PMF>(pmf))(forward<Args>(args)...)) {
-		return ((*forward<Pointer>(ptr)).*forward<PMF>(pmf))(forward<Args>(args)...);
-	}
+template<typename T>
+class reference_wrapper;
 
-	template<typename, typename = void> struct result_of {};
-	template<typename F, typename...Args> struct result_of<F(Args...), decltype(void(invoke(declval<F>(), declval<Args>()...)))> {
-		using type = decltype(invoke(declval<F>(), declval<Args>()...));
+namespace etlHelper {
+
+template<typename T>
+struct is_reference_wrapper : false_type { };
+
+template<typename T>
+struct is_reference_wrapper<reference_wrapper<T>> : true_type { };
+
+template<typename T>
+inline constexpr bool is_reference_wrapper_v = is_reference_wrapper<T>::value;
+
+template<typename T>
+constexpr T&& unwrap_reference(T&& value) noexcept {
+    return forward<T>(value);
+}
+
+template<typename T>
+constexpr T& unwrap_reference(reference_wrapper<T> value) noexcept {
+    return value.get();
+}
+
+template<typename MemPtr, typename Obj>
+constexpr auto invoke_member_object(MemPtr&& mem_ptr, Obj&& obj)
+    -> decltype(unwrap_reference(forward<Obj>(obj)).*mem_ptr) {
+    return unwrap_reference(forward<Obj>(obj)).*mem_ptr;
+}
+
+template<typename MemPtr, typename Ptr>
+constexpr auto invoke_member_object(MemPtr&& mem_ptr, Ptr&& ptr)
+    -> decltype((*forward<Ptr>(ptr)).*mem_ptr) {
+    return (*forward<Ptr>(ptr)).*mem_ptr;
+}
+
+template<typename MemFn, typename Obj, typename... Args>
+constexpr auto invoke_member_function(MemFn&& mem_fn, Obj&& obj, Args&&... args)
+    -> decltype((unwrap_reference(forward<Obj>(obj)).*mem_fn)(forward<Args>(args)...)) {
+    return (unwrap_reference(forward<Obj>(obj)).*mem_fn)(forward<Args>(args)...);
+}
+
+template<typename MemFn, typename Ptr, typename... Args>
+constexpr auto invoke_member_function(MemFn&& mem_fn, Ptr&& ptr, Args&&... args)
+    -> decltype(((*forward<Ptr>(ptr)).*mem_fn)(forward<Args>(args)...)) {
+    return ((*forward<Ptr>(ptr)).*mem_fn)(forward<Args>(args)...);
+}
+
+template<typename F, typename... Args, enable_if_t<!is_member_pointer<decay_t<F>>::value, int> = 0>
+constexpr auto invoke(F&& f, Args&&... args)
+    -> decltype(forward<F>(f)(forward<Args>(args)...)) {
+    return forward<F>(f)(forward<Args>(args)...);
+}
+
+template<typename MemPtr, typename Obj, typename... Args, enable_if_t<is_member_function_pointer<decay_t<MemPtr>>::value, int> = 0>
+constexpr auto invoke(MemPtr&& mem_ptr, Obj&& obj, Args&&... args)
+    -> decltype(invoke_member_function(forward<MemPtr>(mem_ptr), forward<Obj>(obj), forward<Args>(args)...)) {
+    return invoke_member_function(forward<MemPtr>(mem_ptr), forward<Obj>(obj), forward<Args>(args)...);
+}
+
+template<typename MemPtr, typename Obj, enable_if_t<is_member_object_pointer<decay_t<MemPtr>>::value, int> = 0>
+constexpr auto invoke(MemPtr&& mem_ptr, Obj&& obj)
+    -> decltype(invoke_member_object(forward<MemPtr>(mem_ptr), forward<Obj>(obj))) {
+    return invoke_member_object(forward<MemPtr>(mem_ptr), forward<Obj>(obj));
+}
+
+template<typename, typename = void>
+struct result_of { };
+
+template<typename F, typename... Args>
+struct result_of<F(Args...), decltype(void(invoke(declval<F>(), declval<Args>()...)))> {
+    using type = decltype(invoke(declval<F>(), declval<Args>()...));
 };
+
 } // namespace etlHelper
 
-    
-/// Invoke the Callable object f with the parameters args.
-/// @param[in] f Callable to be invoked
-/// @param[in] args arguments to pass to f
-template <typename F, typename... ArgTypes>
-auto invoke(F&& f, ArgTypes&&... args) noexcept(noexcept(etlHelper::invoke(forward<F>(f), forward<ArgTypes>(args)...))) {
+template<typename F, typename... ArgTypes>
+constexpr auto invoke(F&& f, ArgTypes&&... args)
+    noexcept(noexcept(etlHelper::invoke(forward<F>(f), forward<ArgTypes>(args)...)))
+    -> decltype(etlHelper::invoke(forward<F>(f), forward<ArgTypes>(args)...)) {
     return etlHelper::invoke(forward<F>(f), forward<ArgTypes>(args)...);
 }
 
-/// Deduces the return type of a function call expression at compile time.    
-template<typename F> struct result_of {};
-template<typename F, typename... ArgTypes> struct result_of<F(ArgTypes...)> : etlHelper::result_of<F(ArgTypes...)> {};
+template<typename F>
+struct result_of { };
 
+template<typename F, typename... ArgTypes>
+struct result_of<F(ArgTypes...)> : etlHelper::result_of<F(ArgTypes...)> { };
 
-} // namespace ETLSTD  
-
+} // namespace ETLSTD

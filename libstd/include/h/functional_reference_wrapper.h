@@ -1,7 +1,7 @@
-/// @file functional.h
-/// @data 06/06/2014 18:36:55
+/// @file functional_reference_wrapper.h
+/// @date 06/06/2014 18:36:55
 /// @author Ambroise Leclerc
-/// @brief reference_wrapper : wraps a reference in an assignable and copyable object..
+/// @brief reference_wrapper : wraps a reference in an assignable and copyable object.
 //
 // Copyright (c) 2014, Ambroise Leclerc
 //   All rights reserved.
@@ -32,30 +32,71 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <libstd/include/type_traits>
-#include <libstd/include/memory>
+#include <libstd/include/h/functional.h>
 
 namespace ETLSTD {
 
+namespace etlHelper {
+
 template<typename T>
-class reference_wrapper /*: public etlHelper::reference_wrapper_base<typename std::remove_cv<T>::type> */{
- public:
-  using type = T;
-  
-  /// Constructor : stores a reference to x.
-  reference_wrapper(T& x) noexcept : data_(std::addressof(x)) {}
-  
-  /// Move constructor : deleted, construction from a temporary object is not allowed.
-  reference_wrapper(T&&) = delete;
-  
-  /// Copy constructor : stores a reference to other.get().
-  reference_wrapper(const std::reference_wrapper<T>& other) noexcept : data_(std::addressof(other.get())) {}
- private:
-  T* data_;  
-};  
-  
-  
-} // namespace ETLSTD  
+constexpr T* reference_wrapper_addressof(T& value) noexcept {
+#if defined(__GNUC__) || defined(__clang__)
+    return __builtin_addressof(value);
+#else
+    return &value;
+#endif
+}
 
+} // namespace etlHelper
 
-#endif // ETL_LIBSTD_FUNCTIONAL_REFERENCE_WRAPPER_H_
+template<typename T>
+class reference_wrapper {
+public:
+    using type = T;
+
+    constexpr reference_wrapper(T& value) noexcept : data_(etlHelper::reference_wrapper_addressof(value)) { }
+    reference_wrapper(T&&) = delete;
+    constexpr reference_wrapper(const reference_wrapper&) noexcept = default;
+    constexpr reference_wrapper& operator=(const reference_wrapper&) noexcept = default;
+
+    constexpr operator T&() const noexcept { return *data_; }
+    constexpr T& get() const noexcept { return *data_; }
+
+    template<typename... Args>
+    constexpr auto operator()(Args&&... args) const
+        noexcept(noexcept(ETLSTD::invoke(get(), forward<Args>(args)...)))
+        -> decltype(ETLSTD::invoke(get(), forward<Args>(args)...)) {
+        return ETLSTD::invoke(get(), forward<Args>(args)...);
+    }
+
+private:
+    T* data_;
+};
+
+template<typename T>
+constexpr reference_wrapper<T> ref(T& value) noexcept {
+    return reference_wrapper<T>(value);
+}
+
+template<typename T>
+constexpr reference_wrapper<T> ref(reference_wrapper<T> value) noexcept {
+    return reference_wrapper<T>(value.get());
+}
+
+template<typename T>
+void ref(const T&&) = delete;
+
+template<typename T>
+constexpr reference_wrapper<const T> cref(const T& value) noexcept {
+    return reference_wrapper<const T>(value);
+}
+
+template<typename T>
+constexpr reference_wrapper<const T> cref(reference_wrapper<T> value) noexcept {
+    return cref(value.get());
+}
+
+template<typename T>
+void cref(const T&&) = delete;
+
+} // namespace ETLSTD
