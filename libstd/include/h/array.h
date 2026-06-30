@@ -42,15 +42,15 @@ template<typename T, std::size_t N>
 struct array {
   using value_type        = T;
   using pointer           = T*;
-  using const_pointer     = const T;
+  using const_pointer     = const T*;
   using reference         = T&;
   using const_reference   = const T&;
   using iterator          = T*;
   using const_iterator    = const T*;
   using size_type         = size_t;
   using difference_type   = ptrdiff_t;
-  using reverse_iterator  = reverse_iterator<iterator>;
-  using const_reverse_iterator  = std::reverse_iterator<const_iterator>;
+  using reverse_iterator  = ETLSTD::reverse_iterator<iterator>;
+  using const_reverse_iterator  = ETLSTD::reverse_iterator<const_iterator>;
   
   // Access
   reference operator[](size_type i) noexcept              { return elems_[i]; }
@@ -99,9 +99,8 @@ struct array {
   
  private:
   static void CheckRange(size_type i) {
-    if (i >= size()) {
-      std::out_of_range exception("");
-      throw(exception);
+    if (i >= N) {
+      throw out_of_range("");
     }      
   }    
 };
@@ -111,25 +110,25 @@ template<typename T>
 struct array<T, 0> {
   using value_type        = T;
   using pointer           = T*;
-  using const_pointer     = const T;
+  using const_pointer     = const T*;
   using reference         = T&;
   using const_reference   = const T&;
   using iterator          = T*;
   using const_iterator    = const T*;
   using size_type         = size_t;
   using difference_type   = ptrdiff_t;
-  using reverse_iterator  = reverse_iterator<iterator>;
-  using const_reverse_iterator  = reverse_iterator<const_iterator>;
+  using reverse_iterator  = ETLSTD::reverse_iterator<iterator>;
+  using const_reverse_iterator  = ETLSTD::reverse_iterator<const_iterator>;
   
   // Access
-  reference operator[](size_type)                       { RangeError(); return elems_; }
-  constexpr const_reference operator[](size_type) const { RangeError(); return elems_; }   
-  reference at(size_type)                               { RangeError(); return elems_; }
-  constexpr const_reference at(size_type) const         { RangeError(); return elems_; }
-  reference front()                                     { RangeError(); return elems_; }
-  constexpr const_reference front() const               { RangeError(); return elems_; }
-  reference back()                                      { RangeError(); return elems_; }
-  constexpr const_reference back() const                { RangeError(); return elems_; }
+  reference operator[](size_type)                       { RangeError(); return *data(); }
+  constexpr const_reference operator[](size_type) const { RangeError(); return *data(); }   
+  reference at(size_type)                               { RangeError(); return *data(); }
+  constexpr const_reference at(size_type) const         { RangeError(); return *data(); }
+  reference front()                                     { RangeError(); return *data(); }
+  constexpr const_reference front() const               { RangeError(); return *data(); }
+  reference back()                                      { RangeError(); return *data(); }
+  constexpr const_reference back() const                { RangeError(); return *data(); }
   pointer data() noexcept                               { return nullptr; }
   constexpr const_pointer data() const noexcept         { return nullptr; }
     
@@ -139,11 +138,11 @@ struct array<T, 0> {
   constexpr bool empty() const noexcept { return true; }
     
   // Iterators
-  iterator begin() noexcept { return iterator(reinterpret_cast<T*>(this)); }
-  iterator end() noexcept   { return begin(); }
+  iterator begin() noexcept { return nullptr; }
+  iterator end() noexcept   { return nullptr; }
     
-  const_iterator begin() const noexcept { return const_iterator(reinterpret_cast<const T*>(this)); }
-  const_iterator end() const noexcept   { return begin(); }
+  const_iterator begin() const noexcept { return nullptr; }
+  const_iterator end() const noexcept   { return nullptr; }
   
   reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
   reverse_iterator rend() noexcept   { return reverse_iterator(begin()); }
@@ -151,8 +150,8 @@ struct array<T, 0> {
   const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
   const_reverse_iterator rend() const noexcept   { return const_reverse_iterator(begin()); }
    
-  const_iterator cbegin() const noexcept { return const_iterator(reinterpret_cast<const T*>(this)); }
-  const_iterator cend() const noexcept   { return begin(); }
+  const_iterator cbegin() const noexcept { return nullptr; }
+  const_iterator cend() const noexcept   { return nullptr; }
   
   const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
   const_reverse_iterator crend() const noexcept { return const_reverse_iterator(begin()); }
@@ -162,13 +161,7 @@ struct array<T, 0> {
   void swap(array&) noexcept { }
 
  private:
-  T elems_[0];
-
- private:
-  static void RangeError() {
-    std::out_of_range exception("");
-    throw(exception);
-  }      
+  [[noreturn]] static void RangeError() { throw out_of_range(""); }
 };
 
 // non-member functions
