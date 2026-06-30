@@ -36,18 +36,21 @@ namespace ETLSTD {
 
 class exception {
  public:
-  exception() noexcept {}
-  exception(const exception&) noexcept {}
-  exception& operator=(const exception&) noexcept { return *this;}
-  virtual ~exception() {}
-  virtual const char* what() const noexcept { return nullptr; }
+  exception() noexcept : what_arg_("") {}
+  explicit exception(const char* what_arg) noexcept : what_arg_(what_arg ? what_arg : "") {}
+  exception(const exception&) noexcept = default;
+  exception& operator=(const exception&) noexcept = default;
+  virtual ~exception() = default;
+  virtual const char* what() const noexcept { return what_arg_; }
+
+ protected:
+  const char* what_arg_;
 };
 
 class bad_exception : public exception {
  public:
-  bad_exception() noexcept {}
-  virtual ~bad_exception() noexcept {}
-  virtual const char* what() const noexcept { return nullptr; }
+  bad_exception() noexcept : exception("bad_exception") {}
+  virtual ~bad_exception() noexcept = default;
 };
 
 using terminate_handler = void(*)();
