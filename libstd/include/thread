@@ -38,19 +38,24 @@
 namespace ETLSTD {
 namespace this_thread {
 
+using clock_cycles = chrono::duration<unsigned long, ratio<1, etl::Device::McuFrequency>>;
+
 /// Blocks the execution of the current thread for the specified constant sleepDuration with a 1 cycle resolution.
+/// On mock targets this goes through Device::delayTicks so tests can observe the requested cycle count.
 template<typename Rep, typename Period>
 constexpr void sleep_for(const chrono::duration<Rep, Period>& sleepDuration) {
-    etl::Device::delayTicks(chrono::duration_cast<etl::clock_cycles>(sleepDuration).count());
+    etl::Device::delayTicks(chrono::duration_cast<clock_cycles>(sleepDuration).count());
 }
 
 
 /// Blocks the execution of the current thread for the specified sleepDuration with a 1 millisecond resolution.
+/// Non-constexpr durations are rounded to whole milliseconds and compensate a small fixed loop overhead.
 template<typename Rep, typename Period>
 void sleep_for(chrono::duration<Rep, Period>& sleepDuration) {
 	uint32_t nbMs = chrono::duration_cast<chrono::milliseconds>(sleepDuration).count();
+    const auto ticksPerMs = chrono::duration_cast<clock_cycles>(1ms).count() - (64 / etl::Device::architectureWidth);
 	for (auto count = nbMs; count > 0; count--) {
-		etl::Device::delayTicks(chrono::duration_cast<etl::clock_cycles>(1ms).count() - (64 / etl::Device::architectureWidth));
+		etl::Device::delayTicks(ticksPerMs);
 	}
 }
 

@@ -117,6 +117,7 @@ Useful test runner commands:
 ```sh
 ./build/TestsETL --list-tests
 ./build/TestsETL '[GPIO]'
+./build/TestsETL '[thread]'
 ./build/TestsETL 'Scenario: std::tuple'
 ```
 

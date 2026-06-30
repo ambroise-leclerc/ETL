@@ -79,6 +79,15 @@ public:
     static int64_t pragma(const Pragma& param) { return MockDevice::getInstance().pragma(param.paramsList); }
     static int64_t pragma(std::string pragma)  { return MockDevice::getInstance().pragma(pragma); }
     static void initialize()                   { MockDevice::getInstance().configure(NB_PORTS); }
+    static void delayTicks(uint32_t ticks) {
+        lastDelayTicks_ = ticks;
+        totalDelayTicks_ += ticks;
+
+        const auto micros = (static_cast<uint64_t>(ticks) * 1000000ULL + (McuFrequency - 1)) / McuFrequency;
+        if (micros > 0) {
+            std::this_thread::sleep_for(std::chrono::microseconds(micros));
+        }
+    }
     static void delay_us(uint32_t us)          { std::this_thread::sleep_for(std::chrono::microseconds(us)); }
     static void delay_ms(uint32_t ms)          { std::this_thread::sleep_for(std::chrono::milliseconds(ms)); }
     static void yield()                        { MockDevice::getInstance().yield(); }
@@ -91,6 +100,14 @@ public:
         auto index = &triggerRegister - MockDevice::getInstance().registers.data();
         MockDevice::getInstance().clearAddOnChangeCallback(index, mask);
     }
+
+    static void resetDelayTicksLog() {
+        lastDelayTicks_ = 0;
+        totalDelayTicks_ = 0;
+    }
+
+    static uint32_t lastDelayTicks() { return lastDelayTicks_; }
+    static uint64_t totalDelayTicks() { return totalDelayTicks_; }
 
     static const size_t flashSize = 65535;
     static const size_t sramSize = 10000;
@@ -105,6 +122,10 @@ public:
     static const uint8_t OUT_REG_CYCLES = 3;
     static const uint8_t OUTCLR_REG_CYCLES = 1;
     static const uint8_t OUTSET_REG_CYCLES = 1;
+
+private:
+    inline static uint32_t lastDelayTicks_ = 0;
+    inline static uint64_t totalDelayTicks_ = 0;
 };
 
 } // namespace etl

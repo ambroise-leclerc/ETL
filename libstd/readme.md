@@ -22,3 +22,5 @@ This bundled library is intentionally partial. It primarily covers the following
 - `<utility>`
 - `<array>`
 - `<exception>`
+
+`<thread>` is part of the evolving embedded subset: `this_thread::sleep_for` is supported as a timing helper when the target `Device` exposes `delayTicks`, and mock validation should treat it as a cycle-accounted delay rather than as a high-precision wall-clock guarantee.
