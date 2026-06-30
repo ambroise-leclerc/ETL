@@ -22,3 +22,5 @@ This bundled library is intentionally partial. It primarily covers the following
 - `<utility>`
 - `<array>`
 - `<exception>`
+
+`<random>` is currently present only as a placeholder roadmap surface. It is **not** part of the supported embedded subset yet, and unfinished declarations under `libstd/include/random` should not be treated as production-ready facilities.

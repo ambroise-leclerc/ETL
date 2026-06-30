@@ -34,6 +34,9 @@
 
 namespace ETLSTD {
 
+// Placeholder declaration set: <random> is currently outside the supported
+// embedded libstd subset and remains a roadmap item rather than a maintained
+// contract.
 template<typename IntType = int>
 struct uniform_int_distribution {
   using result_type = IntType;

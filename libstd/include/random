@@ -32,5 +32,9 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
+// Placeholder header: ETL does not currently treat <random> as part of the
+// supported embedded libstd subset. The declarations below are roadmap stubs
+// and should not be relied on as production-ready facilities.
+
 #include "h/random_distributions.h"
 #include "h/random_generators.h"

@@ -100,6 +100,8 @@ ETL now targets a single **C++23** baseline across the repository:
 
 The bundled `libstd` directory remains a focused compatibility layer for the subset of standard-library facilities ETL uses on embedded targets; it is not a full reimplementation of the entire C++23 standard library.
 
+Some larger standard-library surfaces are still intentionally out of scope for the maintained subset. In particular, `libstd/include/random` is currently a placeholder roadmap header rather than a supported embedded facility.
+
 
 Host-side build and tests
 =========================

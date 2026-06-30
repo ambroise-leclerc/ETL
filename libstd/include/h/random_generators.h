@@ -33,4 +33,8 @@
 
 #ifndef ETL_LIBSTD_RANDOM_GENERATORS_H_
 #define ETL_LIBSTD_RANDOM_GENERATORS_H_
+
+// Placeholder header: no supported generator subset has been defined yet for
+// ETL's embedded libstd surface.
+
 #endif // ETL_LIBSTD_RANDOM_GENERATORS_H_
