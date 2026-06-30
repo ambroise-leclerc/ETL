@@ -100,6 +100,8 @@ ETL now targets a single **C++23** baseline across the repository:
 
 The bundled `libstd` directory remains a focused compatibility layer for the subset of standard-library facilities ETL uses on embedded targets; it is not a full reimplementation of the entire C++23 standard library.
 
+Within `libstd`, ETL now distinguishes between **supported**, **experimental**, and **placeholder** headers. The detailed support matrix lives in `libstd/readme.md`; in short, low-level headers ETL already depends on are maintained, while larger surfaces such as `string`, `tuple`, and `random` should not be treated as fully supported yet.
+
 
 Host-side build and tests
 =========================
