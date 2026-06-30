@@ -36,7 +36,7 @@
 #define ETLSTD etlstd
 #include <libstd/include/chrono>
 
-SCENARIO("std::chrono") {
+SCENARIO("std::chrono", "[libstd][chrono]") {
     using namespace ETLSTD::chrono;
     using namespace ETLSTD::chrono_literals;
     auto dur_ns = 2153123456ns;

@@ -38,8 +38,7 @@
 #include <libstd/include/vector>
 
 
-SCENARIO("vector") {
+SCENARIO("vector", "[libstd][vector]") {
     ETLSTD::vector<char> vec1;
     //REQUIRE(vec1.size() == 0);
 }
-

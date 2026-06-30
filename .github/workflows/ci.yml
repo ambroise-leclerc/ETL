@@ -28,6 +28,9 @@ jobs:
       - name: Run host tests
         run: ctest --test-dir build --output-on-failure
 
+      - name: Run libstd-focused tests
+        run: ./build/TestsETL '[libstd]'
+
   avr-smoke:
     runs-on: ubuntu-24.04
     strategy:
@@ -67,5 +70,7 @@ jobs:
       - name: Build AVR smoke target
         run: cmake --build build-avr
 
-      - name: Check HEX output
-        run: test -f build-avr/etl_avr_smoke.hex
+      - name: Check HEX outputs
+        run: |
+          test -f build-avr/etl_avr_smoke.hex
+          test -f build-avr/etl_avr_libstd_smoke.hex

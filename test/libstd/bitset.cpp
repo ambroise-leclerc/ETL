@@ -38,7 +38,7 @@
 
 using namespace ETLSTD;
 
-SCENARIO("bitset") {
+SCENARIO("bitset", "[libstd][bitset]") {
     
     bitset<17> bits0;
     REQUIRE(bits0.size() == 17);

@@ -1,6 +1,6 @@
 /// @file test/libstd/queue.cpp
 /// @data 20/09/2016 17:40:53
-/// @author Ambroise Leclerc and Cécile Gomes
+/// @author Ambroise Leclerc and Cï¿½cile Gomes
 /// @brief BDD tests for <queue>
 //
 // Copyright (c) 2016, Ambroise Leclerc
@@ -65,7 +65,7 @@ protected:
     size_type contSize;
 };
 
-SCENARIO("Queue") {
+SCENARIO("Queue", "[libstd][queue]") {
     using Fifo = ETLSTD::queue<uint8_t, SequenceContainerMock>;
     GIVEN("An empty Fifo") {
         Fifo fifo;
