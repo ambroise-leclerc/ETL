@@ -1,6 +1,6 @@
 /// @file test/libstd/queue.cpp
 /// @data 20/09/2016 17:40:53
-/// @author Ambroise Leclerc and Cécile Gomes
+/// @author Ambroise Leclerc and Cï¿½cile Gomes
 /// @brief BDD tests for <queue>
 //
 // Copyright (c) 2016, Ambroise Leclerc
@@ -34,6 +34,7 @@
 
 #define __Mock_Mock__
 #define ETLSTD etlstd
+#include <etl/CircularBuffer.h>
 #include <libstd/include/queue>
 #include <libstd/include/cstddef>
 #include <libstd/include/memory>
@@ -50,6 +51,20 @@ public:
     using const_reference = const value_type&;
 
     SequenceContainerMock() : elemF(8), elemB(2), contSize(0) { }
+    SequenceContainerMock(const SequenceContainerMock&) = delete;
+    SequenceContainerMock& operator=(const SequenceContainerMock&) = delete;
+    SequenceContainerMock(SequenceContainerMock&& other) noexcept
+        : elemF(other.elemF), elemB(other.elemB), contSize(other.contSize) {
+        mockStatus += MoveConstruct;
+    }
+    SequenceContainerMock& operator=(SequenceContainerMock&& other) noexcept {
+        mockStatus += MoveAssign;
+        elemF = other.elemF;
+        elemB = other.elemB;
+        contSize = other.contSize;
+        return *this;
+    }
+
     bool empty() const { mockStatus += Empty; return false; }
     size_type size() const { mockStatus += Size; return contSize; }
     reference front() { mockStatus += Front; return elemF; }
@@ -59,7 +74,7 @@ public:
     template<typename... Args>
     void emplace_back(Args&& ... args) { mockStatus += Emplace; new(&elemB) uint8_t(std::forward<Args>(args)...); }
     enum method { Size = 1, Front = 10, Back = 100, PushBack = 1000, PopFront = 10000,
-                  Empty = 100000, Emplace = 1000000, Swap = 10000000 };
+                  Empty = 100000, Emplace = 1000000, MoveConstruct = 10000000, MoveAssign = 100000000 };
 protected:
     value_type elemF, elemB;
     size_type contSize;
@@ -88,10 +103,32 @@ SCENARIO("Queue") {
         REQUIRE(mockStatus == 1168907);
 
         Fifo fifo2;
+        mockStatus = 0;
         fifo2.swap(fifo);
+        REQUIRE(mockStatus == SequenceContainerMock::MoveConstruct + 2 * SequenceContainerMock::MoveAssign);
         REQUIRE(fifo2.back() == 150);
         REQUIRE(fifo.back() == 2);
-        REQUIRE(mockStatus == 1169107);
-        
     }
+}
+
+SCENARIO("Queue uses explicit embedded storage") {
+    using EmbeddedFifo = ETLSTD::queue<uint8_t, etl::CircularBuffer<uint8_t, 4>>;
+
+    EmbeddedFifo fifo;
+    fifo.push(1);
+    fifo.push(2);
+    fifo.emplace(3);
+    REQUIRE(fifo.front() == 1);
+    REQUIRE(fifo.back() == 3);
+
+    fifo.pop();
+    REQUIRE(fifo.front() == 2);
+
+    EmbeddedFifo other;
+    other.push(9);
+    fifo.swap(other);
+    REQUIRE(fifo.front() == 9);
+    REQUIRE(fifo.size() == 1);
+    REQUIRE(other.front() == 2);
+    REQUIRE(other.back() == 3);
 }

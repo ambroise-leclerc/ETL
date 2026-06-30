@@ -1,9 +1,9 @@
 /// @file queue
 /// @data 20/09/2016 17:40:53
-/// @author Ambroise Leclerc and Cécile Gomes
+/// @author Ambroise Leclerc and Cï¿½cile Gomes
 /// @brief Container adapter that gives the functionality of a fifo.
 //
-// Copyright (c) 2014, Ambroise Leclerc and Cécile Gomes
+// Copyright (c) 2014, Ambroise Leclerc and Cï¿½cile Gomes
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,10 @@
 
 namespace ETLSTD {
 
-template<typename T, typename Container /* TODO = ETLSTD::deque<T>*/>
+// ETL keeps queue as a thin adapter over caller-provided storage.
+// Embedded FIFO capacity and overwrite policy are application-specific, so
+// fixed-capacity use cases should opt in explicitly with etl::CircularBuffer.
+template<typename T, typename Container>
 class queue {
 public:
     using container_type = Container;
@@ -67,11 +70,8 @@ public:
     }
 
     void swap(queue& right) {
-        Container* pointeurLeft = &container;
-        Container* pointeurRight = &right.container;
-        Container temp = *pointeurLeft;
-        *pointeurLeft = *pointeurRight;
-        *pointeurRight = temp;
+        using ETLSTD::swap;
+        swap(container, right.container);
     }
 
 protected:
