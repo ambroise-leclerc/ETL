@@ -175,18 +175,16 @@ public:
 
     constexpr shared_ptr() : pointee(nullptr), counter(nullptr) {}
     constexpr shared_ptr(std::nullptr_t) : pointee(nullptr), counter(nullptr) {}
-    explicit shared_ptr(T* p) { createCounter(p); }
-    template <typename U> shared_ptr(const shared_ptr<U>& ptr) { *this = ptr; }
-    shared_ptr(const shared_ptr& ptr) : counter(ptr.counter), pointee(ptr.pointee) { if (use_count() > 0) counter->inc(); }
+    explicit shared_ptr(T* p) : pointee(nullptr), counter(nullptr) { createCounter(p); }
+    template <typename U> shared_ptr(const shared_ptr<U>& ptr) : counter(ptr.counter), pointee(ptr.pointee) { if (counter) counter->inc(); }
+    shared_ptr(const shared_ptr& ptr) : counter(ptr.counter), pointee(ptr.pointee) { if (counter) counter->inc(); }
     ~shared_ptr()       { release(); }
 
     void reset()        { release(); }
     void reset(T* p)    { release(); createCounter(p); }
 
-    shared_ptr& operator=(const shared_ptr& rhs) { 
-        release();
-        pointee = rhs.pointee;
-        counter = rhs.counter;
+    shared_ptr& operator=(const shared_ptr& rhs) {
+        shared_ptr(rhs).swap(*this);
         return *this;
     }
 
@@ -203,7 +201,14 @@ public:
     T* get(void)        const { return pointee; }
 
 private:
+    template<typename U> shared_ptr(const shared_ptr<U>& ptr, T* p) : pointee(p), counter(ptr.counter) { if (counter) counter->inc(); }
+
     void createCounter(T* p) {
+        if (p == nullptr) {
+            pointee = nullptr;
+            counter = nullptr;
+            return;
+        }
         auto tmp = new etlHelper::refCountAndPointer<T>(p);
         pointee = tmp->pointee;
         counter = tmp;

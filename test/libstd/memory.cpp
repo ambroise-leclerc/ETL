@@ -101,6 +101,118 @@ SCENARIO("std::shared_ptr") {
             REQUIRE(obj2.unique());
         }
 
+        WHEN("ptr is copy-assigned") {
+            auto assignee = ETLSTD::make_shared<MyClass>(654321);
+            REQUIRE(MyClass::instances == 2);
+
+            assignee = obj;
+
+            THEN("the previous pointee is released and ownership is shared") {
+                REQUIRE(MyClass::instances == 1);
+                REQUIRE(assignee.get() == obj.get());
+                REQUIRE(assignee->id == obj->id);
+                REQUIRE(obj.use_count() == 2);
+                REQUIRE(assignee.use_count() == 2);
+            }
+
+            obj.reset();
+
+            THEN("the assigned pointer keeps the managed object alive") {
+                REQUIRE(!obj);
+                REQUIRE(assignee);
+                REQUIRE(assignee->id == 123456);
+                REQUIRE(assignee.use_count() == 1);
+                REQUIRE(MyClass::instances == 1);
+            }
+        }
+
+        WHEN("ptr is assigned to itself") {
+            obj = obj;
+
+            THEN("ownership stays unchanged") {
+                REQUIRE(obj);
+                REQUIRE(obj.unique());
+                REQUIRE(obj.use_count() == 1);
+                REQUIRE(MyClass::instances == 1);
+            }
+        }
+
+        WHEN("ptr is reset to nullptr") {
+            auto obj2 = obj;
+            REQUIRE(obj.use_count() == 2);
+
+            obj.reset(nullptr);
+
+            THEN("only that owner releases its reference") {
+                REQUIRE(!obj);
+                REQUIRE(obj.use_count() == 0);
+                REQUIRE(obj2);
+                REQUIRE(obj2.use_count() == 1);
+                REQUIRE(MyClass::instances == 1);
+            }
+
+            obj2.reset();
+
+            THEN("the last release destroys the object") {
+                REQUIRE(!obj2);
+                REQUIRE(obj2.use_count() == 0);
+                REQUIRE(MyClass::instances == 0);
+            }
+        }
+
+        WHEN("ptrs are swapped") {
+            auto obj2 = ETLSTD::make_shared<MyClass>(654321);
+            auto obj3 = obj;
+            REQUIRE(obj.use_count() == 2);
+            REQUIRE(obj2.use_count() == 1);
+
+            obj.swap(obj2);
+
+            THEN("ownership and counts follow the handles") {
+                REQUIRE(obj->id == 654321);
+                REQUIRE(obj.use_count() == 1);
+                REQUIRE(obj2->id == 123456);
+                REQUIRE(obj2.use_count() == 2);
+                REQUIRE(obj3.get() == obj2.get());
+                REQUIRE(MyClass::instances == 2);
+            }
+        }
+
+        WHEN("copies are created and destroyed across nested scopes") {
+            {
+                auto obj2 = obj;
+                REQUIRE(obj.use_count() == 2);
+
+                {
+                    auto obj3 = obj2;
+                    REQUIRE(obj.use_count() == 3);
+                    REQUIRE(obj3.use_count() == 3);
+                }
+
+                REQUIRE(obj.use_count() == 2);
+                obj2.reset();
+                REQUIRE(obj.use_count() == 1);
+            }
+
+            THEN("the managed object stays alive until the last owner releases it") {
+                REQUIRE(obj);
+                REQUIRE(obj.unique());
+                REQUIRE(obj.use_count() == 1);
+                REQUIRE(MyClass::instances == 1);
+            }
+        }
+
+    }
+
+    GIVEN("A shared_ptr constructed from a null raw pointer") {
+        MyClass::instances = 0;
+        ETLSTD::shared_ptr<MyClass> obj(static_cast<MyClass*>(nullptr));
+
+        THEN("it remains empty and does not create a control block") {
+            REQUIRE(!obj);
+            REQUIRE(obj.use_count() == 0);
+            REQUIRE(MyClass::instances == 0);
+        }
     }
     REQUIRE(MyClass::instances == 0);
 }
