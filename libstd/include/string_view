@@ -35,6 +35,7 @@
 #include "h/char_traits.h"
 
 #include <libstd/include/algorithm>
+#include <libstd/include/iterator>
 #include <libstd/include/limits>
 #include <libstd/include/stdexcept>
 
@@ -42,6 +43,7 @@ namespace ETLSTD {
 
 template<typename CharT, typename Traits = char_traits<CharT>>
 class basic_string_view {
+public:
     using traits_type = Traits;
     using value_type = CharT;
     using pointer = CharT*;
@@ -55,8 +57,18 @@ class basic_string_view {
     using size_type = size_t;
     using difference_type = ptrdiff_t;
 
+    static constexpr size_type npos = size_type(-1);
+
+private:
+    inline static constexpr value_type emptyValue[1] = {};
+
     const_pointer stringData;
     size_type stringLength;
+
+    constexpr const_pointer storage() const noexcept {
+        return stringData == nullptr ? emptyValue : stringData;
+    }
+
 public:
     constexpr basic_string_view() noexcept : stringData(nullptr), stringLength(0) {}
 
@@ -67,25 +79,23 @@ public:
     constexpr basic_string_view(const CharT* s) : stringData(s), stringLength(traits_type::length(s)) {}
 
     constexpr const_iterator begin() const noexcept {
-        return stringData;
+        return storage();
     }
 
     constexpr const_iterator cbegin() const noexcept {
-        return stringData;
+        return begin();
     }
 
     constexpr const_iterator end() const noexcept {
-        return stringData + stringLength;
+        return begin() + stringLength;
     }
 
     constexpr const_iterator cend() const noexcept {
-        return stringData + stringLength;
+        return end();
     }
 
     constexpr const_reverse_iterator rbegin() const noexcept {
-        if (stringLength == 0)
-            return nullptr;
-        return stringData + stringLength - 1;
+        return const_reverse_iterator(end());
     }
 
     constexpr const_reverse_iterator crbegin() const noexcept {
@@ -93,29 +103,30 @@ public:
     }
 
     constexpr const_reverse_iterator rend() const noexcept {
-        return stringData - 1;
+        return const_reverse_iterator(begin());
     }
 
     constexpr const_reverse_iterator crend() const noexcept {
-        return stringData - 1;
+        return rend();
     }
 
     constexpr const_reference operator[](size_type pos) const {
-        return stringData[pos];
+        return data()[pos];
     }
 
     constexpr const_reference at(size_type pos) const {
         if (pos >= stringLength) {
             throw out_of_range();
         }
+        return data()[pos];
     }
 
     constexpr const_reference front() const {
-        return stringData[0];
+        return data()[0];
     }
 
     constexpr const_reference back() const {
-        return stringData + stringLength - 1;
+        return data()[stringLength - 1];
     }
 
     constexpr size_type max_size() const noexcept {
@@ -127,7 +138,7 @@ public:
     }
 
     constexpr void remove_prefix(size_type n) {
-        stringData += n;
+        stringData = data() + n;
         stringLength -= n;
     }
 
@@ -145,26 +156,33 @@ public:
     }
 
     constexpr const_pointer data() const noexcept {
-        return stringData;
+        return storage();
     }
 
     constexpr size_type size() const noexcept {
         return stringLength;
     }
 
-    constexpr size_type llength() const noexcept {
+    constexpr size_type length() const noexcept {
         return stringLength;
+    }
+
+    constexpr size_type llength() const noexcept {
+        return length();
     }
 
     size_type copy(CharT* dest, size_type count, size_type pos = 0) const {
         if (pos > stringLength)
             throw out_of_range();
         count = min(count, stringLength - pos);
-        copy_n(stringData + pos, count, dest);
+        copy_n(data() + pos, count, dest);
+        return count;
     }
 
     constexpr basic_string_view substr(size_type pos = 0, size_type count = npos ) const {
-        return basic_string_view(stringData + pos, min(count, stringLength - pos));
+        if (pos > stringLength)
+            throw out_of_range();
+        return basic_string_view(data() + pos, min(count, stringLength - pos));
     }
 
     constexpr int compare(basic_string_view v) const noexcept {
@@ -214,8 +232,14 @@ public:
     }
 
     constexpr size_type find(basic_string_view v, size_type pos = 0) const noexcept {
+        if (pos > stringLength)
+            return npos;
+        if (v.size() == 0)
+            return pos;
+        if (v.size() > stringLength - pos)
+            return npos;
         for (auto searchIndex = pos; searchIndex <= stringLength - v.size(); ++searchIndex)
-            if (Traits::compare(&stringData[searchIndex], v.data(), v.size()) == 0)
+            if (Traits::compare(data() + searchIndex, v.data(), v.size()) == 0)
                 return searchIndex;
         return npos;
     }
@@ -233,11 +257,17 @@ public:
     }
 
     constexpr size_type rfind(basic_string_view v, size_type pos = npos) const noexcept {
-        if (pos == npos)
-            pos = size() - 1 - v.size();
-        for (auto searchIndex = pos; searchIndex != size_type(-1); --searchIndex)
-            if (Traits::compare(&stringData[searchIndex], v.data(), v.size()) == 0)
+        if (v.size() > stringLength)
+            return npos;
+        if (v.size() == 0)
+            return min(pos, stringLength);
+        auto searchIndex = pos == npos ? stringLength - v.size() : min(pos, stringLength - v.size());
+        for (;; --searchIndex) {
+            if (Traits::compare(data() + searchIndex, v.data(), v.size()) == 0)
                 return searchIndex;
+            if (searchIndex == 0)
+                break;
+        }
         return npos;
     }
 
@@ -254,9 +284,11 @@ public:
     }
 
     constexpr size_type find_first_of(basic_string_view v, size_type pos = 0) const noexcept {
+        if (pos >= stringLength || v.empty())
+            return npos;
         for (auto searchIndex = pos; searchIndex < stringLength; ++searchIndex)
             for (auto charac : v)
-                if (Traits::eq(stringData[searchIndex], charac))
+                if (Traits::eq(data()[searchIndex], charac))
                     return searchIndex;
         return npos;
     }
@@ -274,12 +306,16 @@ public:
     }
 
     constexpr size_type find_last_of(basic_string_view v, size_type pos = npos) const noexcept {
-        if (pos == npos)
-            pos = size() - 1;
-        for (auto searchIndex = pos; searchIndex != size_type(-1); --searchIndex)
+        if (stringLength == 0 || v.empty())
+            return npos;
+        auto searchIndex = pos == npos ? stringLength - 1 : min(pos, stringLength - 1);
+        for (;; --searchIndex) {
             for (auto charac : v)
-                if (Traits::eq(stringData[searchIndex], charac))
+                if (Traits::eq(data()[searchIndex], charac))
                     return searchIndex;
+            if (searchIndex == 0)
+                break;
+        }
         return npos;
     }
 
@@ -296,10 +332,14 @@ public:
     }
 
     constexpr size_type find_first_not_of(basic_string_view v, size_type pos = 0) const noexcept {
+        if (pos >= stringLength)
+            return npos;
+        if (v.empty())
+            return pos;
         for (auto searchIndex = pos; searchIndex < stringLength; ++searchIndex) {
             bool anyOf = false;
             for (auto c : v)
-                if (Traits::eq(stringData[searchIndex], c))
+                if (Traits::eq(data()[searchIndex], c))
                     anyOf = true;
             if (!anyOf)
                 return searchIndex;
@@ -320,15 +360,20 @@ public:
     }
 
     constexpr size_type find_last_not_of(basic_string_view v, size_type pos = npos) const noexcept {
-        if (pos == npos)
-            pos = size() - 1;
-        for (auto searchIndex = pos; searchIndex != size_type(-1); --searchIndex) {
+        if (stringLength == 0)
+            return npos;
+        auto searchIndex = pos == npos ? stringLength - 1 : min(pos, stringLength - 1);
+        if (v.empty())
+            return searchIndex;
+        for (;; --searchIndex) {
             bool anyOf = false;
             for (auto c : v)
-                if (Traits::eq(stringData[searchIndex], c))
+                if (Traits::eq(data()[searchIndex], c))
                     anyOf = true;
             if (!anyOf)
                 return searchIndex;
+            if (searchIndex == 0)
+                break;
         }
         return npos;
     }
@@ -344,8 +389,6 @@ public:
     constexpr size_type find_last_not_of(const CharT* s, size_type pos = npos) const {
         return find_last_not_of(basic_string_view(s), pos);
     }
-
-    static constexpr size_type npos = size_type(-1);
 };
 
 template<typename CharT, typename Traits>

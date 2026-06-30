@@ -64,12 +64,12 @@ class reverse_iterator : public iterator< typename iterator_traits<Iterator>::it
   
   reverse_iterator<Iterator> operator+(difference_type n) const { return reverse_iterator<Iterator>(current_ - n); }
   reverse_iterator<Iterator> operator-(difference_type n) const { return reverse_iterator<Iterator>(current_ + n); }
-  reverse_iterator<Iterator>& operator+=(difference_type n) const { current_ -= n; return *this; }
-  reverse_iterator<Iterator>& operator-=(difference_type n) const { current_ += n; return *this; }
-  reverse_iterator<Iterator>& operator++() const { --current_; return *this; }
-  reverse_iterator<Iterator>& operator--() const { ++current_; return *this; }
-  reverse_iterator<Iterator>& operator++(int) const { reverse_iterator<Iterator> tmp = *this; --current_; return tmp; }
-  reverse_iterator<Iterator>& operator--(int) const { reverse_iterator<Iterator> tmp = *this; ++current_; return tmp; }
+  reverse_iterator<Iterator>& operator+=(difference_type n) { current_ -= n; return *this; }
+  reverse_iterator<Iterator>& operator-=(difference_type n) { current_ += n; return *this; }
+  reverse_iterator<Iterator>& operator++() { --current_; return *this; }
+  reverse_iterator<Iterator>& operator--() { ++current_; return *this; }
+  reverse_iterator<Iterator> operator++(int) { reverse_iterator<Iterator> tmp = *this; --current_; return tmp; }
+  reverse_iterator<Iterator> operator--(int) { reverse_iterator<Iterator> tmp = *this; ++current_; return tmp; }
     
   pointer operator->() const { return addressof(operator*()); }
   reference operator[](difference_type n) const { return *(*this + n); }
@@ -85,7 +85,7 @@ bool operator==(const reverse_iterator<Iterator1>& lhs,
 
 template<typename Iterator1, typename Iterator2>
 bool operator!=(const reverse_iterator<Iterator1>& lhs,
-                const reverse_iterator<Iterator2>& rhs) { return lhs.base() =! rhs.base(); }  
+                const reverse_iterator<Iterator2>& rhs) { return lhs.base() != rhs.base(); }  
 
 template<typename Iterator1, typename Iterator2>
 bool operator<(const reverse_iterator<Iterator1>& lhs,
@@ -105,10 +105,9 @@ bool operator>=(const reverse_iterator<Iterator1>& lhs,
                   
 // Specializations
 template<typename T> 
-constexpr const T* rbegin(initializer_list<T> list) noexcept { return reverse_iterator<const T*>(list.end()); }
+constexpr reverse_iterator<const T*> rbegin(initializer_list<T> list) noexcept { return reverse_iterator<const T*>(list.end()); }
   
 template<typename T>
-constexpr const T* rend(initializer_list<T> list) noexcept { return reverse_iterator<const T*>(list.begin()); }
+constexpr reverse_iterator<const T*> rend(initializer_list<T> list) noexcept { return reverse_iterator<const T*>(list.begin()); }
   
 }; // namespace ETLSTD
-
