@@ -32,6 +32,8 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
+#include <string.h>
+
 #include <etl/ioports.h>
 #include <libstd/include/algorithm>
 

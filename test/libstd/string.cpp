@@ -30,21 +30,71 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-#//include <catch.hpp>
+#include <catch.hpp>
+
 #define __Mock_Mock__
 #define ETLSTD etlstd
 #include <libstd/include/string>
+
 using namespace ETLSTD;
 
+SCENARIO("std::string subset owns null-terminated storage", "[libstd][string]") {
+    string text("ETL");
 
-  /*
-SCENARIO("char_traits") {
-
-    REQUIRE(char_traits<char>::length("Test string") == 11);
+    REQUIRE(text.size() == 3);
+    REQUIRE(text.length() == 3);
+    REQUIRE_FALSE(text.empty());
+    REQUIRE(text.front() == 'E');
+    REQUIRE(text.back() == 'L');
+    REQUIRE(text[1] == 'T');
+    REQUIRE(text.c_str()[3] == '\0');
+    REQUIRE(text.view() == "ETL"sv);
 }
-*/
 
-static auto func() {
-    return char_traits<char>::length("Test string");
+SCENARIO("std::string subset supports embedded-friendly growth", "[libstd][string]") {
+    string text("ET");
+
+    text.reserve(8);
+    REQUIRE(text.capacity() >= 8);
+    REQUIRE(text.view() == "ET"sv);
+
+    text += 'L';
+    text.append(" std");
+    text.push_back('!');
+    REQUIRE(text.view() == "ETL std!"sv);
+
+    text.append(text.data(), 3);
+    REQUIRE(text.view() == "ETL std!ETL"sv);
+
+    text.resize(3);
+    REQUIRE(text.view() == "ETL"sv);
+    REQUIRE(text.c_str()[3] == '\0');
+
+    text.resize(5, '?');
+    REQUIRE(text.view() == "ETL??"sv);
+
+    text.clear();
+    REQUIRE(text.empty());
+    REQUIRE(text.size() == 0);
+    REQUIRE(text.c_str()[0] == '\0');
 }
 
+SCENARIO("std::string subset interoperates with string_view and move semantics", "[libstd][string]") {
+    string source("embedded");
+    string copy(source);
+    string_view prefix("embed");
+
+    REQUIRE(copy == source);
+    REQUIRE(copy.starts_with(prefix));
+
+    char buffer[5] = {};
+    REQUIRE(copy.copy(buffer, 4) == 4);
+    REQUIRE(string_view(buffer, 4) == "embe"sv);
+
+    string tail = copy.substr(3, 5);
+    REQUIRE(tail.view() == "edded"sv);
+
+    string moved(ETLSTD::move(copy));
+    REQUIRE(moved.view() == "embedded"sv);
+    REQUIRE(copy.empty());
+}
