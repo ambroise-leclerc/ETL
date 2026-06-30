@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  host-tests:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install host GCC 13
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-13 g++-13
+
+      - name: Show host compiler
+        run: g++-13 --version | head -n 1
+
+      - name: Configure host build
+        run: cmake -S . -B build -DCMAKE_CXX_COMPILER=g++-13
+
+      - name: Build host tests
+        run: cmake --build build
+
+      - name: Run host tests
+        run: ctest --test-dir build --output-on-failure
+
+  avr-smoke:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - mcu: atmega328p
+            f_cpu: 16000000UL
+          - mcu: attiny84
+            f_cpu: 8000000UL
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install modern AVR GCC 14.2
+        env:
+          AVR_TOOLCHAIN_VERSION: v14.2.0
+        run: |
+          curl -L -o toolchain-atmelavr-libstdcxx.linux_x86_64.tar.gz \
+            "https://github.com/modern-avr/toolchain/releases/download/${AVR_TOOLCHAIN_VERSION}/toolchain-atmelavr-libstdcxx.linux_x86_64.tar.gz"
+          mkdir -p toolchain
+          tar -xzf toolchain-atmelavr-libstdcxx.linux_x86_64.tar.gz -C toolchain
+          find "${PWD}/toolchain" -type f -name avr-g++ -printf '%h\n' | head -n 1 >> "${GITHUB_PATH}"
+
+      - name: Show AVR compiler
+        run: avr-g++ --version | head -n 1
+
+      - name: Configure AVR smoke build
+        run: >
+          cmake -S . -B build-avr
+          -DCMAKE_TOOLCHAIN_FILE=cmake/avr-gcc-toolchain.cmake
+          -DETL_BUILD_HOST_TESTS=OFF
+          -DETL_BUILD_AVR_SMOKE=ON
+          -DETL_AVR_MCU=${{ matrix.mcu }}
+          -DETL_AVR_F_CPU=${{ matrix.f_cpu }}
+
+      - name: Build AVR smoke target
+        run: cmake --build build-avr
+
+      - name: Check HEX output
+        run: test -f build-avr/etl_avr_smoke.hex

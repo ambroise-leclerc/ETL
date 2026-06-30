@@ -1,9 +1,9 @@
 ETL
 ===
 
-[![Build Status](https://travis-ci.org/ambroise-leclerc/ETL.svg?branch=master)](https://travis-ci.org/ambroise-leclerc/ETL)
+[![CI](https://github.com/ambroise-leclerc/ETL/actions/workflows/ci.yml/badge.svg)](https://github.com/ambroise-leclerc/ETL/actions/workflows/ci.yml)
 
-*C++2x Embedded Template Library for Atmel AVR 8-bit microcontrollers.*
+*C++23 Embedded Template Library for AVR 8-bit microcontrollers.*
 
 **ETL** is a header only template library geared towards the size and performance constraints of embedded applications.
 Its main objective is to take advantage of the efficiency of generic programming and to produce the fastest possible binaries.
@@ -55,7 +55,7 @@ sbi 0x05, 4         ; 2 cycles
 ```
 
 For this second RGBLed, a good hand-optimization would have used a global PORTB manipulation considering the fact that all pins belong to the same PORTB.
-This optimization can easily be performed programmatically by testing at compile-time if the pins belong to a same port, using the std::is_same traits class.
+This optimization can easily be performed programmatically by testing at compile-time if the pins belong to a same port, using `std::is_same_v`.
 
 
 ```C++
@@ -63,8 +63,8 @@ template <typename PinRed, typename PinGreen, typename PinBlue>
 class RGBLed {
 public:
   void SetColor(uint8_t color) const {
-    if (std::is_same<pinRed::Port, pinGreen::Port>::value &&
-        std::is_same<pinRed::Port, pinBlue::Port>::value) {
+    if (std::is_same_v<pinRed::Port, pinGreen::Port> &&
+        std::is_same_v<pinRed::Port, pinBlue::Port>) {
       pinRed::Port::ChangeBits(pinRed::bitmask() | pinGreen::bitmask() | pinBlue::bitmask(), 
                                 (color & bitColor::Red ? pinRed::bitmask() : 0) + 
                                 (color & bitColor::Green ? pinGreen::bitmask() : 0) +
@@ -88,76 +88,112 @@ which now produces this code when all the pins belong to the same PORT, providin
 85 b9    out 0x05, r24       ; 1 cycle
 ```
 
-C++20 Support
-=============
-- `std::string_view::starts_width/end_width`
+Toolchain baseline
+==================
 
-C++17 Support
-=============
-- `std::string_view`    _string-like objects with resources in Flash memory and no freestore allocations_
-- `std::...\_v traits`  _std::is_const_v, std::is_same_v, std::is_object_v, std::is_pod_v, ..._
+ETL now targets a single **C++23** baseline across the repository:
 
-C++14 Support
-=============
-- `std::integer_sequence`
+- public headers require a C++23-capable compiler
+- host tests build with **GCC 13+**
+- AVR smoke builds target **modern-avr GCC 14.2+**
+- the default build system baseline is **CMake 3.25+**
 
-C++11 Support
-=============
-- `std::move`, `std::forward` _needed for xvalue support, move semantics and perfect forwarding_
-- `std::unique_ptr`, `std::make_unique`
-- `<array>`
-- `<bitset>`
-- `<cstddef>`
-- `<exception>`
-- `<functional>`
-- `<iterator>`
-- `<initializer_list>`
-- `<type_traits>`
-- `<utility>`
+The bundled `libstd` directory remains a focused compatibility layer for the subset of standard-library facilities ETL uses on embedded targets; it is not a full reimplementation of the entire C++23 standard library.
 
 
-Using ETL in an Atmel Studio 7 project
-======================================
+Host-side build and tests
+=========================
 
-1. Create a new C++ project :
-  - 'File' -> 'New Project' -> 'GCC C++ Executable Project'
-  - Select your target device
+The repository is header-only, but it ships a host-side Catch test runner for validating the mock architecture and bundled `libstd` implementation.
 
-2. Configure the project to use C++14 :
-  In 'Project' -> 'Project properties' -> 'Toolchain' -> 'AVR/GNU C++ Compiler'
-  ->  'Miscellaneous'
-  add `-std=c++14` in the 'Other flags:' field.
-
-3. Add ETL include path in your configuration :
-  In 'Project' -> 'Project properties' -> 'Toolchain' -> 'AVR/GNU C++ Compiler'
-  -> 'General'
-   - add **"C:\\*your_path*\ETL\include"** in the 'Default Include Paths:' field.*
-   - Add **"C:\\*your_path*\ETL\libstd\include"** unless your toolchain has already a C++ standard library.
-
-      \*(where ***your_path*** is the actual location of the ETL library).
-
-4. Add `#include <etl.h>` in your cpp file.
-  You can now use new, delete, new[], delete[] and placement new operators.
-  The free store manager provides you additional functions :
-
-```
-  etl::FreeStore::GetMemorySize()  
-  etl::FreeStore::GetMemoryFragmentation()  
-  etl::Freestore::GetFreeMemory()
-```
-  
-  An optional freestore trace log can be activated by defining ETL_FREESTORE_LOG_DEPTH with the requested log depth (3 bytes are used per log so a 64 log depth will consume 192 bytes of SRAM) :
-  
-```
-  #define ETL_FREESTORE_LOG_DEPTH 64
-  #include <etl.h>
+```sh
+cmake -S . -B build
+cmake --build build
+ctest --test-dir build --output-on-failure
 ```
 
-  This defines three public variables in :
-  
+Useful test runner commands:
+
+```sh
+./build/TestsETL --list-tests
+./build/TestsETL '[GPIO]'
+./build/TestsETL 'Scenario: std::tuple'
 ```
-  uint8_t etl::FreeStore::FreeStoreDebugTrace::log_counter;       // number of logged operations
-  Operation etl::FreeStore::FreeStoreDebugTrace::log_operation[]  // logged operations
-  void* etl::FreeStore::FreeStoreDebugTrace::log_address[]        // logged addresses
+
+Open AVR workflow
+=================
+
+The primary workflow is now an open, cross-platform AVR toolchain rather than Atmel Studio / Microchip Studio.
+
+Recommended tools:
+
+- host GCC 13+ for local host builds and tests
+- CMake 3.25+
+- modern-avr `avr-g++` 14.2+ for AVR validation
+- `avrdude` for flashing
+
+This repository includes an AVR smoke target that validates the headers with a real `avr-g++` build:
+
+```sh
+cmake -S . -B build-avr \
+  -DCMAKE_TOOLCHAIN_FILE=cmake/avr-gcc-toolchain.cmake \
+  -DETL_BUILD_HOST_TESTS=OFF \
+  -DETL_BUILD_AVR_SMOKE=ON \
+  -DETL_AVR_MCU=atmega328p \
+  -DETL_AVR_F_CPU=16000000UL
+cmake --build build-avr
+```
+
+The repository CI downloads `modern-avr/toolchain` release `v14.2.0` for that AVR validation path.
+
+That produces:
+
+- `build-avr/etl_avr_smoke.elf`
+- `build-avr/etl_avr_smoke.hex`
+
+You can override `ETL_AVR_MCU` to validate another supported MCU such as `attiny84`.
+
+Using ETL in your own AVR project
+=================================
+
+1. Configure your project to compile with C++23.
+2. Add **two** include paths:
+   - `.../ETL/include`
+   - `.../ETL`
+
+   The repository root is required because ETL headers include bundled standard-library headers with paths such as `libstd/include/memory`.
+
+3. Add `#include <etl.h>` in your source file.
+
+If your project uses the freestore helpers, ETL provides:
+
+```
+etl::FreeStore::GetMemorySize()
+etl::FreeStore::GetMemoryFragmentation()
+etl::FreeStore::GetFreeMemory()
+```
+
+An optional freestore trace log can be activated by defining `ETL_FREESTORE_LOG_DEPTH` before including `etl.h`:
+
+```
+#define ETL_FREESTORE_LOG_DEPTH 64
+#include <etl.h>
+```
+
+This exposes:
+
+```
+uint8_t etl::FreeStore::FreeStoreDebugTrace::log_counter;
+Operation etl::FreeStore::FreeStoreDebugTrace::log_operation[];
+void* etl::FreeStore::FreeStoreDebugTrace::log_address[];
+```
+
+Flashing with avrdude
+=====================
+
+Once you have built a `.hex` file, a typical flashing command looks like:
+
+```sh
+avrdude -c <programmer> -p <mcu> -U flash:w:build-avr/etl_avr_smoke.hex:i
 ```
   

@@ -92,10 +92,13 @@ public:
         MockDevice::getInstance().clearAddOnChangeCallback(index, mask);
     }
 
+    static const size_t flashSize = 65535;
     static const size_t sramSize = 10000;
+    static const size_t architectureWidth = 16;
     using RegisterType = uint16_t;
     static const size_t defaultBufferSize = 32;
     using OffType = uint64_t;
+    static const uint32_t McuFrequency = 16000000;
 
     static const uint8_t NB_PORTS = 4;
 

@@ -2,16 +2,17 @@ C++ Standard Library for ETL
 ============================
 
 
-A C++14 Standard Library implementation for ETL.
+A bundled standard-library subset for ETL.
 
-**ETL** is an header only template library geared towards the size and performance constraints of embedded applications. It relies heavily on the C++ Standard Library. But since the avr 8-bit toolchain does not provide a standard C++ standard library, this header-only std-lib provides all elements needed by ETL to be compiled as a standalone product.
+**ETL** is a header only template library geared towards the size and performance constraints of embedded applications. The repository now targets a **C++23** baseline, but AVR environments still benefit from a bundled standard-library subset that covers the facilities ETL actually uses on embedded targets.
 
+When ETL is consumed from another build system, add both the repository root and `include/` to the compiler include path. ETL headers refer to bundled headers through paths such as `libstd/include/memory`, so `include/` alone is not enough.
 
-So far, **C++ Standard Library for ETL** covers the following aspects of C++14 Standard Library :
+This bundled library is intentionally partial. It primarily covers the following families of facilities that ETL relies on:
 
 - `new`, `delete`, `new[]`, `delete[]`, placement new and delete operators
 - a Freestore implementation used by the new and delete operators.
-- `std::move` and `std::forward` needed for xvalue support, move semantics and perfect forwading.
+- `std::move` and `std::forward` needed for xvalue support, move semantics and perfect forwarding.
 - `std::unique_ptr` and `std::make_unique`
 - `<type_traits>`
 - `<cstddef>`
@@ -21,4 +22,3 @@ So far, **C++ Standard Library for ETL** covers the following aspects of C++14 S
 - `<utility>`
 - `<array>`
 - `<exception>`
-
