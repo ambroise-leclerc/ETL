@@ -40,10 +40,13 @@ public:
     explicit exception(const char *what_arg) noexcept : what_arg_(what_arg ? what_arg : "") {}
     exception(const exception &) noexcept = default;
     exception &operator=(const exception &) noexcept = default;
-    virtual ~exception() = default;
+    virtual ~exception() noexcept = default;
     virtual const char *what() const noexcept { return what_arg_; }
 
 protected:
+    /// Non-owning pointer to a caller-provided, long-lived string (typically a string literal).
+    /// It is never copied, so callers must not pass pointers to temporaries or stack buffers
+    /// whose lifetime ends before the exception (and any copies of it) is destroyed.
     const char *what_arg_;
 };
 
