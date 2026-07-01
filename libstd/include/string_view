@@ -64,16 +64,20 @@ private:
     const_pointer stringData;
     size_type stringLength;
 
-    constexpr const_pointer storage() const noexcept { return stringData == nullptr ? emptyValue : stringData; }
+    // Only substitute the static empty buffer for truly empty views (length == 0); otherwise
+    // stringData is guaranteed non-null and valid over [0, stringLength) by the constructors below.
+    constexpr const_pointer storage() const noexcept { return stringLength == 0 ? emptyValue : stringData; }
 
 public:
     constexpr basic_string_view() noexcept : stringData(nullptr), stringLength(0) {}
 
     constexpr basic_string_view(const basic_string_view &other) noexcept = default;
 
-    constexpr basic_string_view(const CharT *s, size_t count) : stringData(s), stringLength(count) {}
+    // Normalize a null pointer with a non-zero count to an empty view so that the invariant
+    // "data() is valid over [0, size())" always holds.
+    constexpr basic_string_view(const CharT *s, size_t count) : stringData(s), stringLength(s == nullptr ? 0 : count) {}
 
-    constexpr basic_string_view(const CharT *s) : stringData(s), stringLength(traits_type::length(s)) {}
+    constexpr basic_string_view(const CharT *s) : stringData(s), stringLength(s == nullptr ? 0 : traits_type::length(s)) {}
 
     constexpr const_iterator begin() const noexcept { return storage(); }
 
