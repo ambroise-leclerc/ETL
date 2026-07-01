@@ -1457,103 +1457,6 @@ public:
 template<> struct is_uart_rxd_capable<PinD2> : std::true_type {};
 template<> struct is_uart_txd_capable<PinD3> : std::true_type {};
 
-class Uart1Driver {
-    static const uint8_t BufferSize = 32;
-    static uint8_t readIndex, writeIndex;
-protected:
-    static void start(uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT) {
-        readIndex = 0;
-        writeIndex = 0;
-        float speedRate = BAUD_RATE > 57600 ? BAUD_RATE * 8 : BAUD_RATE * 16;
-        auto spd = static_cast<uint16_t>(((Device::McuFrequency / speedRate)) - 0.5);
-        UBRR1H = spd>>8 &0b1111;
-        UBRR1L = spd;
-        
-        auto nbBits = (FRAME_FORMAT & FrameFormat::NbBitsMask) >> 3;
-        auto nbBits1 = (nbBits & 0b10) == 0b10;
-        auto nbBits0 = (nbBits & 0b1) == 0b1;
-        
-        auto parityMode = (FRAME_FORMAT & FrameFormat::ParityMask) >> 1;
-        auto parity0 = parityMode == 0b10;
-        auto parity1 = parityMode != 0b00;
-         
-        auto stopBit = (FRAME_FORMAT & FrameFormat::StopBitMask) >> 0;
-        
-        if (BAUD_RATE > 57600)
-            UCSR1A = 1<<U2X1;
-        UCSR1C = (nbBits1<<UCSZ11) | (nbBits0<<UCSZ10) | (parity0<<UPM10) | (parity1<<UPM11) | (stopBit<<USBS1);
-        UCSR1B = (1<<RXEN1) | (1<<TXEN1) | (1<<RXCIE1);
-     }
-
-    using Queue =  etl::CircularBuffer<uint8_t,BufferSize>;
-    static Queue fifo;
-    using ReceiveCallback = void(*)(uint8_t);
-    static ReceiveCallback receiveCallback;
-
-public:
-    static void writeAsync(uint8_t datum) {
-        if (UCSR1A & (1<<UDRE1)) {
-            UDR1 = datum;
-        }
-        else {
-            fifo.push_back(datum);
-            UCSR1B |= 1<<UDRIE1;
-        }
-    }
-
-
-    struct Isr {
-        static void receiveComplete() IOPORTS_IRQ_HANDLER(USART1_RX_vect, signal);
-        static void fifoEmpty() IOPORTS_IRQ_HANDLER(USART1_UDRE_vect, signal);
-    };
-};
-
-uint8_t Uart1Driver::readIndex = 0;
-uint8_t Uart1Driver::writeIndex = 0;
-Uart1Driver::Queue Uart1Driver::fifo;
-Uart1Driver::ReceiveCallback Uart1Driver::receiveCallback = nullptr;
-
-void Uart1Driver::Isr::fifoEmpty() {
-      if (!fifo.empty()) {
-        while((UCSR1A & (1<<UDRE1)) && !fifo.empty()) {
-            UDR1 =  fifo.pop_front();
-         }
-       } else {
-        UCSR1B &= ~(1<<UDRIE1);
-       }
-  }
-
-void Uart1Driver::Isr::receiveComplete() {
-    if (receiveCallback) {
-        receiveCallback(UDR1);
-    }
-}
-
-template<uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT, typename CharType>
-class Uart1 : public Uart1Driver {
-public:
-    using ReceiveCallback = void(*)(CharType);
-    enum class StatusFlags : uint8_t {
-        ReceiveComplete = 1<<RXC1,
-        TransmitComplete = 1<<TXC1,
-        FrameError = 1<<FE1,
-        DataOverrun = 1<<DOR1,
-        ParityError = 1<<UPE1,
-    };
-    
-    static void start() { Uart1Driver::start(BAUD_RATE, FRAME_FORMAT); }
-    static void start(ReceiveCallback func) {
-        receiveCallback = static_cast<Uart1Driver::ReceiveCallback>(func);
-        start();
-    }
-    
-    static void write(CharType datum) {
-        while(fifo.size() >= (BufferSize-1)) {
-            Device::delayTicks(Device::McuFrequency/(BAUD_RATE/8));
-        }
-        writeAsync(datum);
-    }
-};
 #ifdef PCICR
 struct PinChangeControlRegister {
   static void setBits(uint8_t mask)   { PCICR |= mask; }
@@ -1569,14 +1472,14 @@ struct PinChangeMask0 {
 
 struct PinChangeIRQ0 {
   static void enableSource(uint8_t PCINT) {
-    PinChangeControlRegister::SetBits(1<<PCIE0);
-    PinChangeMask0::SetBits(1<<PCINT);
+    PinChangeControlRegister::setBits(1<<PCIE0);
+    PinChangeMask0::setBits(1<<PCINT);
   }
 
   static void disableSource(uint8_t PCINT) {
-    PinChangeMask0::ClearBits(1<<PCINT);
+    PinChangeMask0::clearBits(1<<PCINT);
     if (0 == PinChangeMask0::Get()) {
-      PinChangeControlRegister::ClearBits(1<<PCIE0);
+      PinChangeControlRegister::clearBits(1<<PCIE0);
     }
   }
 
@@ -1602,14 +1505,14 @@ struct PinChangeMask1 {
 
 struct PinChangeIRQ1 {
   static void enableSource(uint8_t PCINT) {
-    PinChangeControlRegister::SetBits(1<<PCIE1);
-    PinChangeMask1::SetBits(1<<PCINT);
+    PinChangeControlRegister::setBits(1<<PCIE1);
+    PinChangeMask1::setBits(1<<PCINT);
   }
 
   static void disableSource(uint8_t PCINT) {
-    PinChangeMask1::ClearBits(1<<PCINT);
+    PinChangeMask1::clearBits(1<<PCINT);
     if (0 == PinChangeMask1::Get()) {
-      PinChangeControlRegister::ClearBits(1<<PCIE1);
+      PinChangeControlRegister::clearBits(1<<PCIE1);
     }
   }
 
@@ -1635,14 +1538,14 @@ struct PinChangeMask2 {
 
 struct PinChangeIRQ2 {
   static void enableSource(uint8_t PCINT) {
-    PinChangeControlRegister::SetBits(1<<PCIE2);
-    PinChangeMask2::SetBits(1<<PCINT);
+    PinChangeControlRegister::setBits(1<<PCIE2);
+    PinChangeMask2::setBits(1<<PCINT);
   }
 
   static void disableSource(uint8_t PCINT) {
-    PinChangeMask2::ClearBits(1<<PCINT);
+    PinChangeMask2::clearBits(1<<PCINT);
     if (0 == PinChangeMask2::Get()) {
-      PinChangeControlRegister::ClearBits(1<<PCIE2);
+      PinChangeControlRegister::clearBits(1<<PCIE2);
     }
   }
 
