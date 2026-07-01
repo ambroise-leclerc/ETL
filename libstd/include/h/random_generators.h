@@ -36,7 +36,7 @@
 
 namespace ETLSTD {
 
-/// xorshift32 pseudo-random generator. Not a std::-conforming engine (no
+/// xorshift32 pseudo-random generator. Not a std::conforming engine (no
 /// standard algorithm/state-size guarantees), but satisfies the
 /// UniformRandomBitGenerator interface used by libstd distributions and is
 /// cheap enough for 8-bit targets.
@@ -55,7 +55,7 @@ public:
         return state_;
     }
 
-    static constexpr result_type min() { return 0u; }
+    static constexpr result_type min() { return 1u; }
     static constexpr result_type max() { return numeric_limits<result_type>::max(); }
 
 private:

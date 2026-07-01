@@ -67,11 +67,16 @@ template <typename IntType = int> struct uniform_int_distribution {
     result_type operator()(UniformRandomNumberGenerator &g, const param_type &parm) {
         using UResult = typename UniformRandomNumberGenerator::result_type;
         using UInt = make_unsigned_t<IntType>;
+        // static_cast to an unsigned type wraps modulo 2^N (well-defined), which correctly
+        // biases signed a()/b() (including negative bounds) into an unsigned span.
         const UInt range = static_cast<UInt>(parm.b()) - static_cast<UInt>(parm.a());
+        // Normalize the generator's output onto a zero-based range before applying modulo:
+        // g() is only guaranteed to lie within [g.min(), g.max()], not [0, g.max()].
+        const UResult generated = static_cast<UResult>(g()) - static_cast<UResult>(UniformRandomNumberGenerator::min());
         if (range == numeric_limits<UInt>::max())
-            return static_cast<result_type>(static_cast<UInt>(g()));
+            return static_cast<result_type>(static_cast<UInt>(generated));
         const UInt span = range + 1;
-        const UInt drawn = static_cast<UInt>(static_cast<UResult>(g()) % static_cast<UResult>(span));
+        const UInt drawn = static_cast<UInt>(generated % static_cast<UResult>(span));
         return static_cast<result_type>(static_cast<UInt>(parm.a()) + drawn);
     }
 

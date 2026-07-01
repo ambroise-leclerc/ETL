@@ -116,6 +116,26 @@ SCENARIO("uniform_int_distribution stays within bounds") {
         }
     }
 
+    GIVEN("a distribution over a negative-to-positive range [-10, 10]") {
+        xorshift32_engine gen(4242u);
+        uniform_int_distribution<int> dist(-10, 10);
+
+        THEN("every draw lies within [a, b] and both signs get hit") {
+            bool sawNegative = false, sawPositive = false;
+            for (int i = 0; i < 10000; ++i) {
+                auto v = dist(gen);
+                REQUIRE(v >= -10);
+                REQUIRE(v <= 10);
+                if (v < 0)
+                    sawNegative = true;
+                else if (v > 0)
+                    sawPositive = true;
+            }
+            REQUIRE(sawNegative);
+            REQUIRE(sawPositive);
+        }
+    }
+
     GIVEN("two distributions drawing from identically seeded generators") {
         xorshift32_engine gen1(2026u);
         xorshift32_engine gen2(2026u);
