@@ -98,7 +98,7 @@ ETL now targets a single **C++23** baseline across the repository:
 - AVR smoke builds target **modern-avr GCC 14.2+**
 - the default build system baseline is **CMake 3.25+**
 
-The bundled `libstd` directory remains a focused compatibility layer for the subset of standard-library facilities ETL uses on embedded targets; it is not a full reimplementation of the entire C++23 standard library.
+The bundled `libstd` directory remains a focused compatibility layer for the subset of standard-library facilities ETL uses on embedded targets; it is not a full reimplementation of the entire C++23 standard library. In particular, `<string>` now means a small owning string subset with `string_view` interop, append/resize/reserve support, and explicit non-goals around full hosted `std::string` parity.
 
 
 Host-side build and tests
