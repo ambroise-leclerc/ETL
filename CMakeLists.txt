@@ -59,7 +59,7 @@ if (ETL_BUILD_HOST_TESTS)
 
     include(CTest)
     if (BUILD_TESTING)
-        add_test(NAME TestsETL COMMAND TestsETL)
+        add_test(NAME TestsETL COMMAND TestsETL ~[libstd])
         add_test(NAME TestsETL-libstd COMMAND TestsETL [libstd])
     endif()
 
