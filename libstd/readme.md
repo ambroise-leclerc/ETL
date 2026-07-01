@@ -28,7 +28,7 @@ Current classification:
 | `memory` | Experimental | `unique_ptr`/`make_unique` are solid, but `shared_ptr`'s copy assignment does not increment the reference count, an unfixed use-after-free/double-free risk (issue #88); do not rely on `shared_ptr` copies yet. |
 | `string`, `tuple` | Placeholder | Present in the tree, but not yet strong enough to be treated as part of the supported subset. |
 
-If a header is not explicitly listed as supported, prefer to treat it as non-contractual until its status is promoted.
+Any header not present in the classification table above should be treated as non-contractual until it is added and given a status.
 
 This bundled library is intentionally partial. It primarily covers the following families of facilities that ETL relies on:
 
