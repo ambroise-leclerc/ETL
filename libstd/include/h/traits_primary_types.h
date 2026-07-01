@@ -36,6 +36,8 @@
 #include <libstd/include/cstddef>
 
 namespace ETLSTD {
+template<typename> struct is_function;
+
 namespace etlHelper {
 template<typename> struct is_type_entier        : false_type { };
 template<> struct is_type_entier<bool>          : true_type  { };
@@ -56,10 +58,10 @@ template<typename T> struct is_pointeur         : false_type { };
 template<typename T> struct is_pointeur<T*>     : true_type  { };
 template<typename T> struct is_mb_pointeur      : false_type { };
 template<typename T, typename U> struct is_mb_pointeur<T U::*> : true_type { };
-template<typename T> struct is_mb_fonction_pointeur : std::false_type {};
-template<typename T, typename U> struct is_mb_fonction_pointeur<T U::*> : std::is_function<T> {}
+template<typename T> struct is_mb_fonction_pointeur : false_type {};
+template<typename T, typename U> struct is_mb_fonction_pointeur<T U::*> : is_function<T> {};
 
-;} // namespace etlHelper
+} // namespace etlHelper
 
 
 template<typename T> struct is_void : integral_constant<bool, is_same<void, remove_cv_t<T>>::value> { };

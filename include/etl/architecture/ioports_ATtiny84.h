@@ -639,60 +639,6 @@ struct PinB0 {
 };
 
 
-struct SpiSpcr {
-
-  /// Assigns a value to SPCR
-  /// @param[in] value value affected to SPCR
-  static void Assign(uint8_t value)  { SPCR = value; }
-
-  /// Sets masked bits in SPCR
-  /// @param[in] mask bits to set
-  static void Set(uint8_t mask)      { SPCR |= mask; }
-
-  /// Clears masked bits in SPCR
-  /// @param[in] mask bits to clear
-  static void Clear(uint8_t mask)    { SPCR &= ~mask; }
-  static uint8_t Get()               { return SPCR; }
-  static bool TestBits(uint8_t mask) { return SPCR & mask; }
-  void operator=(uint8_t value)      { SPCR = value; }
-};
-
-struct SpiSpdr {
-
-  /// Assigns a value to SPDR
-  /// @param[in] value value affected to SPDR
-  static void Assign(uint8_t value)  { SPDR = value; }
-
-  /// Sets masked bits in SPDR
-  /// @param[in] mask bits to set
-  static void Set(uint8_t mask)      { SPDR |= mask; }
-
-  /// Clears masked bits in SPDR
-  /// @param[in] mask bits to clear
-  static void Clear(uint8_t mask)    { SPDR &= ~mask; }
-  static uint8_t Get()               { return SPDR; }
-  static bool TestBits(uint8_t mask) { return SPDR & mask; }
-  void operator=(uint8_t value)      { SPDR = value; }
-};
-
-struct SpiSpsr {
-
-  /// Assigns a value to SPSR
-  /// @param[in] value value affected to SPSR
-  static void Assign(uint8_t value)  { SPSR = value; }
-
-  /// Sets masked bits in SPSR
-  /// @param[in] mask bits to set
-  static void Set(uint8_t mask)      { SPSR |= mask; }
-
-  /// Clears masked bits in SPSR
-  /// @param[in] mask bits to clear
-  static void Clear(uint8_t mask)    { SPSR &= ~mask; }
-  static uint8_t Get()               { return SPSR; }
-  static bool TestBits(uint8_t mask) { return SPSR & mask; }
-  void operator=(uint8_t value)      { SPSR = value; }
-};
-
 struct Timer0 {
   using value_type = uint8_t;
   static const uint8_t timer_width = 8;
