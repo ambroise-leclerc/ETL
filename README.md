@@ -117,6 +117,7 @@ Useful test runner commands:
 ```sh
 ./build/TestsETL --list-tests
 ./build/TestsETL '[GPIO]'
+./build/TestsETL '[libstd]'
 ./build/TestsETL 'Scenario: std::tuple'
 ```
 
@@ -150,6 +151,8 @@ That produces:
 
 - `build-avr/etl_avr_smoke.elf`
 - `build-avr/etl_avr_smoke.hex`
+- `build-avr/etl_avr_libstd_smoke.elf`
+- `build-avr/etl_avr_libstd_smoke.hex`
 
 You can override `ETL_AVR_MCU` to validate another supported MCU such as `attiny84`.
 

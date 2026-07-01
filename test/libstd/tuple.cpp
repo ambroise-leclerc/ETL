@@ -70,7 +70,7 @@ public:
 
 };
 
-SCENARIO("std::integer_sequence") {
+SCENARIO("std::integer_sequence", "[libstd][tuple]") {
     using seq5 = make_integer_sequence<int, 5>;
     using seq10 = make_index_sequence<10>;
     using seq18 = make_integer_sequence<char, 18>;
@@ -92,9 +92,8 @@ SCENARIO("std::integer_sequence") {
     REQUIRE(s.output == "42315012345678910110123456789101112");
 }
 
-SCENARIO("std::tuple") {
+SCENARIO("std::tuple", "[libstd][tuple]") {
     GIVEN("0 class instances") {
 
     }
 }
-
