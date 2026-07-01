@@ -86,16 +86,16 @@ SCENARIO("std::shared_ptr") {
         WHEN("ptr is copied twice") {
             auto obj2 = obj;
             auto obj3 = obj;
-            THEN("3 references are counted")
-            REQUIRE(obj.use_count() == 3);
+            THEN("references are counted and released correctly as owners give up their reference") {
+                REQUIRE(obj.use_count() == 3);
 
-            obj = nullptr;
-            THEN("ref count is decreased")
-            REQUIRE(obj2.use_count() == 2);
+                obj = nullptr;
+                REQUIRE(obj2.use_count() == 2);
 
-            obj3.reset();
-            REQUIRE(!obj3);
-            REQUIRE(obj2.unique());
+                obj3.reset();
+                REQUIRE(!obj3);
+                REQUIRE(obj2.unique());
+            }
         }
 
         WHEN("ptr is copy-assigned") {
