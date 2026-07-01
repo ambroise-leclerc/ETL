@@ -31,63 +31,66 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
+#include <libstd/include/limits>
+#include <libstd/include/type_traits>
 
 namespace ETLSTD {
 
-template<typename IntType = int>
-struct uniform_int_distribution {
-  using result_type = IntType;
-  struct param_type {
-    typedef uniform_int_distribution distribution_type;
-    
-    explicit param_type(IntType a = 0, IntType b = std::numeric_limits<IntType>::max())
-      : a_(a), b_(b) {};
-    result_type a() const { return a_; }
-    result_type b() const { return b_; }
-    friend bool operator==(const param_type& x, const param_type& y) { return x.a_ == y.a_ && x.b_ == y.b_; }
-    friend bool operator!=(const param_type& x, const param_type& y) { return x.a_ != y.a_ || x.b_ != y.b_; }
-   private:
-    IntType a, b;
-  };
+template <typename IntType = int> struct uniform_int_distribution {
+    using result_type = IntType;
+    struct param_type {
+        using distribution_type = uniform_int_distribution;
 
-  explicit uniform_int_distribution(IntType a = 0, IntType b = numeric_limits<IntType>::max()) : param_(a, b) {}
-  explicit uniform_int_distribution(const param_type& parm) : param(p) {}
-  void reset() {}
+        explicit param_type(IntType a = 0, IntType b = numeric_limits<IntType>::max()) : a_(a), b_(b) {}
+        result_type a() const { return a_; }
+        result_type b() const { return b_; }
+        friend bool operator==(const param_type &x, const param_type &y) { return x.a_ == y.a_ && x.b_ == y.b_; }
+        friend bool operator!=(const param_type &x, const param_type &y) { return !(x == y); }
 
-  template<typename UniformRandomNumberGenerator> result_type operator()(UniformRandomNumberGenerator& g) {
-    return this->operator()(g, param_);
-  }
-  
-  template<typename UniformRandomNumberGenerator> result_type operator()(UniformRandomNumberGenerator& g, const param_type& parm) {
-  }    
+    private:
+        IntType a_, b_;
+    };
 
-  result_type a() const { return param_.a(); }
-  result_type b() const { return param_.b(); }
+    uniform_int_distribution() : uniform_int_distribution(0) {}
+    explicit uniform_int_distribution(IntType a, IntType b = numeric_limits<IntType>::max()) : param_(a, b) {}
+    explicit uniform_int_distribution(const param_type &parm) : param_(parm) {}
+    void reset() {}
 
-  param_type param() const;
-  void param(const param_type& param) { param_ = param; }
+    template <typename UniformRandomNumberGenerator> result_type operator()(UniformRandomNumberGenerator &g) {
+        return (*this)(g, param_);
+    }
 
-  result_type min() const { return this->a(); }
-  result_type max() const { return this->b(); }
+    // Modulo-based mapping: simple and adequate for an embedded 8/32-bit
+    // target, at the cost of a small bias when the generator's range isn't a
+    // multiple of the requested span. Not suitable for cryptographic use.
+    template <typename UniformRandomNumberGenerator>
+    result_type operator()(UniformRandomNumberGenerator &g, const param_type &parm) {
+        using UResult = typename UniformRandomNumberGenerator::result_type;
+        using UInt = make_unsigned_t<IntType>;
+        const UInt range = static_cast<UInt>(parm.b()) - static_cast<UInt>(parm.a());
+        if (range == numeric_limits<UInt>::max())
+            return static_cast<result_type>(static_cast<UInt>(g()));
+        const UInt span = range + 1;
+        const UInt drawn = static_cast<UInt>(static_cast<UResult>(g()) % static_cast<UResult>(span));
+        return static_cast<result_type>(static_cast<UInt>(parm.a()) + drawn);
+    }
 
-  friend bool operator==(const uniform_int_distribution& x, const uniform_int_distribution& y) {
-    
-  }
-      
-  friend bool operator!=(const uniform_int_distribution& x, const uniform_int_distribution& y) {
-  }    
+    result_type a() const { return param_.a(); }
+    result_type b() const { return param_.b(); }
 
-  template <class charT, class traits>
-  friend
-  basic_ostream<charT, traits>&
-  operator<<(basic_ostream<charT, traits>& os,
-              const uniform_int_distribution& x);
+    param_type param() const { return param_; }
+    void param(const param_type &parm) { param_ = parm; }
 
-  template <class charT, class traits>
-  friend
-  basic_istream<charT, traits>&
-  operator>>(basic_istream<charT, traits>& is,
-              uniform_int_distribution& x);
+    result_type min() const { return this->a(); }
+    result_type max() const { return this->b(); }
+
+    friend bool operator==(const uniform_int_distribution &x, const uniform_int_distribution &y) {
+        return x.param_ == y.param_;
+    }
+    friend bool operator!=(const uniform_int_distribution &x, const uniform_int_distribution &y) { return !(x == y); }
+
+private:
+    param_type param_;
 };
 
-}  
+} // namespace ETLSTD
