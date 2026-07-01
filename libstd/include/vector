@@ -158,9 +158,9 @@ public:
     iterator begin() noexcept { return buffer_; }
     const_iterator begin() const noexcept { return buffer_; }
     const_iterator cbegin() const noexcept { return buffer_; }
-    iterator end() noexcept { return buffer_ + size_; }
-    const_iterator end() const noexcept { return buffer_ + size_; }
-    const_iterator cend() const noexcept { return buffer_ + size_; }
+    iterator end() noexcept { return buffer_ != nullptr ? buffer_ + size_ : nullptr; }
+    const_iterator end() const noexcept { return buffer_ != nullptr ? buffer_ + size_ : nullptr; }
+    const_iterator cend() const noexcept { return buffer_ != nullptr ? buffer_ + size_ : nullptr; }
 
     reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
     const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
