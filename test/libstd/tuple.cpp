@@ -37,24 +37,33 @@
 #define ETLSTD etlstd
 #include <libstd/include/tuple>
 
-using namespace ETLSTD;
-/*
-class TupleTest {
-public:
-    using Etq = const tuple<const char*, int, bool>;
+// Structured bindings look up tuple_size/tuple_element in ::std regardless of the type's own
+// namespace, so forward the real specializations to etlstd's to exercise `auto [a, b] = t;`.
+namespace std {
+template <typename... T> struct tuple_size<etlstd::tuple<T...>> : etlstd::tuple_size<etlstd::tuple<T...>> {};
+template <size_t I, typename... T>
+struct tuple_element<I, etlstd::tuple<T...>> : etlstd::tuple_element<I, etlstd::tuple<T...>> {};
+} // namespace std
 
-    Etq static findEtiquette(uint8_t id) {
-        switch (id) {
-        case 0: return make_tuple("ADSC", 12, false);
-        case 1: return make_tuple("VTIC", 2, false);
-        }
-        return make_tuple("UNDE", 0, false);
+using namespace ETLSTD;
+
+namespace {
+
+struct Empty {};
+
+struct MoveOnly {
+    int value;
+
+    constexpr explicit MoveOnly(int v) : value(v) {}
+    MoveOnly(const MoveOnly &) = delete;
+    MoveOnly &operator=(const MoveOnly &) = delete;
+    constexpr MoveOnly(MoveOnly &&other) noexcept : value(other.value) { other.value = -1; }
+    constexpr MoveOnly &operator=(MoveOnly &&other) noexcept {
+        value = other.value;
+        other.value = -1;
+        return *this;
     }
 };
-*/
-
-#include <iostream>
-
 
 class Serializer {
 public:
@@ -62,13 +71,22 @@ public:
 
     void f(ETLSTD::size_t s) { output += ::std::to_string(s); }
 
-    template<typename T, T... Indices>
-    void transform(integer_sequence<T, Indices...>) {
-        int ignore[]{ (f(Indices), 0)... };
-        (void)ignore;                       // avoid 'unused' warning
+    template <typename T, T... Indices> void transform(integer_sequence<T, Indices...>) {
+        int ignore[]{(f(Indices), 0)...};
+        (void)ignore;
     }
-
 };
+
+static_assert(tuple_size<tuple<>>::value == 0);
+static_assert(tuple_size_v<tuple<int, long>> == 2);
+static_assert(is_same_v<tuple_element_t<1, tuple<char, int, bool>>, int>);
+static_assert(is_same_v<decltype(get<0>(declval<tuple<int, bool> &>())), int &>);
+static_assert(is_same_v<decltype(get<1>(declval<const tuple<int, bool> &>())), const bool &>);
+static_assert(is_same_v<decltype(get<0>(declval<tuple<int> &&>())), int &&>);
+static_assert(is_same_v<decltype(get<0>(declval<const tuple<int> &&>())), const int &&>);
+static_assert(sizeof(tuple<Empty, uint8_t>) == sizeof(uint8_t));
+
+} // namespace
 
 SCENARIO("std::integer_sequence") {
     using seq5 = make_integer_sequence<int, 5>;
@@ -79,7 +97,6 @@ SCENARIO("std::integer_sequence") {
     REQUIRE(seq10::size() == 10);
     REQUIRE(seq18::size() == 18);
     REQUIRE(seq140::size() == 140);
-
 
     Serializer s;
     s.transform(index_sequence<4, 2, 3, 1, 5>{});
@@ -93,8 +110,106 @@ SCENARIO("std::integer_sequence") {
 }
 
 SCENARIO("std::tuple") {
-    GIVEN("0 class instances") {
+    GIVEN("heterogeneous values constructed in place") {
+        tuple<int, bool, ::std::string> values(42, true, "embedded");
 
+        THEN("get exposes the stored elements") {
+            REQUIRE(get<0>(values) == 42);
+            REQUIRE(get<1>(values));
+            REQUIRE(get<2>(values) == "embedded");
+        }
+    }
+
+    GIVEN("a tuple with references produced by tie") {
+        int number = 3;
+        bool enabled = false;
+        tuple<int &, bool &> refs = tie(number, enabled);
+
+        WHEN("assigning from another tuple") {
+            refs = make_tuple(9, true);
+
+            THEN("the referenced objects are updated") {
+                REQUIRE(number == 9);
+                REQUIRE(enabled);
+            }
+        }
+
+        WHEN("ignore is used during assignment") {
+            tie(number, ignore) = make_tuple(12, "unused");
+
+            THEN("only selected elements are updated") {
+                REQUIRE(number == 12);
+                REQUIRE_FALSE(enabled);
+            }
+        }
+    }
+
+    GIVEN("a tuple built with make_tuple") {
+        int counter = 7;
+        auto values = make_tuple("ticks", ref(counter), 4u);
+
+        THEN("reference_wrapper arguments remain references") {
+            static_assert(is_same_v<decltype(values), tuple<const char *, int &, unsigned int>>);
+            get<1>(values) = 11;
+            REQUIRE(counter == 11);
+            REQUIRE(get<0>(values) == "ticks");
+            REQUIRE(get<2>(values) == 4u);
+        }
+    }
+
+    GIVEN("a tuple converted from another tuple type") {
+        tuple<short, uint8_t> small_values(5, 1);
+
+        WHEN("constructing and assigning a wider tuple") {
+            tuple<int, bool> converted(small_values);
+            tuple<long, int> assigned(0, 0);
+            assigned = converted;
+
+            THEN("element-wise conversions are preserved") {
+                REQUIRE(get<0>(converted) == 5);
+                REQUIRE(get<1>(converted));
+                REQUIRE(get<0>(assigned) == 5);
+                REQUIRE(get<1>(assigned) == 1);
+            }
+        }
+    }
+
+    GIVEN("a tuple containing a move-only value") {
+        tuple<MoveOnly, int> moved(MoveOnly(17), 5);
+
+        THEN("move construction stores the value once") {
+            REQUIRE(get<0>(moved).value == 17);
+            REQUIRE(get<1>(moved) == 5);
+        }
+    }
+
+    GIVEN("a tuple of empty and non-empty types") {
+        tuple<Empty, uint8_t> compact(Empty{}, 9);
+
+        THEN("empty elements do not add payload storage") {
+            REQUIRE(get<1>(compact) == 9);
+            REQUIRE(sizeof(compact) == sizeof(uint8_t));
+        }
+    }
+
+    GIVEN("a tuple destructured with structured bindings") {
+        tuple<int, ::std::string, bool> values(3, "abc", true);
+
+        WHEN("binding by value") {
+            auto [number, text, flag] = values;
+
+            THEN("each binding reads the matching element") {
+                REQUIRE(number == 3);
+                REQUIRE(text == "abc");
+                REQUIRE(flag);
+            }
+        }
+
+        WHEN("binding by reference") {
+            auto &[number, text, flag] = values;
+            number = 9;
+
+            THEN("the binding aliases the tuple's storage") { REQUIRE(get<0>(values) == 9); }
+        }
     }
 }
-
