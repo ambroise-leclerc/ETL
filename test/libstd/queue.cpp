@@ -92,7 +92,7 @@ public:
     }
     template <typename... Args> void emplace_back(Args &&...args) {
         mockStatus += Emplace;
-        new (&elemB) uint8_t(std::forward<Args>(args)...);
+        new (&elemB) uint8_t(ETLSTD::forward<Args>(args)...);
     }
     enum method {
         Size = 1,

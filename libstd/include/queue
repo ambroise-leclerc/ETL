@@ -31,12 +31,16 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
+#include <libstd/include/type_traits>
 #include <libstd/include/utility>
 
 namespace ETLSTD {
 
 // queue stays adapter-only; use etl::CircularBuffer<T,N> as Container for fixed-capacity storage.
 template <typename T, typename Container> class queue {
+    static_assert(is_same<T, typename Container::value_type>::value,
+                  "queue<T, Container> : T must be the same type as Container::value_type");
+
 public:
     using container_type = Container;
     using value_type = typename Container::value_type;
