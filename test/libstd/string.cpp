@@ -107,6 +107,21 @@ SCENARIO("std::string subset handles self-assign when count exceeds capacity", "
     REQUIRE(tail[3] == '\0');
 }
 
+SCENARIO("std::string subset handles self-append overlap without corrupting data", "[libstd][string]") {
+    string text("ABCDEFGH");
+    text.reserve(13);
+    REQUIRE(text.capacity() >= 13);
+
+    text.append(text.data() + 4, 5);
+
+    REQUIRE(text.size() == 13);
+    REQUIRE(text[8] == 'E');
+    REQUIRE(text[9] == 'F');
+    REQUIRE(text[10] == 'G');
+    REQUIRE(text[11] == 'H');
+    REQUIRE(text[12] == '\0');
+}
+
 SCENARIO("std::string subset interoperates with string_view and move semantics", "[libstd][string]") {
     string source("embedded");
     string copy(source);

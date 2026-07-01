@@ -36,6 +36,7 @@
 
 #include <libstd/include/algorithm>
 #include <libstd/include/cstddef>
+#include <libstd/include/functional>
 #include <libstd/include/iterator>
 #include <libstd/include/memory>
 #include <libstd/include/string_view>
@@ -209,7 +210,8 @@ public:
 
     void assign(const value_type *s, size_type count) {
         difference_type sourceOffset = 0;
-        const bool overlaps = buffer_ != nullptr && s >= buffer_ && s < (buffer_ + capacity_ + 1);
+        constexpr ETLSTD::less<const value_type *> less{};
+        const bool overlaps = buffer_ != nullptr && !less(s, buffer_) && less(s, buffer_ + capacity_ + 1);
         if (overlaps)
             sourceOffset = s - buffer_;
 
@@ -246,7 +248,8 @@ public:
             return *this;
 
         difference_type sourceOffset = 0;
-        const bool overlaps = buffer_ != nullptr && s >= buffer_ && s < (buffer_ + capacity_ + 1);
+        constexpr ETLSTD::less<const value_type *> less{};
+        const bool overlaps = buffer_ != nullptr && !less(s, buffer_) && less(s, buffer_ + capacity_ + 1);
         if (overlaps)
             sourceOffset = s - buffer_;
 
@@ -254,7 +257,10 @@ public:
         if (overlaps)
             s = buffer_ + sourceOffset;
 
-        traits_type::copy(buffer_ + length_, s, count);
+        if (overlaps)
+            traits_type::move(buffer_ + length_, s, count);
+        else
+            traits_type::copy(buffer_ + length_, s, count);
         length_ += count;
         terminate();
         return *this;
