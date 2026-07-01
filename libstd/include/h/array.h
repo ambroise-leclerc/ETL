@@ -32,174 +32,181 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <libstd/include/iterator>
 #include <libstd/include/algorithm>
+#include <libstd/include/iterator>
 #include <libstd/include/stdexcept>
 
 namespace ETLSTD {
 
-template<typename T, std::size_t N>
-struct array {
-  using value_type        = T;
-  using pointer           = T*;
-  using const_pointer     = const T;
-  using reference         = T&;
-  using const_reference   = const T&;
-  using iterator          = T*;
-  using const_iterator    = const T*;
-  using size_type         = size_t;
-  using difference_type   = ptrdiff_t;
-  using reverse_iterator  = reverse_iterator<iterator>;
-  using const_reverse_iterator  = std::reverse_iterator<const_iterator>;
-  
-  // Access
-  reference operator[](size_type i) noexcept              { return elems_[i]; }
-  constexpr const_reference operator[](size_type i) const  { return elems_[i]; }
-    
-  reference at(size_type i)       { CheckRange(i); return elems_[i]; }
-  constexpr const_reference at(size_type i) const { CheckRange(i); return elems_[i]; }
-   
-  reference front() noexcept                        { return elems_[0]; }
-  constexpr const_reference front() const noexcept  { return elems_[0]; }
-  reference back() noexcept                         { return elems_[N - 1]; }
-  constexpr const_reference back() const noexcept   { return elems_[N - 1]; }
-  pointer data() noexcept                           { return elems_; }
-  constexpr const_pointer data() const noexcept     { return elems_; }
-    
-  // Size
-  constexpr size_type size() const noexcept { return N; }
-  constexpr size_type max_size() const noexcept { return N; }
-  constexpr bool empty() const noexcept { return size() == 0; }
-    
-  // Iterators
-  iterator begin() noexcept { return elems_; }
-  iterator end() noexcept   { return elems_ + N; }
-    
-  const_iterator begin() const noexcept { return elems_; }
-  const_iterator end() const noexcept   { return elems_ + N; }
-  
-  reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
-  reverse_iterator rend() noexcept   { return reverse_iterator(begin()); }
-    
-  const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
-  const_reverse_iterator rend() const noexcept   { return const_reverse_iterator(begin()); }
-   
-  const_iterator cbegin() const noexcept { return elems_; }
-  const_iterator cend() const noexcept   { return elems_ + N; }
-  
-  const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
-  const_reverse_iterator crend() const noexcept { return const_reverse_iterator(begin()); }
-    
-  // Operations
-  void fill(const T& value) { std::fill_n(begin(), size(), value); }    
-  void swap(array& other) noexcept { std::swap_ranges(begin(), end(), other.begin()); }
-    
- private:
-  T elems_[N];
-  
- private:
-  static void CheckRange(size_type i) {
-    if (i >= size()) {
-      std::out_of_range exception("");
-      throw(exception);
-    }      
-  }    
+template <typename T, std::size_t N> struct array {
+    using value_type = T;
+    using pointer = T *;
+    using const_pointer = const T *;
+    using reference = T &;
+    using const_reference = const T &;
+    using iterator = T *;
+    using const_iterator = const T *;
+    using size_type = size_t;
+    using difference_type = ptrdiff_t;
+    using reverse_iterator = ETLSTD::reverse_iterator<iterator>;
+    using const_reverse_iterator = ETLSTD::reverse_iterator<const_iterator>;
+
+    // Access
+    reference operator[](size_type i) noexcept { return elems_[i]; }
+    constexpr const_reference operator[](size_type i) const { return elems_[i]; }
+
+    reference at(size_type i) {
+        CheckRange(i);
+        return elems_[i];
+    }
+    constexpr const_reference at(size_type i) const {
+        CheckRange(i);
+        return elems_[i];
+    }
+
+    reference front() noexcept { return elems_[0]; }
+    constexpr const_reference front() const noexcept { return elems_[0]; }
+    reference back() noexcept { return elems_[N - 1]; }
+    constexpr const_reference back() const noexcept { return elems_[N - 1]; }
+    pointer data() noexcept { return elems_; }
+    constexpr const_pointer data() const noexcept { return elems_; }
+
+    // Size
+    constexpr size_type size() const noexcept { return N; }
+    constexpr size_type max_size() const noexcept { return N; }
+    constexpr bool empty() const noexcept { return size() == 0; }
+
+    // Iterators
+    iterator begin() noexcept { return elems_; }
+    iterator end() noexcept { return elems_ + N; }
+
+    const_iterator begin() const noexcept { return elems_; }
+    const_iterator end() const noexcept { return elems_ + N; }
+
+    reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
+    reverse_iterator rend() noexcept { return reverse_iterator(begin()); }
+
+    const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
+    const_reverse_iterator rend() const noexcept { return const_reverse_iterator(begin()); }
+
+    const_iterator cbegin() const noexcept { return elems_; }
+    const_iterator cend() const noexcept { return elems_ + N; }
+
+    const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
+    const_reverse_iterator crend() const noexcept { return const_reverse_iterator(begin()); }
+
+    // Operations
+    void fill(const T &value) { std::fill_n(begin(), size(), value); }
+    void swap(array &other) noexcept { std::swap_ranges(begin(), end(), other.begin()); }
+
+private:
+    T elems_[N];
+
+private:
+    static void CheckRange(size_type i) {
+        if (i >= N) {
+            throw out_of_range("");
+        }
+    }
 };
 
 // Zero-sized array specialization
-template<typename T>
-struct array<T, 0> {
-  using value_type        = T;
-  using pointer           = T*;
-  using const_pointer     = const T;
-  using reference         = T&;
-  using const_reference   = const T&;
-  using iterator          = T*;
-  using const_iterator    = const T*;
-  using size_type         = size_t;
-  using difference_type   = ptrdiff_t;
-  using reverse_iterator  = reverse_iterator<iterator>;
-  using const_reverse_iterator  = reverse_iterator<const_iterator>;
-  
-  // Access
-  reference operator[](size_type)                       { RangeError(); return elems_; }
-  constexpr const_reference operator[](size_type) const { RangeError(); return elems_; }   
-  reference at(size_type)                               { RangeError(); return elems_; }
-  constexpr const_reference at(size_type) const         { RangeError(); return elems_; }
-  reference front()                                     { RangeError(); return elems_; }
-  constexpr const_reference front() const               { RangeError(); return elems_; }
-  reference back()                                      { RangeError(); return elems_; }
-  constexpr const_reference back() const                { RangeError(); return elems_; }
-  pointer data() noexcept                               { return nullptr; }
-  constexpr const_pointer data() const noexcept         { return nullptr; }
-    
-  // Size
-  constexpr size_type size() const noexcept { return 0; }
-  constexpr size_type max_size() const noexcept { return 0; }
-  constexpr bool empty() const noexcept { return true; }
-    
-  // Iterators
-  iterator begin() noexcept { return iterator(reinterpret_cast<T*>(this)); }
-  iterator end() noexcept   { return begin(); }
-    
-  const_iterator begin() const noexcept { return const_iterator(reinterpret_cast<const T*>(this)); }
-  const_iterator end() const noexcept   { return begin(); }
-  
-  reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
-  reverse_iterator rend() noexcept   { return reverse_iterator(begin()); }
-    
-  const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
-  const_reverse_iterator rend() const noexcept   { return const_reverse_iterator(begin()); }
-   
-  const_iterator cbegin() const noexcept { return const_iterator(reinterpret_cast<const T*>(this)); }
-  const_iterator cend() const noexcept   { return begin(); }
-  
-  const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
-  const_reverse_iterator crend() const noexcept { return const_reverse_iterator(begin()); }
-    
-  // Operations
-  void fill(const T&) { }    
-  void swap(array&) noexcept { }
+template <typename T> struct array<T, 0> {
+    using value_type = T;
+    using pointer = T *;
+    using const_pointer = const T *;
+    using reference = T &;
+    using const_reference = const T &;
+    using iterator = T *;
+    using const_iterator = const T *;
+    using size_type = size_t;
+    using difference_type = ptrdiff_t;
+    using reverse_iterator = ETLSTD::reverse_iterator<iterator>;
+    using const_reverse_iterator = ETLSTD::reverse_iterator<const_iterator>;
 
- private:
-  T elems_[0];
+    // Access
+    reference operator[](size_type) {
+        RangeError();
+        return *data();
+    }
+    constexpr const_reference operator[](size_type) const {
+        RangeError();
+        return *data();
+    }
+    reference at(size_type) {
+        RangeError();
+        return *data();
+    }
+    constexpr const_reference at(size_type) const {
+        RangeError();
+        return *data();
+    }
+    reference front() {
+        RangeError();
+        return *data();
+    }
+    constexpr const_reference front() const {
+        RangeError();
+        return *data();
+    }
+    reference back() {
+        RangeError();
+        return *data();
+    }
+    constexpr const_reference back() const {
+        RangeError();
+        return *data();
+    }
+    pointer data() noexcept { return nullptr; }
+    constexpr const_pointer data() const noexcept { return nullptr; }
 
- private:
-  static void RangeError() {
-    std::out_of_range exception("");
-    throw(exception);
-  }      
+    // Size
+    constexpr size_type size() const noexcept { return 0; }
+    constexpr size_type max_size() const noexcept { return 0; }
+    constexpr bool empty() const noexcept { return true; }
+
+    // Iterators
+    iterator begin() noexcept { return nullptr; }
+    iterator end() noexcept { return nullptr; }
+
+    const_iterator begin() const noexcept { return nullptr; }
+    const_iterator end() const noexcept { return nullptr; }
+
+    reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
+    reverse_iterator rend() noexcept { return reverse_iterator(begin()); }
+
+    const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
+    const_reverse_iterator rend() const noexcept { return const_reverse_iterator(begin()); }
+
+    const_iterator cbegin() const noexcept { return nullptr; }
+    const_iterator cend() const noexcept { return nullptr; }
+
+    const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
+    const_reverse_iterator crend() const noexcept { return const_reverse_iterator(begin()); }
+
+    // Operations
+    void fill(const T &) {}
+    void swap(array &) noexcept {}
+
+private:
+    [[noreturn]] static void RangeError() { throw out_of_range(""); }
 };
 
 // non-member functions
-template<typename T, size_t N >
-bool operator==(const array<T,N>& x, const array<T,N>& y) {
-  return equal( x.cbegin(), x.cend(), y.cbegin());
+template <typename T, size_t N> bool operator==(const array<T, N> &x, const array<T, N> &y) {
+    return equal(x.cbegin(), x.cend(), y.cbegin());
 }
-  
-template<typename T, size_t N >
-bool operator!=(const array<T,N>& x, const array<T,N>& y) {
-  return !(x == y);
-}  
 
-template<typename T, size_t N >
-bool operator<(const array<T,N>& x, const array<T,N>& y) {
-  return lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
-}  
+template <typename T, size_t N> bool operator!=(const array<T, N> &x, const array<T, N> &y) { return !(x == y); }
 
-template<typename T, size_t N >
-bool operator<=(const array<T,N>& x, const array<T,N>& y) {
-  return !(y < x);
-}  
+template <typename T, size_t N> bool operator<(const array<T, N> &x, const array<T, N> &y) {
+    return lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
+}
 
-template<typename T, size_t N >
-bool operator>(const array<T,N>& x, const array<T,N>& y) {
-  return y < x;
-}  
+template <typename T, size_t N> bool operator<=(const array<T, N> &x, const array<T, N> &y) { return !(y < x); }
 
-template<typename T, size_t N >
-bool operator>=(const array<T,N>& x, const array<T,N>& y) {
-  return !(x < y);
-}  
+template <typename T, size_t N> bool operator>(const array<T, N> &x, const array<T, N> &y) { return y < x; }
+
+template <typename T, size_t N> bool operator>=(const array<T, N> &x, const array<T, N> &y) { return !(x < y); }
 
 } // namespace ETLSTD
