@@ -1,9 +1,9 @@
-/// @file thread
-/// @data 13/06/2016 18:23:53
+/// @file test/libstd/thread.cpp
+/// @date 01/07/2026
 /// @author Ambroise Leclerc
-/// @brief this header is part of the thread support library.
+/// @brief Tests for <thread>
 //
-// Copyright (c) 2016, Ambroise Leclerc
+// Copyright (c) 2026, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -30,31 +30,35 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-#pragma once
+#include <catch.hpp>
+
+#define __Mock_Mock__
+#define ETLSTD etlstd
 
 #include <etl/ioports.h>
-#include <libstd/include/chrono>
+#include <libstd/include/thread>
 
-namespace ETLSTD {
-namespace this_thread {
+using namespace ETLSTD;
+using namespace ETLSTD::chrono_literals;
 
-using clock_cycles = chrono::duration<unsigned long, ratio<1, etl::Device::McuFrequency>>;
+SCENARIO("std::this_thread::sleep_for constant-duration path", "[libstd][thread]") {
+    etl::Device::resetDelayTicksLog();
+    using clock_cycles = ETLSTD::chrono::duration<unsigned long, ETLSTD::ratio<1, etl::Device::McuFrequency>>;
 
-/// Blocks the execution of the current thread for the specified constant sleepDuration with a 1 cycle resolution.
-/// On mock targets this goes through Device::delayTicks so tests can observe the requested cycle count.
-template <typename Rep, typename Period> constexpr void sleep_for(const chrono::duration<Rep, Period> &sleepDuration) {
-    etl::Device::delayTicks(chrono::duration_cast<clock_cycles>(sleepDuration).count());
+    ETLSTD::this_thread::sleep_for(3us);
+
+    REQUIRE(etl::Device::lastDelayTicks() == chrono::duration_cast<clock_cycles>(3us).count());
+    REQUIRE(etl::Device::totalDelayTicks() == etl::Device::lastDelayTicks());
 }
 
-/// Blocks the execution of the current thread for the specified sleepDuration with a 1 millisecond resolution.
-/// Non-constexpr durations are rounded to whole milliseconds and compensate a small fixed loop overhead.
-template <typename Rep, typename Period> void sleep_for(chrono::duration<Rep, Period> &sleepDuration) {
-    uint32_t nbMs = chrono::duration_cast<chrono::milliseconds>(sleepDuration).count();
+SCENARIO("std::this_thread::sleep_for millisecond runtime path", "[libstd][thread]") {
+    etl::Device::resetDelayTicksLog();
+    using clock_cycles = ETLSTD::chrono::duration<unsigned long, ETLSTD::ratio<1, etl::Device::McuFrequency>>;
+
+    auto duration = 2ms;
+    ETLSTD::this_thread::sleep_for(duration);
+
     const auto ticksPerMs = chrono::duration_cast<clock_cycles>(1ms).count() - (64 / etl::Device::architectureWidth);
-    for (auto count = nbMs; count > 0; count--) {
-        etl::Device::delayTicks(ticksPerMs);
-    }
+    REQUIRE(etl::Device::lastDelayTicks() == ticksPerMs);
+    REQUIRE(etl::Device::totalDelayTicks() == static_cast<uint64_t>(ticksPerMs) * 2);
 }
-
-} // namespace this_thread
-} // namespace ETLSTD
