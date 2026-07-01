@@ -96,8 +96,8 @@ template <typename T, std::size_t N> struct array {
     const_reverse_iterator crend() const noexcept { return const_reverse_iterator(begin()); }
 
     // Operations
-    void fill(const T &value) { std::fill_n(begin(), size(), value); }
-    void swap(array &other) noexcept { std::swap_ranges(begin(), end(), other.begin()); }
+    void fill(const T &value) { fill_n(begin(), size(), value); }
+    void swap(array &other) noexcept { swap_ranges(begin(), end(), other.begin()); }
 
 private:
     T elems_[N];
