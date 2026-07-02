@@ -97,7 +97,7 @@ SCENARIO("CircularBuffer holding unique_ptrs") {
     REQUIRE(Element::nbCreated == 24);
     REQUIRE(Element::nbActive == 15);
 
-    queue<uint8_t, Buffer> fifo;
+    queue<unique_ptr<Element>, Buffer> fifo;
     for (auto &&elem : source)
         fifo.push(move(elem));
 }
