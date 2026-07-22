@@ -31,79 +31,281 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
-#include <libstd/include/memory>
+
+#include <libstd/include/initializer_list>
 #include <libstd/include/iterator>
+#include <libstd/include/memory>
+#include <libstd/include/type_traits>
+#include <libstd/include/utility>
 
 #include <etl/ETLDevice.h>
 
 namespace ETLSTD {
-template<typename T, typename Allocator = allocator<T>>
-class vector {
+template <typename T, typename Allocator = allocator<T>> class vector {
 public:
     using value_type = T;
     using allocator_type = Allocator;
     using size_type = size_t;
     using difference_type = ptrdiff_t;
-    using reference = value_type&;
-    using const_reference = const value_type&;
+    using reference = value_type &;
+    using const_reference = const value_type &;
     using pointer = typename allocator_traits<Allocator>::pointer;
     using const_pointer = typename allocator_traits<Allocator>::const_pointer;
-    using iterator = T*;
-    using const_iterator = const T*;
+    using iterator = T *;
+    using const_iterator = const T *;
     using const_reverse_iterator = ETLSTD::reverse_iterator<const_iterator>;
     using reverse_iterator = ETLSTD::reverse_iterator<iterator>;
 
-    // Constructors
     vector() : vector(Allocator()) {}
-    explicit vector(const Allocator& alloc) : vector(etl::Device::defaultBufferSize, alloc) {}
-    vector(size_type count, const T& value, const Allocator& alloc = Allocator())
-        : allocator(alloc), bufferSize(etl::Device::defaultBufferSize + count), capacity(0), buffer(allocator.allocate(bufferSize)) {
-        assign(bufferSize, value);
+
+    explicit vector(const Allocator &alloc) : allocator_(alloc), size_(0), capacity_(0), buffer_(nullptr) {}
+
+    vector(size_type count, const T &value, const Allocator &alloc = Allocator()) : vector(alloc) { assign(count, value); }
+
+    explicit vector(size_type count, const Allocator &alloc = Allocator()) : vector(alloc) { resize(count); }
+
+    vector(const vector &other) : vector(other, other.allocator_) {}
+
+    vector(const vector &other, const Allocator &alloc) : vector(alloc) {
+        reserve(other.size_);
+        for (const auto &value : other) {
+            emplace_back(value);
+        }
     }
-    explicit vector(size_type count, const Allocator& alloc = Allocator())
-        : allocator(alloc), bufferSize(count), capacity(0), buffer(allocator.allocate(bufferSize)) {}
-    vector(const vector& other);
-    vector(const vector& other, const Allocator& alloc);
-    vector(vector&& other);
-    vector(vector&& other, const Allocator& alloc);
-    vector(initializer_list<T> init, const Allocator& alloc = Allocator());
 
-    template<typename InputIt>
-    vector(InputIt first, InputIt last, const Allocator& alloc = Allocator());
+    vector(vector &&other)
+        : allocator_(move(other.allocator_)), size_(other.size_), capacity_(other.capacity_), buffer_(other.buffer_) {
+        other.size_ = 0;
+        other.capacity_ = 0;
+        other.buffer_ = nullptr;
+    }
 
-	template <class InputIterator>
-	void assign(InputIterator first, InputIterator last) {
-		
-	}
+    vector(vector &&other, const Allocator &alloc) : vector(alloc) {
+        reserve(other.size_);
+        for (auto &value : other) {
+            emplace_back(move(value));
+        }
+        other.clear();
+    }
 
-	void assign(size_type n, const value_type& val) {
-		resize(n);
-	}
+    vector(initializer_list<T> init, const Allocator &alloc = Allocator()) : vector(alloc) { assign(init.begin(), init.end()); }
 
-	void assign(initializer_list<value_type> il);
+    template <typename InputIt, typename = enable_if_t<!is_integral<InputIt>::value>>
+    vector(InputIt first, InputIt last, const Allocator &alloc = Allocator()) : vector(alloc) {
+        assign(first, last);
+    }
 
-	void resize(size_type count) {
-		reserve(count);
-		bufferSize = count;
-	}
+    ~vector() {
+        clear();
+        release_storage();
+    }
 
-	void resize(size_type count, const value_type& value);
+    vector &operator=(const vector &other) {
+        if (this != &other) {
+            assign(other.begin(), other.end());
+        }
+        return *this;
+    }
 
-	void reserve(size_type new_cap) {
-		auto oldBuffer = move(buffer);
-		buffer = make_unique<T>(new_cap);
-		memcpy(buffer.get(), oldBuffer.get(), bufferSize);
-		capacity = count;
-	}
+    vector &operator=(vector &&other) {
+        if (this != &other) {
+            clear();
+            release_storage();
+            allocator_ = move(other.allocator_);
+            size_ = other.size_;
+            capacity_ = other.capacity_;
+            buffer_ = other.buffer_;
+            other.size_ = 0;
+            other.capacity_ = 0;
+            other.buffer_ = nullptr;
+        }
+        return *this;
+    }
 
-    // Capacity
-    size_type size() const noexcept { return bufferSize; }
+    vector &operator=(initializer_list<value_type> ilist) {
+        assign(ilist.begin(), ilist.end());
+        return *this;
+    }
 
-	
+    template <typename InputIt, typename = enable_if_t<!is_integral<InputIt>::value>> void assign(InputIt first, InputIt last) {
+        vector replacement(allocator_);
+        for (; first != last; ++first) {
+            replacement.emplace_back(*first);
+        }
+        swap(replacement);
+    }
+
+    void assign(size_type count, const value_type &value) {
+        clear();
+        reserve(count);
+        while (size_ < count) {
+            construct_at_end(value);
+        }
+    }
+
+    void assign(initializer_list<value_type> ilist) { assign(ilist.begin(), ilist.end()); }
+
+    reference operator[](size_type index) { return buffer_[index]; }
+    const_reference operator[](size_type index) const { return buffer_[index]; }
+
+    reference front() { return buffer_[0]; }
+    const_reference front() const { return buffer_[0]; }
+    reference back() { return buffer_[size_ - 1]; }
+    const_reference back() const { return buffer_[size_ - 1]; }
+    pointer data() noexcept { return buffer_; }
+    const_pointer data() const noexcept { return buffer_; }
+
+    iterator begin() noexcept { return buffer_; }
+    const_iterator begin() const noexcept { return buffer_; }
+    const_iterator cbegin() const noexcept { return buffer_; }
+    iterator end() noexcept { return buffer_ != nullptr ? buffer_ + size_ : nullptr; }
+    const_iterator end() const noexcept { return buffer_ != nullptr ? buffer_ + size_ : nullptr; }
+    const_iterator cend() const noexcept { return buffer_ != nullptr ? buffer_ + size_ : nullptr; }
+
+    reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
+    const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
+    const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(cend()); }
+    reverse_iterator rend() noexcept { return reverse_iterator(begin()); }
+    const_reverse_iterator rend() const noexcept { return const_reverse_iterator(begin()); }
+    const_reverse_iterator crend() const noexcept { return const_reverse_iterator(cbegin()); }
+
+    bool empty() const noexcept { return size_ == 0; }
+    size_type size() const noexcept { return size_; }
+    size_type capacity() const noexcept { return capacity_; }
+
+    void clear() noexcept {
+        while (size_ > 0) {
+            --size_;
+            destroy_at(buffer_ + size_);
+        }
+    }
+
+    void reserve(size_type new_cap) {
+        if (new_cap <= capacity_) {
+            return;
+        }
+        reallocate(new_cap);
+    }
+
+    void resize(size_type count) {
+        if (count < size_) {
+            shrink_to(count);
+            return;
+        }
+        reserve(count);
+        while (size_ < count) {
+            construct_at_end();
+        }
+    }
+
+    void resize(size_type count, const value_type &value) {
+        if (count < size_) {
+            shrink_to(count);
+            return;
+        }
+        reserve(count);
+        while (size_ < count) {
+            construct_at_end(value);
+        }
+    }
+
+    void push_back(const value_type &value) {
+        ensure_capacity_for_one_more();
+        construct_at_end(value);
+    }
+
+    void push_back(value_type &&value) {
+        ensure_capacity_for_one_more();
+        construct_at_end(move(value));
+    }
+
+    template <typename... Args> reference emplace_back(Args &&...args) {
+        ensure_capacity_for_one_more();
+        allocator_traits<Allocator>::construct(allocator_, buffer_ + size_, forward<Args>(args)...);
+        ++size_;
+        return back();
+    }
+
+    void pop_back() {
+        if (size_ == 0) {
+            return;
+        }
+        --size_;
+        destroy_at(buffer_ + size_);
+    }
+
+    void swap(vector &other) {
+        ETLSTD::swap(allocator_, other.allocator_);
+        ETLSTD::swap(size_, other.size_);
+        ETLSTD::swap(capacity_, other.capacity_);
+        ETLSTD::swap(buffer_, other.buffer_);
+    }
+
 protected:
-    Allocator allocator;
-    size_type bufferSize;
-    size_type capacity;
-	unique_ptr<T> buffer;
+    Allocator allocator_;
+    size_type size_;
+    size_type capacity_;
+    pointer buffer_;
+
+private:
+    static constexpr size_type minimum_growth() {
+        return etl::Device::defaultBufferSize > 0 ? etl::Device::defaultBufferSize : 1;
+    }
+
+    size_type next_capacity(size_type requested) const {
+        size_type new_capacity =
+            capacity_ == 0 ? minimum_growth() : capacity_ + (capacity_ < minimum_growth() ? minimum_growth() : capacity_);
+        return new_capacity < requested ? requested : new_capacity;
+    }
+
+    void ensure_capacity_for_one_more() {
+        if (size_ == capacity_) {
+            reserve(next_capacity(size_ + 1));
+        }
+    }
+
+    void construct_at_end() {
+        allocator_traits<Allocator>::construct(allocator_, buffer_ + size_);
+        ++size_;
+    }
+
+    template <typename U> void construct_at_end(U &&value) {
+        allocator_traits<Allocator>::construct(allocator_, buffer_ + size_, forward<U>(value));
+        ++size_;
+    }
+
+    void destroy_at(pointer element) { element->~value_type(); }
+
+    void shrink_to(size_type new_size) {
+        while (size_ > new_size) {
+            --size_;
+            destroy_at(buffer_ + size_);
+        }
+    }
+
+    void reallocate(size_type new_cap) {
+        pointer new_buffer = allocator_.allocate(new_cap);
+        for (size_type index = 0; index < size_; ++index) {
+            allocator_traits<Allocator>::construct(allocator_, new_buffer + index, move(buffer_[index]));
+        }
+        for (size_type index = size_; index > 0; --index) {
+            destroy_at(buffer_ + (index - 1));
+        }
+        if (buffer_ != nullptr) {
+            allocator_.deallocate(buffer_, capacity_);
+        }
+        buffer_ = new_buffer;
+        capacity_ = new_cap;
+    }
+
+    void release_storage() {
+        if (buffer_ != nullptr) {
+            allocator_.deallocate(buffer_, capacity_);
+            buffer_ = nullptr;
+            capacity_ = 0;
+        }
+    }
 };
+
+template <typename T, typename Allocator> void swap(vector<T, Allocator> &lhs, vector<T, Allocator> &rhs) { lhs.swap(rhs); }
 } // namespace ETLSTD
