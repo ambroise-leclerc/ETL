@@ -27,7 +27,7 @@ Current classification:
 | `thread`, `vector`, `random` | Experimental | Present and exercised, but still evolving toward a clearer embedded contract and deeper validation. `random` currently offers only `xorshift32_engine` and `uniform_int_distribution`, a small modulo-biased embedded subset, not a full `<random>` implementation. |
 | `string`, `tuple` | Placeholder | Present in the tree, but not yet strong enough to be treated as part of the supported subset. |
 
-If a header is not explicitly listed as supported, prefer to treat it as non-contractual until its status is promoted.
+Any header not present in the classification table above should be treated as non-contractual until it is added and given a status.
 
 This bundled library is intentionally partial. It primarily covers the following families of facilities that ETL relies on:
 
