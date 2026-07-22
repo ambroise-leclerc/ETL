@@ -24,8 +24,7 @@ Current classification:
 | Header family | Status | Notes |
 | --- | --- | --- |
 | `memory`, `utility`, `type_traits`, `cstddef`, `cstdint`, `limits`, `ratio`, `chrono`, `iterator`, `array`, `bitset`, `functional`, `queue`, `string_view`, `exception`, `stdexcept`, `initializer_list`, `new` | Supported | These headers are part of the maintained embedded subset and are expected to stay usable under the current C++23 baseline. |
-| `thread`, `vector`, `random` | Experimental | Present and exercised, but still evolving toward a clearer embedded contract and deeper validation. `random` currently offers only `xorshift32_engine` and `uniform_int_distribution`, a small modulo-biased embedded subset, not a full `<random>` implementation. |
-| `string`, `tuple` | Placeholder | Present in the tree, but not yet strong enough to be treated as part of the supported subset. |
+| `thread`, `vector`, `random`, `string`, `tuple` | Experimental | Present and exercised, but still evolving toward a clearer embedded contract and deeper validation. `random` currently offers only `xorshift32_engine` and `uniform_int_distribution`, a small modulo-biased embedded subset, not a full `<random>` implementation. `string` and `tuple` have real, tested implementations (see below for `string`'s documented scope) but are narrower than the hosted standard library. |
 
 Any header not present in the classification table above should be treated as non-contractual until it is added and given a status.
 
