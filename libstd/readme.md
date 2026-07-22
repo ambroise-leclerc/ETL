@@ -60,3 +60,5 @@ The following are intentionally **not** part of the promised surface today:
 - small-string optimization or copy-on-write
 - the full search / replace / insert / erase family from hosted `std::basic_string`
 - allocator-heavy API parity work beyond ETL's current embedded needs
+
+`<thread>` is part of the evolving embedded subset: `this_thread::sleep_for` is supported as a timing helper when the target `Device` exposes `delayTicks`, and mock validation should treat it as a cycle-accounted delay rather than as a high-precision wall-clock guarantee.
