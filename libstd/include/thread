@@ -32,28 +32,34 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <libstd/include/chrono>
 #include <etl/ioports.h>
+#include <libstd/include/chrono>
 
 namespace ETLSTD {
 namespace this_thread {
 
-/// Blocks the execution of the current thread for the specified constant sleepDuration with a 1 cycle resolution.
-template<typename Rep, typename Period>
-constexpr void sleep_for(const chrono::duration<Rep, Period>& sleepDuration) {
-    etl::Device::delayTicks(chrono::duration_cast<etl::clock_cycles>(sleepDuration).count());
-}
+using clock_cycles = chrono::duration<unsigned long, ratio<1, etl::Device::McuFrequency>>;
 
+/// Blocks the execution of the current thread for the specified sleepDuration with a 1 cycle resolution.
+/// Overload resolution picks this version whenever sleepDuration cannot bind to a mutable (non-const)
+/// lvalue reference, i.e. for rvalues such as literals (e.g. sleep_for(2ms)) and for const-qualified
+/// duration variables. On mock targets this goes through Device::delayTicks so tests can observe the
+/// requested cycle count.
+template <typename Rep, typename Period> constexpr void sleep_for(const chrono::duration<Rep, Period> &sleepDuration) {
+    etl::Device::delayTicks(chrono::duration_cast<clock_cycles>(sleepDuration).count());
+}
 
 /// Blocks the execution of the current thread for the specified sleepDuration with a 1 millisecond resolution.
-template<typename Rep, typename Period>
-void sleep_for(chrono::duration<Rep, Period>& sleepDuration) {
-	uint32_t nbMs = chrono::duration_cast<chrono::milliseconds>(sleepDuration).count();
-	for (auto count = nbMs; count > 0; count--) {
-		etl::Device::delayTicks(chrono::duration_cast<etl::clock_cycles>(1ms).count() - (64 / etl::Device::architectureWidth));
-	}
+/// Overload resolution picks this version only when sleepDuration is passed as a mutable (non-const) lvalue,
+/// e.g. `auto d = 2ms; sleep_for(d);` — rvalues and const-qualified durations bind to the overload above
+/// instead. The duration is rounded to whole milliseconds and a small fixed loop overhead is compensated for.
+template <typename Rep, typename Period> void sleep_for(chrono::duration<Rep, Period> &sleepDuration) {
+    uint32_t nbMs = chrono::duration_cast<chrono::milliseconds>(sleepDuration).count();
+    const auto ticksPerMs = chrono::duration_cast<clock_cycles>(1ms).count() - (64 / etl::Device::architectureWidth);
+    for (auto count = nbMs; count > 0; count--) {
+        etl::Device::delayTicks(ticksPerMs);
+    }
 }
-
 
 } // namespace this_thread
 } // namespace ETLSTD

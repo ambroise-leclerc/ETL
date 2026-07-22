@@ -32,36 +32,380 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-
 #include "h/char_traits.h"
-#include <libstd/include/vector>
-#include <libstd/include/memory>
+
+#include <libstd/include/algorithm>
+#include <libstd/include/cstddef>
+#include <libstd/include/functional>
 #include <libstd/include/iterator>
+#include <libstd/include/memory>
+#include <libstd/include/string_view>
+#include <libstd/include/utility>
 
 namespace ETLSTD {
 
-template<typename CharT, typename Traits = char_traits<CharT>, typename Allocator = allocator<CharT>>
-class basic_string {
+template <typename CharT, typename Traits = char_traits<CharT>, typename Allocator = allocator<CharT>> class basic_string {
 public:
     using traits_type = Traits;
     using value_type = typename Traits::char_type;
     using allocator_type = Allocator;
     using size_type = size_t;
     using difference_type = ptrdiff_t;
-    using reference = value_type&;
-    using const_reference = const value_type&;
+    using reference = value_type &;
+    using const_reference = const value_type &;
     using pointer = typename allocator_traits<Allocator>::pointer;
     using const_pointer = typename allocator_traits<Allocator>::const_pointer;
-    using iterator = vector<CharT, Allocator>;
-    using const_iterator = vector<CharT, Allocator>;
+    using iterator = pointer;
+    using const_iterator = const_pointer;
     using const_reverse_iterator = ETLSTD::reverse_iterator<const_iterator>;
     using reverse_iterator = ETLSTD::reverse_iterator<iterator>;
+    using view_type = basic_string_view<CharT, Traits>;
 
-    static const size_type npos = -1;
+    inline static const size_type npos = size_type(-1);
 
+    basic_string() noexcept(noexcept(allocator_type())) : allocator_(), length_(0), capacity_(0), buffer_(nullptr) {}
 
+    explicit basic_string(const allocator_type &alloc) noexcept
+        : allocator_(alloc), length_(0), capacity_(0), buffer_(nullptr) {}
 
+    basic_string(size_type count, value_type ch, const allocator_type &alloc = allocator_type()) : basic_string(alloc) {
+        assign(count, ch);
+    }
+
+    basic_string(const value_type *s, const allocator_type &alloc = allocator_type()) : basic_string(alloc) { assign(s); }
+
+    basic_string(const value_type *s, size_type count, const allocator_type &alloc = allocator_type()) : basic_string(alloc) {
+        assign(s, count);
+    }
+
+    basic_string(view_type view, const allocator_type &alloc = allocator_type()) : basic_string(alloc) { assign(view); }
+
+    basic_string(const basic_string &other) : basic_string(other.allocator_) { assign(other.data(), other.size()); }
+
+    basic_string(basic_string &&other) noexcept
+        : allocator_(ETLSTD::move(other.allocator_)), length_(other.length_), capacity_(other.capacity_),
+          buffer_(other.buffer_) {
+        other.length_ = 0;
+        other.capacity_ = 0;
+        other.buffer_ = nullptr;
+    }
+
+    ~basic_string() { release(); }
+
+    basic_string &operator=(const basic_string &other) {
+        if (this != &other)
+            assign(other.data(), other.size());
+        return *this;
+    }
+
+    basic_string &operator=(basic_string &&other) noexcept {
+        if (this != &other) {
+            release();
+            allocator_ = ETLSTD::move(other.allocator_);
+            length_ = other.length_;
+            capacity_ = other.capacity_;
+            buffer_ = other.buffer_;
+            other.length_ = 0;
+            other.capacity_ = 0;
+            other.buffer_ = nullptr;
+        }
+        return *this;
+    }
+
+    basic_string &operator=(const value_type *s) {
+        assign(s);
+        return *this;
+    }
+
+    basic_string &operator=(view_type view) {
+        assign(view);
+        return *this;
+    }
+
+    iterator begin() noexcept { return mutable_data(); }
+
+    const_iterator begin() const noexcept { return data(); }
+
+    const_iterator cbegin() const noexcept { return data(); }
+
+    iterator end() noexcept { return mutable_data() + length_; }
+
+    const_iterator end() const noexcept { return data() + length_; }
+
+    const_iterator cend() const noexcept { return data() + length_; }
+
+    reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
+
+    const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
+
+    const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(cend()); }
+
+    reverse_iterator rend() noexcept { return reverse_iterator(begin()); }
+
+    const_reverse_iterator rend() const noexcept { return const_reverse_iterator(begin()); }
+
+    const_reverse_iterator crend() const noexcept { return const_reverse_iterator(cbegin()); }
+
+    reference operator[](size_type pos) { return mutable_data()[pos]; }
+
+    const_reference operator[](size_type pos) const { return data()[pos]; }
+
+    reference front() { return mutable_data()[0]; }
+
+    const_reference front() const { return data()[0]; }
+
+    reference back() { return mutable_data()[length_ - 1]; }
+
+    const_reference back() const { return data()[length_ - 1]; }
+
+    [[nodiscard]] bool empty() const noexcept { return length_ == 0; }
+
+    size_type size() const noexcept { return length_; }
+
+    size_type length() const noexcept { return length_; }
+
+    size_type capacity() const noexcept { return capacity_; }
+
+    size_type max_size() const noexcept { return (npos / sizeof(value_type)) - 1; }
+
+    const_pointer data() const noexcept { return buffer_ ? buffer_ : empty_data(); }
+
+    pointer data() noexcept { return mutable_data(); }
+
+    const_pointer c_str() const noexcept { return data(); }
+
+    void clear() noexcept {
+        length_ = 0;
+        if (buffer_)
+            buffer_[0] = null_terminator();
+    }
+
+    void reserve(size_type newCapacity) {
+        if (newCapacity <= capacity_)
+            return;
+        reallocate(newCapacity);
+    }
+
+    void resize(size_type count) { resize(count, value_type()); }
+
+    void resize(size_type count, value_type ch) {
+        if (count <= length_) {
+            length_ = count;
+            terminate();
+            return;
+        }
+
+        ensure_capacity(count);
+        traits_type::assign(buffer_ + length_, count - length_, ch);
+        length_ = count;
+        terminate();
+    }
+
+    void assign(size_type count, value_type ch) {
+        clear();
+        resize(count, ch);
+    }
+
+    void assign(const value_type *s) { assign(s, traits_type::length(s)); }
+
+    void assign(const value_type *s, size_type count) {
+        difference_type sourceOffset = 0;
+        constexpr ETLSTD::less<const value_type *> less{};
+        const bool overlaps = buffer_ != nullptr && !less(s, buffer_) && less(s, buffer_ + capacity_ + 1);
+        if (overlaps)
+            sourceOffset = s - buffer_;
+
+        ensure_capacity(count);
+        if (count != 0) {
+            if (overlaps)
+                s = buffer_ + sourceOffset;
+            if (overlaps)
+                traits_type::move(buffer_, s, count);
+            else
+                traits_type::copy(buffer_, s, count);
+        }
+        length_ = count;
+        terminate();
+    }
+
+    void assign(view_type view) { assign(view.data(), view.size()); }
+
+    basic_string &append(size_type count, value_type ch) {
+        if (count == 0)
+            return *this;
+
+        ensure_capacity(length_ + count);
+        traits_type::assign(buffer_ + length_, count, ch);
+        length_ += count;
+        terminate();
+        return *this;
+    }
+
+    basic_string &append(const value_type *s) { return append(s, traits_type::length(s)); }
+
+    basic_string &append(const value_type *s, size_type count) {
+        if (count == 0)
+            return *this;
+
+        difference_type sourceOffset = 0;
+        constexpr ETLSTD::less<const value_type *> less{};
+        const bool overlaps = buffer_ != nullptr && !less(s, buffer_) && less(s, buffer_ + capacity_ + 1);
+        if (overlaps)
+            sourceOffset = s - buffer_;
+
+        ensure_capacity(length_ + count);
+        if (overlaps)
+            s = buffer_ + sourceOffset;
+
+        if (overlaps)
+            traits_type::move(buffer_ + length_, s, count);
+        else
+            traits_type::copy(buffer_ + length_, s, count);
+        length_ += count;
+        terminate();
+        return *this;
+    }
+
+    basic_string &append(view_type view) { return append(view.data(), view.size()); }
+
+    basic_string &push_back(value_type ch) { return append(1, ch); }
+
+    basic_string &operator+=(value_type ch) { return append(1, ch); }
+
+    basic_string &operator+=(const value_type *s) { return append(s); }
+
+    basic_string &operator+=(view_type view) { return append(view); }
+
+    size_type copy(value_type *dest, size_type count, size_type pos = 0) const {
+        if (pos >= length_)
+            return 0;
+
+        const auto copied = count < (length_ - pos) ? count : (length_ - pos);
+        traits_type::copy(dest, data() + pos, copied);
+        return copied;
+    }
+
+    int compare(view_type view) const noexcept { return this->view().compare(view); }
+
+    int compare(const value_type *s) const { return compare(view_type(s)); }
+
+    bool starts_with(view_type prefix) const noexcept { return view().starts_with(prefix); }
+
+    bool starts_with(value_type ch) const noexcept { return !empty() && traits_type::eq(front(), ch); }
+
+    bool starts_with(const value_type *s) const { return starts_with(view_type(s)); }
+
+    basic_string substr(size_type pos = 0, size_type count = npos) const {
+        if (pos >= length_)
+            return basic_string(allocator_);
+
+        const auto remaining = length_ - pos;
+        const auto copied = count < remaining ? count : remaining;
+        return basic_string(data() + pos, copied, allocator_);
+    }
+
+    view_type view() const noexcept { return view_type(data(), length_); }
+
+    operator view_type() const noexcept { return view(); }
+
+    void swap(basic_string &other) noexcept {
+        ETLSTD::swap(allocator_, other.allocator_);
+        ETLSTD::swap(length_, other.length_);
+        ETLSTD::swap(capacity_, other.capacity_);
+        ETLSTD::swap(buffer_, other.buffer_);
+    }
+
+private:
+    static value_type null_terminator() noexcept { return value_type(); }
+
+    static const_pointer empty_data() noexcept {
+        static const value_type empty[1] = {value_type()};
+        return empty;
+    }
+
+    pointer mutable_data() noexcept { return buffer_ ? buffer_ : const_cast<pointer>(empty_data()); }
+
+    void ensure_capacity(size_type required) {
+        if (required <= capacity_)
+            return;
+
+        size_type newCapacity = capacity_ == 0 ? required : capacity_;
+        while (newCapacity < required) {
+            const auto doubled = newCapacity * 2;
+            if (doubled <= newCapacity) {
+                newCapacity = required;
+                break;
+            }
+            newCapacity = doubled;
+        }
+        reallocate(newCapacity);
+    }
+
+    void reallocate(size_type newCapacity) {
+        auto *newBuffer = allocator_.allocate(newCapacity + 1);
+        // Copy the full old allocation, not just size(): a self-aliasing assign/append may read past length_.
+        if (buffer_)
+            traits_type::copy(newBuffer, buffer_, capacity_ + 1);
+        newBuffer[length_] = null_terminator();
+
+        if (buffer_)
+            allocator_.deallocate(buffer_, capacity_ + 1);
+
+        buffer_ = newBuffer;
+        capacity_ = newCapacity;
+    }
+
+    void terminate() noexcept {
+        if (buffer_)
+            buffer_[length_] = null_terminator();
+    }
+
+    void release() {
+        if (!buffer_)
+            return;
+
+        allocator_.deallocate(buffer_, capacity_ + 1);
+        buffer_ = nullptr;
+        length_ = 0;
+        capacity_ = 0;
+    }
+
+private:
+    allocator_type allocator_;
+    size_type length_;
+    size_type capacity_;
+    pointer buffer_;
 };
+
+template <typename CharT, typename Traits, typename Allocator>
+bool operator==(const basic_string<CharT, Traits, Allocator> &lhs, const basic_string<CharT, Traits, Allocator> &rhs) noexcept {
+    return lhs.compare(rhs.view()) == 0;
+}
+
+template <typename CharT, typename Traits, typename Allocator>
+bool operator==(const basic_string<CharT, Traits, Allocator> &lhs, basic_string_view<CharT, Traits> rhs) noexcept {
+    return lhs.compare(rhs) == 0;
+}
+
+template <typename CharT, typename Traits, typename Allocator>
+bool operator==(basic_string_view<CharT, Traits> lhs, const basic_string<CharT, Traits, Allocator> &rhs) noexcept {
+    return rhs == lhs;
+}
+
+template <typename CharT, typename Traits, typename Allocator>
+bool operator!=(const basic_string<CharT, Traits, Allocator> &lhs, const basic_string<CharT, Traits, Allocator> &rhs) noexcept {
+    return !(lhs == rhs);
+}
+
+template <typename CharT, typename Traits, typename Allocator>
+bool operator!=(const basic_string<CharT, Traits, Allocator> &lhs, basic_string_view<CharT, Traits> rhs) noexcept {
+    return !(lhs == rhs);
+}
+
+template <typename CharT, typename Traits, typename Allocator>
+bool operator!=(basic_string_view<CharT, Traits> lhs, const basic_string<CharT, Traits, Allocator> &rhs) noexcept {
+    return !(lhs == rhs);
+}
 
 using string = basic_string<char>;
 

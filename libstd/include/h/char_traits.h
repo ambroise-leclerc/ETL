@@ -32,6 +32,8 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
+#include <string.h>
+
 #include <etl/ioports.h>
 #include <libstd/include/algorithm>
 
@@ -47,7 +49,7 @@ template <typename CharT> struct char_traits {
     using state_type = CharT;
 
     static void assign(char_type &r, const char_type &a) noexcept { r = a; }
-    static char_type *assign(char_type *p, std::size_t count, char_type a) {
+    static char_type *assign(char_type *p, size_t count, char_type a) {
         fill_n(p, count, a);
         return p;
     }

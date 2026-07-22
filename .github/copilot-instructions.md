@@ -23,6 +23,7 @@
 - `include/etl/ioports.h` is the target-selection layer. It chooses an implementation from `include/etl/architecture/` based on preprocessor macros such as `__AVR_*__`, `__ESP_*__`, or `__Mock_Mock__`.
 - The core API is built around static port/pin types instead of runtime objects. `PortN` and `PinN` classes expose operations like `set`, `clear`, `setOutput`, and `changeBits`, plus compile-time metadata like `Pin::Port`, `Pin::bit()`, and `Pin::bitmask()`. The README's RGB LED examples reflect this compile-time composition model.
 - `libstd/include/` is ETL's bundled standard-library subset for targets that do not provide a usable C++ standard library. ETL code uses the `ETLSTD` namespace alias so the same headers can work with host `std` or bundled `etlstd`.
+- `libstd/readme.md` defines a support policy for bundled headers: some are **supported**, some are **experimental**, and some remain **placeholder** headers. Do not assume every header under `libstd/include/` is equally mature.
 - `CMakeLists.txt` now separates the host test runner from the AVR smoke build. The AVR path is a compile/link validation target, not a flashed firmware application.
 - Host-side tests run against the mock architecture in `include/etl/architecture/MockCore.h` and `test/MockDevice.h`. `Device::yield()` is the central simulation step: it flushes staged register writes, applies `Device::pragma("BitLink" ...)` wiring, and dispatches pin-change callbacks.
 

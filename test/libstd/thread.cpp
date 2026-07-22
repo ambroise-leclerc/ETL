@@ -1,9 +1,9 @@
-/// @file exception
-/// @data 16/04/2014 18:45:53
+/// @file test/libstd/thread.cpp
+/// @date 01/07/2026
 /// @author Ambroise Leclerc
-/// @brief Standard exceptions definitions.
+/// @brief Tests for <thread>
 //
-// Copyright (c) 2014, Ambroise Leclerc
+// Copyright (c) 2026, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -30,33 +30,35 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-#pragma once
+#include <catch.hpp>
 
-namespace ETLSTD {
+#define __Mock_Mock__
+#define ETLSTD etlstd
 
-class exception {
-public:
-    exception() noexcept : what_arg_("") {}
-    explicit exception(const char *what_arg) noexcept : what_arg_(what_arg ? what_arg : "") {}
-    exception(const exception &) noexcept = default;
-    exception &operator=(const exception &) noexcept = default;
-    virtual ~exception() noexcept = default;
-    virtual const char *what() const noexcept { return what_arg_; }
+#include <etl/ioports.h>
+#include <libstd/include/thread>
 
-protected:
-    /// Non-owning pointer to a caller-provided, long-lived string (typically a string literal).
-    /// It is never copied, so callers must not pass pointers to temporaries or stack buffers
-    /// whose lifetime ends before the exception (and any copies of it) is destroyed.
-    const char *what_arg_;
-};
+using namespace ETLSTD;
+using namespace ETLSTD::chrono_literals;
 
-class bad_exception : public exception {
-public:
-    bad_exception() noexcept : exception("bad_exception") {}
-    virtual ~bad_exception() noexcept = default;
-};
+SCENARIO("std::this_thread::sleep_for constant-duration path", "[libstd][thread]") {
+    etl::Device::resetDelayTicksLog();
+    using clock_cycles = ETLSTD::chrono::duration<unsigned long, ETLSTD::ratio<1, etl::Device::McuFrequency>>;
 
-using terminate_handler = void (*)();
-using unexpected_handler = void (*)();
+    ETLSTD::this_thread::sleep_for(3us);
 
-} // namespace ETLSTD
+    REQUIRE(etl::Device::lastDelayTicks() == chrono::duration_cast<clock_cycles>(3us).count());
+    REQUIRE(etl::Device::totalDelayTicks() == etl::Device::lastDelayTicks());
+}
+
+SCENARIO("std::this_thread::sleep_for millisecond runtime path", "[libstd][thread]") {
+    etl::Device::resetDelayTicksLog();
+    using clock_cycles = ETLSTD::chrono::duration<unsigned long, ETLSTD::ratio<1, etl::Device::McuFrequency>>;
+
+    auto duration = 2ms;
+    ETLSTD::this_thread::sleep_for(duration);
+
+    const auto ticksPerMs = chrono::duration_cast<clock_cycles>(1ms).count() - (64 / etl::Device::architectureWidth);
+    REQUIRE(etl::Device::lastDelayTicks() == ticksPerMs);
+    REQUIRE(etl::Device::totalDelayTicks() == static_cast<uint64_t>(ticksPerMs) * 2);
+}

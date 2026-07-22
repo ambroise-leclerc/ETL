@@ -165,7 +165,7 @@ template <typename T> struct refCountAndPointer : refCounter {
 
 template <typename T> struct refCountAndObject : refCounter {
     T object;
-    template <typename... Args> refCountAndObject(Args &&...args) : object(args...) {}
+    template <typename... Args> refCountAndObject(Args &&...args) : object(forward<Args>(args)...) {}
 };
 } // namespace etlHelper
 
@@ -174,13 +174,23 @@ public:
     using element_type = remove_extent_t<T>;
 
     constexpr shared_ptr() : pointee(nullptr), counter(nullptr) {}
-    constexpr shared_ptr(std::nullptr_t) : pointee(nullptr), counter(nullptr) {}
-    explicit shared_ptr(T *p) { createCounter(p); }
-    template <typename U> shared_ptr(const shared_ptr<U> &ptr) { *this = ptr; }
-    shared_ptr(const shared_ptr &ptr) : counter(ptr.counter), pointee(ptr.pointee) {
-        if (use_count() > 0)
+    constexpr shared_ptr(nullptr_t) : pointee(nullptr), counter(nullptr) {}
+    explicit shared_ptr(T *p) : pointee(nullptr), counter(nullptr) { createCounter(p); }
+    template <typename U> shared_ptr(const shared_ptr<U> &ptr) : counter(ptr.counter), pointee(ptr.pointee) {
+        if (counter)
             counter->inc();
     }
+    shared_ptr(const shared_ptr &ptr) : counter(ptr.counter), pointee(ptr.pointee) {
+        if (counter)
+            counter->inc();
+    }
+
+    // Aliasing constructor: shares ownership with ptr but points at p (e.g. a sub-object of *ptr).
+    template <typename U> shared_ptr(const shared_ptr<U> &ptr, T *p) : pointee(p), counter(ptr.counter) {
+        if (counter)
+            counter->inc();
+    }
+
     ~shared_ptr() { release(); }
 
     void reset() { release(); }
@@ -190,9 +200,7 @@ public:
     }
 
     shared_ptr &operator=(const shared_ptr &rhs) {
-        release();
-        pointee = rhs.pointee;
-        counter = rhs.counter;
+        shared_ptr(rhs).swap(*this);
         return *this;
     }
 
@@ -210,6 +218,11 @@ public:
 
 private:
     void createCounter(T *p) {
+        if (p == nullptr) {
+            pointee = nullptr;
+            counter = nullptr;
+            return;
+        }
         auto tmp = new etlHelper::refCountAndPointer<T>(p);
         pointee = tmp->pointee;
         counter = tmp;
@@ -253,7 +266,7 @@ template <typename T, typename U> shared_ptr<T> static_pointer_cast(const shared
 
 template <typename T, typename... Args> shared_ptr<T> make_shared(Args &&...args) {
     shared_ptr<T> ptr;
-    auto tmp = new etlHelper::refCountAndObject<T>(args...);
+    auto tmp = new etlHelper::refCountAndObject<T>(forward<Args>(args)...);
     ptr.pointee = &tmp->object;
     ptr.counter = tmp;
 

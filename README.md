@@ -98,7 +98,9 @@ ETL now targets a single **C++23** baseline across the repository:
 - AVR smoke builds target **modern-avr GCC 14.2+**
 - the default build system baseline is **CMake 3.25+**
 
-The bundled `libstd` directory remains a focused compatibility layer for the subset of standard-library facilities ETL uses on embedded targets; it is not a full reimplementation of the entire C++23 standard library.
+The bundled `libstd` directory remains a focused compatibility layer for the subset of standard-library facilities ETL uses on embedded targets; it is not a full reimplementation of the entire C++23 standard library. In particular, `<string>` now means a small owning string subset with `string_view` interop, append/resize/reserve support, and explicit non-goals around full hosted `std::string` parity.
+
+Within `libstd`, ETL now distinguishes between **supported**, **experimental**, and **placeholder** headers. The detailed support matrix lives in `libstd/readme.md`; in short, low-level headers ETL already depends on are maintained, `vector`/`random`/`thread` are experimental, and `string`/`tuple` are placeholders not yet fit for use.
 
 
 Host-side build and tests
@@ -118,6 +120,7 @@ Useful test runner commands:
 ./build/TestsETL --list-tests
 ./build/TestsETL '[GPIO]'
 ./build/TestsETL '[libstd]'
+./build/TestsETL '[thread]'
 ./build/TestsETL 'Scenario: std::tuple'
 ```
 
