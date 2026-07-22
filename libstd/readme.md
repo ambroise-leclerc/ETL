@@ -23,9 +23,8 @@ Current classification:
 
 | Header family | Status | Notes |
 | --- | --- | --- |
-| `utility`, `type_traits`, `cstddef`, `cstdint`, `limits`, `ratio`, `chrono`, `iterator`, `array`, `bitset`, `functional`, `queue`, `string_view`, `exception`, `stdexcept`, `initializer_list`, `new` | Supported | These headers are part of the maintained embedded subset and are expected to stay usable under the current C++23 baseline. |
+| `memory`, `utility`, `type_traits`, `cstddef`, `cstdint`, `limits`, `ratio`, `chrono`, `iterator`, `array`, `bitset`, `functional`, `queue`, `string_view`, `exception`, `stdexcept`, `initializer_list`, `new` | Supported | These headers are part of the maintained embedded subset and are expected to stay usable under the current C++23 baseline. |
 | `thread`, `vector`, `random` | Experimental | Present and exercised, but still evolving toward a clearer embedded contract and deeper validation. `random` currently offers only `xorshift32_engine` and `uniform_int_distribution`, a small modulo-biased embedded subset, not a full `<random>` implementation. |
-| `memory` | Experimental | `unique_ptr`/`make_unique` are solid, but `shared_ptr`'s copy assignment does not increment the reference count, an unfixed use-after-free/double-free risk (issue #88); do not rely on `shared_ptr` copies yet. |
 | `string`, `tuple` | Placeholder | Present in the tree, but not yet strong enough to be treated as part of the supported subset. |
 
 Any header not present in the classification table above should be treated as non-contractual until it is added and given a status.
@@ -44,3 +43,22 @@ This bundled library is intentionally partial. It primarily covers the following
 - `<utility>`
 - `<array>`
 - `<exception>`
+- `<string_view>`
+- a deliberately small `<string>` subset for owning, NUL-terminated dynamic text buffers
+
+`<string>` support is intentionally embedded-oriented rather than a promise of full `std::basic_string` coverage. The maintained subset currently includes:
+
+- construction from C strings, counted ranges, `string_view`, copies, and moves
+- contiguous mutable storage via `data()` / `c_str()`
+- iteration with pointer iterators
+- `size()`, `length()`, `empty()`, `capacity()`, `reserve()`, `resize()`, and `clear()`
+- `append(...)`, `push_back(...)`, `operator+=`, `copy(...)`, `compare(...)`, `substr(...)`, and `starts_with(...)`
+- cheap interop with `string_view`
+
+The following are intentionally **not** part of the promised surface today:
+
+- small-string optimization or copy-on-write
+- the full search / replace / insert / erase family from hosted `std::basic_string`
+- allocator-heavy API parity work beyond ETL's current embedded needs
+
+`<thread>` is part of the evolving embedded subset: `this_thread::sleep_for` is supported as a timing helper when the target `Device` exposes `delayTicks`, and mock validation should treat it as a cycle-accounted delay rather than as a high-precision wall-clock guarantee.
