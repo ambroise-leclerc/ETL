@@ -1,9 +1,9 @@
 /// @file queue
 /// @data 20/09/2016 17:40:53
-/// @author Ambroise Leclerc and Cécile Gomes
+/// @author Ambroise Leclerc and Cï¿½cile Gomes
 /// @brief Container adapter that gives the functionality of a fifo.
 //
-// Copyright (c) 2014, Ambroise Leclerc and Cécile Gomes
+// Copyright (c) 2014, Ambroise Leclerc and Cï¿½cile Gomes
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -31,12 +31,16 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
+#include <libstd/include/type_traits>
 #include <libstd/include/utility>
 
 namespace ETLSTD {
 
-template<typename T, typename Container /* TODO = ETLSTD::deque<T>*/>
-class queue {
+// queue stays adapter-only; use etl::CircularBuffer<T,N> as Container for fixed-capacity storage.
+template <typename T, typename Container> class queue {
+    static_assert(is_same<T, typename Container::value_type>::value,
+                  "queue<T, Container> : T must be the same type as Container::value_type");
+
 public:
     using container_type = Container;
     using value_type = typename Container::value_type;
@@ -44,44 +48,30 @@ public:
     using reference = typename Container::reference;
     using const_reference = typename Container::const_reference;
 
-    bool empty() const              { return container.empty(); }
-    size_type size() const          { return container.size(); }
-    reference front()				{ return container.front(); }
-	const_reference front() const	{ return container.front(); }
-	reference back()				{ return container.back(); }
-	const_reference back() const	{ return container.back(); }
+    bool empty() const { return container.empty(); }
+    size_type size() const { return container.size(); }
+    reference front() { return container.front(); }
+    const_reference front() const { return container.front(); }
+    reference back() { return container.back(); }
+    const_reference back() const { return container.back(); }
 
-    void pop()                      { container.pop_front(); }
+    void pop() { container.pop_front(); }
 
-    void push(const value_type& element) {
-        container.push_back(element);
-    }
+    void push(const value_type &element) { container.push_back(element); }
 
-    void push(value_type&& element) {
-        container.push_back(move(element));
-    }
+    void push(value_type &&element) { container.push_back(move(element)); }
 
-    template<typename... Args>
-    void emplace(Args&& ... args) {
-        container.emplace_back(forward<Args>(args)...);
-    }
+    template <typename... Args> void emplace(Args &&...args) { container.emplace_back(forward<Args>(args)...); }
 
-    void swap(queue& right) {
-        Container* pointeurLeft = &container;
-        Container* pointeurRight = &right.container;
-        Container temp = *pointeurLeft;
-        *pointeurLeft = *pointeurRight;
-        *pointeurRight = temp;
+    void swap(queue &right) {
+        using ETLSTD::swap;
+        swap(container, right.container);
     }
 
 protected:
     Container container;
 };
 
-
-template<typename T, typename Container>
-void swap(queue<T,Container>& lhs, queue<T,Container>& rhs) { lhs.swap(rhs); }
-
-	
+template <typename T, typename Container> void swap(queue<T, Container> &lhs, queue<T, Container> &rhs) { lhs.swap(rhs); }
 
 } // namespace ETLSTD

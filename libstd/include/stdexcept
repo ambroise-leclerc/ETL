@@ -38,10 +38,9 @@ namespace ETLSTD {
 
 class logic_error : public exception {
 public:
-    logic_error() throw() {}
-    explicit logic_error(const char * /*what_arg*/) {}
-    virtual ~logic_error() throw() {}
-    virtual const char *what() const throw() { return nullptr; }
+    logic_error() throw() : exception("") {}
+    explicit logic_error(const char *what_arg) : exception(what_arg) {}
+    virtual ~logic_error() throw() = default;
 };
 
 class domain_error : public logic_error {
@@ -67,17 +66,16 @@ public:
 
 class out_of_range : public logic_error {
 public:
-    out_of_range() : logic_error() {}
+    out_of_range() : logic_error("") {}
     explicit out_of_range(const char *what_arg) : logic_error(what_arg) {}
-    virtual ~out_of_range() throw() {}
+    virtual ~out_of_range() throw() = default;
 };
 
 class runtime_error : public exception {
 public:
-    runtime_error() {}
-    explicit runtime_error(const char * /*what_arg*/) {}
-    virtual ~runtime_error() throw() {}
-    virtual const char *what() const throw() { return nullptr; };
+    runtime_error() : exception("") {}
+    explicit runtime_error(const char *what_arg) : exception(what_arg) {}
+    virtual ~runtime_error() throw() = default;
 };
 
 class range_error : public runtime_error {
