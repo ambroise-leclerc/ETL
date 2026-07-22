@@ -67,5 +67,7 @@ jobs:
       - name: Build AVR smoke target
         run: cmake --build build-avr
 
-      - name: Check HEX output
-        run: test -f build-avr/etl_avr_smoke.hex
+      - name: Check HEX outputs
+        run: |
+          test -f build-avr/etl_avr_smoke.hex
+          test -f build-avr/etl_avr_libstd_smoke.hex

@@ -87,7 +87,7 @@ void resetCounts() {
 }
 } // namespace
 
-SCENARIO("vector starts empty", "[vector]") {
+SCENARIO("vector starts empty", "[libstd][vector]") {
     vector<char> values;
 
     REQUIRE(values.empty());
@@ -96,7 +96,7 @@ SCENARIO("vector starts empty", "[vector]") {
     REQUIRE(values.begin() == values.end());
 }
 
-SCENARIO("vector supports construction and assignment from ranges", "[vector]") {
+SCENARIO("vector supports construction and assignment from ranges", "[libstd][vector]") {
     const int initial[] = {1, 2, 3, 4};
     const int replacement[] = {8, 6, 4};
 
@@ -127,7 +127,7 @@ SCENARIO("vector supports construction and assignment from ranges", "[vector]") 
     REQUIRE(copy.empty());
 }
 
-SCENARIO("vector reserves and resizes without losing elements", "[vector]") {
+SCENARIO("vector reserves and resizes without losing elements", "[libstd][vector]") {
     vector<char> values;
 
     values.reserve(4);
@@ -151,7 +151,7 @@ SCENARIO("vector reserves and resizes without losing elements", "[vector]") {
     REQUIRE(values.empty());
 }
 
-SCENARIO("vector manages non-trivial element lifetimes", "[vector]") {
+SCENARIO("vector manages non-trivial element lifetimes", "[libstd][vector]") {
     resetCounts();
 
     {

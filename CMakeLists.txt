@@ -60,7 +60,8 @@ if (ETL_BUILD_HOST_TESTS)
 
     include(CTest)
     if (BUILD_TESTING)
-        add_test(NAME TestsETL COMMAND TestsETL)
+        add_test(NAME TestsETL COMMAND TestsETL ~[libstd])
+        add_test(NAME TestsETL-libstd COMMAND TestsETL [libstd])
     endif()
 
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT TestsETL)
@@ -71,24 +72,29 @@ if (ETL_BUILD_AVR_SMOKE)
         message(FATAL_ERROR "ETL_BUILD_AVR_SMOKE requires an AVR toolchain. Configure with -DCMAKE_TOOLCHAIN_FILE=cmake/avr-gcc-toolchain.cmake.")
     endif()
 
-    add_executable(etl_avr_smoke
-        examples/avr/smoke.cpp
-        ${HEADERS}
-    )
-
-    target_link_libraries(etl_avr_smoke PRIVATE etl)
-    target_compile_features(etl_avr_smoke PRIVATE cxx_std_23)
-    target_compile_definitions(etl_avr_smoke PRIVATE F_CPU=${ETL_AVR_F_CPU})
-    target_compile_options(etl_avr_smoke PRIVATE -Os -ffunction-sections -fdata-sections)
-    target_link_options(etl_avr_smoke PRIVATE -Wl,--gc-sections)
-    set_target_properties(etl_avr_smoke PROPERTIES OUTPUT_NAME "etl_avr_smoke" SUFFIX ".elf")
-
-    if (CMAKE_OBJCOPY)
-        add_custom_command(
-            TARGET etl_avr_smoke POST_BUILD
-            COMMAND ${CMAKE_OBJCOPY} -O ihex -R .eeprom $<TARGET_FILE:etl_avr_smoke> ${CMAKE_CURRENT_BINARY_DIR}/etl_avr_smoke.hex
-            BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/etl_avr_smoke.hex
-            COMMENT "Generating Intel HEX image"
+    function(etl_add_avr_smoke_target target_name source_file)
+        add_executable(${target_name}
+            ${source_file}
+            ${HEADERS}
         )
-    endif()
+
+        target_link_libraries(${target_name} PRIVATE etl)
+        target_compile_features(${target_name} PRIVATE cxx_std_23)
+        target_compile_definitions(${target_name} PRIVATE F_CPU=${ETL_AVR_F_CPU})
+        target_compile_options(${target_name} PRIVATE -Os -ffunction-sections -fdata-sections)
+        target_link_options(${target_name} PRIVATE -Wl,--gc-sections)
+        set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${target_name}" SUFFIX ".elf")
+
+        if (CMAKE_OBJCOPY)
+            add_custom_command(
+                TARGET ${target_name} POST_BUILD
+                COMMAND ${CMAKE_OBJCOPY} -O ihex -R .eeprom $<TARGET_FILE:${target_name}> ${CMAKE_CURRENT_BINARY_DIR}/${target_name}.hex
+                BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/${target_name}.hex
+                COMMENT "Generating Intel HEX image for ${target_name}"
+            )
+        endif()
+    endfunction()
+
+    etl_add_avr_smoke_target(etl_avr_smoke examples/avr/smoke.cpp)
+    etl_add_avr_smoke_target(etl_avr_libstd_smoke examples/avr/libstd_smoke.cpp)
 endif()

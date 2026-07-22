@@ -40,7 +40,7 @@
 using namespace ETLSTD;
 using ETLSTD::size_t;
 
-SCENARIO("std::numeric_limits") {
+SCENARIO("std::numeric_limits", "[libstd][limits]") {
 
     auto r1 = numeric_limits<uint32_t>::is_signed;
     REQUIRE(r1 == false);

@@ -99,7 +99,7 @@ template <typename T, size_t N> struct array {
     void fill(const T &value) { fill_n(begin(), size(), value); }
     void swap(array &other) noexcept { swap_ranges(begin(), end(), other.begin()); }
 
-private:
+public:
     T elems[N];
 
 private:

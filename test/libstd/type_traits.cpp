@@ -39,7 +39,7 @@
 
 using namespace ETLSTD;
 
-SCENARIO("std::signed, std_unsigned") {
+SCENARIO("std::signed, std_unsigned", "[libstd][type_traits]") {
     auto s1 = is_signed<uint8_t>::value;    REQUIRE(s1 == false);
     auto s2 = is_signed<char>::value;       REQUIRE(s2 == true);
     auto s3 = is_signed<int32_t>::value;    REQUIRE(s3 == true);
@@ -63,7 +63,7 @@ SCENARIO("std::signed, std_unsigned") {
     REQUIRE(is_unsigned_v<int64_t> == false);
 }
 
-SCENARIO("std::common_type, std::same_type") {
+SCENARIO("std::common_type, std::same_type", "[libstd][type_traits]") {
     class Base {};
     class Incarnation1 : Base {};
     class Incarnation2 : Base {};
@@ -75,7 +75,7 @@ SCENARIO("std::common_type, std::same_type") {
 }
 
 
-SCENARIO("std::make_signed, std::make_unsigned") {
+SCENARIO("std::make_signed, std::make_unsigned", "[libstd][type_traits]") {
     auto comp = is_same_v<make_signed_t<uint16_t>, int16_t>;
     REQUIRE(comp == true);
 
@@ -88,7 +88,7 @@ SCENARIO("std::make_signed, std::make_unsigned") {
 
 
 
-SCENARIO("Primary types _v") {
+SCENARIO("Primary types _v", "[libstd][type_traits]") {
     REQUIRE(is_void_v<void>);
     REQUIRE(!is_void_v<double>);
 
@@ -152,4 +152,3 @@ SCENARIO("Primary types _v") {
     REQUIRE(is_member_object_pointer<decltype(memberPointer)>::value);
 
 }
-

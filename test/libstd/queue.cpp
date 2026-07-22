@@ -111,7 +111,7 @@ protected:
     size_type contSize;
 };
 
-SCENARIO("Queue") {
+SCENARIO("Queue", "[libstd][queue]") {
     using Fifo = ETLSTD::queue<uint8_t, SequenceContainerMock>;
     GIVEN("An empty Fifo") {
         Fifo fifo;

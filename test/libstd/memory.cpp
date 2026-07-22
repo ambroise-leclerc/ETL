@@ -52,7 +52,7 @@ public:
 uint8_t MyClass::instances = 0;
 // using namespace etlTest::std;
 
-SCENARIO("std::unique_ptr") {
+SCENARIO("std::unique_ptr", "[libstd][memory]") {
     GIVEN("0 class instances") {
         MyClass::instances = 0;
         WHEN("a unique_ptr is created") {
@@ -68,7 +68,7 @@ SCENARIO("std::unique_ptr") {
     }
 }
 
-SCENARIO("std::shared_ptr") {
+SCENARIO("std::shared_ptr", "[libstd][memory]") {
     GIVEN("A shared_ptr constructed by make_shared") {
         MyClass::instances = 0;
         auto obj = ETLSTD::make_shared<MyClass>(123456);

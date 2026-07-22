@@ -39,7 +39,7 @@
 
 using namespace ETLSTD;
 
-SCENARIO("Test of std::string_view") {
+SCENARIO("Test of std::string_view", "[libstd][string_view]") {
     const char *str = "std::string_view";
     string_view v = str;
     REQUIRE(v.size() == 16);
@@ -56,7 +56,7 @@ SCENARIO("Test of std::string_view") {
     REQUIRE(v.starts_with(v2));
 }
 
-SCENARIO("std::string_view element access and copy") {
+SCENARIO("std::string_view element access and copy", "[libstd][string_view]") {
     string_view v("string_view");
 
     REQUIRE(v.at(0) == 's');
@@ -75,7 +75,7 @@ SCENARIO("std::string_view element access and copy") {
     REQUIRE_THROWS_AS(v.substr(v.size() + 1), out_of_range);
 }
 
-SCENARIO("std::string_view reverse iteration") {
+SCENARIO("std::string_view reverse iteration", "[libstd][string_view]") {
     string_view v("abc");
     char reversed[4] = {};
     size_t index = 0;
@@ -92,7 +92,7 @@ SCENARIO("std::string_view reverse iteration") {
     REQUIRE(empty.crbegin() == empty.crend());
 }
 
-SCENARIO("std::string_view empty boundary behavior") {
+SCENARIO("std::string_view empty boundary behavior", "[libstd][string_view]") {
     string_view empty;
     REQUIRE(empty.empty());
     REQUIRE(empty.size() == 0);
@@ -125,7 +125,7 @@ SCENARIO("std::string_view empty boundary behavior") {
     REQUIRE(v.find_last_not_of("") == v.size() - 1);
 }
 
-SCENARIO("std::string_view find functions") {
+SCENARIO("std::string_view find functions", "[libstd][string_view]") {
     string_view v("original string with five words.");
 
     REQUIRE(v.find("string") == 9);
@@ -141,7 +141,7 @@ SCENARIO("std::string_view find functions") {
     REQUIRE(v.find(v2.substr(7, 4)) == 16);
 }
 
-SCENARIO("std::string_view rfind functions") {
+SCENARIO("std::string_view rfind functions", "[libstd][string_view]") {
     string_view v("String with multiple 'with' words within.");
 
     REQUIRE(v.find("with") == 7);
@@ -155,7 +155,7 @@ SCENARIO("std::string_view rfind functions") {
     REQUIRE(v.find(with) == 21);
 }
 
-SCENARIO("std::string_view find_first_of functions") {
+SCENARIO("std::string_view find_first_of functions", "[libstd][string_view]") {
     string_view v("String with multiple 'with' words within.");
 
     REQUIRE(v.find_first_of("mdkz") == 12);
@@ -165,7 +165,7 @@ SCENARIO("std::string_view find_first_of functions") {
     REQUIRE(v.find_first_of(tiple, 2) == 3);
 }
 
-SCENARIO("std::string_view find_last_of functions") {
+SCENARIO("std::string_view find_last_of functions", "[libstd][string_view]") {
     string_view v("String with multiple 'with' words within.");
 
     REQUIRE(v.find_last_of("mdkz") == 31);
@@ -175,7 +175,7 @@ SCENARIO("std::string_view find_last_of functions") {
     REQUIRE(v.find_last_of(tiple, 34) == 24);
 }
 
-SCENARIO("std::string_view find_first_not_of functions") {
+SCENARIO("std::string_view find_first_not_of functions", "[libstd][string_view]") {
     string_view v("String with multiple 'with' words within.");
 
     REQUIRE(v.find_first_not_of("String wh") == 12);
@@ -183,14 +183,14 @@ SCENARIO("std::string_view find_first_not_of functions") {
     REQUIRE(v.find_first_not_of('S') == 1);
 }
 
-SCENARIO("std::string_view find_last_not_of functions") {
+SCENARIO("std::string_view find_last_not_of functions", "[libstd][string_view]") {
     string_view v("String with multiple 'with' words within.");
 
     REQUIRE(v.find_last_not_of(". withn") == 32);
     REQUIRE(v.find_last_not_of('.') == v.size() - 2);
 }
 
-SCENARIO("std::string_view comparisons") {
+SCENARIO("std::string_view comparisons", "[libstd][string_view]") {
     auto s1{"String1"sv};
     auto s2 = "String2"sv;
     string_view s3("String1 longer");
@@ -206,7 +206,7 @@ SCENARIO("std::string_view comparisons") {
     REQUIRE(s1 <= s4);
 }
 
-SCENARIO("std::string trim functions") {
+SCENARIO("std::string trim functions", "[libstd][string_view]") {
     const char *str = "   trim me";
     string_view v = str;
     REQUIRE(v.compare("   trim me") == 0);

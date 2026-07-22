@@ -76,7 +76,7 @@ template <typename CharT> struct char_traits {
         return 0;
     }
 
-    static size_t length(const char_type *s) {
+    static constexpr size_t length(const char_type *s) {
         const char_type null_char = char_type();
         size_t nbChars = 0;
         for (; !eq(s[nbChars], null_char); ++nbChars) {}

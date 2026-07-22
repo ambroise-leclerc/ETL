@@ -183,7 +183,7 @@ public:
     }
 
     constexpr bool starts_with(basic_string_view x) const noexcept {
-        return size() >= x.size() && compare(0, x.size(), x) == 0;
+        return size() >= x.size() && Traits::compare(data(), x.data(), x.size()) == 0;
     }
 
     constexpr bool starts_with(CharT x) const noexcept { return starts_with(basic_string_view(&x, 1)); }
