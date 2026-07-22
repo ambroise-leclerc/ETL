@@ -1,9 +1,9 @@
-/// @file exception
-/// @data 16/04/2014 18:45:53
+/// @file test/libstd/exception.cpp
+/// @date 01/07/2026
 /// @author Ambroise Leclerc
-/// @brief Standard exceptions definitions.
+/// @brief Tests for <exception> and <stdexcept>
 //
-// Copyright (c) 2014, Ambroise Leclerc
+// Copyright (c) 2026, Ambroise Leclerc
 //   All rights reserved.
 //
 //   Redistribution and use in source and binary forms, with or without
@@ -30,33 +30,30 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-#pragma once
+#include <catch.hpp>
+#include <cstring>
 
-namespace ETLSTD {
+#define __Mock_Mock__
+#define ETLSTD etlstd
 
-class exception {
-public:
-    exception() noexcept : what_arg_("") {}
-    explicit exception(const char *what_arg) noexcept : what_arg_(what_arg ? what_arg : "") {}
-    exception(const exception &) noexcept = default;
-    exception &operator=(const exception &) noexcept = default;
-    virtual ~exception() noexcept = default;
-    virtual const char *what() const noexcept { return what_arg_; }
+#include <libstd/include/stdexcept>
 
-protected:
-    /// Non-owning pointer to a caller-provided, long-lived string (typically a string literal).
-    /// It is never copied, so callers must not pass pointers to temporaries or stack buffers
-    /// whose lifetime ends before the exception (and any copies of it) is destroyed.
-    const char *what_arg_;
-};
+using namespace ETLSTD;
 
-class bad_exception : public exception {
-public:
-    bad_exception() noexcept : exception("bad_exception") {}
-    virtual ~bad_exception() noexcept = default;
-};
+SCENARIO("std::exception diagnostics", "[libstd][exception]") {
+    exception base;
+    REQUIRE(base.what() != nullptr);
+    REQUIRE(base.what()[0] == '\0');
 
-using terminate_handler = void (*)();
-using unexpected_handler = void (*)();
+    bad_exception bad;
+    REQUIRE(bad.what() != nullptr);
 
-} // namespace ETLSTD
+    logic_error logic("logic");
+    REQUIRE(std::strcmp(logic.what(), "logic") == 0);
+
+    out_of_range range("range");
+    REQUIRE(std::strcmp(range.what(), "range") == 0);
+
+    runtime_error runtime("runtime");
+    REQUIRE(std::strcmp(runtime.what(), "runtime") == 0);
+}
