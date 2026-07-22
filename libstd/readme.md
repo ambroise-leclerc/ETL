@@ -43,3 +43,20 @@ This bundled library is intentionally partial. It primarily covers the following
 - `<utility>`
 - `<array>`
 - `<exception>`
+- `<string_view>`
+- a deliberately small `<string>` subset for owning, NUL-terminated dynamic text buffers
+
+`<string>` support is intentionally embedded-oriented rather than a promise of full `std::basic_string` coverage. The maintained subset currently includes:
+
+- construction from C strings, counted ranges, `string_view`, copies, and moves
+- contiguous mutable storage via `data()` / `c_str()`
+- iteration with pointer iterators
+- `size()`, `length()`, `empty()`, `capacity()`, `reserve()`, `resize()`, and `clear()`
+- `append(...)`, `push_back(...)`, `operator+=`, `copy(...)`, `compare(...)`, `substr(...)`, and `starts_with(...)`
+- cheap interop with `string_view`
+
+The following are intentionally **not** part of the promised surface today:
+
+- small-string optimization or copy-on-write
+- the full search / replace / insert / erase family from hosted `std::basic_string`
+- allocator-heavy API parity work beyond ETL's current embedded needs
