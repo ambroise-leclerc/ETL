@@ -94,8 +94,9 @@ Toolchain baseline
 ETL now targets a single **C++23** baseline across the repository:
 
 - public headers require a C++23-capable compiler
-- host tests build with **GCC 13+**
-- AVR smoke builds target **modern-avr GCC 14.2+**
+- host tests build with **GCC 13+** and are validated in CI with GCC 13, 14, 15, 16 and Clang 18
+- AVR smoke builds target **avr-gcc 14.2+** and are validated in CI with GCC 14.2 (modern-avr) and GCC 16.1
+- the AVR smoke targets build without libstdc++, relying only on avr-libc and the bundled `libstd`
 - the default build system baseline is **CMake 3.25+**
 
 The bundled `libstd` directory remains a focused compatibility layer for the subset of standard-library facilities ETL uses on embedded targets; it is not a full reimplementation of the entire C++23 standard library. In particular, `<string>` now means a small owning string subset with `string_view` interop, append/resize/reserve support, and explicit non-goals around full hosted `std::string` parity.
@@ -131,9 +132,12 @@ The primary workflow is now an open, cross-platform AVR toolchain rather than At
 
 Recommended tools:
 
-- host GCC 13+ for local host builds and tests
+- host GCC 13+ (or Clang 18+) for local host builds and tests
 - CMake 3.25+
-- modern-avr `avr-g++` 14.2+ for AVR validation
+- `avr-g++` 14.2+ for AVR validation, for example:
+  - [ZakKemble/avr-gcc-build](https://github.com/ZakKemble/avr-gcc-build/releases) (GCC 16.1, no libstdc++)
+  - [modern-avr/toolchain](https://github.com/modern-avr/toolchain/releases) (GCC 14.2, ships libstdc++)
+  - [Microchip AVR 8-bit Toolchain](https://www.microchip.com/en-us/tools-resources/develop/microchip-studio/gcc-compilers) 4.x (GCC 15.1)
 - `avrdude` for flashing
 
 This repository includes an AVR smoke target that validates the headers with a real `avr-g++` build:
@@ -148,7 +152,7 @@ cmake -S . -B build-avr \
 cmake --build build-avr
 ```
 
-The repository CI downloads `modern-avr/toolchain` release `v14.2.0` for that AVR validation path.
+The repository CI builds that path with two pinned toolchains (archives verified by SHA-256): `modern-avr/toolchain` `v14.2.0` and ZakKemble `avr-gcc` `16.1.0`. Each job reports the `avr-size` of the smoke binaries in its summary.
 
 That produces:
 
