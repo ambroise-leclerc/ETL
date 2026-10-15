@@ -17,7 +17,8 @@ public:
     using reference = value_type&;
     using const_reference = const value_type&;
 
-    CircularBuffer() : index(0), nbElems(0) {}
+    // constexpr: a static CircularBuffer is constant-initialized, with no startup code
+    constexpr CircularBuffer() : buffer{}, index(0), nbElems(0) {}
 
     void push_back(const value_type& elem) {
         buffer[(index + nbElems) % N] = elem;

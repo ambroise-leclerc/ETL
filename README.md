@@ -161,7 +161,7 @@ That produces:
 - `build-avr/etl_avr_libstd_smoke.elf`
 - `build-avr/etl_avr_libstd_smoke.hex`
 - `build-avr/etl_avr_user_isr_smoke.elf` / `.hex` (user-defined USART ISR next to ETL)
-- `build-avr/etl_avr_uart0_isr_smoke.elf` / `.hex` (`Uart0` with the ETL interrupt handlers)
+- `build-avr/etl_avr_uart0_smoke.elf` / `.hex` (`Uart0` with the ETL interrupt handlers)
 
 You can override `ETL_AVR_MCU` to validate another supported MCU such as `attiny84`.
 
@@ -177,14 +177,7 @@ Using ETL in your own AVR project
 
 3. Add `#include <etl.h>` in your source file.
 
-The hardware UART drivers (`Uart0`, and `Uart1` on the ATmega644) rely on interrupt handlers. To keep the USART vectors free for programs that define their own `ISR(USART_RX_vect)`, ETL only defines these handlers when asked. In **exactly one** source file of a program that uses `Uart0`, define `ETL_UART0_ISR` (or `ETL_UART1_ISR` for `Uart1`) before including ETL:
-
-```
-#define ETL_UART0_ISR
-#include <etl.h>
-```
-
-Without it, a program that uses `Uart0` fails to link with undefined references to `etl::Uart0Driver::fifo` and related members.
+The hardware UART drivers (`Uart0`, and `Uart1` on the ATmega644) install their interrupt handlers only when the program contains a call to their `start()` (even one that never runs): a program that includes ETL without starting a UART keeps the USART vectors free for its own `ISR(USART_RX_vect)`. Starting a UART while also defining a handler for one of its vectors is a build error (`symbol '__vector_18' is already defined` or `multiple definition of '__vector_18'`).
 
 If your project uses the freestore helpers, ETL provides:
 

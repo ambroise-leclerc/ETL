@@ -100,7 +100,12 @@ if (ETL_BUILD_AVR_SMOKE)
 
     etl_add_avr_smoke_target(etl_avr_smoke examples/avr/smoke.cpp)
     etl_add_avr_smoke_target(etl_avr_libstd_smoke examples/avr/libstd_smoke.cpp)
-    etl_add_avr_smoke_target(etl_avr_user_isr_smoke examples/avr/uart_isr_smoke.cpp)
-    etl_add_avr_smoke_target(etl_avr_uart0_isr_smoke examples/avr/uart_isr_smoke.cpp)
-    target_compile_definitions(etl_avr_uart0_isr_smoke PRIVATE ETL_UART0_ISR)
+    etl_add_avr_smoke_target(etl_avr_user_isr_smoke examples/avr/user_isr_smoke.cpp)
+    etl_add_avr_smoke_target(etl_avr_uart0_smoke examples/avr/uart0_smoke.cpp)
+
+    # Must fail to build (checked by CI): a user ISR on a vector already taken by a started Uart0
+    if (ETL_AVR_MCU STREQUAL "atmega328p")
+        etl_add_avr_smoke_target(etl_avr_uart0_isr_conflict examples/avr/uart0_isr_conflict.cpp)
+        set_target_properties(etl_avr_uart0_isr_conflict PROPERTIES EXCLUDE_FROM_ALL ON)
+    endif()
 endif()

@@ -121,16 +121,21 @@ jobs:
           test -f build-avr/etl_avr_smoke.hex
           test -f build-avr/etl_avr_libstd_smoke.hex
           test -f build-avr/etl_avr_user_isr_smoke.hex
-          test -f build-avr/etl_avr_uart0_isr_smoke.hex
+          test -f build-avr/etl_avr_uart0_smoke.hex
 
       - name: Check USART vectors
         if: matrix.target.mcu == 'atmega328p'
         run: |
           # User ISR only: ETL must leave the USART vectors alone
           test "$(avr-nm build-avr/etl_avr_user_isr_smoke.elf | grep -c ' T __vector_')" -eq 1
-          # ETL_UART0_ISR: ETL installs the RX and UDRE handlers
-          avr-nm build-avr/etl_avr_uart0_isr_smoke.elf | grep -q ' T __vector_18$'
-          avr-nm build-avr/etl_avr_uart0_isr_smoke.elf | grep -q ' T __vector_19$'
+          # Uart0 started: ETL installs the RX and UDRE handlers
+          avr-nm build-avr/etl_avr_uart0_smoke.elf | grep -q ' T __vector_18$'
+          avr-nm build-avr/etl_avr_uart0_smoke.elf | grep -q ' T __vector_19$'
+          # User ISR on a vector taken by Uart0: the build must fail on the duplicate vector
+          if cmake --build build-avr --target etl_avr_uart0_isr_conflict > conflict.log 2>&1; then
+            echo "Duplicate USART vector not detected"; exit 1
+          fi
+          grep "__vector_18' is already defined" conflict.log
 
       - name: Report binary sizes
         run: |
