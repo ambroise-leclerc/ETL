@@ -75,9 +75,9 @@ if (ETL_BUILD_AVR_SMOKE)
         message(FATAL_ERROR "ETL_BUILD_AVR_SMOKE requires an AVR toolchain. Configure with -DCMAKE_TOOLCHAIN_FILE=cmake/avr-gcc-toolchain.cmake.")
     endif()
 
-    function(etl_add_avr_smoke_target target_name source_file)
+    function(etl_add_avr_smoke_target target_name)
         add_executable(${target_name}
-            ${source_file}
+            ${ARGN}
             ${HEADERS}
         )
 
@@ -102,6 +102,8 @@ if (ETL_BUILD_AVR_SMOKE)
     etl_add_avr_smoke_target(etl_avr_libstd_smoke examples/avr/libstd_smoke.cpp)
     etl_add_avr_smoke_target(etl_avr_user_isr_smoke examples/avr/user_isr_smoke.cpp)
     etl_add_avr_smoke_target(etl_avr_uart0_smoke examples/avr/uart0_smoke.cpp)
+    etl_add_avr_smoke_target(etl_avr_multi_tu_smoke examples/avr/multi_tu_main.cpp examples/avr/multi_tu_other.cpp)
+    etl_add_avr_smoke_target(etl_avr_custom_new_smoke examples/avr/custom_new_main.cpp examples/avr/custom_new_allocator.cpp)
 
     # Must fail to build (checked by CI): a user ISR on a vector already taken by a started Uart0
     if (ETL_AVR_MCU STREQUAL "atmega328p")

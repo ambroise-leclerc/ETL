@@ -42,14 +42,3 @@
 #include <etl/ioports.h>
 #include <libstd/include/memory>
 #include <libstd/include/new>
-
-namespace etl {
-#ifdef ETL_FREESTORE_H_  
-class HardwareInitializer {
-  static bool freestore_initialized_;
-};
-bool HardwareInitializer::freestore_initialized_ = FreeStore::Initialize();
-#endif
-
-
-} // namespace etl

@@ -122,6 +122,15 @@ jobs:
           test -f build-avr/etl_avr_libstd_smoke.hex
           test -f build-avr/etl_avr_user_isr_smoke.hex
           test -f build-avr/etl_avr_uart0_smoke.hex
+          test -f build-avr/etl_avr_multi_tu_smoke.hex
+          test -f build-avr/etl_avr_custom_new_smoke.hex
+
+      - name: Check allocation functions
+        run: |
+          # ETL provides weak allocation functions, shared by all translation units
+          avr-nm build-avr/etl_avr_multi_tu_smoke.elf | grep -q ' W _Znwj$'
+          # A user definition replaces them
+          avr-nm build-avr/etl_avr_custom_new_smoke.elf | grep -q ' T _Znwj$'
 
       - name: Check USART vectors
         if: matrix.target.mcu == 'atmega328p'
