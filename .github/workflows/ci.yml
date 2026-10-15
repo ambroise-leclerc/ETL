@@ -74,10 +74,13 @@ jobs:
             url: https://github.com/ZakKemble/avr-gcc-build/releases/download/v16.1.0-1/avr-gcc-16.1.0-x64-linux.tar.bz2
             sha256: 8621ecc6514df50202b58b23b0f8f72f0e535ec35ee40426194e9a15c57692f6
         target:
+          # timer0_vectors: Timer0 overflow and compare match A vector numbers
           - mcu: atmega328p
             f_cpu: 16000000UL
+            timer0_vectors: 16 14
           - mcu: attiny84
             f_cpu: 8000000UL
+            timer0_vectors: 11 9
 
     steps:
       - uses: actions/checkout@v4
@@ -124,6 +127,29 @@ jobs:
           test -f build-avr/etl_avr_uart0_smoke.hex
           test -f build-avr/etl_avr_multi_tu_smoke.hex
           test -f build-avr/etl_avr_custom_new_smoke.hex
+          test -f build-avr/etl_avr_interrupt_smoke.hex
+
+      - name: Check interrupt handlers
+        run: |
+          # Handlers attached with etl::Interrupt generate the same code as avr-libc ISR()
+          .github/scripts/compare-isr.sh build-avr/etl_avr_isr_equivalence_etl.elf \
+            build-avr/etl_avr_isr_equivalence_libc.elf ${{ matrix.target.timer0_vectors }}
+          # Two handlers on the same vector: the build must fail on the duplicate vector
+          if cmake --build build-avr --target etl_avr_interrupt_conflict > interrupt_conflict.log 2>&1; then
+            echo "Duplicate interrupt vector not detected"; exit 1
+          fi
+          grep "is already defined" interrupt_conflict.log
+
+      - name: Build for every supported MCU
+        if: matrix.target.mcu == 'atmega328p'
+        run: |
+          for mcu in atmega48a atmega48pa atmega88a atmega88pa atmega168a atmega168p atmega168pa \
+                     atmega328 atmega328p atmega32u4 atmega644a atmega644p attiny84; do
+            echo "::group::${mcu}"
+            avr-g++ -std=c++23 -mmcu=${mcu} -DF_CPU=8000000UL -Os -Wall -Werror -Wno-literal-suffix \
+              -I. -Iinclude examples/avr/device_smoke.cpp -o device_smoke_${mcu}.elf
+            echo "::endgroup::"
+          done
 
       - name: Check allocation functions
         run: |

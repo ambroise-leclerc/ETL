@@ -25,7 +25,7 @@ set(LIBSTD_TESTS test/libstd/array.cpp test/libstd/bitset.cpp test/libstd/chrono
                  test/libstd/limits.cpp test/libstd/memory.cpp test/libstd/random.cpp test/libstd/thread.cpp test/libstd/tuple.cpp
                  test/libstd/type_traits.cpp test/libstd/queue.cpp test/libstd/string.cpp test/libstd/string_view.cpp test/libstd/vector.cpp)
                  
-set(ETL_TESTS test/test.cpp test/SetClearTest.cpp test/InterruptsTest.cpp test/CircularBuffer.cpp)
+set(ETL_TESTS test/test.cpp test/SetClearTest.cpp test/InterruptsTest.cpp test/InterruptVectorTest.cpp test/CircularBuffer.cpp)
 set(ETL_ARCHITECTURE include/etl/architecture/MockCore.h)
 set(ETL_DRIVERS include/etl/drivers/hd44780.h include/etl/drivers/tm1638.h include/etl/drivers/gfx/win32gdi.hpp)
 
@@ -103,7 +103,14 @@ if (ETL_BUILD_AVR_SMOKE)
     etl_add_avr_smoke_target(etl_avr_user_isr_smoke examples/avr/user_isr_smoke.cpp)
     etl_add_avr_smoke_target(etl_avr_uart0_smoke examples/avr/uart0_smoke.cpp)
     etl_add_avr_smoke_target(etl_avr_multi_tu_smoke examples/avr/multi_tu_main.cpp examples/avr/multi_tu_other.cpp)
+    etl_add_avr_smoke_target(etl_avr_interrupt_smoke examples/avr/interrupt_smoke.cpp)
+    etl_add_avr_smoke_target(etl_avr_isr_equivalence_etl examples/avr/isr_equivalence_etl.cpp)
+    etl_add_avr_smoke_target(etl_avr_isr_equivalence_libc examples/avr/isr_equivalence_libc.cpp)
     etl_add_avr_smoke_target(etl_avr_custom_new_smoke examples/avr/custom_new_main.cpp examples/avr/custom_new_allocator.cpp)
+
+    # Must fail to build (checked by CI): two handlers attached to the same vector
+    etl_add_avr_smoke_target(etl_avr_interrupt_conflict examples/avr/interrupt_conflict.cpp)
+    set_target_properties(etl_avr_interrupt_conflict PROPERTIES EXCLUDE_FROM_ALL ON)
 
     # Must fail to build (checked by CI): a user ISR on a vector already taken by a started Uart0
     if (ETL_AVR_MCU STREQUAL "atmega328p")

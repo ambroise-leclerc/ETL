@@ -164,6 +164,8 @@ That produces:
 - `build-avr/etl_avr_uart0_smoke.elf` / `.hex` (`Uart0` with the ETL interrupt handlers)
 - `build-avr/etl_avr_multi_tu_smoke.elf` / `.hex` (ETL included from two translation units)
 - `build-avr/etl_avr_custom_new_smoke.elf` / `.hex` (user replacement of `operator new` / `operator delete`)
+- `build-avr/etl_avr_interrupt_smoke.elf` / `.hex` (handlers attached with `etl::Interrupt`)
+- `build-avr/etl_avr_isr_equivalence_etl.elf` / `etl_avr_isr_equivalence_libc.elf` (same handlers with `etl::Interrupt` and avr-libc `ISR()`, compared by CI)
 
 You can override `ETL_AVR_MCU` to validate another supported MCU such as `attiny84`.
 
@@ -179,7 +181,37 @@ Using ETL in your own AVR project
 
 3. Add `#include <etl.h>` in your source file.
 
-The hardware UART drivers (`Uart0`, and `Uart1` on the ATmega644) install their interrupt handlers only when the program contains a call to their `start()` (even one that never runs): a program that includes ETL without starting a UART keeps the USART vectors free for its own `ISR(USART_RX_vect)`. Starting a UART while also defining a handler for one of its vectors is a build error (`symbol '__vector_18' is already defined` or `multiple definition of '__vector_18'`).
+Interrupts
+----------
+
+Interrupt handlers are attached to the vectors that the device headers declare on each peripheral, without macros:
+
+```cpp
+static volatile uint8_t ticks;
+
+static void onOverflow() { ticks = ticks + 1; }
+
+[[gnu::naked]] void onCompareMatchB() {        // saves what it uses and ends with reti
+    asm volatile("sbi %0, 0\n\treti" :: "I"(_SFR_IO_ADDR(GPIOR0)));
+}
+
+int main() {
+    etl::Interrupt<etl::Timer0::Overflow>::attach<onOverflow>();
+    etl::Interrupt<etl::Timer0::CompareMatchA>::attach<[] { /* ... */ }, etl::IsrKind::NonBlocking>();
+    etl::Interrupt<etl::Timer0::CompareMatchB>::attach<onCompareMatchB, etl::IsrKind::Naked>();
+    etl::Interrupt<etl::PinChangeIRQ0::Trigger>::attach<[] { /* ... */ }>();
+    // ... enable the interrupt sources, then sei()
+}
+```
+
+- `attach()` binds the handler at link time and generates no code: the vector is installed as soon as the program contains the call. It does not enable the interrupt source.
+- `IsrKind::Blocking` (default) and `IsrKind::NonBlocking` match avr-libc `ISR()` and `ISR_NOBLOCK`. A lambda, or a `static` or `inline` function, is inlined into the interrupt code, which is then identical to an `ISR()` with the same body (checked by CI). A function with external linkage is called, as from an `ISR()`.
+- `IsrKind::Naked` reaches a `[[gnu::naked]]` function through one jump from the vector.
+- Attaching the same handler from several source files is fine. Attaching another handler, or defining an avr-libc `ISR()`, for the same vector is a build error (`symbol '__vector_16' is already defined` or `multiple definition of '__vector_16'`).
+- Vector names: `TimerN::Overflow`, `TimerN::CompareMatchA`/`B`/`C`/`D`, `TimerN::Capture`, `PinChangeIRQN::Trigger`. Any other vector can be named with `etl::InterruptVector<USART_RX_vect_num>`.
+- On the host, `Interrupt<V>::raise()` runs the attached handler, so that handlers can be unit-tested.
+
+The hardware UART drivers (`Uart0`, and `Uart1` on the ATmega644) use the same mechanism: `start()` attaches their handlers, so a program that does not start a UART keeps the USART vectors free for its own handlers.
 
 ETL is header-only and can be included from any number of translation units.
 
