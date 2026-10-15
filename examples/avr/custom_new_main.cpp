@@ -15,11 +15,11 @@ Tracked* volatile tracked;
 
 int main() {
     value = new long{42};
-    values = new long[3];
+    values = new long[3]{1, 2, 3};
     tracked = new Tracked[2];
-    long result = *value + values[0] * 0;
+    long result = *value + values[2];
     delete value;
     delete[] values;
     delete[] tracked;
-    return result == 42 && Tracked::destroyed == 2 ? 0 : 1;
+    return result == 45 && Tracked::destroyed == 2 ? 0 : 1;
 }
