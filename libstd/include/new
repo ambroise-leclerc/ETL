@@ -37,7 +37,7 @@
 /// Allocates requested number of bytes.
 /// @param[in] size number of bytes to allocate
 /// @return pointer to allocated memory
-void* operator new(std::size_t size){
+void* operator new(ETLSTD::size_t size){
   return etl::FreeStore::Allocate(size);
 }
 
