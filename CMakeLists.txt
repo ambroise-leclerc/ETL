@@ -100,4 +100,7 @@ if (ETL_BUILD_AVR_SMOKE)
 
     etl_add_avr_smoke_target(etl_avr_smoke examples/avr/smoke.cpp)
     etl_add_avr_smoke_target(etl_avr_libstd_smoke examples/avr/libstd_smoke.cpp)
+    etl_add_avr_smoke_target(etl_avr_user_isr_smoke examples/avr/uart_isr_smoke.cpp)
+    etl_add_avr_smoke_target(etl_avr_uart0_isr_smoke examples/avr/uart_isr_smoke.cpp)
+    target_compile_definitions(etl_avr_uart0_isr_smoke PRIVATE ETL_UART0_ISR)
 endif()

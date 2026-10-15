@@ -1816,6 +1816,10 @@ public:
     };
 };
 
+// The USART0 interrupt handlers (and the driver state they share) are only defined in the
+// translation unit that defines ETL_UART0_ISR before including ETL. Other programs keep the
+// USART0 vectors free for their own ISR. Using Uart0 without it fails at link time.
+#ifdef ETL_UART0_ISR
 uint8_t Uart0Driver::readIndex = 0;
 uint8_t Uart0Driver::writeIndex = 0;
 Uart0Driver::Queue Uart0Driver::fifo;
@@ -1836,6 +1840,7 @@ void Uart0Driver::Isr::receiveComplete() {
         receiveCallback(UDR0);
     }
 }
+#endif // ETL_UART0_ISR
 
 template<uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT, typename CharType>
 class Uart0 : public Uart0Driver {
@@ -1917,6 +1922,10 @@ public:
     };
 };
 
+// The USART1 interrupt handlers (and the driver state they share) are only defined in the
+// translation unit that defines ETL_UART1_ISR before including ETL. Other programs keep the
+// USART1 vectors free for their own ISR. Using Uart1 without it fails at link time.
+#ifdef ETL_UART1_ISR
 uint8_t Uart1Driver::readIndex = 0;
 uint8_t Uart1Driver::writeIndex = 0;
 Uart1Driver::Queue Uart1Driver::fifo;
@@ -1937,6 +1946,7 @@ void Uart1Driver::Isr::receiveComplete() {
         receiveCallback(UDR1);
     }
 }
+#endif // ETL_UART1_ISR
 
 template<uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT, typename CharType>
 class Uart1 : public Uart1Driver {
