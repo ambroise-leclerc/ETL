@@ -45,7 +45,7 @@ class FreeStore : public FreeStoreTracePolicy {
   /// @return Pointer to the beginning of allocated memory. The pointer must be
   /// deallocated with FreeStore::Deallocate.
   static void* Allocate(ETLSTD::size_t size) noexcept {
-    auto chunk_parser = free_chunk_;
+    auto chunk_parser = FirstFreeChunk();
       
     // 0) Setup the start of allocatable area (data_) to the first unallocated block
     while (chunk_parser->IsAllocated()) {
@@ -84,7 +84,8 @@ class FreeStore : public FreeStoreTracePolicy {
   /// behaviors occurs.
   /// @param[in] pointer to the memory to deallocate
   /// @return
-  static void Deallocate(void* ptr) noexcept {
+  // noinline: keeps the weak operator delete copies emitted by each translation unit tiny
+  [[gnu::noinline]] static void Deallocate(void* ptr) noexcept {
     auto deallocatable = reinterpret_cast<Chunk*>(
       reinterpret_cast<decltype(Chunk::descriptor)*>(ptr)-1);     // Point to chunk beginning
     FreeStoreTracePolicy::Log(FreeStoreTracePolicy::DeallocationRequest, ptr);
@@ -118,7 +119,7 @@ class FreeStore : public FreeStoreTracePolicy {
   static ETLSTD::size_t GetFreeMemory() noexcept {
     uint16_t stack_limit = 0;
 
-    auto chunk_parser = free_chunk_;
+    auto chunk_parser = FirstFreeChunk();
     while (!chunk_parser->IsLastChunk()) {
       chunk_parser = chunk_parser->NextChunk();
     }
@@ -179,6 +180,7 @@ class FreeStore : public FreeStoreTracePolicy {
   };
 
   static ETLSTD::size_t GetChunksSize(bool allocated) __attribute__((noinline)) {
+    FirstFreeChunk();
     auto chunk_parser = reinterpret_cast<Chunk*>(__malloc_heap_start);
     ETLSTD::size_t size = 0;
       
@@ -192,21 +194,21 @@ class FreeStore : public FreeStoreTracePolicy {
   }
 
  private:
-  friend class HardwareInitializer;
-  static bool Initialize() noexcept {
-    reinterpret_cast<Chunk*>(free_chunk_)->descriptor = ~(0);
-    reinterpret_cast<Chunk*>(free_chunk_)->SetLastChunk();
-    reinterpret_cast<Chunk*>(free_chunk_)->ResetAllocated();
-    return true;
+  /// Returns the first free chunk, setting up the heap as a single free chunk on first use.
+  /// The free store is initialized lazily, so a program that does not use it pays nothing,
+  /// and no static initializer has to be ordered before the first allocation.
+  static Chunk* FirstFreeChunk() noexcept {
+    if (free_chunk_ == nullptr) {
+      free_chunk_ = reinterpret_cast<Chunk*>(__malloc_heap_start);
+      free_chunk_->descriptor = ~(0);
+      free_chunk_->SetLastChunk();
+      free_chunk_->ResetAllocated();
+    }
+    return free_chunk_;
   }
 
-  static Chunk* free_chunk_;
-  
- public:
-  
+  inline static Chunk* free_chunk_ = nullptr;
 };
-
-FreeStore::Chunk* FreeStore::free_chunk_ = reinterpret_cast<FreeStore::Chunk*>(__malloc_heap_start);
 
 } // namespace etl
 

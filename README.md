@@ -162,6 +162,8 @@ That produces:
 - `build-avr/etl_avr_libstd_smoke.hex`
 - `build-avr/etl_avr_user_isr_smoke.elf` / `.hex` (user-defined USART ISR next to ETL)
 - `build-avr/etl_avr_uart0_smoke.elf` / `.hex` (`Uart0` with the ETL interrupt handlers)
+- `build-avr/etl_avr_multi_tu_smoke.elf` / `.hex` (ETL included from two translation units)
+- `build-avr/etl_avr_custom_new_smoke.elf` / `.hex` (user replacement of `operator new` / `operator delete`)
 
 You can override `ETL_AVR_MCU` to validate another supported MCU such as `attiny84`.
 
@@ -178,6 +180,10 @@ Using ETL in your own AVR project
 3. Add `#include <etl.h>` in your source file.
 
 The hardware UART drivers (`Uart0`, and `Uart1` on the ATmega644) install their interrupt handlers only when the program contains a call to their `start()` (even one that never runs): a program that includes ETL without starting a UART keeps the USART vectors free for its own `ISR(USART_RX_vect)`. Starting a UART while also defining a handler for one of its vectors is a build error (`symbol '__vector_18' is already defined` or `multiple definition of '__vector_18'`).
+
+ETL is header-only and can be included from any number of translation units.
+
+`etl.h` provides the global `operator new` / `operator delete` (including the sized and array forms) on top of `etl::FreeStore`. They are weak definitions: to use your own allocator, define these functions in a source file that does not include `etl.h`, and they take precedence. The free store is set up on its first use, so a program that never allocates pays nothing for it.
 
 If your project uses the freestore helpers, ETL provides:
 

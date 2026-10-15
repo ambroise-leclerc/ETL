@@ -34,43 +34,64 @@
 
 #include <etl/freestore.h>
 
-/// Allocates requested number of bytes.
-/// @param[in] size number of bytes to allocate
-/// @return pointer to allocated memory
-void* operator new(ETLSTD::size_t size){
-  return etl::FreeStore::Allocate(size);
-}
-
-/// Deallocates memory space previously allocated by a matching operator new.
-/// @param[in] pointer to the memory to deallocate
-/// @return
-void operator delete(void* ptr) {
-  etl::FreeStore::Deallocate(ptr);
-}
+// The replaceable allocation functions must not be inline ([replacement.functions]), yet every
+// translation unit including this header defines them. They are weak instead: the linker keeps
+// one copy, and a program can still replace them with its own (strong) definitions.
 
 /// Allocates requested number of bytes.
 /// @param[in] size number of bytes to allocate
 /// @return pointer to allocated memory
-void* operator new[](size_t size) {
+[[gnu::weak]] void* operator new(ETLSTD::size_t size) {
+  return etl::FreeStore::Allocate(size);
+}
+
+/// Allocates requested number of bytes.
+/// @param[in] size number of bytes to allocate
+/// @return pointer to allocated memory
+[[gnu::weak]] void* operator new[](ETLSTD::size_t size) {
   return etl::FreeStore::Allocate(size);
 }
 
 /// Deallocates memory space previously allocated by a matching operator new.
-/// @param[in] pointer to the memory to deallocate
-void operator delete[](void* ptr) {
-  etl::FreeStore::Deallocate(ptr);
+/// @param[in] ptr pointer to the memory to deallocate, or nullptr
+[[gnu::weak]] void operator delete(void* ptr) noexcept {
+  if (ptr != nullptr) {
+    etl::FreeStore::Deallocate(ptr);
+  }
+}
+
+/// Deallocates memory space previously allocated by a matching operator new[].
+/// Releases to FreeStore directly, like operator new[] allocates from it: forwarding to the
+/// scalar operator delete would hand the block to a program replacing only the scalar forms.
+/// @param[in] ptr pointer to the memory to deallocate, or nullptr
+[[gnu::weak]] void operator delete[](void* ptr) noexcept {
+  if (ptr != nullptr) {
+    etl::FreeStore::Deallocate(ptr);
+  }
+}
+
+/// Sized deallocation, called by delete-expressions on complete types (C++14).
+/// @param[in] ptr pointer to the memory to deallocate, or nullptr
+[[gnu::weak]] void operator delete(void* ptr, ETLSTD::size_t) noexcept {
+  operator delete(ptr);
+}
+
+/// Sized deallocation, called by delete[]-expressions on complete types (C++14).
+/// @param[in] ptr pointer to the memory to deallocate, or nullptr
+[[gnu::weak]] void operator delete[](void* ptr, ETLSTD::size_t) noexcept {
+  operator delete[](ptr);
 }
 
 /// Placement new for allocating the object inside a given memory buffer.
-/// @param[in] ptr pointer to a memory area to initialize the object at
-void* operator new(size_t, void* const buf){
+/// These forms are not replaceable ([new.delete.placement]), so they can be inline.
+/// @param[in] buf pointer to a memory area to initialize the object at
+[[nodiscard]] inline void* operator new(ETLSTD::size_t, void* buf) noexcept {
   return buf;
 }
-void* operator new[](size_t, void* const buf){
+[[nodiscard]] inline void* operator new[](ETLSTD::size_t, void* buf) noexcept {
   return buf;
 }
 
 /// Placement delete called automatically on "placement new" failure.
-void operator delete(void*, void* const){ }
-void operator delete[](void*, void* const){ }
-
+inline void operator delete(void*, void*) noexcept { }
+inline void operator delete[](void*, void*) noexcept { }
