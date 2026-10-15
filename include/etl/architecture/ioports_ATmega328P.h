@@ -1615,8 +1615,8 @@ public:
     }
 
     struct Isr {
-        static void receiveComplete() IOPORTS_IRQ_HANDLER(USART0_RX_vect, signal);
-        static void fifoEmpty() IOPORTS_IRQ_HANDLER(USART0_UDRE_vect, signal);
+        static void receiveComplete() IOPORTS_IRQ_HANDLER(USART_RX_vect, signal);
+        static void fifoEmpty() IOPORTS_IRQ_HANDLER(USART_UDRE_vect, signal);
     };
 };
 
