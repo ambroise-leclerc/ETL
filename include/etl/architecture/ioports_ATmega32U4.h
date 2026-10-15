@@ -1653,14 +1653,14 @@ struct PinChangeMask0 {
 
 struct PinChangeIRQ0 {
   static void enableSource(uint8_t PCINT) {
-    PinChangeControlRegister::SetBits(1<<PCIE0);
-    PinChangeMask0::SetBits(1<<PCINT);
+    PinChangeControlRegister::setBits(1<<PCIE0);
+    PinChangeMask0::setBits(1<<PCINT);
   }
 
   static void disableSource(uint8_t PCINT) {
-    PinChangeMask0::ClearBits(1<<PCINT);
+    PinChangeMask0::clearBits(1<<PCINT);
     if (0 == PinChangeMask0::Get()) {
-      PinChangeControlRegister::ClearBits(1<<PCIE0);
+      PinChangeControlRegister::clearBits(1<<PCIE0);
     }
   }
 

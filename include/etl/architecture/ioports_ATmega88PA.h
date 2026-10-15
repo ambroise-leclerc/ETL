@@ -1367,14 +1367,14 @@ struct PinChangeMask0 {
 
 struct PinChangeIRQ0 {
   static void enableSource(uint8_t PCINT) {
-    PinChangeControlRegister::SetBits(1<<PCIE0);
-    PinChangeMask0::SetBits(1<<PCINT);
+    PinChangeControlRegister::setBits(1<<PCIE0);
+    PinChangeMask0::setBits(1<<PCINT);
   }
 
   static void disableSource(uint8_t PCINT) {
-    PinChangeMask0::ClearBits(1<<PCINT);
+    PinChangeMask0::clearBits(1<<PCINT);
     if (0 == PinChangeMask0::Get()) {
-      PinChangeControlRegister::ClearBits(1<<PCIE0);
+      PinChangeControlRegister::clearBits(1<<PCIE0);
     }
   }
 
@@ -1400,14 +1400,14 @@ struct PinChangeMask1 {
 
 struct PinChangeIRQ1 {
   static void enableSource(uint8_t PCINT) {
-    PinChangeControlRegister::SetBits(1<<PCIE1);
-    PinChangeMask1::SetBits(1<<PCINT);
+    PinChangeControlRegister::setBits(1<<PCIE1);
+    PinChangeMask1::setBits(1<<PCINT);
   }
 
   static void disableSource(uint8_t PCINT) {
-    PinChangeMask1::ClearBits(1<<PCINT);
+    PinChangeMask1::clearBits(1<<PCINT);
     if (0 == PinChangeMask1::Get()) {
-      PinChangeControlRegister::ClearBits(1<<PCIE1);
+      PinChangeControlRegister::clearBits(1<<PCIE1);
     }
   }
 
@@ -1433,14 +1433,14 @@ struct PinChangeMask2 {
 
 struct PinChangeIRQ2 {
   static void enableSource(uint8_t PCINT) {
-    PinChangeControlRegister::SetBits(1<<PCIE2);
-    PinChangeMask2::SetBits(1<<PCINT);
+    PinChangeControlRegister::setBits(1<<PCIE2);
+    PinChangeMask2::setBits(1<<PCINT);
   }
 
   static void disableSource(uint8_t PCINT) {
-    PinChangeMask2::ClearBits(1<<PCINT);
+    PinChangeMask2::clearBits(1<<PCINT);
     if (0 == PinChangeMask2::Get()) {
-      PinChangeControlRegister::ClearBits(1<<PCIE2);
+      PinChangeControlRegister::clearBits(1<<PCIE2);
     }
   }
 
