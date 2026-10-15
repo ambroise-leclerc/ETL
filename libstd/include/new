@@ -61,9 +61,13 @@
 }
 
 /// Deallocates memory space previously allocated by a matching operator new[].
+/// Releases to FreeStore directly, like operator new[] allocates from it: forwarding to the
+/// scalar operator delete would hand the block to a program replacing only the scalar forms.
 /// @param[in] ptr pointer to the memory to deallocate, or nullptr
 [[gnu::weak]] void operator delete[](void* ptr) noexcept {
-  operator delete(ptr);
+  if (ptr != nullptr) {
+    etl::FreeStore::Deallocate(ptr);
+  }
 }
 
 /// Sized deallocation, called by delete-expressions on complete types (C++14).
@@ -75,7 +79,7 @@
 /// Sized deallocation, called by delete[]-expressions on complete types (C++14).
 /// @param[in] ptr pointer to the memory to deallocate, or nullptr
 [[gnu::weak]] void operator delete[](void* ptr, ETLSTD::size_t) noexcept {
-  operator delete(ptr);
+  operator delete[](ptr);
 }
 
 /// Placement new for allocating the object inside a given memory buffer.

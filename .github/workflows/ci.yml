@@ -131,6 +131,15 @@ jobs:
           avr-nm build-avr/etl_avr_multi_tu_smoke.elf | grep -q ' W _Znwj$'
           # A user definition replaces them
           avr-nm build-avr/etl_avr_custom_new_smoke.elf | grep -q ' T _Znwj$'
+          # Array forms the user did not replace stay on FreeStore: delete[] must not reach the
+          # user's scalar operator delete
+          avr-objdump -d build-avr/etl_avr_custom_new_smoke.elf > custom_new.lst
+          for f in _ZdaPv _ZdaPvj; do
+            grep -q "<${f}>:" custom_new.lst
+            if awk -v f="<${f}>:" '$2 == f {on = 1; next} on && /^$/ {exit} on' custom_new.lst | grep -qE '<_ZdlPvj?>'; then
+              echo "${f} reaches the user's scalar operator delete"; exit 1
+            fi
+          done
 
       - name: Check USART vectors
         if: matrix.target.mcu == 'atmega328p'
