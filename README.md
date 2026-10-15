@@ -95,8 +95,8 @@ ETL now targets a single **C++23** baseline across the repository:
 
 - public headers require a C++23-capable compiler
 - host tests build with **GCC 13+** and are validated in CI with GCC 13, 14, 15, 16 and Clang 18
-- AVR smoke builds target **avr-gcc 14.2+** and are validated in CI with GCC 14.2 (modern-avr) and GCC 16.1
-- the AVR smoke targets build without libstdc++, relying only on avr-libc and the bundled `libstd`
+- AVR smoke builds target **avr-gcc 14.2+** and are validated in CI with GCC 14.2 (modern-avr), 15.2 and 16.1 (ZakKemble)
+- the AVR smoke targets build without libstdc++, relying only on avr-libc and the bundled `libstd`; the 15.2 and 16.1 CI jobs check this, as their toolchains ship no libstdc++
 - the default build system baseline is **CMake 3.25+**
 
 The bundled `libstd` directory remains a focused compatibility layer for the subset of standard-library facilities ETL uses on embedded targets; it is not a full reimplementation of the entire C++23 standard library. In particular, `<string>` now means a small owning string subset with `string_view` interop, append/resize/reserve support, and explicit non-goals around full hosted `std::string` parity.
@@ -135,7 +135,7 @@ Recommended tools:
 - host GCC 13+ (or Clang 18+) for local host builds and tests
 - CMake 3.25+
 - `avr-g++` 14.2+ for AVR validation, for example:
-  - [ZakKemble/avr-gcc-build](https://github.com/ZakKemble/avr-gcc-build/releases) (GCC 16.1, no libstdc++)
+  - [ZakKemble/avr-gcc-build](https://github.com/ZakKemble/avr-gcc-build/releases) (GCC 15.2 or 16.1, no libstdc++)
   - [modern-avr/toolchain](https://github.com/modern-avr/toolchain/releases) (GCC 14.2, ships libstdc++)
   - [Microchip AVR 8-bit Toolchain](https://www.microchip.com/en-us/tools-resources/develop/microchip-studio/gcc-compilers) 4.x (GCC 15.1)
 - `avrdude` for flashing
@@ -152,7 +152,7 @@ cmake -S . -B build-avr \
 cmake --build build-avr
 ```
 
-The repository CI builds that path with two pinned toolchains (archives verified by SHA-256): `modern-avr/toolchain` `v14.2.0` and ZakKemble `avr-gcc` `16.1.0`. Each job reports the `avr-size` of the smoke binaries in its summary.
+The repository CI builds that path with three pinned toolchains (archives verified by SHA-256): `modern-avr/toolchain` `v14.2.0` and ZakKemble `avr-gcc` `15.2.0` and `16.1.0`. Each job reports the `avr-size` of the smoke binaries in its summary.
 
 That produces:
 
@@ -160,6 +160,8 @@ That produces:
 - `build-avr/etl_avr_smoke.hex`
 - `build-avr/etl_avr_libstd_smoke.elf`
 - `build-avr/etl_avr_libstd_smoke.hex`
+- `build-avr/etl_avr_user_isr_smoke.elf` / `.hex` (user-defined USART ISR next to ETL)
+- `build-avr/etl_avr_uart0_isr_smoke.elf` / `.hex` (`Uart0` with the ETL interrupt handlers)
 
 You can override `ETL_AVR_MCU` to validate another supported MCU such as `attiny84`.
 
@@ -174,6 +176,15 @@ Using ETL in your own AVR project
    The repository root is required because ETL headers include bundled standard-library headers with paths such as `libstd/include/memory`.
 
 3. Add `#include <etl.h>` in your source file.
+
+The hardware UART drivers (`Uart0`, and `Uart1` on the ATmega644) rely on interrupt handlers. To keep the USART vectors free for programs that define their own `ISR(USART_RX_vect)`, ETL only defines these handlers when asked. In **exactly one** source file of a program that uses `Uart0`, define `ETL_UART0_ISR` (or `ETL_UART1_ISR` for `Uart1`) before including ETL:
+
+```
+#define ETL_UART0_ISR
+#include <etl.h>
+```
+
+Without it, a program that uses `Uart0` fails to link with undefined references to `etl::Uart0Driver::fifo` and related members.
 
 If your project uses the freestore helpers, ETL provides:
 
