@@ -1767,7 +1767,7 @@ template<> struct is_uart_txd_capable<PinD1> : std::true_type {};
 
 class Uart0Driver {
     static const uint8_t BufferSize = 32;
-    static uint8_t readIndex, writeIndex;
+    inline static uint8_t readIndex = 0, writeIndex = 0;
 protected:
     static void start(uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT) {
         readIndex = 0;
@@ -1794,9 +1794,9 @@ protected:
      }
 
     using Queue =  etl::CircularBuffer<uint8_t,BufferSize>;
-    static Queue fifo;
+    inline static Queue fifo;
     using ReceiveCallback = void(*)(uint8_t);
-    static ReceiveCallback receiveCallback;
+    inline static ReceiveCallback receiveCallback = nullptr;
 
 public:
     static void writeAsync(uint8_t datum) {
@@ -1810,18 +1810,21 @@ public:
     }
 
 
-    struct Isr {
-        static void receiveComplete() IOPORTS_IRQ_HANDLER(USART0_RX_vect, signal);
-        static void fifoEmpty() IOPORTS_IRQ_HANDLER(USART0_UDRE_vect, signal);
+    // Interrupt handlers, only emitted (and thus installed) when a Uart0 is started
+    template <typename = void> struct Isr {
+        static void receiveComplete() __attribute__((signal, __INTR_ATTRS));
+        static void fifoEmpty() __attribute__((signal, __INTR_ATTRS));
     };
 };
 
-uint8_t Uart0Driver::readIndex = 0;
-uint8_t Uart0Driver::writeIndex = 0;
-Uart0Driver::Queue Uart0Driver::fifo;
-Uart0Driver::ReceiveCallback Uart0Driver::receiveCallback = nullptr;
-
-void Uart0Driver::Isr::fifoEmpty() {
+// Template instances are weak symbols and would lose against the weak __bad_interrupt aliases of
+// the startup code: each handler binds its vector with a strong alias, defined in the handler's
+// COMDAT section so that several translation units can start Uart0. With .equiv, a user-defined
+// ISR for the same vector is a build error instead of a silent override.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmisspelled-isr"
+template <typename T> void Uart0Driver::Isr<T>::fifoEmpty() {
+    asm(".global __vector_21\n.equiv __vector_21, %c0" ::"i"(&fifoEmpty)); // USART0_UDRE_vect
       if (!fifo.empty()) {
         while((UCSR0A & (1<<UDRE0)) && !fifo.empty()) {
             UDR0 =  fifo.pop_front();
@@ -1831,11 +1834,13 @@ void Uart0Driver::Isr::fifoEmpty() {
        }
   }
 
-void Uart0Driver::Isr::receiveComplete() {
+template <typename T> void Uart0Driver::Isr<T>::receiveComplete() {
+    asm(".global __vector_20\n.equiv __vector_20, %c0" ::"i"(&receiveComplete)); // USART0_RX_vect
     if (receiveCallback) {
         receiveCallback(UDR0);
     }
 }
+#pragma GCC diagnostic pop
 
 template<uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT, typename CharType>
 class Uart0 : public Uart0Driver {
@@ -1849,7 +1854,13 @@ public:
         ParityError = 1<<UPE0,
     };
     
-    static void start() { Uart0Driver::start(BAUD_RATE, FRAME_FORMAT); }
+    static void start() {
+        // Depends on BAUD_RATE so that the handlers are instantiated here only, and shared by all Uart0s
+        using Handlers = Isr<typename ETLSTD::conditional<BAUD_RATE != 0, void, void>::type>;
+        static_cast<void>(&Handlers::receiveComplete);
+        static_cast<void>(&Handlers::fifoEmpty);
+        Uart0Driver::start(BAUD_RATE, FRAME_FORMAT);
+    }
     static void start(ReceiveCallback func) {
         receiveCallback = static_cast<Uart0Driver::ReceiveCallback>(func);
         start();
@@ -1868,7 +1879,7 @@ template<> struct is_uart_txd_capable<PinD3> : std::true_type {};
 
 class Uart1Driver {
     static const uint8_t BufferSize = 32;
-    static uint8_t readIndex, writeIndex;
+    inline static uint8_t readIndex = 0, writeIndex = 0;
 protected:
     static void start(uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT) {
         readIndex = 0;
@@ -1895,9 +1906,9 @@ protected:
      }
 
     using Queue =  etl::CircularBuffer<uint8_t,BufferSize>;
-    static Queue fifo;
+    inline static Queue fifo;
     using ReceiveCallback = void(*)(uint8_t);
-    static ReceiveCallback receiveCallback;
+    inline static ReceiveCallback receiveCallback = nullptr;
 
 public:
     static void writeAsync(uint8_t datum) {
@@ -1911,18 +1922,21 @@ public:
     }
 
 
-    struct Isr {
-        static void receiveComplete() IOPORTS_IRQ_HANDLER(USART1_RX_vect, signal);
-        static void fifoEmpty() IOPORTS_IRQ_HANDLER(USART1_UDRE_vect, signal);
+    // Interrupt handlers, only emitted (and thus installed) when a Uart1 is started
+    template <typename = void> struct Isr {
+        static void receiveComplete() __attribute__((signal, __INTR_ATTRS));
+        static void fifoEmpty() __attribute__((signal, __INTR_ATTRS));
     };
 };
 
-uint8_t Uart1Driver::readIndex = 0;
-uint8_t Uart1Driver::writeIndex = 0;
-Uart1Driver::Queue Uart1Driver::fifo;
-Uart1Driver::ReceiveCallback Uart1Driver::receiveCallback = nullptr;
-
-void Uart1Driver::Isr::fifoEmpty() {
+// Template instances are weak symbols and would lose against the weak __bad_interrupt aliases of
+// the startup code: each handler binds its vector with a strong alias, defined in the handler's
+// COMDAT section so that several translation units can start Uart1. With .equiv, a user-defined
+// ISR for the same vector is a build error instead of a silent override.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmisspelled-isr"
+template <typename T> void Uart1Driver::Isr<T>::fifoEmpty() {
+    asm(".global __vector_29\n.equiv __vector_29, %c0" ::"i"(&fifoEmpty)); // USART1_UDRE_vect
       if (!fifo.empty()) {
         while((UCSR1A & (1<<UDRE1)) && !fifo.empty()) {
             UDR1 =  fifo.pop_front();
@@ -1932,11 +1946,13 @@ void Uart1Driver::Isr::fifoEmpty() {
        }
   }
 
-void Uart1Driver::Isr::receiveComplete() {
+template <typename T> void Uart1Driver::Isr<T>::receiveComplete() {
+    asm(".global __vector_28\n.equiv __vector_28, %c0" ::"i"(&receiveComplete)); // USART1_RX_vect
     if (receiveCallback) {
         receiveCallback(UDR1);
     }
 }
+#pragma GCC diagnostic pop
 
 template<uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT, typename CharType>
 class Uart1 : public Uart1Driver {
@@ -1950,7 +1966,13 @@ public:
         ParityError = 1<<UPE1,
     };
     
-    static void start() { Uart1Driver::start(BAUD_RATE, FRAME_FORMAT); }
+    static void start() {
+        // Depends on BAUD_RATE so that the handlers are instantiated here only, and shared by all Uart1s
+        using Handlers = Isr<typename ETLSTD::conditional<BAUD_RATE != 0, void, void>::type>;
+        static_cast<void>(&Handlers::receiveComplete);
+        static_cast<void>(&Handlers::fifoEmpty);
+        Uart1Driver::start(BAUD_RATE, FRAME_FORMAT);
+    }
     static void start(ReceiveCallback func) {
         receiveCallback = static_cast<Uart1Driver::ReceiveCallback>(func);
         start();
