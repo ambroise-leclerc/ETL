@@ -165,18 +165,18 @@ template<typename R1, typename P1, typename R2, typename P2> constexpr bool oper
 inline namespace literals {
 inline namespace chrono_literals {
 
-constexpr chrono::hours                                 operator "" h(unsigned long long h)     { return chrono::hours(static_cast<chrono::hours::rep>(h)); }
-constexpr chrono::duration<long double, ratio<3600, 1>> operator "" h(long double h)            { return chrono::duration<long double, ratio<3600, 1>>(h); }
-constexpr chrono::minutes                               operator "" min(unsigned long long m)   { return chrono::minutes(static_cast<chrono::minutes::rep>(m)); }
-constexpr chrono::duration<long double, ratio<60, 1>>   operator "" min(long double m)          { return chrono::duration<long double, ratio<60, 1>>(m); }
-constexpr chrono::seconds                               operator "" s(unsigned long long s)     { return chrono::seconds(static_cast<chrono::seconds::rep>(s)); }
-constexpr chrono::duration<long double>                 operator "" s(long double s)            { return chrono::duration<long double>(s); }
-constexpr chrono::milliseconds                          operator "" ms(unsigned long long ms)   { return chrono::milliseconds(static_cast<chrono::milliseconds::rep>(ms)); }
-constexpr chrono::duration<long double, milli>          operator "" ms(long double ms)          { return chrono::duration<long double, milli>(ms); }
-constexpr chrono::microseconds      					operator "" us(unsigned long long us)   { return chrono::microseconds(static_cast<chrono::microseconds::rep>(us)); }
-constexpr chrono::duration<long double, micro>          operator "" us(long double us)          { return chrono::duration<long double, micro>(us); }
-constexpr chrono::nanoseconds                           operator "" ns(unsigned long long ns)   { return chrono::nanoseconds(static_cast<chrono::nanoseconds::rep>(ns)); }
-constexpr chrono::duration<long double, nano>           operator "" ns(long double ns)          { return chrono::duration<long double, nano>(ns); }
+constexpr chrono::hours                                 operator ""h(unsigned long long h)     { return chrono::hours(static_cast<chrono::hours::rep>(h)); }
+constexpr chrono::duration<long double, ratio<3600, 1>> operator ""h(long double h)            { return chrono::duration<long double, ratio<3600, 1>>(h); }
+constexpr chrono::minutes                               operator ""min(unsigned long long m)   { return chrono::minutes(static_cast<chrono::minutes::rep>(m)); }
+constexpr chrono::duration<long double, ratio<60, 1>>   operator ""min(long double m)          { return chrono::duration<long double, ratio<60, 1>>(m); }
+constexpr chrono::seconds                               operator ""s(unsigned long long s)     { return chrono::seconds(static_cast<chrono::seconds::rep>(s)); }
+constexpr chrono::duration<long double>                 operator ""s(long double s)            { return chrono::duration<long double>(s); }
+constexpr chrono::milliseconds                          operator ""ms(unsigned long long ms)   { return chrono::milliseconds(static_cast<chrono::milliseconds::rep>(ms)); }
+constexpr chrono::duration<long double, milli>          operator ""ms(long double ms)          { return chrono::duration<long double, milli>(ms); }
+constexpr chrono::microseconds      					operator ""us(unsigned long long us)   { return chrono::microseconds(static_cast<chrono::microseconds::rep>(us)); }
+constexpr chrono::duration<long double, micro>          operator ""us(long double us)          { return chrono::duration<long double, micro>(us); }
+constexpr chrono::nanoseconds                           operator ""ns(unsigned long long ns)   { return chrono::nanoseconds(static_cast<chrono::nanoseconds::rep>(ns)); }
+constexpr chrono::duration<long double, nano>           operator ""ns(long double ns)          { return chrono::duration<long double, nano>(ns); }
 
 } // namespace chrono_literals
 } // namespace literals

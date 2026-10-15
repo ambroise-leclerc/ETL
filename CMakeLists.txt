@@ -39,6 +39,11 @@ target_include_directories(etl
 )
 target_compile_features(etl INTERFACE cxx_std_23)
 
+# libstd defines standard literal suffixes (sv, ms, ...) that compilers reserve for the hosted library
+set(ETL_LIBSTD_WARNING_OPTIONS
+    $<$<CXX_COMPILER_ID:GNU>:-Wno-literal-suffix>
+    $<$<CXX_COMPILER_ID:Clang,AppleClang>:-Wno-user-defined-literals>)
+
 if (ETL_BUILD_HOST_TESTS)
     add_executable(TestsETL
         ${ETL_TESTS}
@@ -54,9 +59,7 @@ if (ETL_BUILD_HOST_TESTS)
     find_package(Threads REQUIRED)
     target_link_libraries(TestsETL PRIVATE Threads::Threads)
 
-    if (NOT(CMAKE_CXX_COMPILER MATCHES "MSVC"))
-        target_compile_options(TestsETL PRIVATE -Wno-literal-suffix)
-    endif()
+    target_compile_options(TestsETL PRIVATE ${ETL_LIBSTD_WARNING_OPTIONS})
 
     include(CTest)
     if (BUILD_TESTING)
@@ -81,7 +84,7 @@ if (ETL_BUILD_AVR_SMOKE)
         target_link_libraries(${target_name} PRIVATE etl)
         target_compile_features(${target_name} PRIVATE cxx_std_23)
         target_compile_definitions(${target_name} PRIVATE F_CPU=${ETL_AVR_F_CPU})
-        target_compile_options(${target_name} PRIVATE -Os -ffunction-sections -fdata-sections)
+        target_compile_options(${target_name} PRIVATE -Os -ffunction-sections -fdata-sections ${ETL_LIBSTD_WARNING_OPTIONS})
         target_link_options(${target_name} PRIVATE -Wl,--gc-sections)
         set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${target_name}" SUFFIX ".elf")
 

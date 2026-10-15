@@ -377,12 +377,12 @@ using wstring_view = basic_string_view<wchar_t>;
 using u16string_view = basic_string_view<char16_t>;
 using u32string_view = basic_string_view<char32_t>;
 
-constexpr string_view operator"" sv(const char *str, size_t len) noexcept { return string_view{str, len}; }
+constexpr string_view operator""sv(const char *str, size_t len) noexcept { return string_view{str, len}; }
 
-constexpr u16string_view operator"" sv(const char16_t *str, size_t len) noexcept { return u16string_view{str, len}; }
+constexpr u16string_view operator""sv(const char16_t *str, size_t len) noexcept { return u16string_view{str, len}; }
 
-constexpr u32string_view operator"" sv(const char32_t *str, size_t len) noexcept { return u32string_view{str, len}; }
+constexpr u32string_view operator""sv(const char32_t *str, size_t len) noexcept { return u32string_view{str, len}; }
 
-constexpr wstring_view operator"" sv(const wchar_t *str, size_t len) noexcept { return wstring_view{str, len}; }
+constexpr wstring_view operator""sv(const wchar_t *str, size_t len) noexcept { return wstring_view{str, len}; }
 
 } // namespace ETLSTD
