@@ -34,6 +34,7 @@
 
 #include "ETLDevice_ATmega328P.h"
 #include <avr/interrupt.h>
+#include <etl/interrupt.h>
 #include <avr/io.h>
 #include <etl/CircularBuffer.h>
 #include <libstd/include/chrono>
@@ -43,8 +44,6 @@
 extern void __builtin_avr_delay_cycles(unsigned long);
 
 namespace etl {
-#define IOPORTS_TO_STRING(name) #name
-#define IOPORTS_IRQ_HANDLER(vector, type) asm(IOPORTS_TO_STRING(vector)) __attribute__((type, __INTR_ATTRS))
 
 using clock_cycles = ETLSTD::chrono::duration<unsigned long, ETLSTD::ratio<1, Device::McuFrequency>>;
 constexpr clock_cycles operator""_clks(unsigned long long c) { return clock_cycles(static_cast<clock_cycles::rep>(c)); }
@@ -1390,23 +1389,10 @@ struct Timer0 {
     static void setOutputCompareValueB(value_type value) { OCR0B = value; }
     static value_type getOutputCompareValueB() { return OCR0B; }
 
-    struct Isr {
-        static void Overflow() IOPORTS_IRQ_HANDLER(TIMER0_OVF_vect, signal);
-        static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER0_COMPA_vect, signal);
-        static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER0_COMPB_vect, signal);
-    };
-
-    struct IsrNoBlock {
-        static void Overflow() IOPORTS_IRQ_HANDLER(TIMER0_OVF_vect, interrupt);
-        static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER0_COMPA_vect, interrupt);
-        static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER0_COMPB_vect, interrupt);
-    };
-
-    struct IsrNaked {
-        static void Overflow() IOPORTS_IRQ_HANDLER(TIMER0_OVF_vect, naked);
-        static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER0_COMPA_vect, naked);
-        static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER0_COMPB_vect, naked);
-    };
+    // Interrupt vectors, for etl::Interrupt<...>::attach()
+    using Overflow = InterruptVector<TIMER0_OVF_vect_num>;
+    using CompareMatchA = InterruptVector<TIMER0_COMPA_vect_num>;
+    using CompareMatchB = InterruptVector<TIMER0_COMPB_vect_num>;
 };
 
 struct Timer1 {
@@ -1451,26 +1437,11 @@ struct Timer1 {
     static void setOutputCompareValueB(value_type value) { OCR1B = value; }
     static value_type getOutputCompareValueB() { return OCR1B; }
 
-    struct Isr {
-        static void Overflow() IOPORTS_IRQ_HANDLER(TIMER1_OVF_vect, signal);
-        static void Capture() IOPORTS_IRQ_HANDLER(TIMER1_CAPT_vect, signal);
-        static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER1_COMPA_vect, signal);
-        static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER1_COMPB_vect, signal);
-    };
-
-    struct IsrNoBlock {
-        static void Overflow() IOPORTS_IRQ_HANDLER(TIMER1_OVF_vect, interrupt);
-        static void Capture() IOPORTS_IRQ_HANDLER(TIMER1_CAPT_vect, interrupt);
-        static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER1_COMPA_vect, interrupt);
-        static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER1_COMPB_vect, interrupt);
-    };
-
-    struct IsrNaked {
-        static void Overflow() IOPORTS_IRQ_HANDLER(TIMER1_OVF_vect, naked);
-        static void Capture() IOPORTS_IRQ_HANDLER(TIMER1_CAPT_vect, naked);
-        static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER1_COMPA_vect, naked);
-        static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER1_COMPB_vect, naked);
-    };
+    // Interrupt vectors, for etl::Interrupt<...>::attach()
+    using Overflow = InterruptVector<TIMER1_OVF_vect_num>;
+    using Capture = InterruptVector<TIMER1_CAPT_vect_num>;
+    using CompareMatchA = InterruptVector<TIMER1_COMPA_vect_num>;
+    using CompareMatchB = InterruptVector<TIMER1_COMPB_vect_num>;
 };
 
 struct Timer2 {
@@ -1516,23 +1487,10 @@ struct Timer2 {
     static void setOutputCompareValueB(value_type value) { OCR2B = value; }
     static value_type getOutputCompareValueB() { return OCR2B; }
 
-    struct Isr {
-        static void Overflow() IOPORTS_IRQ_HANDLER(TIMER2_OVF_vect, signal);
-        static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER2_COMPA_vect, signal);
-        static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER2_COMPB_vect, signal);
-    };
-
-    struct IsrNoBlock {
-        static void Overflow() IOPORTS_IRQ_HANDLER(TIMER2_OVF_vect, interrupt);
-        static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER2_COMPA_vect, interrupt);
-        static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER2_COMPB_vect, interrupt);
-    };
-
-    struct IsrNaked {
-        static void Overflow() IOPORTS_IRQ_HANDLER(TIMER2_OVF_vect, naked);
-        static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER2_COMPA_vect, naked);
-        static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER2_COMPB_vect, naked);
-    };
+    // Interrupt vectors, for etl::Interrupt<...>::attach()
+    using Overflow = InterruptVector<TIMER2_OVF_vect_num>;
+    using CompareMatchA = InterruptVector<TIMER2_COMPA_vect_num>;
+    using CompareMatchB = InterruptVector<TIMER2_COMPB_vect_num>;
 };
 
 template <typename> struct is_uart_txd_capable : ETLSTD::false_type {};
@@ -1614,37 +1572,28 @@ public:
         }
     }
 
-    // Interrupt handlers, only emitted (and thus installed) when a Uart0 is started
-    template <typename = void> struct Isr {
-        static void receiveComplete() __attribute__((signal, __INTR_ATTRS));
-        static void fifoEmpty() __attribute__((signal, __INTR_ATTRS));
-    };
+protected:
+    // Interrupt vectors and handlers, installed by Uart0::start()
+    using RxComplete = InterruptVector<USART_RX_vect_num>;
+    using DataRegisterEmpty = InterruptVector<USART_UDRE_vect_num>;
+
+    static void receiveComplete() {
+        if (receiveCallback) {
+            receiveCallback(UDR0);
+        }
+    }
+
+    static void fifoEmpty() {
+        if (!fifo.empty()) {
+            while ((UCSR0A & (1 << UDRE0)) && !fifo.empty()) {
+                UDR0 = fifo.pop_front();
+            }
+        } else {
+            UCSR0B &= ~(1 << UDRIE0);
+        }
+    }
 };
 
-// Template instances are weak symbols and would lose against the weak __bad_interrupt aliases of
-// the startup code: each handler binds its vector with a strong alias, defined in the handler's
-// COMDAT section so that several translation units can start Uart0. With .equiv, a user-defined
-// ISR for the same vector is a build error instead of a silent override.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmisspelled-isr"
-template <typename T> void Uart0Driver::Isr<T>::fifoEmpty() {
-    asm(".global __vector_19\n.equiv __vector_19, %c0" ::"i"(&fifoEmpty)); // USART_UDRE_vect
-    if (!fifo.empty()) {
-        while ((UCSR0A & (1 << UDRE0)) && !fifo.empty()) {
-            UDR0 = fifo.pop_front();
-        }
-    } else {
-        UCSR0B &= ~(1 << UDRIE0);
-    }
-}
-
-template <typename T> void Uart0Driver::Isr<T>::receiveComplete() {
-    asm(".global __vector_18\n.equiv __vector_18, %c0" ::"i"(&receiveComplete)); // USART_RX_vect
-    if (receiveCallback) {
-        receiveCallback(UDR0);
-    }
-}
-#pragma GCC diagnostic pop
 
 template <uint32_t BAUD_RATE, FrameFormat FRAME_FORMAT, typename CharType> class Uart0 : public Uart0Driver {
 public:
@@ -1658,10 +1607,9 @@ public:
     };
 
     static void start() {
-        // Depends on BAUD_RATE so that the handlers are instantiated here only, and shared by all Uart0s
-        using Handlers = Isr<typename ETLSTD::conditional<BAUD_RATE != 0, void, void>::type>;
-        static_cast<void>(&Handlers::receiveComplete);
-        static_cast<void>(&Handlers::fifoEmpty);
+        // Vectors made dependent on BAUD_RATE: the handlers are installed only by a started Uart0
+        Interrupt<dependent_t<RxComplete, BAUD_RATE>>::template attach<&Uart0Driver::receiveComplete>();
+        Interrupt<dependent_t<DataRegisterEmpty, BAUD_RATE>>::template attach<&Uart0Driver::fifoEmpty>();
         Uart0Driver::start(BAUD_RATE, FRAME_FORMAT);
     }
     static void start(ReceiveCallback func) {
@@ -1706,17 +1654,8 @@ struct PinChangeIRQ0 {
         }
     }
 
-    struct Isr {
-        static void trigger() IOPORTS_IRQ_HANDLER(PCINT0_vect, signal);
-    };
-
-    struct IsrNoBlock {
-        static void trigger() IOPORTS_IRQ_HANDLER(PCINT0_vect, interrupt);
-    };
-
-    struct IsrNaked {
-        static void trigger() IOPORTS_IRQ_HANDLER(PCINT0_vect, naked);
-    };
+    // Interrupt vectors, for etl::Interrupt<...>::attach()
+    using Trigger = InterruptVector<PCINT0_vect_num>;
 };
 
 struct PinChangeMask1 {
@@ -1738,17 +1677,8 @@ struct PinChangeIRQ1 {
         }
     }
 
-    struct Isr {
-        static void trigger() IOPORTS_IRQ_HANDLER(PCINT1_vect, signal);
-    };
-
-    struct IsrNoBlock {
-        static void trigger() IOPORTS_IRQ_HANDLER(PCINT1_vect, interrupt);
-    };
-
-    struct IsrNaked {
-        static void trigger() IOPORTS_IRQ_HANDLER(PCINT1_vect, naked);
-    };
+    // Interrupt vectors, for etl::Interrupt<...>::attach()
+    using Trigger = InterruptVector<PCINT1_vect_num>;
 };
 
 struct PinChangeMask2 {
@@ -1770,19 +1700,8 @@ struct PinChangeIRQ2 {
         }
     }
 
-    struct Isr {
-        static void trigger() IOPORTS_IRQ_HANDLER(PCINT2_vect, signal);
-    };
-
-    struct IsrNoBlock {
-        static void trigger() IOPORTS_IRQ_HANDLER(PCINT2_vect, interrupt);
-    };
-
-    struct IsrNaked {
-        static void trigger() IOPORTS_IRQ_HANDLER(PCINT2_vect, naked);
-    };
+    // Interrupt vectors, for etl::Interrupt<...>::attach()
+    using Trigger = InterruptVector<PCINT2_vect_num>;
 };
 
-#undef IOPORTS_TO_STRING
-#undef IOPORTS_IRQ_HANDLER
 } // namespace etl
