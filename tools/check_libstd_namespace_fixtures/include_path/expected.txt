@@ -1,0 +1,3 @@
+examples/b.cpp:1: [libstd-include-path] repository-qualified standard include, include the standard name (e.g. <memory>)
+include/etl/a.h:1: [libstd-include-path] repository-qualified standard include, include the standard name (e.g. <memory>)
+test/c.cpp:1: [libstd-include-path] repository-qualified standard include, include the standard name (e.g. <memory>)

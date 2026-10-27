@@ -1,0 +1,3 @@
+etlstd-token test/gone.cpp
+bogus-rule include/etl/a.h
+etlstd-token include/etl/a.h extra

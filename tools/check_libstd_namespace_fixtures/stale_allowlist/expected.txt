@@ -1,0 +1,3 @@
+allowlist.txt:2: [bad-allowlist-entry] expected '<rule> <path>' with rule in ['etlstd-namespace-decl', 'etlstd-token', 'libstd-include-path']
+allowlist.txt:3: [bad-allowlist-entry] expected '<rule> <path>' with rule in ['etlstd-namespace-decl', 'etlstd-token', 'libstd-include-path']
+allowlist.txt:1: [stale-allowlist] etlstd-token test/gone.cpp no longer has any violation, remove it
