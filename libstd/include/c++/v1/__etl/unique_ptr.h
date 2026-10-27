@@ -33,11 +33,11 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once 
 
-#include <libstd/include/utility>
-#include <libstd/include/cstddef>
-#include <libstd/include/h/default_delete.h>
-#include <libstd/include/type_traits>
-#include <libstd/include/functional>
+#include "../utility"
+#include "../cstddef"
+#include "default_delete.h"
+#include "../type_traits"
+#include "../functional"
 
 namespace ETLSTD {
   

@@ -32,8 +32,8 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <libstd/include/type_traits>
-#include <libstd/include/utility>
+#include "../type_traits"
+#include "../utility"
 
 namespace ETLSTD {
 

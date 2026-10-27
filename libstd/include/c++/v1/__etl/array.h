@@ -32,9 +32,9 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <libstd/include/algorithm>
-#include <libstd/include/iterator>
-#include <libstd/include/stdexcept>
+#include "../algorithm"
+#include "../iterator"
+#include "../stdexcept"
 
 namespace ETLSTD {
 

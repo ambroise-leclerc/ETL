@@ -35,7 +35,7 @@
 #include <string.h>
 
 #include <etl/ioports.h>
-#include <libstd/include/algorithm>
+#include "../algorithm"
 
 namespace ETLSTD {
 
