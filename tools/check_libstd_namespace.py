@@ -35,6 +35,8 @@ RULES = {
     "etlstd-namespace-decl": (re.compile(r"\bnamespace\s+etlstd\b"), "namespace etlstd must not be declared", True),
 }
 NON_ALLOWLISTABLE = {"etlstd-namespace-decl"}
+# Only 0.2 compatibility paths may be allowlisted: the ETLSTD bridge and the legacy Catch suites.
+ALLOWLISTABLE_PREFIXES = ("libstd/include/c++/compat/", "test/libstd/")
 
 
 def read_text(path):
@@ -47,8 +49,8 @@ def read_text(path):
 _LEXEME = re.compile(r"//[^\n]*|/\*.*?\*/|\"(?:\\.|[^\"\\\n])*\"|'(?:\\.|[^'\\\n])*'", re.DOTALL)
 
 
-def preprocess(text):
-    """Splice `\\`-continued lines and blank out comments; return (text, line number of each character)."""
+def preprocess(text, mask_strings):
+    """Splice `\\`-continued lines and blank out comments (and string contents if asked); return (text, line number of each character)."""
     chars, lines, line, i = [], [], 1, 0
     while i < len(text):
         if text[i] == "\\" and text[i + 1:i + 2] == "\n":
@@ -65,7 +67,7 @@ def preprocess(text):
     spliced = "".join(chars)
     out = list(spliced)
     for match in _LEXEME.finditer(spliced):
-        if match.group()[0] in "/":
+        if match.group()[0] == "/" or mask_strings:
             for k in range(match.start(), match.end()):
                 if out[k] != "\n":
                     out[k] = " "
@@ -76,12 +78,12 @@ def find_matches(text, rule):
     pattern, _, preprocessed = RULES[rule]
     if not preprocessed:
         return [number for number, line in enumerate(text.splitlines(), 1) if pattern.search(line)]
-    clean, lines = preprocess(text)
+    clean, lines = preprocess(text, mask_strings=rule == "etlstd-namespace-decl")
     return sorted({lines[m.start()] for m in pattern.finditer(clean)})
 
 
-def parse_allowlist(path, root):
-    """Return ({(rule, relpath): line_number}, [error diagnostics])."""
+def parse_allowlist(path):
+    """Return ({(rule, relpath): line_number}, [(label, line, rule, text) error diagnostics])."""
     entries, errors = {}, []
     if not path.is_file():
         return entries, errors
@@ -92,11 +94,13 @@ def parse_allowlist(path, root):
             continue
         fields = line.split()
         if len(fields) != 2 or fields[0] not in RULES:
-            errors.append(f"{label}:{number}: [bad-allowlist-entry] expected '<rule> <path>' with rule in {sorted(RULES)}")
+            errors.append((label, number, "bad-allowlist-entry", f"{label}:{number}: [bad-allowlist-entry] expected '<rule> <path>' with rule in {sorted(RULES)}"))
         elif fields[0] in NON_ALLOWLISTABLE:
-            errors.append(f"{label}:{number}: [bad-allowlist-entry] rule {fields[0]} cannot be allowlisted")
+            errors.append((label, number, "bad-allowlist-entry", f"{label}:{number}: [bad-allowlist-entry] rule {fields[0]} cannot be allowlisted"))
+        elif not fields[1].startswith(ALLOWLISTABLE_PREFIXES):
+            errors.append((label, number, "bad-allowlist-entry", f"{label}:{number}: [bad-allowlist-entry] only paths under {', '.join(ALLOWLISTABLE_PREFIXES)} can be allowlisted"))
         elif (fields[0], fields[1]) in entries:
-            errors.append(f"{label}:{number}: [bad-allowlist-entry] duplicate entry {fields[0]} {fields[1]}")
+            errors.append((label, number, "bad-allowlist-entry", f"{label}:{number}: [bad-allowlist-entry] duplicate entry {fields[0]} {fields[1]}"))
         else:
             entries[(fields[0], fields[1])] = number
     return entries, errors
@@ -104,9 +108,9 @@ def parse_allowlist(path, root):
 
 def scan(root, allowlist_path):
     """Return the sorted list of diagnostics for the tree at root."""
-    allowed, diagnostics = parse_allowlist(allowlist_path, root)
+    allowed, diagnostics = parse_allowlist(allowlist_path)
     used = set()
-    violations = []
+    violations = list(diagnostics)
     for directory in SCANNED_DIRS:
         base = root / directory
         if not base.is_dir():
@@ -124,8 +128,9 @@ def scan(root, allowlist_path):
                         violations.append((rel, number, rule, f"{rel}:{number}: [{rule}] {message}"))
     for (rule, rel), number in sorted(allowed.items(), key=lambda item: item[1]):
         if (rule, rel) not in used:
-            diagnostics.append(f"{allowlist_path.name}:{number}: [stale-allowlist] {rule} {rel} no longer has any violation, remove it")
-    return diagnostics + [entry[3] for entry in sorted(violations)]
+            text = f"{allowlist_path.name}:{number}: [stale-allowlist] {rule} {rel} no longer has any violation, remove it"
+            violations.append((allowlist_path.name, number, "stale-allowlist", text))
+    return [entry[3] for entry in sorted(violations)]
 
 
 def self_test():

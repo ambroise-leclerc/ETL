@@ -1,4 +1,4 @@
-include/etl/e.h:1: [etlstd-namespace-decl] namespace etlstd must not be declared
-include/etl/e.h:3: [etlstd-namespace-decl] namespace etlstd must not be declared
-include/etl/e.h:6: [libstd-include-path] repository-qualified standard include, include the standard name (e.g. <memory>)
-include/etl/e.h:7: [libstd-include-path] repository-qualified standard include, include the standard name (e.g. <memory>)
+test/libstd/e.h:1: [etlstd-namespace-decl] namespace etlstd must not be declared
+test/libstd/e.h:3: [etlstd-namespace-decl] namespace etlstd must not be declared
+test/libstd/e.h:6: [libstd-include-path] repository-qualified standard include, include the standard name (e.g. <memory>)
+test/libstd/e.h:7: [libstd-include-path] repository-qualified standard include, include the standard name (e.g. <memory>)

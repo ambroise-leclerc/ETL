@@ -7,3 +7,4 @@ const char *s = "#include <libstd/include/x>";
 #include \
     <../libstd/include/tuple>
 #include <memory>
+const char *t = "namespace etlstd";
