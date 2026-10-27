@@ -3,9 +3,9 @@
 #pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma message("warning: <libstd/include/iterator> is deprecated, include <iterator> from libstd/include/c++/v1 instead")
+#pragma message("warning: <libstd/include/iterator> is deprecated, use the canonical libstd/include/c++/v1/iterator instead")
 #else
-#warning "<libstd/include/iterator> is deprecated, include <iterator> from libstd/include/c++/v1 instead"
+#warning "<libstd/include/iterator> is deprecated, use the canonical libstd/include/c++/v1/iterator instead"
 #endif
 
 #include "c++/v1/iterator"

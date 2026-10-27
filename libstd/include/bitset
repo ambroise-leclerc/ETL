@@ -3,9 +3,9 @@
 #pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma message("warning: <libstd/include/bitset> is deprecated, include <bitset> from libstd/include/c++/v1 instead")
+#pragma message("warning: <libstd/include/bitset> is deprecated, use the canonical libstd/include/c++/v1/bitset instead")
 #else
-#warning "<libstd/include/bitset> is deprecated, include <bitset> from libstd/include/c++/v1 instead"
+#warning "<libstd/include/bitset> is deprecated, use the canonical libstd/include/c++/v1/bitset instead"
 #endif
 
 #include "c++/v1/bitset"

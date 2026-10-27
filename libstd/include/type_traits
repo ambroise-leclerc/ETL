@@ -3,9 +3,9 @@
 #pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma message("warning: <libstd/include/type_traits> is deprecated, include <type_traits> from libstd/include/c++/v1 instead")
+#pragma message("warning: <libstd/include/type_traits> is deprecated, use the canonical libstd/include/c++/v1/type_traits instead")
 #else
-#warning "<libstd/include/type_traits> is deprecated, include <type_traits> from libstd/include/c++/v1 instead"
+#warning "<libstd/include/type_traits> is deprecated, use the canonical libstd/include/c++/v1/type_traits instead"
 #endif
 
 #include "c++/v1/type_traits"

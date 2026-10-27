@@ -31,9 +31,9 @@ TEMPLATE = """\
 #pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma message("warning: <libstd/include/{name}> is deprecated, include <{name}> from libstd/include/c++/v1 instead")
+#pragma message("warning: <libstd/include/{name}> is deprecated, use the canonical libstd/include/c++/v1/{name} instead")
 #else
-#warning "<libstd/include/{name}> is deprecated, include <{name}> from libstd/include/c++/v1 instead"
+#warning "<libstd/include/{name}> is deprecated, use the canonical libstd/include/c++/v1/{name} instead"
 #endif
 
 #include "c++/v1/{name}"

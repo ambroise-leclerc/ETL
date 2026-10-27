@@ -3,9 +3,9 @@
 #pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma message("warning: <libstd/include/thread> is deprecated, include <thread> from libstd/include/c++/v1 instead")
+#pragma message("warning: <libstd/include/thread> is deprecated, use the canonical libstd/include/c++/v1/thread instead")
 #else
-#warning "<libstd/include/thread> is deprecated, include <thread> from libstd/include/c++/v1 instead"
+#warning "<libstd/include/thread> is deprecated, use the canonical libstd/include/c++/v1/thread instead"
 #endif
 
 #include "c++/v1/thread"

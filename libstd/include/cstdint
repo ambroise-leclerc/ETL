@@ -3,9 +3,9 @@
 #pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma message("warning: <libstd/include/cstdint> is deprecated, include <cstdint> from libstd/include/c++/v1 instead")
+#pragma message("warning: <libstd/include/cstdint> is deprecated, use the canonical libstd/include/c++/v1/cstdint instead")
 #else
-#warning "<libstd/include/cstdint> is deprecated, include <cstdint> from libstd/include/c++/v1 instead"
+#warning "<libstd/include/cstdint> is deprecated, use the canonical libstd/include/c++/v1/cstdint instead"
 #endif
 
 #include "c++/v1/cstdint"

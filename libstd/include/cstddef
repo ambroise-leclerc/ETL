@@ -3,9 +3,9 @@
 #pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma message("warning: <libstd/include/cstddef> is deprecated, include <cstddef> from libstd/include/c++/v1 instead")
+#pragma message("warning: <libstd/include/cstddef> is deprecated, use the canonical libstd/include/c++/v1/cstddef instead")
 #else
-#warning "<libstd/include/cstddef> is deprecated, include <cstddef> from libstd/include/c++/v1 instead"
+#warning "<libstd/include/cstddef> is deprecated, use the canonical libstd/include/c++/v1/cstddef instead"
 #endif
 
 #include "c++/v1/cstddef"

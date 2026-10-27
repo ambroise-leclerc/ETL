@@ -3,9 +3,9 @@
 #pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma message("warning: <libstd/include/new> is deprecated, include <new> from libstd/include/c++/v1 instead")
+#pragma message("warning: <libstd/include/new> is deprecated, use the canonical libstd/include/c++/v1/new instead")
 #else
-#warning "<libstd/include/new> is deprecated, include <new> from libstd/include/c++/v1 instead"
+#warning "<libstd/include/new> is deprecated, use the canonical libstd/include/c++/v1/new instead"
 #endif
 
 #include "c++/v1/new"

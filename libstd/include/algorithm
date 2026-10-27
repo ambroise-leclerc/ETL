@@ -3,9 +3,9 @@
 #pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma message("warning: <libstd/include/algorithm> is deprecated, include <algorithm> from libstd/include/c++/v1 instead")
+#pragma message("warning: <libstd/include/algorithm> is deprecated, use the canonical libstd/include/c++/v1/algorithm instead")
 #else
-#warning "<libstd/include/algorithm> is deprecated, include <algorithm> from libstd/include/c++/v1 instead"
+#warning "<libstd/include/algorithm> is deprecated, use the canonical libstd/include/c++/v1/algorithm instead"
 #endif
 
 #include "c++/v1/algorithm"

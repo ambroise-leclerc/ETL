@@ -3,9 +3,9 @@
 #pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma message("warning: <libstd/include/chrono> is deprecated, include <chrono> from libstd/include/c++/v1 instead")
+#pragma message("warning: <libstd/include/chrono> is deprecated, use the canonical libstd/include/c++/v1/chrono instead")
 #else
-#warning "<libstd/include/chrono> is deprecated, include <chrono> from libstd/include/c++/v1 instead"
+#warning "<libstd/include/chrono> is deprecated, use the canonical libstd/include/c++/v1/chrono instead"
 #endif
 
 #include "c++/v1/chrono"

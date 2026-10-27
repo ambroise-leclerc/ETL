@@ -3,9 +3,9 @@
 #pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma message("warning: <libstd/include/limits> is deprecated, include <limits> from libstd/include/c++/v1 instead")
+#pragma message("warning: <libstd/include/limits> is deprecated, use the canonical libstd/include/c++/v1/limits instead")
 #else
-#warning "<libstd/include/limits> is deprecated, include <limits> from libstd/include/c++/v1 instead"
+#warning "<libstd/include/limits> is deprecated, use the canonical libstd/include/c++/v1/limits instead"
 #endif
 
 #include "c++/v1/limits"

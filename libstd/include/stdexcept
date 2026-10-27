@@ -3,9 +3,9 @@
 #pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma message("warning: <libstd/include/stdexcept> is deprecated, include <stdexcept> from libstd/include/c++/v1 instead")
+#pragma message("warning: <libstd/include/stdexcept> is deprecated, use the canonical libstd/include/c++/v1/stdexcept instead")
 #else
-#warning "<libstd/include/stdexcept> is deprecated, include <stdexcept> from libstd/include/c++/v1 instead"
+#warning "<libstd/include/stdexcept> is deprecated, use the canonical libstd/include/c++/v1/stdexcept instead"
 #endif
 
 #include "c++/v1/stdexcept"

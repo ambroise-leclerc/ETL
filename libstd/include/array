@@ -3,9 +3,9 @@
 #pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma message("warning: <libstd/include/array> is deprecated, include <array> from libstd/include/c++/v1 instead")
+#pragma message("warning: <libstd/include/array> is deprecated, use the canonical libstd/include/c++/v1/array instead")
 #else
-#warning "<libstd/include/array> is deprecated, include <array> from libstd/include/c++/v1 instead"
+#warning "<libstd/include/array> is deprecated, use the canonical libstd/include/c++/v1/array instead"
 #endif
 
 #include "c++/v1/array"

@@ -3,9 +3,9 @@
 #pragma once
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma message("warning: <libstd/include/cfloat> is deprecated, include <cfloat> from libstd/include/c++/v1 instead")
+#pragma message("warning: <libstd/include/cfloat> is deprecated, use the canonical libstd/include/c++/v1/cfloat instead")
 #else
-#warning "<libstd/include/cfloat> is deprecated, include <cfloat> from libstd/include/c++/v1 instead"
+#warning "<libstd/include/cfloat> is deprecated, use the canonical libstd/include/c++/v1/cfloat instead"
 #endif
 
 #include "c++/v1/cfloat"
