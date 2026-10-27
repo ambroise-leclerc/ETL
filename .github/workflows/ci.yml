@@ -146,7 +146,9 @@ jobs:
           for mcu in atmega48a atmega48pa atmega88a atmega88pa atmega168a atmega168p atmega168pa \
                      atmega328 atmega328p atmega32u4 atmega644a atmega644p attiny84; do
             echo "::group::${mcu}"
-            avr-g++ -std=c++23 -mmcu=${mcu} -DF_CPU=8000000UL -Os -Wall -Werror -Wno-literal-suffix \
+            # -Wno-error=cpp: the deprecated libstd/include/<header> wrappers warn until ETL consumers
+            # are migrated to the canonical headers (#127); remove it then.
+            avr-g++ -std=c++23 -mmcu=${mcu} -DF_CPU=8000000UL -Os -Wall -Werror -Wno-error=cpp -Wno-literal-suffix \
               -I. -Iinclude examples/avr/device_smoke.cpp -o device_smoke_${mcu}.elf
             echo "::endgroup::"
           done
