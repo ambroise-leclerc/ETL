@@ -18,6 +18,8 @@ namespace etl_harness {
 
 struct TestCase {
     const char *title;
+    const char *file;
+    int line;
     void (*function)();
     TestCase *next;
 };
@@ -51,7 +53,11 @@ inline int run() {
     int tests = 0;
     for (TestCase *test = firstTest; test; test = test->next) {
         const int failuresBefore = failures;
-        test->function();
+        try {
+            test->function();
+        } catch (...) {
+            fail(test->file, test->line, "unexpected exception in TEST_CASE", test->title);
+        }
         ++tests;
         fprintf(stderr, "[%s] %s\n", failures == failuresBefore ? "ok" : "FAILED", test->title);
     }
@@ -66,7 +72,7 @@ inline int run() {
 
 #define TEST_CASE(title, ...)                                                                                   \
     static void ETL_HARNESS_CONCAT(etl_test_, __LINE__)();                                                      \
-    static etl_harness::TestCase ETL_HARNESS_CONCAT(etl_test_case_, __LINE__){title, ETL_HARNESS_CONCAT(etl_test_, __LINE__), nullptr}; \
+    static etl_harness::TestCase ETL_HARNESS_CONCAT(etl_test_case_, __LINE__){title, __FILE__, __LINE__, ETL_HARNESS_CONCAT(etl_test_, __LINE__), nullptr}; \
     static etl_harness::Registrar ETL_HARNESS_CONCAT(etl_registrar_, __LINE__){ETL_HARNESS_CONCAT(etl_test_case_, __LINE__)}; \
     static void ETL_HARNESS_CONCAT(etl_test_, __LINE__)()
 

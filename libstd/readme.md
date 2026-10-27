@@ -78,7 +78,7 @@ Suites that exercise the canonical headers are built as standalone executables w
 To add a suite:
 
 1. Write `test/libstd/<name>.cpp`. Include `"../libstd_harness/harness.h"`, then the standard headers by their standard names (`<array>`, ...), and use `using namespace std;`.
-2. Use `TEST_CASE("title")`, `CHECK(expr)`, `CHECK_EQ(a, b)` and `CHECK_THROWS_AS(expr, Type)`. Failures print `file:line` on stderr and the executable exits non-zero.
+2. Use `TEST_CASE("title")`, `CHECK(expr)`, `CHECK_EQ(a, b)` and `CHECK_THROWS_AS(expr, Type)`. Failures print `file:line` on stderr and the executable exits non-zero. An unexpected exception fails the current test case at its declaration location; the remaining test cases still run and the final summary is printed.
 3. Register it in `CMakeLists.txt` with `etl_add_libstd_isolated_test(<name> test/libstd/<name>.cpp)` and remove the former Catch file from `LIBSTD_TESTS`.
 
 `libstd-isolated-failing-fixture` fails on purpose (`WILL_FAIL`) to check that failures reach the exit status. `test/libstd_harness/stubs/etl/ioports.h` replaces the Mock device for `<string_view>`; the executables still link the host runtime (exceptions) until runtime archives land separately.
