@@ -34,7 +34,7 @@
 #include "type_traits"
 #include "utility"
 
-namespace ETLSTD {
+namespace std {
 
 // queue stays adapter-only; use etl::CircularBuffer<T,N> as Container for fixed-capacity storage.
 template <typename T, typename Container> class queue {
@@ -64,7 +64,7 @@ public:
     template <typename... Args> void emplace(Args &&...args) { container.emplace_back(forward<Args>(args)...); }
 
     void swap(queue &right) {
-        using ETLSTD::swap;
+        using std::swap;
         swap(container, right.container);
     }
 
@@ -74,4 +74,4 @@ protected:
 
 template <typename T, typename Container> void swap(queue<T, Container> &lhs, queue<T, Container> &rhs) { lhs.swap(rhs); }
 
-} // namespace ETLSTD
+} // namespace std

@@ -40,7 +40,7 @@
 #include "__etl/traits_add.h"
 #include "utility"
 
-namespace ETLSTD {
+namespace std {
 
 template<bool B, typename T = void> struct enable_if            {};
 template<typename T>                struct enable_if<true, T>   { using type = T; };
@@ -52,7 +52,7 @@ template<typename T> struct is_empty : public integral_constant<bool, __is_empty
 template<typename T> constexpr bool is_empty_v = is_empty<T>::value;
 //#else
 
-namespace etlHelper {
+namespace __etl {
 	// Conditional logical helpers from GNU libstdc++;
     template<bool, typename, typename> struct conditional;
     template<typename...> struct cond_or;
@@ -79,12 +79,12 @@ namespace etlHelper {
     public:
         typedef decltype(__test<From, To>(0)) type;
     };
-} // namespace etlHelper
+} // namespace __etl
 
-template<typename From, typename To> struct is_convertible : public etlHelper::is_convertible<From, To>::type { };
+template<typename From, typename To> struct is_convertible : public __etl::is_convertible<From, To>::type { };
 //#endif
 
-//template<typename Base, Derived> struct is_base_of : public integral_constant<bool, is_class<Base>::value && sizeof(etlHelper::is_base_of(Base, Derived)> {};
+//template<typename Base, Derived> struct is_base_of : public integral_constant<bool, is_class<Base>::value && sizeof(__etl::is_base_of(Base, Derived)> {};
 
 
 template<typename ...T> struct common_type;
@@ -104,7 +104,7 @@ struct common_type<T1, T2, T3...> {
     using type = common_type_t<common_type_t<T1, T2>, T3...>;
 };
 
-namespace etlHelper {
+namespace __etl {
 
     template<typename T, bool = is_arithmetic<T>::value> struct TypeIsSigned : integral_constant<bool, T(-1) < T(0)> {};
     template<typename T> struct TypeIsSigned<T, false> : false_type {};
@@ -112,17 +112,17 @@ namespace etlHelper {
     template<typename T, bool = is_arithmetic<T>::value> struct TypeIsUnsigned : integral_constant<bool, T(0) < T(-1)> {};
     template<typename T> struct TypeIsUnsigned<T, false> : false_type {};
 
-} // namespace etlHelper
+} // namespace __etl
 
-template<typename T> struct is_signed : etlHelper::TypeIsSigned<T>::type {};
-template<typename T> struct is_unsigned : etlHelper::TypeIsUnsigned<T>::type {};
+template<typename T> struct is_signed : __etl::TypeIsSigned<T>::type {};
+template<typename T> struct is_unsigned : __etl::TypeIsUnsigned<T>::type {};
 
 template<typename T> constexpr bool is_signed_v = is_signed<T>::value;
 template<typename T> constexpr bool is_unsigned_v = is_unsigned<T>::value;
 
 template<typename... > using void_t = void;
 
-namespace etlHelper {
+namespace __etl {
 template<typename Default, typename AlwaysVoid, template<typename...> typename Op, typename... Args>
 struct detector {
     using value_t = false_type;
@@ -135,7 +135,7 @@ struct detector<Default, void_t<Op<Args...>>, Op, Args...> {
     using type = Op<Args...>;
 };
 
-} // namespace etlHelper
+} // namespace __etl
 
 namespace experimental {
 struct nonesuch {
@@ -147,13 +147,13 @@ struct nonesuch {
 } // namespace nonesuch
 
 template<template<typename...> typename Op, typename... Args>
-using is_detected = typename etlHelper::detector<experimental::nonesuch, void, Op, Args...>::value_t;
+using is_detected = typename __etl::detector<experimental::nonesuch, void, Op, Args...>::value_t;
 
 template<template<typename...> typename Op, typename... Args>
-using detected_t = typename etlHelper::detector<experimental::nonesuch, void, Op, Args...>::type;
+using detected_t = typename __etl::detector<experimental::nonesuch, void, Op, Args...>::type;
 
 template<typename Default, template<typename...> typename Op, typename... Args>
-using detected_or = etlHelper::detector<Default, void, Op, Args...>;
+using detected_or = __etl::detector<Default, void, Op, Args...>;
 /*
 namespace detail {
     template <template <class...> class Trait, class Enabler, class... Args>
@@ -190,7 +190,7 @@ using is_detected_convertible = is_convertible<detected_t<Op, Args...>, To>;
 template<typename To, template<typename...> typename Op, typename... Args>
 constexpr bool is_detected_convertible_v = is_detected_convertible<To, Op, Args...>::value;
 
-namespace etlHelper {
+namespace __etl {
 /// Apply constness and volatileness of type T to type U
 template<typename T, typename U, bool = is_const<remove_reference_t<T>>::value,
                                  bool = is_volatile<remove_reference_t<T>>::value >
@@ -232,7 +232,7 @@ template<> struct makeUnsigned<unsigned long, true> { using type = unsigned long
 template<> struct makeUnsigned<signed long long, true> { using type = unsigned long long; };
 template<> struct makeUnsigned<unsigned long long, true> { using type = unsigned long long; };
 
-} // namespace etlHelper
+} // namespace __etl
 
 
 template<typename T>
@@ -241,21 +241,21 @@ struct make_signed {
                     "make_signed<T> requires that T shall be an integral type or enumeration but not a bool type.");
 */  
     
-    using Signed = typename etlHelper::makeSigned<remove_cv_t<T>>::type;
+    using Signed = typename __etl::makeSigned<remove_cv_t<T>>::type;
 
-    using type = typename etlHelper::forward_cv<T, Signed>::type;
+    using type = typename __etl::forward_cv<T, Signed>::type;
 };
 
 template<typename T>
 struct make_unsigned {
     static_assert(  ((is_integral<T>::value || is_enum<T>::value) && !is_same<T, bool>::value),
                     "make_unsigned<T> requires that T shall be an integral type or enumeration but not a bool type.");
-    using type = typename etlHelper::forward_cv<T, typename etlHelper::makeUnsigned<remove_cv_t<T>>::type>::type;
+    using type = typename __etl::forward_cv<T, typename __etl::makeUnsigned<remove_cv_t<T>>::type>::type;
 };
 
 
 template<typename T> using make_signed_t = typename make_signed<T>::type;
 template<typename T> using make_unsigned_t = typename make_unsigned<T>::type;
 
-} // namespace ETLSTD
+} // namespace std
 

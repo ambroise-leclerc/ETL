@@ -39,7 +39,7 @@
 #include "../type_traits"
 #include "../functional"
 
-namespace ETLSTD {
+namespace std {
   
 template <class T, class D = default_delete<T>>
 class unique_ptr {
@@ -301,7 +301,7 @@ class unique_ptr<T[], D> {
 };
 
 
-namespace etlHelper {
+namespace __etl {
   template<typename T> struct unique_if { using non_array = unique_ptr<T>; };
   template<typename T> struct unique_if<T[]> { using runtime_sized = unique_ptr<T[]>; };
   template<typename T, size_t N> struct unique_if<T[N]> { using compiletime_size = void; };
@@ -313,7 +313,7 @@ namespace etlHelper {
 /// @param[in] Args list of arguments for the object constructor.
 /// @return created std::unique_ptr.
 template<typename T, typename... Args>
-typename etlHelper::unique_if<T>::non_array make_unique(Args&&... args) {
+typename __etl::unique_if<T>::non_array make_unique(Args&&... args) {
   return unique_ptr<T>(new T(forward<Args>(args)...));
 }
 
@@ -321,12 +321,12 @@ typename etlHelper::unique_if<T>::non_array make_unique(Args&&... args) {
 /// @param[in] size size of the array to construct
 /// @return created std::unique_ptr.
 template<typename T>
-typename etlHelper::unique_if<T>::runtime_sized make_unique(size_t size) {
+typename __etl::unique_if<T>::runtime_sized make_unique(size_t size) {
   return unique_ptr<T>(new typename remove_extent<T>::type[size]());
 }
 
 template<typename T, typename... Args>
-typename etlHelper::unique_if<T>::compiletime_size make_unique(Args&&...) = delete;
+typename __etl::unique_if<T>::compiletime_size make_unique(Args&&...) = delete;
 
 //#endif // __cplusplus >= 201103L
 
@@ -385,4 +385,4 @@ bool operator>=(const unique_ptr<T, D>& x, nullptr_t);
 template <class T, class D>
 bool operator>=(nullptr_t, const unique_ptr<T, D>& y);
 
-} // namespace ETLSTD
+} // namespace std

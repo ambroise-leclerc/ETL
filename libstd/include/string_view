@@ -8,4 +8,5 @@
 #warning "<libstd/include/string_view> is deprecated, use the canonical libstd/include/c++/v1/string_view instead"
 #endif
 
+#include "c++/compat/etlstd.h"
 #include "c++/v1/string_view"

@@ -34,7 +34,7 @@
 
 #include "exception"
 
-namespace ETLSTD {
+namespace std {
 
 class logic_error : public exception {
 public:
@@ -99,4 +99,4 @@ public:
     virtual ~underflow_error() noexcept = default;
 };
 
-} // namespace ETLSTD
+} // namespace std

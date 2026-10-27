@@ -33,19 +33,19 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-namespace ETLSTD {
+namespace std {
 template<typename T> struct is_reference             : false_type { };
 template<typename T> struct is_reference<T&>         : true_type  { };
 template<typename T> struct is_reference<T&&>        : true_type  { };
 
-namespace etlHelper {
+namespace __etl {
     template<typename T> struct is_referenceable
     : integral_constant<bool, (is_object<T>::value == true || is_reference<T>::value == true)>::type { };     
-} // namespace etlHelper
+} // namespace __etl
 
 template<typename T> struct is_rvalue_reference      : false_type { };
 template<typename T> struct is_rvalue_reference<T&&> : true_type  { };
 template<typename T> struct is_lvalue_reference      : false_type { };
 template<typename T> struct is_lvalue_reference<T&>  : true_type  { };
   
-} // namespace ETLSTD 
+} // namespace std 

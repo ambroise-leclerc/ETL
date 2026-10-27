@@ -34,7 +34,7 @@
 #include "../limits"
 #include "../type_traits"
 
-namespace ETLSTD {
+namespace std {
 
 template <typename IntType = int> struct uniform_int_distribution {
     using result_type = IntType;
@@ -98,4 +98,4 @@ private:
     param_type param_;
 };
 
-} // namespace ETLSTD
+} // namespace std

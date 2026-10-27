@@ -35,11 +35,11 @@
 #include "../type_traits"
 #include "../utility"
 
-namespace ETLSTD {
+namespace std {
 
 template <typename T> class reference_wrapper;
 
-namespace etlHelper {
+namespace __etl {
 
 template <typename T> struct is_reference_wrapper : false_type {};
 
@@ -97,17 +97,17 @@ template <typename F, typename... Args> struct result_of<F(Args...), decltype(vo
     using type = decltype(invoke(declval<F>(), declval<Args>()...));
 };
 
-} // namespace etlHelper
+} // namespace __etl
 
 template <typename F, typename... ArgTypes>
 constexpr auto invoke(F &&f,
-                      ArgTypes &&...args) noexcept(noexcept(etlHelper::invoke(forward<F>(f), forward<ArgTypes>(args)...)))
-    -> decltype(etlHelper::invoke(forward<F>(f), forward<ArgTypes>(args)...)) {
-    return etlHelper::invoke(forward<F>(f), forward<ArgTypes>(args)...);
+                      ArgTypes &&...args) noexcept(noexcept(__etl::invoke(forward<F>(f), forward<ArgTypes>(args)...)))
+    -> decltype(__etl::invoke(forward<F>(f), forward<ArgTypes>(args)...)) {
+    return __etl::invoke(forward<F>(f), forward<ArgTypes>(args)...);
 }
 
 template <typename F> struct result_of {};
 
-template <typename F, typename... ArgTypes> struct result_of<F(ArgTypes...)> : etlHelper::result_of<F(ArgTypes...)> {};
+template <typename F, typename... ArgTypes> struct result_of<F(ArgTypes...)> : __etl::result_of<F(ArgTypes...)> {};
 
-} // namespace ETLSTD
+} // namespace std

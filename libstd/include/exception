@@ -8,4 +8,5 @@
 #warning "<libstd/include/exception> is deprecated, use the canonical libstd/include/c++/v1/exception instead"
 #endif
 
+#include "c++/compat/etlstd.h"
 #include "c++/v1/exception"

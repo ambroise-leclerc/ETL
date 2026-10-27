@@ -41,14 +41,14 @@
 /// Allocates requested number of bytes.
 /// @param[in] size number of bytes to allocate
 /// @return pointer to allocated memory
-[[gnu::weak]] void* operator new(ETLSTD::size_t size) {
+[[gnu::weak]] void* operator new(std::size_t size) {
   return etl::FreeStore::Allocate(size);
 }
 
 /// Allocates requested number of bytes.
 /// @param[in] size number of bytes to allocate
 /// @return pointer to allocated memory
-[[gnu::weak]] void* operator new[](ETLSTD::size_t size) {
+[[gnu::weak]] void* operator new[](std::size_t size) {
   return etl::FreeStore::Allocate(size);
 }
 
@@ -72,23 +72,23 @@
 
 /// Sized deallocation, called by delete-expressions on complete types (C++14).
 /// @param[in] ptr pointer to the memory to deallocate, or nullptr
-[[gnu::weak]] void operator delete(void* ptr, ETLSTD::size_t) noexcept {
+[[gnu::weak]] void operator delete(void* ptr, std::size_t) noexcept {
   operator delete(ptr);
 }
 
 /// Sized deallocation, called by delete[]-expressions on complete types (C++14).
 /// @param[in] ptr pointer to the memory to deallocate, or nullptr
-[[gnu::weak]] void operator delete[](void* ptr, ETLSTD::size_t) noexcept {
+[[gnu::weak]] void operator delete[](void* ptr, std::size_t) noexcept {
   operator delete[](ptr);
 }
 
 /// Placement new for allocating the object inside a given memory buffer.
 /// These forms are not replaceable ([new.delete.placement]), so they can be inline.
 /// @param[in] buf pointer to a memory area to initialize the object at
-[[nodiscard]] inline void* operator new(ETLSTD::size_t, void* buf) noexcept {
+[[nodiscard]] inline void* operator new(std::size_t, void* buf) noexcept {
   return buf;
 }
-[[nodiscard]] inline void* operator new[](ETLSTD::size_t, void* buf) noexcept {
+[[nodiscard]] inline void* operator new[](std::size_t, void* buf) noexcept {
   return buf;
 }
 

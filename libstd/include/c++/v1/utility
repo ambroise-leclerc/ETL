@@ -35,7 +35,7 @@
 #include "__etl/traits_operations.h"
 #include "__etl/traits_add.h"
 
-namespace ETLSTD {
+namespace std {
 
 /// Returns an rvalue reference to arg and converts arg to an xvalue.
 /// @param arg object to be moved
@@ -68,16 +68,16 @@ struct integer_sequence {
     static constexpr size_t size() noexcept { return sizeof...(Ints); }
 };
 
-namespace etlHelper {
+namespace __etl {
     template<typename T, typename Sequence1, typename Sequence2> struct merge_integer_seq;
     template<typename T, T... I1, T... I2>
     struct merge_integer_seq<T, integer_sequence<T, I1...>, integer_sequence<T, I2...>>
         : integer_sequence<T, I1..., (sizeof...(I1)+I2)...>
     { };
-} // namespace etlHelper
+} // namespace __etl
 
 template<typename T, T N>
-struct make_integer_sequence : etlHelper::merge_integer_seq<T,  typename make_integer_sequence<T, N / 2>::type,
+struct make_integer_sequence : __etl::merge_integer_seq<T,  typename make_integer_sequence<T, N / 2>::type,
                                                                 typename make_integer_sequence<T, N - N / 2>::type> { };
 
 
@@ -138,7 +138,7 @@ struct pair {
     T2 second;
 };
 
-namespace etlHelper {
+namespace __etl {
 
     // make_pair : The deduced types V1 and V2 are std::decay<T1>::type and std::decay<T2>::type (the
     // usual type transformations applied to arguments of functions passed by value) unless application
@@ -159,20 +159,20 @@ namespace etlHelper {
         static const bool never_use = false;
         static typename add_rvalue_reference<T>::type ret();
     };
-} // namespace etlHelper
+} // namespace __etl
 
 template<typename T1, typename T2> constexpr auto make_pair(T1&& x, T2&& y)
--> pair<typename etlHelper::make_pair_return_type<T1>::type, typename etlHelper::make_pair_return_type<T2>::type> {
-    return pair<typename etlHelper::make_pair_return_type<T1>::type,
-        typename etlHelper::make_pair_return_type<T2>::type>(forward<T1>(x), forward<T2>(y));
+-> pair<typename __etl::make_pair_return_type<T1>::type, typename __etl::make_pair_return_type<T2>::type> {
+    return pair<typename __etl::make_pair_return_type<T1>::type,
+        typename __etl::make_pair_return_type<T2>::type>(forward<T1>(x), forward<T2>(y));
 }
 
 template<typename T> typename add_rvalue_reference<T>::type declval() noexcept {
-    static_assert(etlHelper::declval<T>::never_use, "std::declval() return value must never be used (ISO 20.2.4).");
-    return etlHelper::declval<T>::ret();
+    static_assert(__etl::declval<T>::never_use, "std::declval() return value must never be used (ISO 20.2.4).");
+    return __etl::declval<T>::ret();
 }
 
 template<typename T> constexpr add_const_t<T>& as_const(T& t) noexcept { return t; }
 template<typename T> void as_const(const T&&) = delete;
 
-} // namespace ETLSTD
+} // namespace std

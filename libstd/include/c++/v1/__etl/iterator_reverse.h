@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-namespace ETLSTD {
+namespace std {
 
 template <typename Iterator>
 class reverse_iterator
@@ -139,4 +139,4 @@ template <typename T> constexpr reverse_iterator<const T *> rend(initializer_lis
     return reverse_iterator<const T *>(list.begin());
 }
 
-}; // namespace ETLSTD
+}; // namespace std

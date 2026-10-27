@@ -39,7 +39,7 @@
 #include "limits"
 #include "stdexcept"
 
-namespace ETLSTD {
+namespace std {
 
 template <typename CharT, typename Traits = char_traits<CharT>> class basic_string_view {
 public:
@@ -51,7 +51,7 @@ public:
     using const_reference = const CharT &;
     using const_iterator = const CharT *;
     using iterator = const_iterator;
-    using const_reverse_iterator = ETLSTD::reverse_iterator<const_iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
     using reverse_iterator = const_reverse_iterator;
     using size_type = size_t;
     using difference_type = ptrdiff_t;
@@ -385,4 +385,4 @@ constexpr u32string_view operator""sv(const char32_t *str, size_t len) noexcept 
 
 constexpr wstring_view operator""sv(const wchar_t *str, size_t len) noexcept { return wstring_view{str, len}; }
 
-} // namespace ETLSTD
+} // namespace std

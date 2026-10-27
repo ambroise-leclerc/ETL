@@ -8,4 +8,5 @@
 #warning "<libstd/include/limits> is deprecated, use the canonical libstd/include/c++/v1/limits instead"
 #endif
 
+#include "c++/compat/etlstd.h"
 #include "c++/v1/limits"

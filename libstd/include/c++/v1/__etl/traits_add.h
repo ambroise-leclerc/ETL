@@ -36,12 +36,12 @@
 #include "traits_primary_types.h"
 #include "traits_references.h"
 
-namespace ETLSTD {
+namespace std {
 
-namespace etlHelper {
+namespace __etl {
   template<typename T, bool b> struct rvalue_reference_type { using type = T; };
   template<typename T> struct rvalue_reference_type<T, true> { using type = T&&; }; 
-} // namespace etlHelper
+} // namespace __etl
 
 // Obtains a pointer on type T or on the referred type.
 template<typename T> struct add_pointer {
@@ -51,7 +51,7 @@ template<typename T> using add_pointer_t = typename add_pointer<T>::type;
 
   
 template<typename T> struct add_rvalue_reference {
-  typedef typename etlHelper::rvalue_reference_type< 
+  typedef typename __etl::rvalue_reference_type< 
     T, (is_void<T>::value == false && is_reference<T>::value == false)>::type type;
 };
 template<typename T> struct add_lvalue_reference   { using type = T; };
@@ -80,5 +80,5 @@ template<typename T> using add_cv_t = typename add_cv<T>::type;
 template<typename T> using add_const_t = typename add_const<T>::type;
 template<typename T> using add_volatile_t = typename add_volatile<T>::type;
 
-} // namespace ETLSTD
+} // namespace std
 
