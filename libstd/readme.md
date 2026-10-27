@@ -13,6 +13,8 @@ Layout
 
 The canonical standard headers live in `libstd/include/c++/v1/` and their reserved implementation headers in `libstd/include/c++/v1/__etl/`. The former `libstd/include/<header>` paths remain for release 0.2 as generated wrappers that emit a deprecation warning and include the canonical header; they are removed in release 0.3. Regenerate them with `python3 tools/generate_libstd_compat_headers.py`; the `libstd-compat-headers` CTest runs the same script with `--check` and fails on missing, extra or stale wrappers.
 
+The canonical headers declare their facilities directly in `std` (the former `ETLSTD` macro survives only as a deprecated alias set by the legacy wrappers, through `libstd/include/c++/compat/etlstd.h`). They therefore cannot be compiled next to the host standard library, which Catch loads. The Catch suites under `test/libstd/` and `test/CircularBuffer.cpp` are disabled by default (`-DETL_BUILD_LIBSTD_HOST_TESTS=ON` re-enables them, but they do not compile) until they are converted to isolated test executables. `libstd-namespace-scan` requires zero `ETLSTD` below `c++/v1`, and `libstd-header-*` compile `<array>`, `<memory>` and `<tuple>` with `-nostdinc++` against the canonical include root only.
+
 Support policy
 ==============
 
