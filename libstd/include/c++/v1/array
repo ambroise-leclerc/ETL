@@ -36,7 +36,7 @@
 #include "iterator"
 #include "stdexcept"
 
-namespace ETLSTD {
+namespace std {
 
 template <typename T, size_t N> struct array {
     using value_type = T;
@@ -48,8 +48,8 @@ template <typename T, size_t N> struct array {
     using const_iterator = const T *;
     using size_type = size_t;
     using difference_type = ptrdiff_t;
-    using reverse_iterator = ETLSTD::reverse_iterator<iterator>;
-    using const_reverse_iterator = ETLSTD::reverse_iterator<const_iterator>;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     // Access
     reference operator[](size_type i) noexcept { return elems[i]; }
@@ -121,8 +121,8 @@ template <typename T> struct array<T, 0> {
     using const_iterator = const T *;
     using size_type = size_t;
     using difference_type = ptrdiff_t;
-    using reverse_iterator = ETLSTD::reverse_iterator<iterator>;
-    using const_reverse_iterator = ETLSTD::reverse_iterator<const_iterator>;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     // Access
     reference operator[](size_type) {
@@ -209,4 +209,4 @@ template <typename T, size_t N> bool operator>(const array<T, N> &x, const array
 
 template <typename T, size_t N> bool operator>=(const array<T, N> &x, const array<T, N> &y) { return !(x < y); }
 
-} // namespace ETLSTD
+} // namespace std

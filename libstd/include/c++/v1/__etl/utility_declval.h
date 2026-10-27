@@ -34,18 +34,18 @@
 
 #pragma once
 
-namespace ETLSTD {
-namespace etlHelper {
+namespace std {
+namespace __etl {
     template<typename T> struct declval {
         static const bool never_use = false;
         static typename std::add_rvalue_reference<T>::type ret();
     };
-} // namespace etlHelper
+} // namespace __etl
 
   
 template<typename T> typename std::add_rvalue_reference<T>::type declval() noexcept {
-    static_assert(etlHelper::declval<T>::never_use, "std::declval() return value must never be used (ISO §20.2.4).");
-    return etlHelper::declval<T>::ret();
+    static_assert(__etl::declval<T>::never_use, "std::declval() return value must never be used (ISO §20.2.4).");
+    return __etl::declval<T>::ret();
 }
 
 } // namspace std

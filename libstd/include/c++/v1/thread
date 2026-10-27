@@ -35,7 +35,7 @@
 #include <etl/ioports.h>
 #include "chrono"
 
-namespace ETLSTD {
+namespace std {
 namespace this_thread {
 
 using clock_cycles = chrono::duration<unsigned long, ratio<1, etl::Device::McuFrequency>>;
@@ -62,4 +62,4 @@ template <typename Rep, typename Period> void sleep_for(chrono::duration<Rep, Pe
 }
 
 } // namespace this_thread
-} // namespace ETLSTD
+} // namespace std

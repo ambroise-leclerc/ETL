@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-namespace ETLSTD {
+namespace std {
 
 // Iterator_tags : define the category of an iterator.
 struct input_iterator_tag { };
@@ -71,4 +71,4 @@ struct iterator_traits<const T*> {
   using reference         = const T&;
 };
   
-} // namespace ETLSTD  
+} // namespace std  

@@ -40,7 +40,7 @@
 
 #include <etl/ETLDevice.h>
 
-namespace ETLSTD {
+namespace std {
 template <typename T, typename Allocator = allocator<T>> class vector {
 public:
     using value_type = T;
@@ -53,8 +53,8 @@ public:
     using const_pointer = typename allocator_traits<Allocator>::const_pointer;
     using iterator = T *;
     using const_iterator = const T *;
-    using const_reverse_iterator = ETLSTD::reverse_iterator<const_iterator>;
-    using reverse_iterator = ETLSTD::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+    using reverse_iterator = std::reverse_iterator<iterator>;
 
     vector() : vector(Allocator()) {}
 
@@ -235,10 +235,10 @@ public:
     }
 
     void swap(vector &other) {
-        ETLSTD::swap(allocator_, other.allocator_);
-        ETLSTD::swap(size_, other.size_);
-        ETLSTD::swap(capacity_, other.capacity_);
-        ETLSTD::swap(buffer_, other.buffer_);
+        std::swap(allocator_, other.allocator_);
+        std::swap(size_, other.size_);
+        std::swap(capacity_, other.capacity_);
+        std::swap(buffer_, other.buffer_);
     }
 
 protected:
@@ -308,4 +308,4 @@ private:
 };
 
 template <typename T, typename Allocator> void swap(vector<T, Allocator> &lhs, vector<T, Allocator> &rhs) { lhs.swap(rhs); }
-} // namespace ETLSTD
+} // namespace std

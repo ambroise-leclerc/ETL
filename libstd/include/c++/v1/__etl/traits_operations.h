@@ -32,8 +32,9 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
+#include "../cstddef"
 
-namespace ETLSTD {
+namespace std {
 
 template<typename T, T v>
 struct integral_constant {
@@ -80,4 +81,4 @@ template<typename T> struct remove_extent<T[]> { using type = T; };
 template<typename T, size_t N> struct remove_extent<T[N]> { using type = T; };
 template<typename T> using remove_extent_t = typename remove_extent<T>::type;
 
-} // namespace ETLSTD
+} // namespace std

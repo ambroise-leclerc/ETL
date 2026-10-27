@@ -36,7 +36,7 @@
 #include "type_traits"
 #include "utility"
 
-namespace ETLSTD {
+namespace std {
 
 template <typename... Types> class tuple;
 
@@ -60,7 +60,7 @@ constexpr tuple_element_t<Index, tuple<Types...>> &&get(tuple<Types...> &&value)
 template <size_t Index, typename... Types>
 constexpr const tuple_element_t<Index, tuple<Types...>> &&get(const tuple<Types...> &&value) noexcept;
 
-namespace etlHelper {
+namespace __etl {
 
 template <typename T, bool = is_class<remove_cv_t<T>>::value> struct tuple_is_final : false_type {};
 
@@ -96,7 +96,7 @@ template <typename T> using tuple_decay_t = typename tuple_decay<decay_t<T>>::ty
 template <size_t Index, typename T, bool = tuple_leaf_use_ebo<T>::value> struct tuple_leaf {
     constexpr tuple_leaf() = default;
 
-    template <typename U> explicit constexpr tuple_leaf(U &&arg) : value(ETLSTD::forward<U>(arg)) {}
+    template <typename U> explicit constexpr tuple_leaf(U &&arg) : value(std::forward<U>(arg)) {}
 
     constexpr T &get() & noexcept { return static_cast<T &>(value); }
     constexpr const T &get() const & noexcept { return static_cast<const T &>(value); }
@@ -109,7 +109,7 @@ template <size_t Index, typename T, bool = tuple_leaf_use_ebo<T>::value> struct 
 template <size_t Index, typename T> struct tuple_leaf<Index, T, true> : private T {
     constexpr tuple_leaf() = default;
 
-    template <typename U> explicit constexpr tuple_leaf(U &&arg) : T(ETLSTD::forward<U>(arg)) {}
+    template <typename U> explicit constexpr tuple_leaf(U &&arg) : T(std::forward<U>(arg)) {}
 
     constexpr T &get() & noexcept { return static_cast<T &>(*this); }
     constexpr const T &get() const & noexcept { return static_cast<const T &>(*this); }
@@ -125,14 +125,14 @@ struct tuple_impl<index_sequence<Indices...>, Types...> : tuple_leaf<Indices, Ty
 
     template <typename... UTypes>
         requires(sizeof...(UTypes) == sizeof...(Types) && sizeof...(Types) != 0)
-    explicit constexpr tuple_impl(UTypes &&...args) : tuple_leaf<Indices, Types>(ETLSTD::forward<UTypes>(args))... {}
+    explicit constexpr tuple_impl(UTypes &&...args) : tuple_leaf<Indices, Types>(std::forward<UTypes>(args))... {}
 };
 
 template <typename... Types> struct ignore_t {
     template <typename T> constexpr const ignore_t &operator=(T &&) const noexcept { return *this; }
 };
 
-} // namespace etlHelper
+} // namespace __etl
 
 template <typename... Types> class tuple {
 public:
@@ -144,7 +144,7 @@ public:
 
     template <typename... UTypes>
         requires(sizeof...(UTypes) == sizeof...(Types) && sizeof...(Types) != 0)
-    explicit constexpr tuple(UTypes &&...args) : storage_(ETLSTD::forward<UTypes>(args)...) {}
+    explicit constexpr tuple(UTypes &&...args) : storage_(std::forward<UTypes>(args)...) {}
 
     template <typename... UTypes>
         requires(sizeof...(UTypes) == sizeof...(Types))
@@ -153,7 +153,7 @@ public:
     template <typename... UTypes>
         requires(sizeof...(UTypes) == sizeof...(Types))
     constexpr tuple(tuple<UTypes...> &&other)
-        : tuple(ETLSTD::move(other), typename make_index_sequence<sizeof...(Types)>::type{}) {}
+        : tuple(std::move(other), typename make_index_sequence<sizeof...(Types)>::type{}) {}
 
     template <typename... UTypes>
         requires(sizeof...(UTypes) == sizeof...(Types))
@@ -165,30 +165,30 @@ public:
     template <typename... UTypes>
         requires(sizeof...(UTypes) == sizeof...(Types))
     constexpr tuple &operator=(tuple<UTypes...> &&other) {
-        assign_from(ETLSTD::move(other), typename make_index_sequence<sizeof...(Types)>::type{});
+        assign_from(std::move(other), typename make_index_sequence<sizeof...(Types)>::type{});
         return *this;
     }
 
     constexpr void swap(tuple &other) { swap_elements(other, typename make_index_sequence<sizeof...(Types)>::type{}); }
 
 private:
-    using storage_type = etlHelper::tuple_impl<typename make_index_sequence<sizeof...(Types)>::type, Types...>;
+    using storage_type = __etl::tuple_impl<typename make_index_sequence<sizeof...(Types)>::type, Types...>;
 
-    template <size_t Index> using element_type = typename etlHelper::tuple_type_at<Index, Types...>::type;
+    template <size_t Index> using element_type = typename __etl::tuple_type_at<Index, Types...>::type;
 
-    template <size_t Index> using leaf_type = etlHelper::tuple_leaf<Index, element_type<Index>>;
+    template <size_t Index> using leaf_type = __etl::tuple_leaf<Index, element_type<Index>>;
 
     template <typename OtherTuple, size_t... Indices>
     constexpr tuple(OtherTuple &&other, index_sequence<Indices...>)
-        : storage_(ETLSTD::forward<OtherTuple>(other).template element<Indices>()...) {}
+        : storage_(std::forward<OtherTuple>(other).template element<Indices>()...) {}
 
     template <typename OtherTuple, size_t... Indices>
     constexpr void assign_from(OtherTuple &&other, index_sequence<Indices...>) {
-        ((element<Indices>() = ETLSTD::forward<OtherTuple>(other).template element<Indices>()), ...);
+        ((element<Indices>() = std::forward<OtherTuple>(other).template element<Indices>()), ...);
     }
 
     template <size_t... Indices> constexpr void swap_elements(tuple &other, index_sequence<Indices...>) {
-        (ETLSTD::swap(element<Indices>(), other.template element<Indices>()), ...);
+        (std::swap(element<Indices>(), other.template element<Indices>()), ...);
     }
 
     template <size_t Index> constexpr element_type<Index> &element() & noexcept {
@@ -235,7 +235,7 @@ template <typename T> struct tuple_size<volatile T> : tuple_size<T> {};
 template <typename T> struct tuple_size<const volatile T> : tuple_size<T> {};
 
 template <size_t Index, typename... Types> struct tuple_element<Index, tuple<Types...>> {
-    using type = typename etlHelper::tuple_type_at<Index, Types...>::type;
+    using type = typename __etl::tuple_type_at<Index, Types...>::type;
 };
 
 template <size_t Index, typename... Types> struct tuple_element<Index, const tuple<Types...>> {
@@ -262,26 +262,26 @@ constexpr const tuple_element_t<Index, tuple<Types...>> &get(const tuple<Types..
 
 template <size_t Index, typename... Types>
 constexpr tuple_element_t<Index, tuple<Types...>> &&get(tuple<Types...> &&value) noexcept {
-    return ETLSTD::move(value).template element<Index>();
+    return std::move(value).template element<Index>();
 }
 
 template <size_t Index, typename... Types>
 constexpr const tuple_element_t<Index, tuple<Types...>> &&get(const tuple<Types...> &&value) noexcept {
-    return ETLSTD::move(value).template element<Index>();
+    return std::move(value).template element<Index>();
 }
 
-template <typename... Types> constexpr tuple<etlHelper::tuple_decay_t<Types>...> make_tuple(Types &&...args) {
-    return tuple<etlHelper::tuple_decay_t<Types>...>(ETLSTD::forward<Types>(args)...);
+template <typename... Types> constexpr tuple<__etl::tuple_decay_t<Types>...> make_tuple(Types &&...args) {
+    return tuple<__etl::tuple_decay_t<Types>...>(std::forward<Types>(args)...);
 }
 
 template <typename... Types> constexpr tuple<Types &&...> forward_as_tuple(Types &&...args) noexcept {
-    return tuple<Types &&...>(ETLSTD::forward<Types>(args)...);
+    return tuple<Types &&...>(std::forward<Types>(args)...);
 }
 
 template <typename... Types> constexpr tuple<Types &...> tie(Types &...args) noexcept { return tuple<Types &...>(args...); }
 
 template <typename... Types> constexpr void swap(tuple<Types...> &left, tuple<Types...> &right) { left.swap(right); }
 
-inline constexpr etlHelper::ignore_t<> ignore{};
+inline constexpr __etl::ignore_t<> ignore{};
 
-} // namespace ETLSTD
+} // namespace std

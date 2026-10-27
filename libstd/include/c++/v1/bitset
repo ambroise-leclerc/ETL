@@ -35,7 +35,7 @@
 #include "array"
 #include "string"
 
-namespace ETLSTD {
+namespace std {
 
 template<size_t N>
 class bitset {
@@ -200,4 +200,4 @@ private:
     }
 };
    
-} // namespace ETLSTD
+} // namespace std

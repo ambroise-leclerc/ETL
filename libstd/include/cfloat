@@ -8,4 +8,5 @@
 #warning "<libstd/include/cfloat> is deprecated, use the canonical libstd/include/c++/v1/cfloat instead"
 #endif
 
+#include "c++/compat/etlstd.h"
 #include "c++/v1/cfloat"

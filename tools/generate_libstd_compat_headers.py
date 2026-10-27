@@ -17,6 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 LEGACY_DIR = ROOT / "libstd" / "include"
 CANONICAL_DIR = LEGACY_DIR / "c++" / "v1"
+COMPAT_HEADER = LEGACY_DIR / "c++" / "compat" / "etlstd.h"
 
 MANIFEST = (
     "algorithm", "array", "bitset", "cassert", "cctype", "cerrno", "cfenv", "cfloat", "chrono", "climits",
@@ -36,6 +37,7 @@ TEMPLATE = """\
 #warning "<libstd/include/{name}> is deprecated, use the canonical libstd/include/c++/v1/{name} instead"
 #endif
 
+#include "c++/compat/etlstd.h"
 #include "c++/v1/{name}"
 """
 
@@ -51,6 +53,8 @@ def legacy_files():
 def check():
     errors = []
     wrappers = expected_wrappers()
+    if not COMPAT_HEADER.is_file():
+        errors.append(f"missing {COMPAT_HEADER.relative_to(ROOT)}")
     for path, content in sorted(wrappers.items()):
         if not (CANONICAL_DIR / path.name).is_file():
             errors.append(f"no canonical header for manifest entry {path.name}")

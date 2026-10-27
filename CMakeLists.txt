@@ -77,7 +77,23 @@ if (ETL_BUILD_HOST_TESTS)
         if (Python3_Interpreter_FOUND)
             add_test(NAME libstd-compat-headers
                      COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/generate_libstd_compat_headers.py --check)
+            add_test(NAME libstd-namespace-scan
+                     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/check_libstd_namespace.py)
         endif()
+
+        # Canonical headers, compiled in isolation (no host C++ library) with direct std:: names
+        set(ETL_LIBSTD_ISOLATED_OPTIONS "")
+        if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            set(ETL_LIBSTD_ISOLATED_OPTIONS -Wno-literal-suffix)
+        elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+            set(ETL_LIBSTD_ISOLATED_OPTIONS -Wno-user-defined-literals)
+        endif ()
+        foreach (header array memory tuple)
+            add_test(NAME libstd-header-${header}
+                     COMMAND ${CMAKE_CXX_COMPILER} -std=c++23 -nostdinc++ ${ETL_LIBSTD_ISOLATED_OPTIONS}
+                             -I${CMAKE_CURRENT_SOURCE_DIR}/libstd/include/c++/v1 -fsyntax-only
+                             ${CMAKE_CURRENT_SOURCE_DIR}/test/libstd_headers/${header}.cpp)
+        endforeach ()
     endif()
 
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT TestsETL)

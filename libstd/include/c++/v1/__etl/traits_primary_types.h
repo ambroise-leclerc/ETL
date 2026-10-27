@@ -35,10 +35,10 @@
 #include "../cstdint"
 #include "../cstddef"
 
-namespace ETLSTD {
+namespace std {
 template<typename> struct is_function;
 
-namespace etlHelper {
+namespace __etl {
 template<typename> struct is_type_entier        : false_type { };
 template<> struct is_type_entier<bool>          : true_type  { };
 template<> struct is_type_entier<char>          : true_type  { };
@@ -61,7 +61,7 @@ template<typename T, typename U> struct is_mb_pointeur<T U::*> : true_type { };
 template<typename T> struct is_mb_fonction_pointeur : false_type {};
 template<typename T, typename U> struct is_mb_fonction_pointeur<T U::*> : is_function<T> {};
 
-} // namespace etlHelper
+} // namespace __etl
 
 
 template<typename T> struct is_void : integral_constant<bool, is_same<void, remove_cv_t<T>>::value> { };
@@ -72,15 +72,15 @@ template<typename T> struct is_enum : integral_constant<bool, __is_enum(T)> { };
 template<typename T> inline constexpr bool is_enum_v = is_enum<T>::value;
 template<typename T> struct is_class : integral_constant<bool, __is_class(T)> { };
 template<typename T> inline constexpr bool is_class_v = is_class<T>::value;
-template<typename T> struct is_integral : etlHelper::is_type_entier<remove_cv_t<T>>::type { };
+template<typename T> struct is_integral : __etl::is_type_entier<remove_cv_t<T>>::type { };
 template<typename T> inline constexpr bool is_integral_v = is_integral<T>::value;
-template<typename T> struct is_floating_point : etlHelper::is_type_flottant<remove_cv_t<T>>::type { };
+template<typename T> struct is_floating_point : __etl::is_type_flottant<remove_cv_t<T>>::type { };
 template<typename T> inline constexpr bool is_floating_point_v = is_floating_point<T>::value;
-template<typename T> struct is_pointer : etlHelper::is_pointeur<remove_cv_t<T>> {};
+template<typename T> struct is_pointer : __etl::is_pointeur<remove_cv_t<T>> {};
 template<typename T> inline constexpr bool is_pointer_v = is_pointer<T>::value;
-template<typename T> struct is_member_pointer : etlHelper::is_mb_pointeur<remove_cv_t<T>> {};
+template<typename T> struct is_member_pointer : __etl::is_mb_pointeur<remove_cv_t<T>> {};
 template<typename T> inline constexpr bool is_member_pointer_v = is_member_pointer<T>::value;
-template<typename T > struct is_member_function_pointer : etlHelper::is_mb_fonction_pointeur<remove_cv_t<T>> {};
+template<typename T > struct is_member_function_pointer : __etl::is_mb_fonction_pointeur<remove_cv_t<T>> {};
 template<typename T> inline constexpr bool is_member_function_pointer_v = is_member_function_pointer<T>::value;
 template<typename T> struct is_member_object_pointer : integral_constant<bool, is_member_pointer_v<T> && !is_member_function_pointer_v<T>> {};
 template<typename T> inline constexpr bool is_member_object_pointer_v = is_member_object_pointer<T>::value;
@@ -135,4 +135,4 @@ template<typename T> struct is_volatile             : false_type {};
 template<typename T> struct is_volatile<volatile T> : true_type {};
 template<typename T> inline constexpr bool is_volatile_v = is_const<T>::value;
 
-} // namespace ETLSTD
+} // namespace std

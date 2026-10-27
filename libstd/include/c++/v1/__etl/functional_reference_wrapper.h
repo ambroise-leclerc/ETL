@@ -34,9 +34,9 @@
 
 #include "functional.h"
 
-namespace ETLSTD {
+namespace std {
 
-namespace etlHelper {
+namespace __etl {
 
 template <typename T> constexpr T *reference_wrapper_addressof(T &value) noexcept {
 #if defined(__GNUC__) || defined(__clang__)
@@ -46,13 +46,13 @@ template <typename T> constexpr T *reference_wrapper_addressof(T &value) noexcep
 #endif
 }
 
-} // namespace etlHelper
+} // namespace __etl
 
 template <typename T> class reference_wrapper {
 public:
     using type = T;
 
-    constexpr reference_wrapper(T &value) noexcept : data_(etlHelper::reference_wrapper_addressof(value)) {}
+    constexpr reference_wrapper(T &value) noexcept : data_(__etl::reference_wrapper_addressof(value)) {}
     reference_wrapper(T &&) = delete;
     constexpr reference_wrapper(const reference_wrapper &) noexcept = default;
     constexpr reference_wrapper &operator=(const reference_wrapper &) noexcept = default;
@@ -61,9 +61,9 @@ public:
     constexpr T &get() const noexcept { return *data_; }
 
     template <typename... Args>
-    constexpr auto operator()(Args &&...args) const noexcept(noexcept(ETLSTD::invoke(get(), forward<Args>(args)...)))
-        -> decltype(ETLSTD::invoke(get(), forward<Args>(args)...)) {
-        return ETLSTD::invoke(get(), forward<Args>(args)...);
+    constexpr auto operator()(Args &&...args) const noexcept(noexcept(std::invoke(get(), forward<Args>(args)...)))
+        -> decltype(std::invoke(get(), forward<Args>(args)...)) {
+        return std::invoke(get(), forward<Args>(args)...);
     }
 
 private:
@@ -88,4 +88,4 @@ template <typename T> constexpr reference_wrapper<const T> cref(reference_wrappe
 
 template <typename T> void cref(const T &&) = delete;
 
-} // namespace ETLSTD
+} // namespace std

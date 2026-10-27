@@ -8,4 +8,5 @@
 #warning "<libstd/include/queue> is deprecated, use the canonical libstd/include/c++/v1/queue instead"
 #endif
 
+#include "c++/compat/etlstd.h"
 #include "c++/v1/queue"

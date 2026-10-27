@@ -42,7 +42,7 @@
 #include "string_view"
 #include "utility"
 
-namespace ETLSTD {
+namespace std {
 
 template <typename CharT, typename Traits = char_traits<CharT>, typename Allocator = allocator<CharT>> class basic_string {
 public:
@@ -57,8 +57,8 @@ public:
     using const_pointer = typename allocator_traits<Allocator>::const_pointer;
     using iterator = pointer;
     using const_iterator = const_pointer;
-    using const_reverse_iterator = ETLSTD::reverse_iterator<const_iterator>;
-    using reverse_iterator = ETLSTD::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+    using reverse_iterator = std::reverse_iterator<iterator>;
     using view_type = basic_string_view<CharT, Traits>;
 
     inline static const size_type npos = size_type(-1);
@@ -83,7 +83,7 @@ public:
     basic_string(const basic_string &other) : basic_string(other.allocator_) { assign(other.data(), other.size()); }
 
     basic_string(basic_string &&other) noexcept
-        : allocator_(ETLSTD::move(other.allocator_)), length_(other.length_), capacity_(other.capacity_),
+        : allocator_(std::move(other.allocator_)), length_(other.length_), capacity_(other.capacity_),
           buffer_(other.buffer_) {
         other.length_ = 0;
         other.capacity_ = 0;
@@ -101,7 +101,7 @@ public:
     basic_string &operator=(basic_string &&other) noexcept {
         if (this != &other) {
             release();
-            allocator_ = ETLSTD::move(other.allocator_);
+            allocator_ = std::move(other.allocator_);
             length_ = other.length_;
             capacity_ = other.capacity_;
             buffer_ = other.buffer_;
@@ -210,7 +210,7 @@ public:
 
     void assign(const value_type *s, size_type count) {
         difference_type sourceOffset = 0;
-        constexpr ETLSTD::less<const value_type *> less{};
+        constexpr std::less<const value_type *> less{};
         const bool overlaps = buffer_ != nullptr && !less(s, buffer_) && less(s, buffer_ + capacity_ + 1);
         if (overlaps)
             sourceOffset = s - buffer_;
@@ -248,7 +248,7 @@ public:
             return *this;
 
         difference_type sourceOffset = 0;
-        constexpr ETLSTD::less<const value_type *> less{};
+        constexpr std::less<const value_type *> less{};
         const bool overlaps = buffer_ != nullptr && !less(s, buffer_) && less(s, buffer_ + capacity_ + 1);
         if (overlaps)
             sourceOffset = s - buffer_;
@@ -309,10 +309,10 @@ public:
     operator view_type() const noexcept { return view(); }
 
     void swap(basic_string &other) noexcept {
-        ETLSTD::swap(allocator_, other.allocator_);
-        ETLSTD::swap(length_, other.length_);
-        ETLSTD::swap(capacity_, other.capacity_);
-        ETLSTD::swap(buffer_, other.buffer_);
+        std::swap(allocator_, other.allocator_);
+        std::swap(length_, other.length_);
+        std::swap(capacity_, other.capacity_);
+        std::swap(buffer_, other.buffer_);
     }
 
 private:
@@ -409,4 +409,4 @@ bool operator!=(basic_string_view<CharT, Traits> lhs, const basic_string<CharT, 
 
 using string = basic_string<char>;
 
-} // namespace ETLSTD
+} // namespace std

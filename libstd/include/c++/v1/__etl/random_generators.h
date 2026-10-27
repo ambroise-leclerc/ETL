@@ -34,7 +34,7 @@
 #include "../cstdint"
 #include "../limits"
 
-namespace ETLSTD {
+namespace std {
 
 /// xorshift32 pseudo-random generator. Not a std::conforming engine (no
 /// standard algorithm/state-size guarantees), but satisfies the
@@ -64,4 +64,4 @@ private:
 
 using default_random_engine = xorshift32_engine;
 
-} // namespace ETLSTD
+} // namespace std

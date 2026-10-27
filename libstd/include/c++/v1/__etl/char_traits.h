@@ -37,7 +37,7 @@
 #include <etl/ioports.h>
 #include "../algorithm"
 
-namespace ETLSTD {
+namespace std {
 
 template <typename CharT> struct char_traits {
     using char_type = CharT;
@@ -96,4 +96,4 @@ template <typename CharT> struct char_traits {
     static constexpr int_type not_eof(const int_type &i) noexcept { return !eq_int_type(i, eof()) ? i : 0; }
 };
 
-} // namespace ETLSTD
+} // namespace std

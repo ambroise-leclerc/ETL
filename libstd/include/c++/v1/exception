@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-namespace ETLSTD {
+namespace std {
 
 class exception {
 public:
@@ -59,4 +59,4 @@ public:
 using terminate_handler = void (*)();
 using unexpected_handler = void (*)();
 
-} // namespace ETLSTD
+} // namespace std

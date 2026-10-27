@@ -34,7 +34,7 @@
 #include "climits"
 #include "type_traits"
 
-namespace ETLSTD {
+namespace std {
 enum float_round_style {
     round_indeterminate       = -1,
     round_toward_zero         =  0,
@@ -49,7 +49,7 @@ enum float_denorm_style {
     denorm_present = 1
 };
 
-namespace etlHelper {
+namespace __etl {
     template<typename T> constexpr auto typeDigits() { return (sizeof(T) * CHAR_BIT - (is_signed_v<T> ? 1 : 0)); }
     template<typename T> constexpr auto typeDigits10() { return typeDigits<T>() * 643L/2136; }
     template<typename T> constexpr T typeMax() { return is_signed_v<T> ?
@@ -99,12 +99,12 @@ namespace etlHelper {
 
     template class numericLimitsBase<unsigned char>;
 
-} // namespace etlHelper
+} // namespace __etl
 
 
-template<typename T> struct numeric_limits : public etlHelper::numericLimitsBase<T> {};
+template<typename T> struct numeric_limits : public __etl::numericLimitsBase<T> {};
 
-template<> struct numeric_limits<bool>  : public etlHelper::numericLimitsBase<bool> {
+template<> struct numeric_limits<bool>  : public __etl::numericLimitsBase<bool> {
     static constexpr bool min() noexcept           { return false; }
     static constexpr bool max() noexcept           { return true; }
     static constexpr bool lowest() noexcept        { return min(); }
@@ -112,4 +112,4 @@ template<> struct numeric_limits<bool>  : public etlHelper::numericLimitsBase<bo
     static constexpr int digits10 = 0;
 };
 
-}  // namespace ETLSTD
+}  // namespace std

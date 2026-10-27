@@ -8,4 +8,5 @@
 #warning "<libstd/include/ratio> is deprecated, use the canonical libstd/include/c++/v1/ratio instead"
 #endif
 
+#include "c++/compat/etlstd.h"
 #include "c++/v1/ratio"

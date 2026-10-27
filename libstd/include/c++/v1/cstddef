@@ -33,7 +33,7 @@
 #pragma once
 #include <stddef.h>
 
-namespace ETLSTD {
+namespace std {
 #ifdef _MSC_VER
     using nullptr_t = decltype(__nullptr);
     using max_align_t = double;
@@ -44,6 +44,6 @@ namespace ETLSTD {
 
     using size_t = ::size_t;
     using ptrdiff_t = ::ptrdiff_t;
-} // namespace ETLSTD
+} // namespace std
 
-using ETLSTD::nullptr_t;
+using std::nullptr_t;

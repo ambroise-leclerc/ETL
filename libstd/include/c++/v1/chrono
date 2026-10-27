@@ -35,7 +35,7 @@
 #include "ratio"
 #include "limits"
 
-namespace ETLSTD {
+namespace std {
 namespace chrono {
 	template<typename Rep, typename Period = ratio<1>> class duration;
 } // namespace chrono
@@ -43,7 +43,7 @@ namespace chrono {
 // std::common_type specialization for std::chrono::duration
 template<typename Rep1, typename Period1, typename Rep2, typename Period2>
 struct common_type<chrono::duration<Rep1, Period1>, chrono::duration<Rep2, Period2>> {
-    using type = chrono::duration<typename common_type<Rep1, Rep2>::type, typename etlHelper::ratio_PGCD<Period1, Period2>::type>;
+    using type = chrono::duration<typename common_type<Rep1, Rep2>::type, typename __etl::ratio_PGCD<Period1, Period2>::type>;
 };
 
 namespace chrono {
@@ -54,7 +54,7 @@ template<typename Rep> struct duration_values {
     static constexpr Rep max()  { return numeric_limits<Rep>::max(); }
 };
 
-namespace etlHelper {
+namespace __etl {
     template<typename From, typename To, typename Period = ratio_divide<typename From::period, typename To::period>,
              bool = Period::num == 1, bool = Period::den == 1>
     struct durationCast;
@@ -87,20 +87,20 @@ namespace etlHelper {
             return To(static_cast<typename To::rep>(static_cast<ComRep>(dur.count()) * static_cast<ComRep>(Period::num) / static_cast<ComRep>(Period::den)));
         }
     };
-} // namespace etlHelper
+} // namespace __etl
 
 
 
 /// Converts a std::chrono::duration to a duration of different type ToDuration
 template<typename ToDuration, typename Rep, typename Period> constexpr ToDuration duration_cast(const duration<Rep, Period>& ticks) {
-	return etlHelper::durationCast<duration<Rep, Period>, ToDuration>()(ticks);
+	return __etl::durationCast<duration<Rep, Period>, ToDuration>()(ticks);
 }
 
 
 
 template<typename Rep, typename Period>
 class duration {
-    static_assert(ETLSTD::etlHelper::is_ratio<Period>::value, "duration<Rep, Period> : Period template parameter must be a std::ratio");
+    static_assert(std::__etl::is_ratio<Period>::value, "duration<Rep, Period> : Period template parameter must be a std::ratio");
 public:
     using rep = Rep;
     using period = Period;
@@ -182,12 +182,12 @@ constexpr chrono::duration<long double, nano>           operator ""ns(long doubl
 } // namespace literals
 
 /*
-namespace etlHelper {
+namespace __etl {
     template<typename T>                    struct is_duration : false_type {};
     template<typename Rep, typename Period> struct is_duration<duration<Rep, Period>> : true_type {};
     template<typename Rep, typename Period> struct is_duration<const duration<Rep, Period>> : true_type {};
     template<typename Rep, typename Period> struct is_duration<volatile duration<Rep, Period>> : true_type {};
     template<typename Rep, typename Period> struct is_duration<const volatile duration<Rep, Period>> : true_type {};
-} // namespace etlHelper
+} // namespace __etl
 */
-} // namespace ETLSTD
+} // namespace std
