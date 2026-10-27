@@ -23,13 +23,16 @@ FIXTURES_DIR = TOOLS_DIR / "check_libstd_namespace_fixtures"
 
 SCANNED_DIRS = ("libstd/include/c++", "include", "examples", "test")
 
+# (pattern, message, preprocessed): token rules match raw lines (comments included); the others match the text
+# after line splicing and comment removal, so that `namespace /* c */ etlstd` or a `\`-continued include is caught.
 RULES = {
-    "etlstd-token": (re.compile(r"\b(?:ETLSTD|etlstd)\b"), "ETLSTD/etlstd is forbidden, use std directly"),
+    "etlstd-token": (re.compile(r"\b(?:ETLSTD|etlstd)\b"), "ETLSTD/etlstd is forbidden, use std directly", False),
     "libstd-include-path": (
-        re.compile(r"^\s*#\s*include\s*[<\"](?:\.\./)*libstd/include/"),
+        re.compile(r"^[ \t]*#[ \t]*include[ \t]*[<\"](?:\.\./)*libstd/include/", re.MULTILINE),
         "repository-qualified standard include, include the standard name (e.g. <memory>)",
+        True,
     ),
-    "etlstd-namespace-decl": (re.compile(r"\bnamespace\s+etlstd\b"), "namespace etlstd must not be declared"),
+    "etlstd-namespace-decl": (re.compile(r"\bnamespace\s+etlstd\b"), "namespace etlstd must not be declared", True),
 }
 NON_ALLOWLISTABLE = {"etlstd-namespace-decl"}
 
@@ -39,6 +42,42 @@ def read_text(path):
     if b"\0" in data:
         return None
     return data.decode("utf-8", errors="replace")
+
+
+_LEXEME = re.compile(r"//[^\n]*|/\*.*?\*/|\"(?:\\.|[^\"\\\n])*\"|'(?:\\.|[^'\\\n])*'", re.DOTALL)
+
+
+def preprocess(text):
+    """Splice `\\`-continued lines and blank out comments; return (text, line number of each character)."""
+    chars, lines, line, i = [], [], 1, 0
+    while i < len(text):
+        if text[i] == "\\" and text[i + 1:i + 2] == "\n":
+            i, line = i + 2, line + 1
+            continue
+        if text[i] == "\\" and text[i + 1:i + 3] == "\r\n":
+            i, line = i + 3, line + 1
+            continue
+        chars.append(text[i])
+        lines.append(line)
+        if text[i] == "\n":
+            line += 1
+        i += 1
+    spliced = "".join(chars)
+    out = list(spliced)
+    for match in _LEXEME.finditer(spliced):
+        if match.group()[0] in "/":
+            for k in range(match.start(), match.end()):
+                if out[k] != "\n":
+                    out[k] = " "
+    return "".join(out), lines
+
+
+def find_matches(text, rule):
+    pattern, _, preprocessed = RULES[rule]
+    if not preprocessed:
+        return [number for number, line in enumerate(text.splitlines(), 1) if pattern.search(line)]
+    clean, lines = preprocess(text)
+    return sorted({lines[m.start()] for m in pattern.finditer(clean)})
 
 
 def parse_allowlist(path, root):
@@ -77,13 +116,12 @@ def scan(root, allowlist_path):
             if text is None:
                 continue
             rel = path.relative_to(root).as_posix()
-            for number, line in enumerate(text.splitlines(), 1):
-                for rule, (pattern, message) in RULES.items():
-                    if pattern.search(line):
-                        if (rule, rel) in allowed:
-                            used.add((rule, rel))
-                        else:
-                            violations.append((rel, number, rule, f"{rel}:{number}: [{rule}] {message}"))
+            for rule, (_, message, _) in RULES.items():
+                for number in find_matches(text, rule):
+                    if (rule, rel) in allowed:
+                        used.add((rule, rel))
+                    else:
+                        violations.append((rel, number, rule, f"{rel}:{number}: [{rule}] {message}"))
     for (rule, rel), number in sorted(allowed.items(), key=lambda item: item[1]):
         if (rule, rel) not in used:
             diagnostics.append(f"{allowlist_path.name}:{number}: [stale-allowlist] {rule} {rel} no longer has any violation, remove it")
