@@ -1,15 +1,14 @@
 #define CATCH_CONFIG_NO_POSIX_SIGNALS
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#define ETLSTD etlstd
 
 /*
 namespace etlTest {
 #define __Mock_Mock__
 #include <etl/ioports.h>
 #include <etl/architecture/uart_Mock.h>
-#include <libstd/include/algorithm>
-#include <libstd/include/thread>
+#include <algorithm>
+#include <thread>
 } // namespace etlTest
 
 

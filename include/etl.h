@@ -32,13 +32,9 @@
 //  POSSIBILITY OF SUCH DAMAGE./*
 #pragma once
 
-#ifndef ETLSTD
-#define ETLSTD std  // std namespace name for ETL's libstd
-#endif
-
 #include <stdlib.h>
 #include <etl/debug_policies.h>
 #include <etl/metautils.h>
 #include <etl/ioports.h>
-#include <libstd/include/memory>
-#include <libstd/include/new>
+#include <memory>
+#include <new>

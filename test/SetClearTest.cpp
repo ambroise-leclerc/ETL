@@ -1,7 +1,6 @@
 #include <catch.hpp>
 
 #define __Mock_Mock__
-#define ETLSTD etlstd
 #include <etl/ioports.h>
 #include <algorithm>
 

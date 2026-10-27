@@ -173,13 +173,10 @@ Using ETL in your own AVR project
 =================================
 
 1. Configure your project to compile with C++23.
-2. Add **two** include paths:
-   - `.../ETL/include`
-   - `.../ETL`
+2. Add the include path `.../ETL/include`.
+3. On AVR, add the bundled standard library as a *system* include directory, so that it is searched before the compiler's own C++ directories: `-isystem .../ETL/libstd/include/c++/v1`. ETL headers include standard headers by their standard names (`<memory>`, `<array>`, ...). On a host build, do not add it: ETL then uses the compiler's standard library.
 
-   The repository root is required because ETL headers include bundled standard-library headers with paths such as `libstd/include/memory`.
-
-3. Add `#include <etl.h>` in your source file.
+4. Add `#include <etl.h>` in your source file.
 
 Interrupts
 ----------

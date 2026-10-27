@@ -32,6 +32,9 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
+#include <chrono>
+#include <functional>
+#include <string>
 #include <thread>
 
 namespace etl {

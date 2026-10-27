@@ -1,7 +1,7 @@
 #pragma once
 //#include <string>
-#include <../libstd/include/thread>
-#include <../libstd/include/chrono>
+#include <thread>
+#include <chrono>
 
 using namespace std;
 using namespace chrono_literals;

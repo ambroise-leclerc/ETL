@@ -32,6 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
+#include <functional>
 #include <MockDevice.h>
 #include "ETLDevice_Mock.h"
 
