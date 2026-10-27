@@ -6,6 +6,18 @@ on:
   pull_request:
 
 jobs:
+  source-policy:
+    name: source policy
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Self-test the source policy checker
+        run: python3 tools/check_libstd_namespace.py --self-test
+
+      - name: Check ETLSTD and repository-qualified standard includes
+        run: python3 tools/check_libstd_namespace.py
+
   host-tests:
     name: host (${{ matrix.name }})
     runs-on: ubuntu-24.04
@@ -194,12 +206,14 @@ jobs:
   ci-ok:
     name: ci-ok
     if: always()
-    needs: [host-tests, avr-smoke]
+    needs: [source-policy, host-tests, avr-smoke]
     runs-on: ubuntu-24.04
     steps:
       - name: Check that all CI jobs succeeded
         run: |
+          echo "source-policy: ${{ needs.source-policy.result }}"
           echo "host-tests: ${{ needs.host-tests.result }}"
           echo "avr-smoke: ${{ needs.avr-smoke.result }}"
+          test "${{ needs.source-policy.result }}" = success
           test "${{ needs.host-tests.result }}" = success
           test "${{ needs.avr-smoke.result }}" = success

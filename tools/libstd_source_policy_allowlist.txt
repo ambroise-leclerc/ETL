@@ -1,0 +1,39 @@
+# Allowlist for tools/check_libstd_namespace.py (CTest: libstd-source-policy).
+#
+# Format: <rule> <repository-root-relative path>   (# starts a comment)
+# Only 0.2 compatibility files may be listed. A stale entry (no remaining violation) fails the check,
+# so remove an entry as soon as its file is converted. `etlstd-namespace-decl` can never be allowlisted.
+#
+# This list must become EMPTY when release 0.3 removes the ETLSTD bridge (libstd/include/c++/compat/etlstd.h
+# and the libstd/include/<header> wrappers), at which point the allowlist file itself can be deleted.
+
+# Deprecated ETLSTD alias set by the 0.2 wrappers.
+etlstd-token libstd/include/c++/compat/etlstd.h
+
+# Catch suites not yet converted to isolated executables (see libstd/readme.md); they still spell ETLSTD.
+etlstd-token test/libstd/bitset.cpp
+etlstd-token test/libstd/chrono.cpp
+etlstd-token test/libstd/exception.cpp
+etlstd-token test/libstd/functional.cpp
+etlstd-token test/libstd/limits.cpp
+etlstd-token test/libstd/memory.cpp
+etlstd-token test/libstd/queue.cpp
+etlstd-token test/libstd/random.cpp
+etlstd-token test/libstd/string.cpp
+etlstd-token test/libstd/thread.cpp
+etlstd-token test/libstd/tuple.cpp
+etlstd-token test/libstd/vector.cpp
+
+# The same unconverted suites still include <libstd/include/...> (0.2 wrapper paths).
+libstd-include-path test/libstd/bitset.cpp
+libstd-include-path test/libstd/chrono.cpp
+libstd-include-path test/libstd/exception.cpp
+libstd-include-path test/libstd/functional.cpp
+libstd-include-path test/libstd/limits.cpp
+libstd-include-path test/libstd/memory.cpp
+libstd-include-path test/libstd/queue.cpp
+libstd-include-path test/libstd/random.cpp
+libstd-include-path test/libstd/string.cpp
+libstd-include-path test/libstd/thread.cpp
+libstd-include-path test/libstd/tuple.cpp
+libstd-include-path test/libstd/vector.cpp

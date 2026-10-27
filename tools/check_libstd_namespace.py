@@ -1,21 +1,168 @@
 #!/usr/bin/env python3
-"""Fail if a canonical libstd header still mentions the ETLSTD namespace macro."""
+"""Source policy: canonical code uses std directly, never ETLSTD or repository-qualified standard includes.
+
+Rules (every violation is reported as `path:line: [rule] message`, paths relative to the repository root):
+  etlstd-token          ETLSTD / etlstd token; only allowlisted 0.2 compatibility files may keep it.
+  libstd-include-path   #include <libstd/include/...> or <../libstd/include/...> (angle or quote form).
+  etlstd-namespace-decl `namespace etlstd` declaration; never allowlistable.
+
+Scanned: libstd/include/c++, include, examples, test. The 0.2 wrappers directly under libstd/include are not scanned.
+Allowlist (tools/libstd_source_policy_allowlist.txt): `<rule> <path>` per line; stale entries fail the check.
+
+Usage: check_libstd_namespace.py [--root DIR] [--allowlist FILE] [--self-test]
+"""
+import argparse
 import re
 import sys
 from pathlib import Path
 
-CANONICAL_DIR = Path(__file__).resolve().parent.parent / "libstd" / "include" / "c++" / "v1"
+TOOLS_DIR = Path(__file__).resolve().parent
+DEFAULT_ROOT = TOOLS_DIR.parent
+DEFAULT_ALLOWLIST = TOOLS_DIR / "libstd_source_policy_allowlist.txt"
+FIXTURES_DIR = TOOLS_DIR / "check_libstd_namespace_fixtures"
+
+SCANNED_DIRS = ("libstd/include/c++", "include", "examples", "test")
+
+# (pattern, message, preprocessed): token rules match raw lines (comments included); the others match the text
+# after line splicing and comment removal, so that `namespace /* c */ etlstd` or a `\`-continued include is caught.
+RULES = {
+    "etlstd-token": (re.compile(r"\b(?:ETLSTD|etlstd)\b"), "ETLSTD/etlstd is forbidden, use std directly", False),
+    "libstd-include-path": (
+        re.compile(r"^[ \t]*#[ \t]*include[ \t]*[<\"](?:\.\./)*libstd/include/", re.MULTILINE),
+        "repository-qualified standard include, include the standard name (e.g. <memory>)",
+        True,
+    ),
+    "etlstd-namespace-decl": (re.compile(r"\bnamespace\s+etlstd\b"), "namespace etlstd must not be declared", True),
+}
+NON_ALLOWLISTABLE = {"etlstd-namespace-decl"}
+# Only 0.2 compatibility paths may be allowlisted: the ETLSTD bridge and the legacy Catch suites.
+ALLOWLISTABLE_PREFIXES = ("libstd/include/c++/compat/", "test/libstd/")
+
+
+def read_text(path):
+    data = path.read_bytes()
+    if b"\0" in data:
+        return None
+    return data.decode("utf-8", errors="replace")
+
+
+_LEXEME = re.compile(r"//[^\n]*|/\*.*?\*/|\"(?:\\.|[^\"\\\n])*\"|'(?:\\.|[^'\\\n])*'", re.DOTALL)
+
+
+def preprocess(text, mask_strings):
+    """Splice `\\`-continued lines and blank out comments (and string contents if asked); return (text, line number of each character)."""
+    chars, lines, line, i = [], [], 1, 0
+    while i < len(text):
+        if text[i] == "\\" and text[i + 1:i + 2] == "\n":
+            i, line = i + 2, line + 1
+            continue
+        if text[i] == "\\" and text[i + 1:i + 3] == "\r\n":
+            i, line = i + 3, line + 1
+            continue
+        chars.append(text[i])
+        lines.append(line)
+        if text[i] == "\n":
+            line += 1
+        i += 1
+    spliced = "".join(chars)
+    out = list(spliced)
+    for match in _LEXEME.finditer(spliced):
+        if match.group()[0] == "/" or mask_strings:
+            for k in range(match.start(), match.end()):
+                if out[k] != "\n":
+                    out[k] = " "
+    return "".join(out), lines
+
+
+def find_matches(text, rule):
+    pattern, _, preprocessed = RULES[rule]
+    if not preprocessed:
+        return [number for number, line in enumerate(text.splitlines(), 1) if pattern.search(line)]
+    clean, lines = preprocess(text, mask_strings=rule == "etlstd-namespace-decl")
+    return sorted({lines[m.start()] for m in pattern.finditer(clean)})
+
+
+def parse_allowlist(path):
+    """Return ({(rule, relpath): line_number}, [(label, line, rule, text) error diagnostics])."""
+    entries, errors = {}, []
+    if not path.is_file():
+        return entries, errors
+    label = path.name
+    for number, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        line = raw.split("#", 1)[0].strip()
+        if not line:
+            continue
+        fields = line.split()
+        if len(fields) != 2 or fields[0] not in RULES:
+            errors.append((label, number, "bad-allowlist-entry", f"{label}:{number}: [bad-allowlist-entry] expected '<rule> <path>' with rule in {sorted(RULES)}"))
+        elif fields[0] in NON_ALLOWLISTABLE:
+            errors.append((label, number, "bad-allowlist-entry", f"{label}:{number}: [bad-allowlist-entry] rule {fields[0]} cannot be allowlisted"))
+        elif not fields[1].startswith(ALLOWLISTABLE_PREFIXES):
+            errors.append((label, number, "bad-allowlist-entry", f"{label}:{number}: [bad-allowlist-entry] only paths under {', '.join(ALLOWLISTABLE_PREFIXES)} can be allowlisted"))
+        elif (fields[0], fields[1]) in entries:
+            errors.append((label, number, "bad-allowlist-entry", f"{label}:{number}: [bad-allowlist-entry] duplicate entry {fields[0]} {fields[1]}"))
+        else:
+            entries[(fields[0], fields[1])] = number
+    return entries, errors
+
+
+def scan(root, allowlist_path):
+    """Return the sorted list of diagnostics for the tree at root."""
+    allowed, diagnostics = parse_allowlist(allowlist_path)
+    used = set()
+    violations = list(diagnostics)
+    for directory in SCANNED_DIRS:
+        base = root / directory
+        if not base.is_dir():
+            continue
+        for path in sorted(p for p in base.rglob("*") if p.is_file()):
+            text = read_text(path)
+            if text is None:
+                continue
+            rel = path.relative_to(root).as_posix()
+            for rule, (_, message, _) in RULES.items():
+                for number in find_matches(text, rule):
+                    if (rule, rel) in allowed:
+                        used.add((rule, rel))
+                    else:
+                        violations.append((rel, number, rule, f"{rel}:{number}: [{rule}] {message}"))
+    for (rule, rel), number in sorted(allowed.items(), key=lambda item: item[1]):
+        if (rule, rel) not in used:
+            text = f"{allowlist_path.name}:{number}: [stale-allowlist] {rule} {rel} no longer has any violation, remove it"
+            violations.append((allowlist_path.name, number, "stale-allowlist", text))
+    return [entry[3] for entry in sorted(violations)]
+
+
+def self_test():
+    """Each fixture directory is a mini repository root with `expected.txt` and an optional `allowlist.txt`."""
+    failures = 0
+    fixtures = sorted(p for p in FIXTURES_DIR.iterdir() if p.is_dir())
+    if not fixtures:
+        print(f"no fixtures found in {FIXTURES_DIR}", file=sys.stderr)
+        return 1
+    for fixture in fixtures:
+        expected = (fixture / "expected.txt").read_text(encoding="utf-8").splitlines()
+        actual = scan(fixture, fixture / "allowlist.txt")
+        if actual == expected:
+            print(f"ok   {fixture.name}")
+        else:
+            failures += 1
+            print(f"FAIL {fixture.name}\n  expected: {expected}\n  actual:   {actual}", file=sys.stderr)
+    return 1 if failures else 0
 
 
 def main():
-    pattern = re.compile(r"\bETLSTD\b")
-    found = 0
-    for path in sorted(p for p in CANONICAL_DIR.rglob("*") if p.is_file()):
-        for number, line in enumerate(path.read_text(errors="replace").splitlines(), 1):
-            if pattern.search(line):
-                print(f"{path.relative_to(CANONICAL_DIR.parent.parent.parent.parent)}:{number}: {line.strip()}", file=sys.stderr)
-                found += 1
-    return 1 if found else 0
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--root", type=Path, default=DEFAULT_ROOT)
+    parser.add_argument("--allowlist", type=Path, default=DEFAULT_ALLOWLIST)
+    parser.add_argument("--self-test", action="store_true", help="run the checker against its fixtures")
+    args = parser.parse_args()
+    if args.self_test:
+        return self_test()
+    diagnostics = scan(args.root.resolve(), args.allowlist)
+    for diagnostic in diagnostics:
+        print(diagnostic, file=sys.stderr)
+    return 1 if diagnostics else 0
 
 
 if __name__ == "__main__":

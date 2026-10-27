@@ -88,7 +88,9 @@ if (ETL_BUILD_HOST_TESTS)
         if (Python3_Interpreter_FOUND)
             add_test(NAME libstd-compat-headers
                      COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/generate_libstd_compat_headers.py --check)
-            add_test(NAME libstd-namespace-scan
+            add_test(NAME libstd-source-policy-self-test
+                     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/check_libstd_namespace.py --self-test)
+            add_test(NAME libstd-source-policy
                      COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/check_libstd_namespace.py)
         endif()
 
