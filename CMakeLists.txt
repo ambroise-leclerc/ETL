@@ -148,6 +148,8 @@ if (ETL_BUILD_AVR_SMOKE)
         )
 
         target_link_libraries(${target_name} PRIVATE etl)
+        # ETLStd headers come first, before the compiler's own C++ directories
+        target_include_directories(${target_name} SYSTEM BEFORE PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libstd/include/c++/v1)
         target_compile_features(${target_name} PRIVATE cxx_std_23)
         target_compile_definitions(${target_name} PRIVATE F_CPU=${ETL_AVR_F_CPU})
         target_compile_options(${target_name} PRIVATE -Os -ffunction-sections -fdata-sections ${ETL_LIBSTD_WARNING_OPTIONS})

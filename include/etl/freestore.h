@@ -34,7 +34,7 @@
 #pragma once
 #define ETL_FREESTORE_H_
 
-#include <libstd/include/cstddef>
+#include <cstddef>
 
 namespace etl {
 
@@ -44,7 +44,7 @@ class FreeStore : public FreeStoreTracePolicy {
   /// @param[in] size number of bytes to allocate
   /// @return Pointer to the beginning of allocated memory. The pointer must be
   /// deallocated with FreeStore::Deallocate.
-  static void* Allocate(ETLSTD::size_t size) noexcept {
+  static void* Allocate(std::size_t size) noexcept {
     auto chunk_parser = FirstFreeChunk();
       
     // 0) Setup the start of allocatable area (data_) to the first unallocated block
@@ -97,7 +97,7 @@ class FreeStore : public FreeStoreTracePolicy {
     
   /// Returns how many bytes have been allocated.
   /// @return allocated bytes
-  static ETLSTD::size_t GetMemorySize() noexcept {
+  static std::size_t GetMemorySize() noexcept {
     return GetChunksSize(true);
   }
 
@@ -116,14 +116,14 @@ class FreeStore : public FreeStoreTracePolicy {
   /// Computes available RAM (i.e. total micro-controller on-board SRAM
   /// minus global variables, stack and free store consumption).
   /// @return Available RAM in bytes
-  static ETLSTD::size_t GetFreeMemory() noexcept {
+  static std::size_t GetFreeMemory() noexcept {
     uint16_t stack_limit = 0;
 
     auto chunk_parser = FirstFreeChunk();
     while (!chunk_parser->IsLastChunk()) {
       chunk_parser = chunk_parser->NextChunk();
     }
-    ETLSTD::size_t mem_spread = reinterpret_cast<uint8_t*>(&stack_limit) - reinterpret_cast<uint8_t*>(chunk_parser);
+    std::size_t mem_spread = reinterpret_cast<uint8_t*>(&stack_limit) - reinterpret_cast<uint8_t*>(chunk_parser);
     return mem_spread;
   }
 
@@ -179,10 +179,10 @@ class FreeStore : public FreeStoreTracePolicy {
     }
   };
 
-  static ETLSTD::size_t GetChunksSize(bool allocated) __attribute__((noinline)) {
+  static std::size_t GetChunksSize(bool allocated) __attribute__((noinline)) {
     FirstFreeChunk();
     auto chunk_parser = reinterpret_cast<Chunk*>(__malloc_heap_start);
-    ETLSTD::size_t size = 0;
+    std::size_t size = 0;
       
     while (!chunk_parser->IsLastChunk()) {
       if (allocated == chunk_parser->IsAllocated()) {

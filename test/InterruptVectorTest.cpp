@@ -1,6 +1,5 @@
 #include <catch.hpp>
 
-#define ETLSTD etlstd
 #include <etl/interrupt.h>
 
 namespace {

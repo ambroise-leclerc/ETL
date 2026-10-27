@@ -6,7 +6,7 @@ A bundled standard-library subset for ETL.
 
 **ETL** is a header only template library geared towards the size and performance constraints of embedded applications. The repository now targets a **C++23** baseline, but AVR environments still benefit from a bundled standard-library subset that covers the facilities ETL actually uses on embedded targets.
 
-When ETL is consumed from another build system, add both the repository root and `include/` to the compiler include path. ETL headers refer to bundled headers through paths such as `libstd/include/memory`, so `include/` alone is not enough.
+When ETL is consumed from another build system on AVR, add `include/` to the compiler include path and `libstd/include/c++/v1` as a system include directory (`-isystem`), so that it is searched before the compiler's own C++ directories. ETL headers include standard headers by their standard names; on a host build, do not add the canonical root and ETL uses the compiler's standard library.
 
 Layout
 ======

@@ -32,7 +32,9 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <libstd/include/cstdint>
+#include <chrono>
+#include <cstdint>
+#include <ratio>
 #include "ETLDevice_ESP8266.h"
 
 extern "C" {

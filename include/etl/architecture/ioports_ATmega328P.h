@@ -37,15 +37,17 @@
 #include <etl/interrupt.h>
 #include <avr/io.h>
 #include <etl/CircularBuffer.h>
-#include <libstd/include/chrono>
-#include <libstd/include/queue>
+#include <chrono>
+#include <ratio>
+#include <type_traits>
+#include <queue>
 #include <util/delay.h>
 
 extern void __builtin_avr_delay_cycles(unsigned long);
 
 namespace etl {
 
-using clock_cycles = ETLSTD::chrono::duration<unsigned long, ETLSTD::ratio<1, Device::McuFrequency>>;
+using clock_cycles = std::chrono::duration<unsigned long, std::ratio<1, Device::McuFrequency>>;
 constexpr clock_cycles operator""_clks(unsigned long long c) { return clock_cycles(static_cast<clock_cycles::rep>(c)); }
 struct PinChangeIRQ0;
 struct PinChangeIRQ1;
@@ -1493,8 +1495,8 @@ struct Timer2 {
     using CompareMatchB = InterruptVector<TIMER2_COMPB_vect_num>;
 };
 
-template <typename> struct is_uart_txd_capable : ETLSTD::false_type {};
-template <typename> struct is_uart_rxd_capable : ETLSTD::false_type {};
+template <typename> struct is_uart_txd_capable : std::false_type {};
+template <typename> struct is_uart_rxd_capable : std::false_type {};
 enum FrameFormat {
     _5N1 = 0b00000,
     _5N2 = 0b000001,
@@ -1525,8 +1527,8 @@ enum FrameFormat {
     StopBitMask = 0b00001
 };
 
-template <> struct is_uart_rxd_capable<PinD0> : ETLSTD::true_type {};
-template <> struct is_uart_txd_capable<PinD1> : ETLSTD::true_type {};
+template <> struct is_uart_rxd_capable<PinD0> : std::true_type {};
+template <> struct is_uart_txd_capable<PinD1> : std::true_type {};
 
 class Uart0Driver {
     static const uint8_t BufferSize = 32;
@@ -1625,8 +1627,8 @@ public:
     }
 };
 
-template <> struct is_uart_rxd_capable<PinD2> : ETLSTD::true_type {};
-template <> struct is_uart_txd_capable<PinD3> : ETLSTD::true_type {};
+template <> struct is_uart_rxd_capable<PinD2> : std::true_type {};
+template <> struct is_uart_txd_capable<PinD3> : std::true_type {};
 
 #ifdef PCICR
 struct PinChangeControlRegister {

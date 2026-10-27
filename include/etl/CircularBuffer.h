@@ -1,19 +1,22 @@
 #pragma once
 
-#include <libstd/include/array>
-#include <libstd/include/memory>
-#include <libstd/include/type_traits>
-#include <libstd/include/limits>
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <type_traits>
+#include <limits>
+#include <utility>
 
 
 namespace etl {
 
-template<typename T, size_t N, typename Allocator = ETLSTD::allocator<T>>
+template<typename T, size_t N, typename Allocator = std::allocator<T>>
 class CircularBuffer {
 public:
     using value_type = T;
-    using size_type = typename ETLSTD::conditional_t<N < 256, uint8_t,
-                                                  ETLSTD::conditional_t<N < 65536, uint16_t, uint32_t>>;
+    using size_type = typename std::conditional_t<N < 256, uint8_t,
+                                                  std::conditional_t<N < 65536, uint16_t, uint32_t>>;
     using reference = value_type&;
     using const_reference = const value_type&;
 
@@ -26,7 +29,7 @@ public:
     }
 
     void push_back(value_type&& elem) {
-        buffer[(index + nbElems) % N] = ETLSTD::move(elem);
+        buffer[(index + nbElems) % N] = std::move(elem);
         incNbElems();
     }
 
@@ -47,13 +50,13 @@ public:
     template<typename... Args>
     void emplace_back(Args&& ... args) {
         Allocator all;
-        ETLSTD::allocator_traits<Allocator>::construct(all, &buffer[(index + nbElems) % N], ETLSTD::forward<Args>(args)...);
+        std::allocator_traits<Allocator>::construct(all, &buffer[(index + nbElems) % N], std::forward<Args>(args)...);
         incNbElems();
     }
 
 
 private:
-    ETLSTD::array<T, N> buffer;
+    std::array<T, N> buffer;
     size_type index, nbElems;
 
     void incNbElems() {
