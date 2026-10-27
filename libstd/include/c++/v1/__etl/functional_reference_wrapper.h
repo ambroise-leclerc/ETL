@@ -32,7 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
-#include <libstd/include/h/functional.h>
+#include "functional.h"
 
 namespace ETLSTD {
 

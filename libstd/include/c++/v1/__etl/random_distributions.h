@@ -31,8 +31,8 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
-#include <libstd/include/limits>
-#include <libstd/include/type_traits>
+#include "../limits"
+#include "../type_traits"
 
 namespace ETLSTD {
 

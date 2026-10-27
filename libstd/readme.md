@@ -8,6 +8,11 @@ A bundled standard-library subset for ETL.
 
 When ETL is consumed from another build system, add both the repository root and `include/` to the compiler include path. ETL headers refer to bundled headers through paths such as `libstd/include/memory`, so `include/` alone is not enough.
 
+Layout
+======
+
+The canonical standard headers live in `libstd/include/c++/v1/` and their reserved implementation headers in `libstd/include/c++/v1/__etl/`. The former `libstd/include/<header>` paths remain for release 0.2 as generated wrappers that emit a deprecation warning and include the canonical header; they are removed in release 0.3. Regenerate them with `python3 tools/generate_libstd_compat_headers.py`; the `libstd-compat-headers` CTest runs the same script with `--check` and fails on missing, extra or stale wrappers.
+
 Support policy
 ==============
 
