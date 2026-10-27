@@ -32,9 +32,9 @@ file(GLOB LIBSTD_IMPL_HEADERS CONFIGURE_DEPENDS libstd/include/c++/v1/__etl/*.h)
 file(GLOB LIBSTD_COMPAT_HEADERS CONFIGURE_DEPENDS libstd/include/*)
 list(FILTER LIBSTD_COMPAT_HEADERS EXCLUDE REGEX "/c\\+\\+$")
 list(APPEND LIBSTD_HEADERS ${LIBSTD_IMPL_HEADERS} ${LIBSTD_COMPAT_HEADERS})
-set(LIBSTD_TESTS test/libstd/array.cpp test/libstd/bitset.cpp test/libstd/chrono.cpp test/libstd/exception.cpp test/libstd/functional.cpp
+set(LIBSTD_TESTS test/libstd/bitset.cpp test/libstd/chrono.cpp test/libstd/exception.cpp test/libstd/functional.cpp
                  test/libstd/limits.cpp test/libstd/memory.cpp test/libstd/random.cpp test/libstd/thread.cpp test/libstd/tuple.cpp
-                 test/libstd/type_traits.cpp test/libstd/queue.cpp test/libstd/string.cpp test/libstd/string_view.cpp test/libstd/vector.cpp)
+                 test/libstd/queue.cpp test/libstd/string.cpp test/libstd/vector.cpp)
                  
 set(ETL_TESTS test/test.cpp test/SetClearTest.cpp test/InterruptsTest.cpp test/InterruptVectorTest.cpp)
 if (ETL_BUILD_LIBSTD_HOST_TESTS)
@@ -106,6 +106,32 @@ if (ETL_BUILD_HOST_TESTS)
                              ${CMAKE_CURRENT_SOURCE_DIR}/test/libstd_headers/${header}.cpp)
         endforeach ()
     endif()
+
+    # Isolated libstd suites: canonical ETLStd headers only, no host C++ headers, no Catch, no Threads.
+    # To add a suite: write test/libstd/<name>.cpp with test/libstd_harness/harness.h and register it below.
+    function(etl_add_libstd_isolated_test name)
+        set(target libstd-isolated-${name})
+        add_executable(${target} ${ARGN} test/libstd_harness/main.cpp)
+        target_compile_features(${target} PRIVATE cxx_std_23)
+        target_compile_options(${target} PRIVATE -ffreestanding -nostdinc++ ${ETL_LIBSTD_WARNING_OPTIONS})
+        # stubs/etl/ioports.h replaces the Mock device, which needs the host C++ library
+        target_include_directories(${target} SYSTEM BEFORE PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/libstd/include/c++/v1
+            ${CMAKE_CURRENT_SOURCE_DIR}/test/libstd_harness/stubs)
+        if (BUILD_TESTING)
+            add_test(NAME ${target} COMMAND ${target})
+        endif ()
+    endfunction()
+
+    etl_add_libstd_isolated_test(array test/libstd/array.cpp)
+    etl_add_libstd_isolated_test(type_traits test/libstd/type_traits.cpp)
+    etl_add_libstd_isolated_test(string_view test/libstd/string_view.cpp)
+
+    # Intentional failures: the harness must turn them into a non-zero exit status
+    etl_add_libstd_isolated_test(failing-fixture test/libstd_harness/failing_fixture.cpp)
+    if (BUILD_TESTING)
+        set_tests_properties(libstd-isolated-failing-fixture PROPERTIES WILL_FAIL TRUE)
+    endif ()
 
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT TestsETL)
 endif()

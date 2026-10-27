@@ -30,18 +30,15 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-#include <catch.hpp>
+#include "../libstd_harness/harness.h"
 
-#define __Mock_Mock__
-#define ETLSTD etlstd
+#include <array>
+#include <stdexcept>
+#include <type_traits>
 
-#include <libstd/include/array>
-#include <libstd/include/stdexcept>
-#include <libstd/include/type_traits>
+using namespace std;
 
-using namespace ETLSTD;
-
-SCENARIO("std::array const accessors") {
+TEST_CASE("std::array const accessors") {
     array<int, 3> values;
     values[0] = 1;
     values[1] = 2;
@@ -50,48 +47,48 @@ SCENARIO("std::array const accessors") {
     using const_pointer = typename array<int, 3>::const_pointer;
     using const_data_type = decltype(constValues.data());
 
-    REQUIRE((is_same_v<const_pointer, const int *>));
-    REQUIRE((is_same_v<const_data_type, const int *>));
+    CHECK((is_same_v<const_pointer, const int *>));
+    CHECK((is_same_v<const_data_type, const int *>));
 
-    REQUIRE(constValues.data() == values.data());
-    REQUIRE(constValues.front() == 1);
-    REQUIRE(constValues.back() == 3);
-    REQUIRE(constValues[1] == 2);
-    REQUIRE(constValues.at(2) == 3);
+    CHECK(constValues.data() == values.data());
+    CHECK(constValues.front() == 1);
+    CHECK(constValues.back() == 3);
+    CHECK(constValues[1] == 2);
+    CHECK(constValues.at(2) == 3);
 
-    REQUIRE(constValues.rbegin().base() == constValues.end());
-    REQUIRE(*constValues.rbegin() == 3);
-    REQUIRE(constValues.rend().base() == constValues.begin());
+    CHECK(constValues.rbegin().base() == constValues.end());
+    CHECK(*constValues.rbegin() == 3);
+    CHECK(constValues.rend().base() == constValues.begin());
 
-    REQUIRE(constValues.crbegin().base() == constValues.cend());
-    REQUIRE(*constValues.crbegin() == 3);
-    REQUIRE(constValues.crend().base() == constValues.cbegin());
+    CHECK(constValues.crbegin().base() == constValues.cend());
+    CHECK(*constValues.crbegin() == 3);
+    CHECK(constValues.crend().base() == constValues.cbegin());
 }
 
-SCENARIO("std::array zero-sized specialization") {
+TEST_CASE("std::array zero-sized specialization") {
     array<int, 0> values{};
     const array<int, 0> &constValues = values;
 
-    REQUIRE(values.empty());
-    REQUIRE(values.size() == 0);
-    REQUIRE(values.max_size() == 0);
+    CHECK(values.empty());
+    CHECK(values.size() == 0);
+    CHECK(values.max_size() == 0);
 
-    REQUIRE(values.data() == nullptr);
-    REQUIRE(constValues.data() == nullptr);
-    REQUIRE(values.begin() == values.end());
-    REQUIRE(constValues.begin() == constValues.end());
-    REQUIRE(values.cbegin() == values.cend());
-    REQUIRE(constValues.cbegin() == constValues.cend());
-    REQUIRE(values.rbegin().base() == values.end());
-    REQUIRE(constValues.rbegin().base() == constValues.end());
-    REQUIRE(constValues.crbegin().base() == constValues.cend());
+    CHECK(values.data() == nullptr);
+    CHECK(constValues.data() == nullptr);
+    CHECK(values.begin() == values.end());
+    CHECK(constValues.begin() == constValues.end());
+    CHECK(values.cbegin() == values.cend());
+    CHECK(constValues.cbegin() == constValues.cend());
+    CHECK(values.rbegin().base() == values.end());
+    CHECK(constValues.rbegin().base() == constValues.end());
+    CHECK(constValues.crbegin().base() == constValues.cend());
 
-    REQUIRE_THROWS_AS(values[0], out_of_range);
-    REQUIRE_THROWS_AS(constValues[0], out_of_range);
-    REQUIRE_THROWS_AS(values.at(0), out_of_range);
-    REQUIRE_THROWS_AS(constValues.at(0), out_of_range);
-    REQUIRE_THROWS_AS(values.front(), out_of_range);
-    REQUIRE_THROWS_AS(constValues.front(), out_of_range);
-    REQUIRE_THROWS_AS(values.back(), out_of_range);
-    REQUIRE_THROWS_AS(constValues.back(), out_of_range);
+    CHECK_THROWS_AS(values[0], out_of_range);
+    CHECK_THROWS_AS(constValues[0], out_of_range);
+    CHECK_THROWS_AS(values.at(0), out_of_range);
+    CHECK_THROWS_AS(constValues.at(0), out_of_range);
+    CHECK_THROWS_AS(values.front(), out_of_range);
+    CHECK_THROWS_AS(constValues.front(), out_of_range);
+    CHECK_THROWS_AS(values.back(), out_of_range);
+    CHECK_THROWS_AS(constValues.back(), out_of_range);
 }
