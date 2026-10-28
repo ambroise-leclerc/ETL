@@ -13,6 +13,10 @@ option(ETL_BUILD_HOST_TESTS "Build the host-side Catch test suite" ON)
 option(ETL_BUILD_LIBSTD_HOST_TESTS "Build the Catch suites that include libstd next to the host library (does not compile)" OFF)
 option(ETL_BUILD_AVR_SMOKE "Build the AVR smoke example with avr-g++" OFF)
 
+if (ETL_BUILD_AVR_SMOKE AND NOT CMAKE_SYSTEM_PROCESSOR STREQUAL "avr")
+    message(FATAL_ERROR "ETL_BUILD_AVR_SMOKE requires an AVR toolchain. Configure with -DCMAKE_TOOLCHAIN_FILE=cmake/avr-gcc-toolchain.cmake.")
+endif()
+
 set(ETL_AVR_MCU "atmega328p" CACHE STRING "Target MCU for AVR smoke builds")
 # AVR profile smoke declarations resolve the default frequency from tools/avr_matrix.json.
 if (ETL_BUILD_AVR_SMOKE)
@@ -85,7 +89,9 @@ if (ETL_BUILD_HOST_TESTS)
 
     target_compile_options(TestsETL PRIVATE ${ETL_LIBSTD_WARNING_OPTIONS})
 
-    include(CTest)
+    if (PROJECT_IS_TOP_LEVEL)
+        include(CTest)
+    endif()
     if (BUILD_TESTING)
         add_test(NAME TestsETL COMMAND TestsETL ~[libstd])
         if (ETL_BUILD_LIBSTD_HOST_TESTS)
@@ -151,10 +157,6 @@ if (ETL_BUILD_HOST_TESTS)
 endif()
 
 if (ETL_BUILD_AVR_SMOKE)
-    if (NOT CMAKE_SYSTEM_PROCESSOR STREQUAL "avr")
-        message(FATAL_ERROR "ETL_BUILD_AVR_SMOKE requires an AVR toolchain. Configure with -DCMAKE_TOOLCHAIN_FILE=cmake/avr-gcc-toolchain.cmake.")
-    endif()
-
     include(cmake/AVRProfileSmoke.cmake)
 
     function(etl_add_avr_smoke_target target_name)

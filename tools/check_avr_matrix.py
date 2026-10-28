@@ -40,7 +40,7 @@ def check_artifacts(directory, profile):
     path = directory / f"{name}.map"
     contents = path.read_text()
     opposite = "full" if profile == "minimal" else "minimal"
-    if re.search(r"libstdc\+\+|GLIBCXX|libetlstd_" + opposite + r"\.a", contents, re.IGNORECASE):
+    if re.search(r"libstdc\+\+|GLIBCXX|" + re.escape(f"libetlstd_{opposite}.a"), contents, re.IGNORECASE):
         raise ValueError(f"Contaminated AVR profile link map: {path}")
     if f"libetlstd_{profile}.a" not in contents or f"__etl_profile_{profile}" not in contents:
         raise ValueError(f"Missing ETLStd profile archive/marker in {path}")

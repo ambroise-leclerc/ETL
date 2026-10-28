@@ -173,7 +173,10 @@ ETLStd CMake package
 --------------------
 
 AVR smoke builds also build the two exported runtime profile targets, `ETL::StdMinimal`
-and `ETL::StdFull`. To build and install the package independently of the examples:
+and `ETL::StdFull`. Package version **0.2.0** follows the packaging milestone (#129).
+During 0.x, CMake compatibility is limited to the same minor release (`SameMinorVersion`):
+a request for 0.2 does not accept a future 0.3 or 0.9 package. To build and install the package
+independently of the examples:
 
 ```sh
 cmake -S . -B build-std \
@@ -199,20 +202,32 @@ Rebuild and install for a different multilib. The install prefix can be moved af
 
 Both targets select C++23, freestanding compilation and the canonical headers, and exclude the
 compiler's C++ headers and libstdc++. Minimal disables exceptions and RTTI; full enables their
-compiler options. These profiles do not expand the component support described in
-[the libstd support matrix](libstd/readme.md) or provide a hosted exception runtime.
+compiler options, applied only to C++ sources in mixed C/C++ targets.
+**`StdFull` selects the compiler/profile configuration; it does not supply an exception or RTTI
+runtime.** Code using `throw`, exception handling or runtime type information must supply the
+required ABI runtime separately; otherwise it can fail at link time. The target names follow the
+package contract in #129/#130. These profiles do not expand the component support described in
+[the libstd support matrix](libstd/readme.md).
 The generated internal configuration rejects incompatible flags; linking translation units from
-both profiles fails on `__etl_profile_mismatch_guard`. The existing host `etl` target remains
+both profiles fails on `__etl_profile_mismatch_guard`, even with `--gc-sections`.
+Profile references and marker variables are retained by the package's linker script in the
+non-allocated `.etl.profile` INFO section. They add ELF metadata only: no constructor entries,
+startup calls, flash or SRAM bytes, and no Intel HEX payload. The existing host `etl` target remains
 independent, and host builds do not enable `ETL_BUILD_STD` by default.
 
 Profile smoke binaries are `etl_avr_std_minimal_smoke.{elf,hex,map}` and
 `etl_avr_std_full_smoke.{elf,hex,map}`. Build a single profile with
 `cmake --build build-avr --target etl_avr_std_minimal_smoke_check` (or `full`).
 The check targets reject missing artifacts and maps containing `libstdc++`, `GLIBCXX`, or the
-opposite profile archive. CI retains all three artifacts for each of the 26 combinations.
+opposite profile archive. Both `avr-smoke` and `avr-profiles` use the pinned toolchains from
+`tools/avr_toolchains.json`. CI builds all 26 combinations on **each** of modern-avr GCC 14.2,
+ZakKemble GCC 15.2 and 16.1 (78 combinations in total), retaining all three artifacts for each.
+Profile jobs share the toolchain cache and run at most six concurrently.
 
 [Package/profile checks](tools/test_etlstd_profiles.py) cover build-tree and relocated install-tree
-consumption, multilib/archive diagnostics, incompatible flags and mixed-profile link failures.
+consumption with mixed C/C++ sources, flash/SRAM equivalence to unprofiled binaries,
+multilib/archive diagnostics, 0.x version compatibility, subdirectory integration without
+activating CTest, incompatible flags and mixed-profile link failures.
 [Matrix checks](tools/check_avr_matrix.py) validate documentation and modeled devices and emit
 the matrix consumed by [CI](.github/workflows/ci.yml).
 

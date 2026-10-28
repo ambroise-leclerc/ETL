@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """AVR configuration/link checks for the exported ETLStd package (no execution)."""
 import argparse
+import re
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -21,6 +23,15 @@ def main():
     parser.add_argument("--compiler", required=True)
     parser.add_argument("--mcu", required=True)
     args = parser.parse_args()
+    compiler_bin = Path(args.compiler).resolve().parent
+
+    def avr_tool(name):
+        return shutil.which(name, path=str(compiler_bin)) or shutil.which(name) or name
+
+    def loaded_sizes(binary):
+        sizes = run(avr_tool("avr-size"), "-A", binary)
+        return {name: int(size) for name, size in re.findall(r"^(\.text|\.data|\.bss)\s+(\d+)", sizes, re.MULTILINE)}
+
     with tempfile.TemporaryDirectory(prefix="etlstd-profiles-") as temporary:
         temp = Path(temporary)
         prefix = temp / "prefix"
@@ -45,6 +56,44 @@ def main():
                 build = configure(ROOT / "test/package_consumer", f"{location}-{profile}", package,
                                   f"-DETLSTD_TEST_TARGET=ETL::Std{profile}")
                 run("cmake", "--build", build)
+                binary = build / "consumer"
+                if loaded_sizes(binary) != loaded_sizes(build / "unprofiled"):
+                    raise RuntimeError(f"Profile identity adds flash/SRAM cost: {binary}")
+                sections = run(avr_tool("avr-objdump"), "-h", binary)
+                section = re.search(r"^\s*\d+ \.etl\.profile\s+[^\n]+\n([^\n]+)", sections, re.MULTILINE)
+                if not section or any(flag in section[1] for flag in ("ALLOC", "LOAD", "CODE")):
+                    raise RuntimeError(f"Profile identity is missing or allocated/executable: {binary}")
+
+        version_probe = temp / "versions.cmake"
+        version_probe.write_text('''foreach(minor 1 2 3 9)
+    set(PACKAGE_FIND_VERSION "0.${minor}")
+    set(PACKAGE_FIND_VERSION_MAJOR 0)
+    set(PACKAGE_FIND_VERSION_MINOR ${minor})
+    set(PACKAGE_FIND_VERSION_PATCH 0)
+    set(PACKAGE_FIND_VERSION_TWEAK 0)
+    include("${VERSION_FILE}")
+    if (minor EQUAL 2)
+        if (NOT PACKAGE_VERSION_COMPATIBLE)
+            message(FATAL_ERROR "0.2 must accept the installed 0.2.0 package")
+        endif()
+    elseif(PACKAGE_VERSION_COMPATIBLE)
+        message(FATAL_ERROR "0.${minor} must reject the installed 0.2.0 package")
+    endif()
+endforeach()
+''')
+        subprocess.run(["cmake", f"-DVERSION_FILE={config / 'ETLStdConfigVersion.cmake'}",
+                        "-P", str(version_probe)], cwd=temp, check=True)
+
+        wrapper = temp / "wrapper"
+        wrapper.mkdir()
+        (wrapper / "CMakeLists.txt").write_text(f'''cmake_minimum_required(VERSION 3.25)
+project(Parent LANGUAGES CXX)
+add_subdirectory("{ROOT}" etl)
+if (DEFINED BUILD_TESTING)
+    message(FATAL_ERROR "ETL unexpectedly enabled CTest in its parent")
+endif()
+''')
+        configure(wrapper, "subdirectory", config, "-DETL_BUILD_HOST_TESTS=OFF", "-DETL_BUILD_STD=ON")
 
         source = temp / "negative"
         source.mkdir()
@@ -59,6 +108,7 @@ add_library(full OBJECT other.cpp)
 target_link_libraries(full PRIVATE ETL::StdFull)
 add_executable(mixed $<TARGET_OBJECTS:minimal> $<TARGET_OBJECTS:full>)
 target_link_libraries(mixed PRIVATE ETL::StdMinimal ETL::StdFull)
+target_link_options(mixed PRIVATE -Wl,--gc-sections)
 add_executable(bad_flags main.cpp)
 target_link_libraries(bad_flags PRIVATE ${PROFILE})
 target_compile_options(bad_flags PRIVATE ${BAD_FLAG})
@@ -82,6 +132,19 @@ find_package(ETLStd CONFIG REQUIRED)
         # ATmega2560 uses a different multilib from every ETL-modeled AVR.
         configure(ROOT / "test/package_consumer", "wrong-multilib", config, "-DETL_AVR_MCU=atmega2560",
                   success=False, diagnostic="ETLStd has no runtime for MCU")
+        incomplete = temp / "incomplete-build-tree"
+        incomplete.mkdir()
+        for name in ("ETLStdConfig.cmake", "ETLStdConfigVersion.cmake", "ETLStdTargets.cmake", "ETLStdValidate.cmake"):
+            shutil.copyfile(args.build / name, incomplete / name)
+        targets = incomplete / "ETLStdTargets.cmake"
+        rewritten, count = re.subn(r'(IMPORTED_LOCATION_\w+ ")[^"]*libetlstd_minimal\.a(")',
+                                   lambda match: match[1] + str(incomplete / "missing.a") + match[2],
+                                   targets.read_text())
+        if not count:
+            raise RuntimeError("Build-tree export contains no minimal runtime location")
+        targets.write_text(rewritten)
+        configure(ROOT / "test/package_consumer", "missing-build-archive", incomplete,
+                  success=False, diagnostic="ETLStd runtime archive is missing")
         archive = next(relocated.rglob("libetlstd_minimal.a"))
         archive.unlink()
         configure(ROOT / "test/package_consumer", "missing-archive", config,

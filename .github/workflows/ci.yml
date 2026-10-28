@@ -79,18 +79,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        toolchain:
-          # Reference toolchain: the only prebuilt AVR GCC shipping libstdc++
-          - name: modern-avr-14.2.0
-            url: https://github.com/modern-avr/toolchain/releases/download/v14.2.0/toolchain-atmelavr-libstdcxx.linux_x86_64.tar.gz
-            sha256: 139fb9f03c0ddbcd94a74048141ed0ca461fa8701bc5752a73c2f6814d1f1391
-          # Recent GCCs, without libstdc++: ETL must build on its bundled libstd alone
-          - name: avr-gcc-15.2.0
-            url: https://github.com/ZakKemble/avr-gcc-build/releases/download/v15.2.0-1/avr-gcc-15.2.0-x64-linux.tar.bz2
-            sha256: d90765e6d975950afa235aa998122f97aae8b00504399068b6c9d0bf4994b0fe
-          - name: avr-gcc-16.1.0
-            url: https://github.com/ZakKemble/avr-gcc-build/releases/download/v16.1.0-1/avr-gcc-16.1.0-x64-linux.tar.bz2
-            sha256: 8621ecc6514df50202b58b23b0f8f72f0e535ec35ee40426194e9a15c57692f6
+        toolchain: ${{ fromJSON(needs.avr-matrix.outputs.toolchains) }}
         target: ${{ fromJSON(needs.avr-matrix.outputs.regression) }}
 
     steps:
@@ -210,23 +199,28 @@ jobs:
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
       regression: ${{ steps.matrix.outputs.regression }}
+      toolchains: ${{ steps.matrix.outputs.toolchains }}
     steps:
       - uses: actions/checkout@v4
       - id: matrix
         run: |
+          toolchains=$(python3 -c 'import json; print(json.dumps(json.load(open("tools/avr_toolchains.json")), separators=(",", ":")))')
+          echo "toolchains=$toolchains" >> "$GITHUB_OUTPUT"
           matrix=$(python3 tools/check_avr_matrix.py --github)
           regression=$(python3 tools/check_avr_matrix.py --github-regression)
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
           echo "regression=$regression" >> "$GITHUB_OUTPUT"
 
   avr-profiles:
-    name: AVR profile (${{ matrix.mcu }}, ${{ matrix.profile }})
+    name: AVR profile (${{ matrix.toolchain.name }}, ${{ matrix.target.mcu }}, ${{ matrix.target.profile }})
     needs: avr-matrix
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       max-parallel: 6
-      matrix: ${{ fromJSON(needs.avr-matrix.outputs.matrix) }}
+      matrix:
+        toolchain: ${{ fromJSON(needs.avr-matrix.outputs.toolchains) }}
+        target: ${{ fromJSON(needs.avr-matrix.outputs.matrix).include }}
     steps:
       - uses: actions/checkout@v4
 
@@ -235,14 +229,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: toolchain
-          key: avr-toolchain-139fb9f03c0ddbcd94a74048141ed0ca461fa8701bc5752a73c2f6814d1f1391
+          key: avr-toolchain-${{ matrix.toolchain.sha256 }}
 
       - name: Download AVR toolchain
         if: steps.cache-toolchain.outputs.cache-hit != 'true'
         run: |
-          archive="$RUNNER_TEMP/avr-toolchain.tar.gz"
-          curl -fsSL -o "$archive" https://github.com/modern-avr/toolchain/releases/download/v14.2.0/toolchain-atmelavr-libstdcxx.linux_x86_64.tar.gz
-          echo "139fb9f03c0ddbcd94a74048141ed0ca461fa8701bc5752a73c2f6814d1f1391  $archive" | sha256sum --check
+          archive="${RUNNER_TEMP}/$(basename "${{ matrix.toolchain.url }}")"
+          curl -fsSL -o "$archive" "${{ matrix.toolchain.url }}"
+          echo "${{ matrix.toolchain.sha256 }}  $archive" | sha256sum --check
           mkdir -p toolchain
           tar -xaf "$archive" -C toolchain
 
@@ -255,20 +249,20 @@ jobs:
           -DCMAKE_TOOLCHAIN_FILE=cmake/avr-gcc-toolchain.cmake
           -DETL_BUILD_HOST_TESTS=OFF
           -DETL_BUILD_AVR_SMOKE=ON
-          -DETL_AVR_MCU=${{ matrix.mcu }}
-          -DETL_AVR_F_CPU=${{ matrix.f_cpu }}
+          -DETL_AVR_MCU=${{ matrix.target.mcu }}
+          -DETL_AVR_F_CPU=${{ matrix.target.f_cpu }}
 
       - name: Compile, link and check profile artifacts
-        run: cmake --build build-avr --target etl_avr_std_${{ matrix.profile }}_smoke_check --parallel 2
+        run: cmake --build build-avr --target etl_avr_std_${{ matrix.target.profile }}_smoke_check --parallel 2
 
       - name: Upload ELF, HEX and link map
         uses: actions/upload-artifact@v4
         with:
-          name: avr-${{ matrix.mcu }}-${{ matrix.profile }}
+          name: avr-${{ matrix.toolchain.name }}-${{ matrix.target.mcu }}-${{ matrix.target.profile }}
           path: |
-            build-avr/etl_avr_std_${{ matrix.profile }}_smoke.elf
-            build-avr/etl_avr_std_${{ matrix.profile }}_smoke.hex
-            build-avr/etl_avr_std_${{ matrix.profile }}_smoke.map
+            build-avr/etl_avr_std_${{ matrix.target.profile }}_smoke.elf
+            build-avr/etl_avr_std_${{ matrix.target.profile }}_smoke.hex
+            build-avr/etl_avr_std_${{ matrix.target.profile }}_smoke.map
           if-no-files-found: error
 
   # Single required check for branch protection, independent of the matrix contents

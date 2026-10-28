@@ -10,8 +10,7 @@
 #error "ETLStd profile conflicts with the compiler RTTI flags"
 #endif
 
-extern "C" void __etl_profile_@ETL_PROFILE@();
-// AVR's startup code retains .ctors even with --gc-sections. Every translation unit requires its
-// profile archive; mixing profiles extracts both archives and diagnoses the shared strong guard.
-[[gnu::used, gnu::section(".ctors")]] static void (*const __etl_profile_reference)() =
-    __etl_profile_@ETL_PROFILE@;
+extern "C" const unsigned char __etl_profile_@ETL_PROFILE@;
+// Retained by profile.ld in a non-allocated INFO section, with no startup calls or flash/SRAM cost.
+[[gnu::used, gnu::section(".etl.profile.refs")]] static const unsigned char* const __etl_profile_reference =
+    &__etl_profile_@ETL_PROFILE@;

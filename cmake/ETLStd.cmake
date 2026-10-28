@@ -54,14 +54,21 @@ foreach(ETL_PROFILE minimal full)
         $<BUILD_INTERFACE:${config_dir}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/ETLStd/${ETL_PROFILE}>)
     target_compile_options(etlstd_${ETL_PROFILE} PUBLIC
-        -std=c++23 -ffreestanding ${profile_flags} -nostdinc++
-        "SHELL:-include __etl/config")
-    target_link_options(etlstd_${ETL_PROFILE} INTERFACE -nostdlib++)
+        "$<$<COMPILE_LANGUAGE:CXX>:-std=c++23;-ffreestanding;${profile_flags};-nostdinc++>"
+        "$<$<COMPILE_LANGUAGE:CXX>:SHELL:-include __etl/config>")
+    target_link_options(etlstd_${ETL_PROFILE} INTERFACE -nostdlib++
+        "$<BUILD_INTERFACE:LINKER:-T,${CMAKE_CURRENT_LIST_DIR}/etlstd/profile.ld>"
+        "$<INSTALL_INTERFACE:LINKER:-T,$<INSTALL_PREFIX>/${CMAKE_INSTALL_LIBDIR}/ETLStd/profile.ld>")
+    set_property(TARGET etlstd_${ETL_PROFILE} APPEND PROPERTY INTERFACE_LINK_DEPENDS
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/etlstd/profile.ld>"
+        "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_LIBDIR}/ETLStd/profile.ld>")
     install(TARGETS etlstd_${ETL_PROFILE} EXPORT ETLStdTargets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/ETLStd/${ETLSTD_MULTILIB} COMPONENT ETLStd)
     install(FILES ${config_dir}/__etl/config
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ETLStd/${ETL_PROFILE}/__etl COMPONENT ETLStd)
 endforeach()
+install(FILES ${CMAKE_CURRENT_LIST_DIR}/etlstd/profile.ld
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/ETLStd COMPONENT ETLStd)
 install(TARGETS etlstd_headers EXPORT ETLStdTargets COMPONENT ETLStd)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/libstd/include/c++/v1/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ETLStd/c++/v1 COMPONENT ETLStd)
@@ -73,18 +80,25 @@ configure_file(${CMAKE_CURRENT_LIST_DIR}/ETLStdValidate.cmake
 install(FILES ${PROJECT_BINARY_DIR}/ETLStdValidate.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ETLStd COMPONENT ETLStd)
 set(package_dir ${CMAKE_INSTALL_LIBDIR}/cmake/ETLStd)
+set(ETLSTD_BUILD_TREE TRUE)
 configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/ETLStdConfig.cmake.in
     ${PROJECT_BINARY_DIR}/ETLStdConfig.cmake INSTALL_DESTINATION ${package_dir})
+set(ETLSTD_BUILD_TREE FALSE)
+configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/ETLStdConfig.cmake.in
+    ${PROJECT_BINARY_DIR}/install/ETLStdConfig.cmake INSTALL_DESTINATION ${package_dir})
+# Keep 0.x package compatibility within a minor release.
 write_basic_package_version_file(${PROJECT_BINARY_DIR}/ETLStdConfigVersion.cmake
-    VERSION ${PROJECT_VERSION} COMPATIBILITY SameMajorVersion)
+    VERSION ${PROJECT_VERSION} COMPATIBILITY SameMinorVersion)
 export(TARGETS etlstd_headers etlstd_minimal etlstd_full
     NAMESPACE ETL:: FILE ${PROJECT_BINARY_DIR}/ETLStdTargets.cmake)
 install(EXPORT ETLStdTargets NAMESPACE ETL:: DESTINATION ${package_dir} COMPONENT ETLStd)
-install(FILES ${PROJECT_BINARY_DIR}/ETLStdConfig.cmake ${PROJECT_BINARY_DIR}/ETLStdConfigVersion.cmake
+install(FILES ${PROJECT_BINARY_DIR}/install/ETLStdConfig.cmake ${PROJECT_BINARY_DIR}/ETLStdConfigVersion.cmake
     DESTINATION ${package_dir} COMPONENT ETLStd)
 
-include(CTest)
-if (BUILD_TESTING)
+if (PROJECT_IS_TOP_LEVEL)
+    include(CTest)
+endif()
+if (PROJECT_IS_TOP_LEVEL AND BUILD_TESTING)
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
     add_test(NAME etlstd-profile-package
         COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/tools/test_etlstd_profiles.py
