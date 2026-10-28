@@ -1,0 +1,17 @@
+[
+  {
+    "name": "modern-avr-14.2.0",
+    "url": "https://github.com/modern-avr/toolchain/releases/download/v14.2.0/toolchain-atmelavr-libstdcxx.linux_x86_64.tar.gz",
+    "sha256": "139fb9f03c0ddbcd94a74048141ed0ca461fa8701bc5752a73c2f6814d1f1391"
+  },
+  {
+    "name": "avr-gcc-15.2.0",
+    "url": "https://github.com/ZakKemble/avr-gcc-build/releases/download/v15.2.0-1/avr-gcc-15.2.0-x64-linux.tar.bz2",
+    "sha256": "d90765e6d975950afa235aa998122f97aae8b00504399068b6c9d0bf4994b0fe"
+  },
+  {
+    "name": "avr-gcc-16.1.0",
+    "url": "https://github.com/ZakKemble/avr-gcc-build/releases/download/v16.1.0-1/avr-gcc-16.1.0-x64-linux.tar.bz2",
+    "sha256": "8621ecc6514df50202b58b23b0f8f72f0e535ec35ee40426194e9a15c57692f6"
+  }
+]

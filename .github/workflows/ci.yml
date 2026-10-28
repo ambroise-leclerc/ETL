@@ -15,6 +15,11 @@ jobs:
       - name: Self-test the source policy checker
         run: python3 tools/check_libstd_namespace.py --self-test
 
+      - name: Check supported AVR device matrix
+        run: |
+          python3 tools/test_avr_matrix.py
+          python3 tools/check_avr_matrix.py
+
       - name: Check ETLSTD and repository-qualified standard includes
         run: python3 tools/check_libstd_namespace.py
 
@@ -68,53 +73,23 @@ jobs:
         run: ctest --test-dir build --output-on-failure
 
   avr-smoke:
+    needs: avr-matrix
     name: avr (${{ matrix.toolchain.name }}, ${{ matrix.target.mcu }})
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        toolchain:
-          # Reference toolchain: the only prebuilt AVR GCC shipping libstdc++
-          - name: modern-avr-14.2.0
-            url: https://github.com/modern-avr/toolchain/releases/download/v14.2.0/toolchain-atmelavr-libstdcxx.linux_x86_64.tar.gz
-            sha256: 139fb9f03c0ddbcd94a74048141ed0ca461fa8701bc5752a73c2f6814d1f1391
-          # Recent GCCs, without libstdc++: ETL must build on its bundled libstd alone
-          - name: avr-gcc-15.2.0
-            url: https://github.com/ZakKemble/avr-gcc-build/releases/download/v15.2.0-1/avr-gcc-15.2.0-x64-linux.tar.bz2
-            sha256: d90765e6d975950afa235aa998122f97aae8b00504399068b6c9d0bf4994b0fe
-          - name: avr-gcc-16.1.0
-            url: https://github.com/ZakKemble/avr-gcc-build/releases/download/v16.1.0-1/avr-gcc-16.1.0-x64-linux.tar.bz2
-            sha256: 8621ecc6514df50202b58b23b0f8f72f0e535ec35ee40426194e9a15c57692f6
-        target:
-          # timer0_vectors: Timer0 overflow and compare match A vector numbers
-          - mcu: atmega328p
-            f_cpu: 16000000UL
-            timer0_vectors: 16 14
-          - mcu: attiny84
-            f_cpu: 8000000UL
-            timer0_vectors: 11 9
+        toolchain: ${{ fromJSON(needs.avr-matrix.outputs.toolchains) }}
+        target: ${{ fromJSON(needs.avr-matrix.outputs.regression) }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache AVR toolchain
-        id: cache-toolchain
-        uses: actions/cache@v4
+      - name: Set up AVR toolchain
+        uses: ./.github/actions/setup-avr
         with:
-          path: toolchain
-          key: avr-toolchain-${{ matrix.toolchain.sha256 }}
-
-      - name: Download AVR toolchain
-        if: steps.cache-toolchain.outputs.cache-hit != 'true'
-        run: |
-          archive="${RUNNER_TEMP}/$(basename "${{ matrix.toolchain.url }}")"
-          curl -fsSL -o "${archive}" "${{ matrix.toolchain.url }}"
-          echo "${{ matrix.toolchain.sha256 }}  ${archive}" | sha256sum --check
-          mkdir -p toolchain
-          tar -xaf "${archive}" -C toolchain
-
-      - name: Add AVR toolchain to PATH
-        run: find "${PWD}/toolchain" -type f -name avr-g++ -printf '%h\n' | head -n 1 >> "${GITHUB_PATH}"
+          url: ${{ matrix.toolchain.url }}
+          sha256: ${{ matrix.toolchain.sha256 }}
 
       - name: Show AVR compiler
         run: avr-g++ --version | head -n 1
@@ -130,6 +105,9 @@ jobs:
 
       - name: Build AVR smoke target
         run: cmake --build build-avr
+
+      - name: Check ETLStd package and profile boundaries
+        run: ctest --test-dir build-avr -R etlstd-profile --output-on-failure
 
       - name: Check HEX outputs
         run: |
@@ -155,13 +133,13 @@ jobs:
       - name: Build for every supported MCU
         if: matrix.target.mcu == 'atmega328p'
         run: |
-          for mcu in atmega48a atmega48pa atmega88a atmega88pa atmega168a atmega168p atmega168pa \
-                     atmega328 atmega328p atmega32u4 atmega644a atmega644p attiny84; do
+          python3 tools/check_avr_matrix.py --devices > "$RUNNER_TEMP/avr-devices"
+          while read -r mcu f_cpu; do
             echo "::group::${mcu}"
-            avr-g++ -std=c++23 -mmcu=${mcu} -DF_CPU=8000000UL -Os -Wall -Werror -Wno-literal-suffix \
+            avr-g++ -std=c++23 -mmcu=${mcu} -DF_CPU=${f_cpu} -Os -Wall -Werror -Wno-literal-suffix \
               -isystem libstd/include/c++/v1 -I. -Iinclude examples/avr/device_smoke.cpp -o device_smoke_${mcu}.elf
             echo "::endgroup::"
-          done
+          done < "$RUNNER_TEMP/avr-devices"
 
       - name: Check allocation functions
         run: |
@@ -202,11 +180,71 @@ jobs:
             echo '```'
           } >> "${GITHUB_STEP_SUMMARY}"
 
+  avr-matrix:
+    name: AVR profile matrix
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      regression: ${{ steps.matrix.outputs.regression }}
+      toolchains: ${{ steps.matrix.outputs.toolchains }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: matrix
+        run: |
+          toolchains=$(python3 -c 'import json; print(json.dumps(json.load(open("tools/avr_toolchains.json")), separators=(",", ":")))')
+          echo "toolchains=$toolchains" >> "$GITHUB_OUTPUT"
+          matrix=$(python3 tools/check_avr_matrix.py --github)
+          regression=$(python3 tools/check_avr_matrix.py --github-regression)
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "regression=$regression" >> "$GITHUB_OUTPUT"
+
+  avr-profiles:
+    name: AVR profile (${{ matrix.toolchain.name }}, ${{ matrix.target.mcu }}, ${{ matrix.target.profile }})
+    needs: avr-matrix
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        toolchain: ${{ fromJSON(needs.avr-matrix.outputs.toolchains) }}
+        target: ${{ fromJSON(needs.avr-matrix.outputs.matrix).include }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up AVR toolchain
+        uses: ./.github/actions/setup-avr
+        with:
+          url: ${{ matrix.toolchain.url }}
+          sha256: ${{ matrix.toolchain.sha256 }}
+
+      - name: Configure profile smoke
+        run: >
+          cmake -S . -B build-avr
+          -DCMAKE_TOOLCHAIN_FILE=cmake/avr-gcc-toolchain.cmake
+          -DETL_BUILD_HOST_TESTS=OFF
+          -DETL_BUILD_AVR_SMOKE=ON
+          -DETL_AVR_MCU=${{ matrix.target.mcu }}
+          -DETL_AVR_F_CPU=${{ matrix.target.f_cpu }}
+
+      - name: Compile, link and check profile artifacts
+        run: cmake --build build-avr --target etl_avr_std_${{ matrix.target.profile }}_smoke_check --parallel 2
+
+      - name: Upload ELF, HEX and link map
+        uses: actions/upload-artifact@v4
+        with:
+          name: avr-${{ matrix.toolchain.name }}-${{ matrix.target.mcu }}-${{ matrix.target.profile }}
+          path: |
+            build-avr/etl_avr_std_${{ matrix.target.profile }}_smoke.elf
+            build-avr/etl_avr_std_${{ matrix.target.profile }}_smoke.hex
+            build-avr/etl_avr_std_${{ matrix.target.profile }}_smoke.map
+          if-no-files-found: error
+          retention-days: 14
+
   # Single required check for branch protection, independent of the matrix contents
   ci-ok:
     name: ci-ok
     if: always()
-    needs: [source-policy, host-tests, avr-smoke]
+    needs: [source-policy, host-tests, avr-smoke, avr-matrix, avr-profiles]
     runs-on: ubuntu-24.04
     steps:
       - name: Check that all CI jobs succeeded
@@ -214,6 +252,10 @@ jobs:
           echo "source-policy: ${{ needs.source-policy.result }}"
           echo "host-tests: ${{ needs.host-tests.result }}"
           echo "avr-smoke: ${{ needs.avr-smoke.result }}"
+          echo "avr-matrix: ${{ needs.avr-matrix.result }}"
+          echo "avr-profiles: ${{ needs.avr-profiles.result }}"
+          test "${{ needs.avr-matrix.result }}" = success
+          test "${{ needs.avr-profiles.result }}" = success
           test "${{ needs.source-policy.result }}" = success
           test "${{ needs.host-tests.result }}" = success
           test "${{ needs.avr-smoke.result }}" = success

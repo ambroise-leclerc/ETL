@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25...4.2)
 
-project(ETL LANGUAGES CXX)
+project(ETL VERSION 0.2.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,8 +13,20 @@ option(ETL_BUILD_HOST_TESTS "Build the host-side Catch test suite" ON)
 option(ETL_BUILD_LIBSTD_HOST_TESTS "Build the Catch suites that include libstd next to the host library (does not compile)" OFF)
 option(ETL_BUILD_AVR_SMOKE "Build the AVR smoke example with avr-g++" OFF)
 
+if (ETL_BUILD_AVR_SMOKE AND NOT CMAKE_SYSTEM_PROCESSOR STREQUAL "avr")
+    message(FATAL_ERROR "ETL_BUILD_AVR_SMOKE requires an AVR toolchain. Configure with -DCMAKE_TOOLCHAIN_FILE=cmake/avr-gcc-toolchain.cmake.")
+endif()
+
 set(ETL_AVR_MCU "atmega328p" CACHE STRING "Target MCU for AVR smoke builds")
-set(ETL_AVR_F_CPU "16000000UL" CACHE STRING "F_CPU definition for AVR smoke builds")
+# AVR profile smoke declarations resolve the default frequency from tools/avr_matrix.json.
+if (ETL_BUILD_AVR_SMOKE)
+    include(cmake/AVRMatrixDefaults.cmake)
+endif()
+
+option(ETL_BUILD_STD "Build and export AVR ETLStd runtime profiles" ${ETL_BUILD_AVR_SMOKE})
+if (ETL_BUILD_STD)
+    include(cmake/ETLStd.cmake)
+endif()
 
 set(ETL_HEADERS include/etl/debug_policies.h include/etl/freestore.h include/etl/interrupts.h include/etl/ioports.h
                 include/etl/metautils.h include/etl/watchdog.h)
@@ -77,7 +89,9 @@ if (ETL_BUILD_HOST_TESTS)
 
     target_compile_options(TestsETL PRIVATE ${ETL_LIBSTD_WARNING_OPTIONS})
 
-    include(CTest)
+    if (PROJECT_IS_TOP_LEVEL)
+        include(CTest)
+    endif()
     if (BUILD_TESTING)
         add_test(NAME TestsETL COMMAND TestsETL ~[libstd])
         if (ETL_BUILD_LIBSTD_HOST_TESTS)
@@ -86,6 +100,12 @@ if (ETL_BUILD_HOST_TESTS)
 
         find_package(Python3 COMPONENTS Interpreter)
         if (Python3_Interpreter_FOUND)
+            add_test(NAME avr-matrix-defaults
+                     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/test_avr_defaults.py)
+            add_test(NAME avr-matrix-checker
+                     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/test_avr_matrix.py)
+            add_test(NAME avr-matrix
+                     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/check_avr_matrix.py)
             add_test(NAME libstd-compat-headers
                      COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/generate_libstd_compat_headers.py --check)
             add_test(NAME libstd-source-policy-self-test
@@ -139,9 +159,7 @@ if (ETL_BUILD_HOST_TESTS)
 endif()
 
 if (ETL_BUILD_AVR_SMOKE)
-    if (NOT CMAKE_SYSTEM_PROCESSOR STREQUAL "avr")
-        message(FATAL_ERROR "ETL_BUILD_AVR_SMOKE requires an AVR toolchain. Configure with -DCMAKE_TOOLCHAIN_FILE=cmake/avr-gcc-toolchain.cmake.")
-    endif()
+    include(cmake/AVRProfileSmoke.cmake)
 
     function(etl_add_avr_smoke_target target_name)
         add_executable(${target_name}

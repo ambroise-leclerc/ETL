@@ -1,0 +1,21 @@
+# The same JSON feeds the CI matrix and the local MCU/F_CPU validation.
+file(READ "${PROJECT_SOURCE_DIR}/tools/avr_matrix.json" devices)
+string(JSON count LENGTH "${devices}")
+math(EXPR last "${count} - 1")
+set(found FALSE)
+foreach(index RANGE ${last})
+    string(JSON mcu GET "${devices}" ${index} mcu)
+    if (mcu STREQUAL ETL_AVR_MCU)
+        string(JSON frequency GET "${devices}" ${index} f_cpu)
+        set(found TRUE)
+        break()
+    endif()
+endforeach()
+if (NOT found)
+    message(FATAL_ERROR "ETL_AVR_MCU=${ETL_AVR_MCU} is not in tools/avr_matrix.json.")
+endif()
+if (NOT DEFINED ETL_AVR_F_CPU)
+    # Recompute automatic defaults on every configure. Only an explicit -D override belongs
+    # in the cache, so selecting another MCU also selects its default clock.
+    set(ETL_AVR_F_CPU "${frequency}")
+endif()
