@@ -252,6 +252,8 @@ jobs:
           echo "source-policy: ${{ needs.source-policy.result }}"
           echo "host-tests: ${{ needs.host-tests.result }}"
           echo "avr-smoke: ${{ needs.avr-smoke.result }}"
+          echo "avr-matrix: ${{ needs.avr-matrix.result }}"
+          echo "avr-profiles: ${{ needs.avr-profiles.result }}"
           test "${{ needs.avr-matrix.result }}" = success
           test "${{ needs.avr-profiles.result }}" = success
           test "${{ needs.source-policy.result }}" = success

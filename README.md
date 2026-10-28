@@ -198,7 +198,10 @@ target_link_libraries(application PRIVATE ETL::StdMinimal) # or ETL::StdFull
 For build-tree consumption, set `ETLStd_DIR` to `build-std` instead. Installed headers live
 under `include/ETLStd/c++/v1` and platform headers under `include/ETLStd/vendor`; runtime archives
 live under `lib/ETLStd/<GCC-multilib>`. A package can serve another MCU with the same GCC multilib.
-Rebuild and install for a different multilib. The install prefix can be moved after installation.
+Each install prefix describes **one multilib only**: `ETLStdTargets.cmake` and the configured
+multilib are replaced on installation. Build and install a different multilib into a **distinct
+prefix**, then point consumers at that prefix. Installing it over an existing prefix changes its
+package selection, even if older archive files remain. The install prefix can be moved after installation.
 
 Both targets select C++23, freestanding compilation and the canonical headers, and exclude the
 compiler's C++ headers and libstdc++. Minimal disables exceptions and RTTI; full enables their
@@ -218,6 +221,12 @@ independent, and host builds do not enable `ETL_BUILD_STD` by default.
 Profile smoke binaries are `etl_avr_std_minimal_smoke.{elf,hex,map}` and
 `etl_avr_std_full_smoke.{elf,hex,map}`. Build a single profile with
 `cmake --build build-avr --target etl_avr_std_minimal_smoke_check` (or `full`).
+The minimal smoke checks non-allocating standard headers independently of `<etl.h>`; the full
+smoke includes `<etl.h>` for the current device-specific allocator and exercises `std::unique_ptr`.
+A separate object-only target, `etl_avr_std_full_options_smoke`, compiles `try`/`catch`, `throw` and
+`dynamic_cast` with `ETL::StdFull`. It is a dependency of the full check target on every MCU and
+toolchain. Its objects are never linked into the executable, so this checks compiler selection
+without requiring an exception/RTTI ABI runtime.
 The check targets reject missing artifacts and maps containing `libstdc++`, `GLIBCXX`, or the
 opposite profile archive. Both `avr-smoke` and `avr-profiles` use the pinned toolchains from
 `tools/avr_toolchains.json`. CI builds all 26 combinations on **each** of modern-avr GCC 14.2,
@@ -229,7 +238,10 @@ Uploaded profile artifacts are retained for 14 days.
 [Package/profile checks](tools/test_etlstd_profiles.py) cover build-tree and relocated install-tree
 consumption with mixed C/C++ sources, flash/SRAM equivalence to unprofiled binaries,
 multilib/archive diagnostics, 0.x version compatibility, subdirectory integration without
-activating CTest, incompatible flags and mixed-profile link failures.
+activating CTest, incompatible flags and mixed-profile link failures. In CI, `etlstd-profile`
+runs only in `avr-smoke`: ATmega328P and ATtiny84 on all three toolchains. The remaining eleven
+devices receive compile/link/artifact checks in `avr-profiles`, including the object-only full
+options probe; package installation/relocation tests are not repeated for each device.
 [Matrix checks](tools/check_avr_matrix.py) validate documentation and modeled devices and emit
 the matrix consumed by [CI](.github/workflows/ci.yml).
 
@@ -243,8 +255,19 @@ and ETL's device dispatcher. These are compile/link checks, without simulator ex
 `ETL_BUILD_AVR_SMOKE=ON` accepts only the 13 modeled devices in this table; selecting an unlisted
 MCU (for example `atmega2560`) now fails at configuration time, even with an explicit clock.
 The matrix's default `F_CPU` is recomputed on every configure and is not cached. An explicit
-`-DETL_AVR_F_CPU=...` remains a persistent user override. Use `-UETL_AVR_F_CPU` to clear it;
-this also clears automatically cached defaults left by earlier revisions of this branch.
+`-DETL_AVR_F_CPU=...` remains a persistent user override.
+
+Migration notes for existing build and install directories:
+
+- **Clock cache:** master already cached `ETL_AVR_F_CPU=16000000UL`. Existing build directories
+  from master or earlier revisions of this branch therefore retain that value as an override,
+  including after changing MCU. Its origin cannot be distinguished from an intentional user
+  setting. Run `cmake -S . -B <build> -UETL_AVR_F_CPU` to resume MCU-derived defaults, or pass
+  `-DETL_AVR_F_CPU=...` to select the intended clock explicitly.
+- **Supported devices:** smoke configurations now reject MCUs outside the 13 modeled devices,
+  including with an explicit clock. This is a configuration-time compatibility break.
+- **Install prefixes:** use a separate ETLStd prefix for each GCC multilib; installing a second
+  multilib into the same prefix replaces its exported package selection.
 
 Artifact checks (`--artifacts DIR [--profile minimal|full]`) inspect outputs without reading the
 manifest, README or device dispatcher. Matrix/documentation drift is checked separately by CI

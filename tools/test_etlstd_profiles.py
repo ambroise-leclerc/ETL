@@ -104,9 +104,14 @@ endif()
         source.mkdir()
         (source / "main.cpp").write_text("int main() { return 0; }\n")
         (source / "other.cpp").write_text("int other() { return 1; }\n")
+        (source / "full_options.cpp").write_text((ROOT / "examples/avr/std_full_options_smoke.cpp").read_text())
         (source / "CMakeLists.txt").write_text('''cmake_minimum_required(VERSION 3.25)
 project(ProfileProbes LANGUAGES CXX)
 find_package(ETLStd CONFIG REQUIRED)
+add_library(full_options OBJECT full_options.cpp)
+target_link_libraries(full_options PRIVATE ETL::StdFull)
+add_library(minimal_options OBJECT full_options.cpp)
+target_link_libraries(minimal_options PRIVATE ETL::StdMinimal)
 add_library(minimal OBJECT main.cpp)
 target_link_libraries(minimal PRIVATE ETL::StdMinimal)
 add_library(full OBJECT other.cpp)
@@ -131,6 +136,11 @@ endif()
         build = configure(source, "mixed", config, "-DPROFILE=ETL::StdMinimal", "-DBAD_FLAG=-fno-exceptions")
         run("cmake", "--build", build, "--target", "mixed", success=False,
             diagnostic="__etl_profile_mismatch_guard")
+        run("cmake", "--build", build, "--target", "full_options")
+        errors = run("cmake", "--build", build, "--target", "minimal_options", success=False,
+                     diagnostic="exception handling disabled")
+        if "dynamic_cast" not in errors:
+            raise RuntimeError(f"Minimal did not reject the RTTI probe: {errors}")
         for profile, flag in (("Minimal", "-fexceptions"), ("Minimal", "-frtti"),
                               ("Full", "-fno-exceptions"), ("Full", "-fno-rtti")):
             build = configure(source, f"bad-{profile}{flag}", config,
