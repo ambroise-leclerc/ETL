@@ -32,6 +32,7 @@
 //  POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 #include <cstdint>
+#include <iostream>
 #include <type_traits>
 #include <thread>
 #include <tuple>  

@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include <../libstd/include/type_traits>
+#include <type_traits>
 extern "C"
 {
 #include "ets_sys.h"

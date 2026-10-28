@@ -1,0 +1,4 @@
+etlstd-token test/libstd/gone.cpp
+bogus-rule include/etl/a.h
+etlstd-token include/etl/a.h extra
+etlstd-token libstd/include/c++/v1/array

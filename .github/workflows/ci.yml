@@ -2,25 +2,64 @@ name: CI
 
 on:
   push:
+    branches: [master]
   pull_request:
 
 jobs:
-  host-tests:
+  source-policy:
+    name: source policy
     runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Self-test the source policy checker
+        run: python3 tools/check_libstd_namespace.py --self-test
+
+      - name: Check ETLSTD and repository-qualified standard includes
+        run: python3 tools/check_libstd_namespace.py
+
+  host-tests:
+    name: host (${{ matrix.name }})
+    runs-on: ubuntu-24.04
+    container: ${{ matrix.container }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Minimum supported host compiler
+          - name: gcc-13
+            cxx: g++-13
+            packages: g++-13 cmake make
+          - name: gcc-14
+            container: gcc:14
+            cxx: g++
+            packages: cmake
+          - name: gcc-15
+            container: gcc:15
+            cxx: g++
+            packages: cmake
+          - name: gcc-16
+            container: gcc:16
+            cxx: g++
+            packages: cmake
+          - name: clang-18
+            cxx: clang++-18
+            packages: clang-18 cmake make
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install host GCC 13
+      - name: Install build tools
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-13 g++-13
+          SUDO=$(command -v sudo || true)
+          $SUDO apt-get update
+          $SUDO apt-get install -y ${{ matrix.packages }}
 
       - name: Show host compiler
-        run: g++-13 --version | head -n 1
+        run: ${{ matrix.cxx }} --version | head -n 1
 
       - name: Configure host build
-        run: cmake -S . -B build -DCMAKE_CXX_COMPILER=g++-13
+        run: cmake -S . -B build -DCMAKE_CXX_COMPILER=${{ matrix.cxx }}
 
       - name: Build host tests
         run: cmake --build build
@@ -29,28 +68,53 @@ jobs:
         run: ctest --test-dir build --output-on-failure
 
   avr-smoke:
+    name: avr (${{ matrix.toolchain.name }}, ${{ matrix.target.mcu }})
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        include:
+        toolchain:
+          # Reference toolchain: the only prebuilt AVR GCC shipping libstdc++
+          - name: modern-avr-14.2.0
+            url: https://github.com/modern-avr/toolchain/releases/download/v14.2.0/toolchain-atmelavr-libstdcxx.linux_x86_64.tar.gz
+            sha256: 139fb9f03c0ddbcd94a74048141ed0ca461fa8701bc5752a73c2f6814d1f1391
+          # Recent GCCs, without libstdc++: ETL must build on its bundled libstd alone
+          - name: avr-gcc-15.2.0
+            url: https://github.com/ZakKemble/avr-gcc-build/releases/download/v15.2.0-1/avr-gcc-15.2.0-x64-linux.tar.bz2
+            sha256: d90765e6d975950afa235aa998122f97aae8b00504399068b6c9d0bf4994b0fe
+          - name: avr-gcc-16.1.0
+            url: https://github.com/ZakKemble/avr-gcc-build/releases/download/v16.1.0-1/avr-gcc-16.1.0-x64-linux.tar.bz2
+            sha256: 8621ecc6514df50202b58b23b0f8f72f0e535ec35ee40426194e9a15c57692f6
+        target:
+          # timer0_vectors: Timer0 overflow and compare match A vector numbers
           - mcu: atmega328p
             f_cpu: 16000000UL
+            timer0_vectors: 16 14
           - mcu: attiny84
             f_cpu: 8000000UL
+            timer0_vectors: 11 9
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install modern AVR GCC 14.2
-        env:
-          AVR_TOOLCHAIN_VERSION: v14.2.0
+      - name: Cache AVR toolchain
+        id: cache-toolchain
+        uses: actions/cache@v4
+        with:
+          path: toolchain
+          key: avr-toolchain-${{ matrix.toolchain.sha256 }}
+
+      - name: Download AVR toolchain
+        if: steps.cache-toolchain.outputs.cache-hit != 'true'
         run: |
-          curl -L -o toolchain-atmelavr-libstdcxx.linux_x86_64.tar.gz \
-            "https://github.com/modern-avr/toolchain/releases/download/${AVR_TOOLCHAIN_VERSION}/toolchain-atmelavr-libstdcxx.linux_x86_64.tar.gz"
+          archive="${RUNNER_TEMP}/$(basename "${{ matrix.toolchain.url }}")"
+          curl -fsSL -o "${archive}" "${{ matrix.toolchain.url }}"
+          echo "${{ matrix.toolchain.sha256 }}  ${archive}" | sha256sum --check
           mkdir -p toolchain
-          tar -xzf toolchain-atmelavr-libstdcxx.linux_x86_64.tar.gz -C toolchain
-          find "${PWD}/toolchain" -type f -name avr-g++ -printf '%h\n' | head -n 1 >> "${GITHUB_PATH}"
+          tar -xaf "${archive}" -C toolchain
+
+      - name: Add AVR toolchain to PATH
+        run: find "${PWD}/toolchain" -type f -name avr-g++ -printf '%h\n' | head -n 1 >> "${GITHUB_PATH}"
 
       - name: Show AVR compiler
         run: avr-g++ --version | head -n 1
@@ -61,8 +125,8 @@ jobs:
           -DCMAKE_TOOLCHAIN_FILE=cmake/avr-gcc-toolchain.cmake
           -DETL_BUILD_HOST_TESTS=OFF
           -DETL_BUILD_AVR_SMOKE=ON
-          -DETL_AVR_MCU=${{ matrix.mcu }}
-          -DETL_AVR_F_CPU=${{ matrix.f_cpu }}
+          -DETL_AVR_MCU=${{ matrix.target.mcu }}
+          -DETL_AVR_F_CPU=${{ matrix.target.f_cpu }}
 
       - name: Build AVR smoke target
         run: cmake --build build-avr
@@ -71,3 +135,85 @@ jobs:
         run: |
           test -f build-avr/etl_avr_smoke.hex
           test -f build-avr/etl_avr_libstd_smoke.hex
+          test -f build-avr/etl_avr_user_isr_smoke.hex
+          test -f build-avr/etl_avr_uart0_smoke.hex
+          test -f build-avr/etl_avr_multi_tu_smoke.hex
+          test -f build-avr/etl_avr_custom_new_smoke.hex
+          test -f build-avr/etl_avr_interrupt_smoke.hex
+
+      - name: Check interrupt handlers
+        run: |
+          # Handlers attached with etl::Interrupt generate the same code as avr-libc ISR()
+          .github/scripts/compare-isr.sh build-avr/etl_avr_isr_equivalence_etl.elf \
+            build-avr/etl_avr_isr_equivalence_libc.elf ${{ matrix.target.timer0_vectors }}
+          # Two handlers on the same vector: the build must fail on the duplicate vector
+          if cmake --build build-avr --target etl_avr_interrupt_conflict > interrupt_conflict.log 2>&1; then
+            echo "Duplicate interrupt vector not detected"; exit 1
+          fi
+          grep "is already defined" interrupt_conflict.log
+
+      - name: Build for every supported MCU
+        if: matrix.target.mcu == 'atmega328p'
+        run: |
+          for mcu in atmega48a atmega48pa atmega88a atmega88pa atmega168a atmega168p atmega168pa \
+                     atmega328 atmega328p atmega32u4 atmega644a atmega644p attiny84; do
+            echo "::group::${mcu}"
+            avr-g++ -std=c++23 -mmcu=${mcu} -DF_CPU=8000000UL -Os -Wall -Werror -Wno-literal-suffix \
+              -isystem libstd/include/c++/v1 -I. -Iinclude examples/avr/device_smoke.cpp -o device_smoke_${mcu}.elf
+            echo "::endgroup::"
+          done
+
+      - name: Check allocation functions
+        run: |
+          # ETL provides weak allocation functions, shared by all translation units
+          avr-nm build-avr/etl_avr_multi_tu_smoke.elf | grep -q ' W _Znwj$'
+          # A user definition replaces them
+          avr-nm build-avr/etl_avr_custom_new_smoke.elf | grep -q ' T _Znwj$'
+          # Array forms the user did not replace stay on FreeStore: delete[] must not reach the
+          # user's scalar operator delete
+          avr-objdump -d build-avr/etl_avr_custom_new_smoke.elf > custom_new.lst
+          for f in _ZdaPv _ZdaPvj; do
+            grep -q "<${f}>:" custom_new.lst
+            if awk -v f="<${f}>:" '$2 == f {on = 1; next} on && /^$/ {exit} on' custom_new.lst | grep -qE '<_ZdlPvj?>'; then
+              echo "${f} reaches the user's scalar operator delete"; exit 1
+            fi
+          done
+
+      - name: Check USART vectors
+        if: matrix.target.mcu == 'atmega328p'
+        run: |
+          # User ISR only: ETL must leave the USART vectors alone
+          test "$(avr-nm build-avr/etl_avr_user_isr_smoke.elf | grep -c ' T __vector_')" -eq 1
+          # Uart0 started: ETL installs the RX and UDRE handlers
+          avr-nm build-avr/etl_avr_uart0_smoke.elf | grep -q ' T __vector_18$'
+          avr-nm build-avr/etl_avr_uart0_smoke.elf | grep -q ' T __vector_19$'
+          # User ISR on a vector taken by Uart0: the build must fail on the duplicate vector
+          if cmake --build build-avr --target etl_avr_uart0_isr_conflict > conflict.log 2>&1; then
+            echo "Duplicate USART vector not detected"; exit 1
+          fi
+          grep "__vector_18' is already defined" conflict.log
+
+      - name: Report binary sizes
+        run: |
+          {
+            echo "### ${{ matrix.toolchain.name }} / ${{ matrix.target.mcu }}"
+            echo '```'
+            avr-size build-avr/*.elf
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+  # Single required check for branch protection, independent of the matrix contents
+  ci-ok:
+    name: ci-ok
+    if: always()
+    needs: [source-policy, host-tests, avr-smoke]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check that all CI jobs succeeded
+        run: |
+          echo "source-policy: ${{ needs.source-policy.result }}"
+          echo "host-tests: ${{ needs.host-tests.result }}"
+          echo "avr-smoke: ${{ needs.avr-smoke.result }}"
+          test "${{ needs.source-policy.result }}" = success
+          test "${{ needs.host-tests.result }}" = success
+          test "${{ needs.avr-smoke.result }}" = success

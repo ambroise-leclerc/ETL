@@ -1,12 +1,11 @@
 #include <catch.hpp>
 
-#define ETLSTD etlstd
 #include <etl/CircularBuffer.h>
 #include <iostream>
-#include <libstd/include/queue>
-#include <libstd/include/utility>
+#include <queue>
+#include <utility>
 
-using namespace ETLSTD;
+using namespace std;
 
 SCENARIO("CircularBuffer for fifo of bytes") {
     using fifo = queue<uint8_t, etl::CircularBuffer<uint8_t, 32>>;

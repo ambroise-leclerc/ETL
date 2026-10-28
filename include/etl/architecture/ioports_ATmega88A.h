@@ -35,16 +35,17 @@
 #include <util/delay.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <libstd/include/chrono>
-#include <libstd/include/queue>
+#include <etl/interrupt.h>
+#include <chrono>
+#include <ratio>
+#include <type_traits>
+#include <queue>
 #include <etl/CircularBuffer.h>
 #include "ETLDevice_ATmega88A.h"
 
 extern void __builtin_avr_delay_cycles(unsigned long);
 
 namespace etl {
-#define IOPORTS_TO_STRING(name) #name
-#define IOPORTS_IRQ_HANDLER(vector, type) asm(IOPORTS_TO_STRING(vector)) __attribute__ ((type, __INTR_ATTRS))
 
 using clock_cycles = std::chrono::duration<unsigned long, std::ratio<1, Device::McuFrequency>>;
 constexpr clock_cycles operator ""_clks(unsigned long long c)     { return clock_cycles(static_cast<clock_cycles::rep>(c)); }
@@ -1223,23 +1224,10 @@ struct Timer0 {
   static void setOutputCompareValueB(value_type value) { OCR0B = value; }
   static value_type getOutputCompareValueB()           { return OCR0B; }
 
-  struct Isr {
-    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER0_OVF_vect, signal);
-    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER0_COMPA_vect, signal);
-    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER0_COMPB_vect, signal);
-  };
-
-  struct IsrNoBlock {
-    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER0_OVF_vect, interrupt);
-    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER0_COMPA_vect, interrupt);
-    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER0_COMPB_vect, interrupt);
-  };
-
-  struct IsrNaked {
-    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER0_OVF_vect, naked);
-    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER0_COMPA_vect, naked);
-    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER0_COMPB_vect, naked);
-  };
+  // Interrupt vectors, for etl::Interrupt<...>::attach()
+  using Overflow = InterruptVector<TIMER0_OVF_vect_num>;
+  using CompareMatchA = InterruptVector<TIMER0_COMPA_vect_num>;
+  using CompareMatchB = InterruptVector<TIMER0_COMPB_vect_num>;
 };  
 
 struct Timer1 {
@@ -1271,26 +1259,11 @@ struct Timer1 {
   static void setOutputCompareValueB(value_type value) { OCR1B = value; }
   static value_type getOutputCompareValueB()           { return OCR1B; }
 
-  struct Isr {
-    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER1_OVF_vect, signal);
-    static void Capture() IOPORTS_IRQ_HANDLER(TIMER1_CAPT_vect, signal);
-    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER1_COMPA_vect, signal);
-    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER1_COMPB_vect, signal);
-  };
-
-  struct IsrNoBlock {
-    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER1_OVF_vect, interrupt);
-    static void Capture() IOPORTS_IRQ_HANDLER(TIMER1_CAPT_vect, interrupt);
-    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER1_COMPA_vect, interrupt);
-    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER1_COMPB_vect, interrupt);
-  };
-
-  struct IsrNaked {
-    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER1_OVF_vect, naked);
-    static void Capture() IOPORTS_IRQ_HANDLER(TIMER1_CAPT_vect, naked);
-    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER1_COMPA_vect, naked);
-    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER1_COMPB_vect, naked);
-  };
+  // Interrupt vectors, for etl::Interrupt<...>::attach()
+  using Overflow = InterruptVector<TIMER1_OVF_vect_num>;
+  using Capture = InterruptVector<TIMER1_CAPT_vect_num>;
+  using CompareMatchA = InterruptVector<TIMER1_COMPA_vect_num>;
+  using CompareMatchB = InterruptVector<TIMER1_COMPB_vect_num>;
 };  
 
 struct Timer2 {
@@ -1324,23 +1297,10 @@ struct Timer2 {
   static void setOutputCompareValueB(value_type value) { OCR2B = value; }
   static value_type getOutputCompareValueB()           { return OCR2B; }
 
-  struct Isr {
-    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER2_OVF_vect, signal);
-    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER2_COMPA_vect, signal);
-    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER2_COMPB_vect, signal);
-  };
-
-  struct IsrNoBlock {
-    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER2_OVF_vect, interrupt);
-    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER2_COMPA_vect, interrupt);
-    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER2_COMPB_vect, interrupt);
-  };
-
-  struct IsrNaked {
-    static void Overflow() IOPORTS_IRQ_HANDLER(TIMER2_OVF_vect, naked);
-    static void CompareMatchA() IOPORTS_IRQ_HANDLER(TIMER2_COMPA_vect, naked);
-    static void CompareMatchB() IOPORTS_IRQ_HANDLER(TIMER2_COMPB_vect, naked);
-  };
+  // Interrupt vectors, for etl::Interrupt<...>::attach()
+  using Overflow = InterruptVector<TIMER2_OVF_vect_num>;
+  using CompareMatchA = InterruptVector<TIMER2_COMPA_vect_num>;
+  using CompareMatchB = InterruptVector<TIMER2_COMPB_vect_num>;
 };  
 
 template<typename> struct is_uart_txd_capable : std::false_type {};
@@ -1367,28 +1327,19 @@ struct PinChangeMask0 {
 
 struct PinChangeIRQ0 {
   static void enableSource(uint8_t PCINT) {
-    PinChangeControlRegister::SetBits(1<<PCIE0);
-    PinChangeMask0::SetBits(1<<PCINT);
+    PinChangeControlRegister::setBits(1<<PCIE0);
+    PinChangeMask0::setBits(1<<PCINT);
   }
 
   static void disableSource(uint8_t PCINT) {
-    PinChangeMask0::ClearBits(1<<PCINT);
+    PinChangeMask0::clearBits(1<<PCINT);
     if (0 == PinChangeMask0::Get()) {
-      PinChangeControlRegister::ClearBits(1<<PCIE0);
+      PinChangeControlRegister::clearBits(1<<PCIE0);
     }
   }
 
-  struct Isr {
-    static void trigger() IOPORTS_IRQ_HANDLER(PCINT0_vect, signal);
-  };
-
-  struct IsrNoBlock {
-    static void trigger() IOPORTS_IRQ_HANDLER(PCINT0_vect, interrupt);
-  };
-
-  struct IsrNaked {
-    static void trigger() IOPORTS_IRQ_HANDLER(PCINT0_vect, naked);
-  };
+  // Interrupt vectors, for etl::Interrupt<...>::attach()
+  using Trigger = InterruptVector<PCINT0_vect_num>;
 
 };
 
@@ -1400,28 +1351,19 @@ struct PinChangeMask1 {
 
 struct PinChangeIRQ1 {
   static void enableSource(uint8_t PCINT) {
-    PinChangeControlRegister::SetBits(1<<PCIE1);
-    PinChangeMask1::SetBits(1<<PCINT);
+    PinChangeControlRegister::setBits(1<<PCIE1);
+    PinChangeMask1::setBits(1<<PCINT);
   }
 
   static void disableSource(uint8_t PCINT) {
-    PinChangeMask1::ClearBits(1<<PCINT);
+    PinChangeMask1::clearBits(1<<PCINT);
     if (0 == PinChangeMask1::Get()) {
-      PinChangeControlRegister::ClearBits(1<<PCIE1);
+      PinChangeControlRegister::clearBits(1<<PCIE1);
     }
   }
 
-  struct Isr {
-    static void trigger() IOPORTS_IRQ_HANDLER(PCINT1_vect, signal);
-  };
-
-  struct IsrNoBlock {
-    static void trigger() IOPORTS_IRQ_HANDLER(PCINT1_vect, interrupt);
-  };
-
-  struct IsrNaked {
-    static void trigger() IOPORTS_IRQ_HANDLER(PCINT1_vect, naked);
-  };
+  // Interrupt vectors, for etl::Interrupt<...>::attach()
+  using Trigger = InterruptVector<PCINT1_vect_num>;
 
 };
 
@@ -1433,31 +1375,20 @@ struct PinChangeMask2 {
 
 struct PinChangeIRQ2 {
   static void enableSource(uint8_t PCINT) {
-    PinChangeControlRegister::SetBits(1<<PCIE2);
-    PinChangeMask2::SetBits(1<<PCINT);
+    PinChangeControlRegister::setBits(1<<PCIE2);
+    PinChangeMask2::setBits(1<<PCINT);
   }
 
   static void disableSource(uint8_t PCINT) {
-    PinChangeMask2::ClearBits(1<<PCINT);
+    PinChangeMask2::clearBits(1<<PCINT);
     if (0 == PinChangeMask2::Get()) {
-      PinChangeControlRegister::ClearBits(1<<PCIE2);
+      PinChangeControlRegister::clearBits(1<<PCIE2);
     }
   }
 
-  struct Isr {
-    static void trigger() IOPORTS_IRQ_HANDLER(PCINT2_vect, signal);
-  };
-
-  struct IsrNoBlock {
-    static void trigger() IOPORTS_IRQ_HANDLER(PCINT2_vect, interrupt);
-  };
-
-  struct IsrNaked {
-    static void trigger() IOPORTS_IRQ_HANDLER(PCINT2_vect, naked);
-  };
+  // Interrupt vectors, for etl::Interrupt<...>::attach()
+  using Trigger = InterruptVector<PCINT2_vect_num>;
 
 };
 
-#undef IOPORTS_TO_STRING
-#undef IOPORTS_IRQ_HANDLER
 } // namespace etl

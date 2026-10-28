@@ -30,40 +30,37 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-#include <catch.hpp>
+#include "../libstd_harness/harness.h"
 
-#define __Mock_Mock__
-#define ETLSTD etlstd
+#include <type_traits>
 
-#include <libstd/include/type_traits>
+using namespace std;
 
-using namespace ETLSTD;
+TEST_CASE("std::signed, std_unsigned", "[libstd][type_traits]") {
+    auto s1 = is_signed<uint8_t>::value;    CHECK(s1 == false);
+    auto s2 = is_signed<char>::value;       CHECK(s2 == true);
+    auto s3 = is_signed<int32_t>::value;    CHECK(s3 == true);
+    auto s4 = is_signed<uint64_t>::value;   CHECK(s4 == false);
+    CHECK(is_signed<uint8_t>::value == false);
+    CHECK(is_unsigned<uint8_t>::value == true);
 
-SCENARIO("std::signed, std_unsigned", "[libstd][type_traits]") {
-    auto s1 = is_signed<uint8_t>::value;    REQUIRE(s1 == false);
-    auto s2 = is_signed<char>::value;       REQUIRE(s2 == true);
-    auto s3 = is_signed<int32_t>::value;    REQUIRE(s3 == true);
-    auto s4 = is_signed<uint64_t>::value;   REQUIRE(s4 == false);
-    REQUIRE(is_signed<uint8_t>::value == false);
-    REQUIRE(is_unsigned<uint8_t>::value == true);
+    CHECK(is_signed_v<int16_t> == true);
+    CHECK(is_signed_v<uint32_t> == false);
+    CHECK(is_signed_v<float> == true);
+    CHECK(is_signed_v<double> == true);
 
-    REQUIRE(is_signed_v<int16_t> == true);
-    REQUIRE(is_signed_v<uint32_t> == false);
-    REQUIRE(is_signed_v<float> == true);
-    REQUIRE(is_signed_v<double> == true);
-
-    REQUIRE(is_unsigned<uint8_t>::value == true);
-    REQUIRE(is_unsigned<char>::value == false);
-    REQUIRE(is_unsigned<unsigned char>::value == true);
-    REQUIRE(is_unsigned_v<int16_t> == false);
-    REQUIRE(is_unsigned_v<uint32_t> == true);
-    REQUIRE(is_unsigned_v<float> == false);
-    REQUIRE(is_unsigned_v<double> == false);
-    REQUIRE(is_unsigned_v<uint8_t> == true);
-    REQUIRE(is_unsigned_v<int64_t> == false);
+    CHECK(is_unsigned<uint8_t>::value == true);
+    CHECK(is_unsigned<char>::value == false);
+    CHECK(is_unsigned<unsigned char>::value == true);
+    CHECK(is_unsigned_v<int16_t> == false);
+    CHECK(is_unsigned_v<uint32_t> == true);
+    CHECK(is_unsigned_v<float> == false);
+    CHECK(is_unsigned_v<double> == false);
+    CHECK(is_unsigned_v<uint8_t> == true);
+    CHECK(is_unsigned_v<int64_t> == false);
 }
 
-SCENARIO("std::common_type, std::same_type", "[libstd][type_traits]") {
+TEST_CASE("std::common_type, std::same_type", "[libstd][type_traits]") {
     class Base {};
     class Incarnation1 : Base {};
     class Incarnation2 : Base {};
@@ -75,60 +72,60 @@ SCENARIO("std::common_type, std::same_type", "[libstd][type_traits]") {
 }
 
 
-SCENARIO("std::make_signed, std::make_unsigned", "[libstd][type_traits]") {
+TEST_CASE("std::make_signed, std::make_unsigned", "[libstd][type_traits]") {
     auto comp = is_same_v<make_signed_t<uint16_t>, int16_t>;
-    REQUIRE(comp == true);
+    CHECK(comp == true);
 
     auto comp2 = is_const_v<make_signed_t<const int32_t>>;
-    REQUIRE(comp2 == true);
+    CHECK(comp2 == true);
 
-    REQUIRE(is_volatile_v<make_unsigned_t<volatile const int16_t>> == true);
+    CHECK(is_volatile_v<make_unsigned_t<volatile const int16_t>> == true);
 }
 
 
 
 
-SCENARIO("Primary types _v", "[libstd][type_traits]") {
-    REQUIRE(is_void_v<void>);
-    REQUIRE(!is_void_v<double>);
+TEST_CASE("Primary types _v", "[libstd][type_traits]") {
+    CHECK(is_void_v<void>);
+    CHECK(!is_void_v<double>);
 
     union UnionType {
         int a;
         char b;
     };
     UnionType value;
-    REQUIRE(is_union_v<decltype(value)>);
-    REQUIRE(!is_union_v<float>);
+    CHECK(is_union_v<decltype(value)>);
+    CHECK(!is_union_v<float>);
 
     enum EnumType { One, Two, Three };
-    REQUIRE(is_enum_v<EnumType>);
-    REQUIRE(!is_enum_v<void>);
+    CHECK(is_enum_v<EnumType>);
+    CHECK(!is_enum_v<void>);
 
     class ClassType {
         ClassType() = default;
         int a;
     };
-    REQUIRE(is_class_v<ClassType>);
-    REQUIRE(!is_class_v<UnionType>);
-    REQUIRE(!is_class_v<EnumType>);
+    CHECK(is_class_v<ClassType>);
+    CHECK(!is_class_v<UnionType>);
+    CHECK(!is_class_v<EnumType>);
 
-    REQUIRE(is_integral_v<uint64_t>);
-    REQUIRE(is_integral_v<char>);
-    REQUIRE(!is_integral_v<ClassType>);
-    REQUIRE(!is_integral_v<UnionType>);
+    CHECK(is_integral_v<uint64_t>);
+    CHECK(is_integral_v<char>);
+    CHECK(!is_integral_v<ClassType>);
+    CHECK(!is_integral_v<UnionType>);
 
-    REQUIRE(is_floating_point_v<float>);
-    REQUIRE(is_floating_point_v<double>);
-    REQUIRE(!is_floating_point_v<char>);
-    REQUIRE(!is_floating_point_v<ClassType>);
+    CHECK(is_floating_point_v<float>);
+    CHECK(is_floating_point_v<double>);
+    CHECK(!is_floating_point_v<char>);
+    CHECK(!is_floating_point_v<ClassType>);
 
-    REQUIRE(is_pointer_v<float*>);
-    REQUIRE(is_pointer_v<EnumType*>);
-    REQUIRE(!is_pointer_v<float>);
+    CHECK(is_pointer_v<float*>);
+    CHECK(is_pointer_v<EnumType*>);
+    CHECK(!is_pointer_v<float>);
 
 
 
-   // REQUIRE(is_member_pointer_v<ClassType::*>);
+   // CHECK(is_member_pointer_v<ClassType::*>);
 
 
     struct A {
@@ -138,17 +135,17 @@ SCENARIO("Primary types _v", "[libstd][type_traits]") {
     void(A::*functionPointer)() = &A::function;
     uint8_t A::* memberPointer = &A::member;
 
-    REQUIRE(!is_member_pointer_v<A*>);
-    REQUIRE(is_member_pointer_v<uint8_t A::*>);
-    REQUIRE(is_member_pointer_v<void(A::*)()>);
-    REQUIRE(is_member_pointer_v<decltype(memberPointer)>);
+    CHECK(!is_member_pointer_v<A*>);
+    CHECK(is_member_pointer_v<uint8_t A::*>);
+    CHECK(is_member_pointer_v<void(A::*)()>);
+    CHECK(is_member_pointer_v<decltype(memberPointer)>);
 
-    REQUIRE(is_member_function_pointer_v<void(A::*)()>);
-    REQUIRE(!is_member_function_pointer_v<A*>);
-    REQUIRE(is_member_function_pointer_v<decltype(functionPointer)>);
+    CHECK(is_member_function_pointer_v<void(A::*)()>);
+    CHECK(!is_member_function_pointer_v<A*>);
+    CHECK(is_member_function_pointer_v<decltype(functionPointer)>);
 
-    REQUIRE(!is_member_object_pointer_v<A*>);
-    REQUIRE(is_member_object_pointer_v<int A::*>);
-    REQUIRE(is_member_object_pointer<decltype(memberPointer)>::value);
+    CHECK(!is_member_object_pointer_v<A*>);
+    CHECK(is_member_object_pointer_v<int A::*>);
+    CHECK(is_member_object_pointer<decltype(memberPointer)>::value);
 
 }

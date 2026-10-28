@@ -1,0 +1,4 @@
+allowlist.txt:1: [stale-allowlist] etlstd-token test/libstd/gone.cpp no longer has any violation, remove it
+allowlist.txt:2: [bad-allowlist-entry] expected '<rule> <path>' with rule in ['etlstd-namespace-decl', 'etlstd-token', 'libstd-include-path']
+allowlist.txt:3: [bad-allowlist-entry] expected '<rule> <path>' with rule in ['etlstd-namespace-decl', 'etlstd-token', 'libstd-include-path']
+allowlist.txt:4: [bad-allowlist-entry] only paths under libstd/include/c++/compat/, test/libstd/ can be allowlisted

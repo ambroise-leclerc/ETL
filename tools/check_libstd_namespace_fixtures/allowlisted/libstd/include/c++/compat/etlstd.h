@@ -1,0 +1,1 @@
+#define ETLSTD std

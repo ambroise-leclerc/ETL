@@ -1,0 +1,3 @@
+allowlist.txt:1: [bad-allowlist-entry] rule etlstd-namespace-decl cannot be allowlisted
+include/etl/n.h:1: [etlstd-namespace-decl] namespace etlstd must not be declared
+include/etl/n.h:1: [etlstd-token] ETLSTD/etlstd is forbidden, use std directly

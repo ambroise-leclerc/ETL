@@ -30,52 +30,49 @@
 //  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
-#include <catch.hpp>
+#include "../libstd_harness/harness.h"
 
-#define __Mock_Mock__
+#include <string_view>
 
-#define ETLSTD etlstd
-#include <libstd/include/string_view>
+using namespace std;
 
-using namespace ETLSTD;
-
-SCENARIO("Test of std::string_view", "[libstd][string_view]") {
+TEST_CASE("Test of std::string_view", "[libstd][string_view]") {
     const char *str = "std::string_view";
     string_view v = str;
-    REQUIRE(v.size() == 16);
-    REQUIRE(v.length() == 16);
-    REQUIRE(v.llength() == 16);
+    CHECK(v.size() == 16);
+    CHECK(v.length() == 16);
+    CHECK(v.llength() == 16);
     for (size_t index = 0; index < v.size(); ++index)
-        REQUIRE(v[index] == str[index]);
-    REQUIRE(v.compare("std::string_view") == 0);
+        CHECK(v[index] == str[index]);
+    CHECK(v.compare("std::string_view") == 0);
 
-    REQUIRE(v.starts_with('s'));
-    REQUIRE(v.starts_with("std::s"));
+    CHECK(v.starts_with('s'));
+    CHECK(v.starts_with("std::s"));
 
     string_view v2("std::string");
-    REQUIRE(v.starts_with(v2));
+    CHECK(v.starts_with(v2));
 }
 
-SCENARIO("std::string_view element access and copy", "[libstd][string_view]") {
+TEST_CASE("std::string_view element access and copy", "[libstd][string_view]") {
     string_view v("string_view");
 
-    REQUIRE(v.at(0) == 's');
-    REQUIRE(v.at(v.size() - 1) == 'w');
-    REQUIRE_THROWS_AS(v.at(v.size()), out_of_range);
-    REQUIRE(v.back() == 'w');
+    CHECK(v.at(0) == 's');
+    CHECK(v.at(v.size() - 1) == 'w');
+    CHECK_THROWS_AS(v.at(v.size()), out_of_range);
+    CHECK(v.back() == 'w');
 
     char copied[8] = {};
-    REQUIRE(v.copy(copied, 6) == 6);
-    REQUIRE(string_view(copied, 6) == "string"sv);
-    REQUIRE(v.copy(copied, sizeof(copied), 7) == 4);
-    REQUIRE(string_view(copied, 4) == "view"sv);
-    REQUIRE_THROWS_AS(v.copy(copied, sizeof(copied), v.size() + 1), out_of_range);
+    CHECK(v.copy(copied, 6) == 6);
+    CHECK(string_view(copied, 6) == "string"sv);
+    CHECK(v.copy(copied, sizeof(copied), 7) == 4);
+    CHECK(string_view(copied, 4) == "view"sv);
+    CHECK_THROWS_AS(v.copy(copied, sizeof(copied), v.size() + 1), out_of_range);
 
-    REQUIRE(v.substr(7) == "view"sv);
-    REQUIRE_THROWS_AS(v.substr(v.size() + 1), out_of_range);
+    CHECK(v.substr(7) == "view"sv);
+    CHECK_THROWS_AS(v.substr(v.size() + 1), out_of_range);
 }
 
-SCENARIO("std::string_view reverse iteration", "[libstd][string_view]") {
+TEST_CASE("std::string_view reverse iteration", "[libstd][string_view]") {
     string_view v("abc");
     char reversed[4] = {};
     size_t index = 0;
@@ -83,134 +80,134 @@ SCENARIO("std::string_view reverse iteration", "[libstd][string_view]") {
     for (auto it = v.rbegin(); it != v.rend(); ++it)
         reversed[index++] = *it;
 
-    REQUIRE(index == 3);
-    REQUIRE(string_view(reversed, 3) == "cba"sv);
-    REQUIRE(*v.rbegin() == 'c');
+    CHECK(index == 3);
+    CHECK(string_view(reversed, 3) == "cba"sv);
+    CHECK(*v.rbegin() == 'c');
 
     string_view empty;
-    REQUIRE(empty.rbegin() == empty.rend());
-    REQUIRE(empty.crbegin() == empty.crend());
+    CHECK(empty.rbegin() == empty.rend());
+    CHECK(empty.crbegin() == empty.crend());
 }
 
-SCENARIO("std::string_view empty boundary behavior", "[libstd][string_view]") {
+TEST_CASE("std::string_view empty boundary behavior", "[libstd][string_view]") {
     string_view empty;
-    REQUIRE(empty.empty());
-    REQUIRE(empty.size() == 0);
-    REQUIRE(empty.begin() == empty.end());
-    REQUIRE(empty.cbegin() == empty.cend());
-    REQUIRE_THROWS_AS(empty.at(0), out_of_range);
-    REQUIRE(empty.substr(0).empty());
-    REQUIRE_THROWS_AS(empty.substr(1), out_of_range);
+    CHECK(empty.empty());
+    CHECK(empty.size() == 0);
+    CHECK(empty.begin() == empty.end());
+    CHECK(empty.cbegin() == empty.cend());
+    CHECK_THROWS_AS(empty.at(0), out_of_range);
+    CHECK(empty.substr(0).empty());
+    CHECK_THROWS_AS(empty.substr(1), out_of_range);
 
     char untouched[2] = {'x', 'y'};
-    REQUIRE(empty.copy(untouched, 2) == 0);
-    REQUIRE(untouched[0] == 'x');
-    REQUIRE(untouched[1] == 'y');
+    CHECK(empty.copy(untouched, 2) == 0);
+    CHECK(untouched[0] == 'x');
+    CHECK(untouched[1] == 'y');
 
-    REQUIRE(empty.find(""sv) == 0);
-    REQUIRE(empty.rfind(""sv) == 0);
-    REQUIRE(empty.find('x') == string_view::npos);
-    REQUIRE(empty.find("x") == string_view::npos);
-    REQUIRE(empty.find_first_of("x") == string_view::npos);
-    REQUIRE(empty.find_last_of("x") == string_view::npos);
-    REQUIRE(empty.find_first_not_of("") == string_view::npos);
-    REQUIRE(empty.find_last_not_of("") == string_view::npos);
+    CHECK(empty.find(""sv) == 0);
+    CHECK(empty.rfind(""sv) == 0);
+    CHECK(empty.find('x') == string_view::npos);
+    CHECK(empty.find("x") == string_view::npos);
+    CHECK(empty.find_first_of("x") == string_view::npos);
+    CHECK(empty.find_last_of("x") == string_view::npos);
+    CHECK(empty.find_first_not_of("") == string_view::npos);
+    CHECK(empty.find_last_not_of("") == string_view::npos);
 
     string_view v("abc");
-    REQUIRE(v.find(""sv, v.size()) == v.size());
-    REQUIRE(v.find(""sv, v.size() + 1) == string_view::npos);
-    REQUIRE(v.rfind(""sv) == v.size());
-    REQUIRE(v.rfind("bc"sv, 99) == 1);
-    REQUIRE(v.find_first_not_of("") == 0);
-    REQUIRE(v.find_last_not_of("") == v.size() - 1);
+    CHECK(v.find(""sv, v.size()) == v.size());
+    CHECK(v.find(""sv, v.size() + 1) == string_view::npos);
+    CHECK(v.rfind(""sv) == v.size());
+    CHECK(v.rfind("bc"sv, 99) == 1);
+    CHECK(v.find_first_not_of("") == 0);
+    CHECK(v.find_last_not_of("") == v.size() - 1);
 }
 
-SCENARIO("std::string_view find functions", "[libstd][string_view]") {
+TEST_CASE("std::string_view find functions", "[libstd][string_view]") {
     string_view v("original string with five words.");
 
-    REQUIRE(v.find("string") == 9);
-    REQUIRE(v.find("words.") == 26);
-    REQUIRE(v.find("banana") == string_view::npos);
+    CHECK(v.find("string") == 9);
+    CHECK(v.find("words.") == 26);
+    CHECK(v.find("banana") == string_view::npos);
 
     string_view with("with");
-    REQUIRE(v.find(with) == 16);
+    CHECK(v.find(with) == 16);
 
-    REQUIRE(v.find(with, 10) == 16);
+    CHECK(v.find(with, 10) == 16);
 
     string_view v2("string with four words.");
-    REQUIRE(v.find(v2.substr(7, 4)) == 16);
+    CHECK(v.find(v2.substr(7, 4)) == 16);
 }
 
-SCENARIO("std::string_view rfind functions", "[libstd][string_view]") {
+TEST_CASE("std::string_view rfind functions", "[libstd][string_view]") {
     string_view v("String with multiple 'with' words within.");
 
-    REQUIRE(v.find("with") == 7);
-    REQUIRE(v.rfind("with") == 34);
-    REQUIRE(v.substr(0, 34).rfind("with") == 22);
-    REQUIRE(v.substr(0, 22).rfind("with") == 7);
-    REQUIRE(v.find("banana") == string_view::npos);
-    REQUIRE(v.find("String") == 0);
+    CHECK(v.find("with") == 7);
+    CHECK(v.rfind("with") == 34);
+    CHECK(v.substr(0, 34).rfind("with") == 22);
+    CHECK(v.substr(0, 22).rfind("with") == 7);
+    CHECK(v.find("banana") == string_view::npos);
+    CHECK(v.find("String") == 0);
 
     string_view with("'with'");
-    REQUIRE(v.find(with) == 21);
+    CHECK(v.find(with) == 21);
 }
 
-SCENARIO("std::string_view find_first_of functions", "[libstd][string_view]") {
+TEST_CASE("std::string_view find_first_of functions", "[libstd][string_view]") {
     string_view v("String with multiple 'with' words within.");
 
-    REQUIRE(v.find_first_of("mdkz") == 12);
-    REQUIRE(v.find_first_of('.') == v.size() - 1);
+    CHECK(v.find_first_of("mdkz") == 12);
+    CHECK(v.find_first_of('.') == v.size() - 1);
 
     string_view tiple("tiple");
-    REQUIRE(v.find_first_of(tiple, 2) == 3);
+    CHECK(v.find_first_of(tiple, 2) == 3);
 }
 
-SCENARIO("std::string_view find_last_of functions", "[libstd][string_view]") {
+TEST_CASE("std::string_view find_last_of functions", "[libstd][string_view]") {
     string_view v("String with multiple 'with' words within.");
 
-    REQUIRE(v.find_last_of("mdkz") == 31);
-    REQUIRE(v.find_last_of('.') == v.size() - 1);
+    CHECK(v.find_last_of("mdkz") == 31);
+    CHECK(v.find_last_of('.') == v.size() - 1);
 
     string_view tiple("tiple");
-    REQUIRE(v.find_last_of(tiple, 34) == 24);
+    CHECK(v.find_last_of(tiple, 34) == 24);
 }
 
-SCENARIO("std::string_view find_first_not_of functions", "[libstd][string_view]") {
+TEST_CASE("std::string_view find_first_not_of functions", "[libstd][string_view]") {
     string_view v("String with multiple 'with' words within.");
 
-    REQUIRE(v.find_first_not_of("String wh") == 12);
-    REQUIRE(v.find_first_not_of("'String whmulpeordswn") == v.size() - 1);
-    REQUIRE(v.find_first_not_of('S') == 1);
+    CHECK(v.find_first_not_of("String wh") == 12);
+    CHECK(v.find_first_not_of("'String whmulpeordswn") == v.size() - 1);
+    CHECK(v.find_first_not_of('S') == 1);
 }
 
-SCENARIO("std::string_view find_last_not_of functions", "[libstd][string_view]") {
+TEST_CASE("std::string_view find_last_not_of functions", "[libstd][string_view]") {
     string_view v("String with multiple 'with' words within.");
 
-    REQUIRE(v.find_last_not_of(". withn") == 32);
-    REQUIRE(v.find_last_not_of('.') == v.size() - 2);
+    CHECK(v.find_last_not_of(". withn") == 32);
+    CHECK(v.find_last_not_of('.') == v.size() - 2);
 }
 
-SCENARIO("std::string_view comparisons", "[libstd][string_view]") {
+TEST_CASE("std::string_view comparisons", "[libstd][string_view]") {
     auto s1{"String1"sv};
     auto s2 = "String2"sv;
     string_view s3("String1 longer");
     string_view s4("String1");
 
-    REQUIRE(s1 == s4);
-    REQUIRE(s2 > s1);
-    REQUIRE(s2 > s4);
-    REQUIRE(s1 != s3);
-    REQUIRE(s2 >= s1);
-    REQUIRE(s4 >= s1);
-    REQUIRE(s1 <= s2);
-    REQUIRE(s1 <= s4);
+    CHECK(s1 == s4);
+    CHECK(s2 > s1);
+    CHECK(s2 > s4);
+    CHECK(s1 != s3);
+    CHECK(s2 >= s1);
+    CHECK(s4 >= s1);
+    CHECK(s1 <= s2);
+    CHECK(s1 <= s4);
 }
 
-SCENARIO("std::string trim functions", "[libstd][string_view]") {
+TEST_CASE("std::string trim functions", "[libstd][string_view]") {
     const char *str = "   trim me";
     string_view v = str;
-    REQUIRE(v.compare("   trim me") == 0);
+    CHECK(v.compare("   trim me") == 0);
     v.remove_prefix(std::min(v.find_first_not_of(" "), v.size()));
 
-    REQUIRE(v.compare("trim me") == 0);
+    CHECK(v.compare("trim me") == 0);
 }

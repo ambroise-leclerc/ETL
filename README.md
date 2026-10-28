@@ -94,8 +94,9 @@ Toolchain baseline
 ETL now targets a single **C++23** baseline across the repository:
 
 - public headers require a C++23-capable compiler
-- host tests build with **GCC 13+**
-- AVR smoke builds target **modern-avr GCC 14.2+**
+- host tests build with **GCC 13+** and are validated in CI with GCC 13, 14, 15, 16 and Clang 18
+- AVR smoke builds target **avr-gcc 14.2+** and are validated in CI with GCC 14.2 (modern-avr), 15.2 and 16.1 (ZakKemble)
+- the AVR smoke targets build without libstdc++, relying only on avr-libc and the bundled `libstd`; the 15.2 and 16.1 CI jobs check this, as their toolchains ship no libstdc++
 - the default build system baseline is **CMake 3.25+**
 
 The bundled `libstd` directory remains a focused compatibility layer for the subset of standard-library facilities ETL uses on embedded targets; it is not a full reimplementation of the entire C++23 standard library. In particular, `<string>` now means a small owning string subset with `string_view` interop, append/resize/reserve support, and explicit non-goals around full hosted `std::string` parity.
@@ -131,9 +132,12 @@ The primary workflow is now an open, cross-platform AVR toolchain rather than At
 
 Recommended tools:
 
-- host GCC 13+ for local host builds and tests
+- host GCC 13+ (or Clang 18+) for local host builds and tests
 - CMake 3.25+
-- modern-avr `avr-g++` 14.2+ for AVR validation
+- `avr-g++` 14.2+ for AVR validation, for example:
+  - [ZakKemble/avr-gcc-build](https://github.com/ZakKemble/avr-gcc-build/releases) (GCC 15.2 or 16.1, no libstdc++)
+  - [modern-avr/toolchain](https://github.com/modern-avr/toolchain/releases) (GCC 14.2, ships libstdc++)
+  - [Microchip AVR 8-bit Toolchain](https://www.microchip.com/en-us/tools-resources/develop/microchip-studio/gcc-compilers) 4.x (GCC 15.1)
 - `avrdude` for flashing
 
 This repository includes an AVR smoke target that validates the headers with a real `avr-g++` build:
@@ -148,7 +152,7 @@ cmake -S . -B build-avr \
 cmake --build build-avr
 ```
 
-The repository CI downloads `modern-avr/toolchain` release `v14.2.0` for that AVR validation path.
+The repository CI builds that path with three pinned toolchains (archives verified by SHA-256): `modern-avr/toolchain` `v14.2.0` and ZakKemble `avr-gcc` `15.2.0` and `16.1.0`. Each job reports the `avr-size` of the smoke binaries in its summary.
 
 That produces:
 
@@ -156,6 +160,12 @@ That produces:
 - `build-avr/etl_avr_smoke.hex`
 - `build-avr/etl_avr_libstd_smoke.elf`
 - `build-avr/etl_avr_libstd_smoke.hex`
+- `build-avr/etl_avr_user_isr_smoke.elf` / `.hex` (user-defined USART ISR next to ETL)
+- `build-avr/etl_avr_uart0_smoke.elf` / `.hex` (`Uart0` with the ETL interrupt handlers)
+- `build-avr/etl_avr_multi_tu_smoke.elf` / `.hex` (ETL included from two translation units)
+- `build-avr/etl_avr_custom_new_smoke.elf` / `.hex` (user replacement of `operator new` / `operator delete`)
+- `build-avr/etl_avr_interrupt_smoke.elf` / `.hex` (handlers attached with `etl::Interrupt`)
+- `build-avr/etl_avr_isr_equivalence_etl.elf` / `etl_avr_isr_equivalence_libc.elf` (same handlers with `etl::Interrupt` and avr-libc `ISR()`, compared by CI)
 
 You can override `ETL_AVR_MCU` to validate another supported MCU such as `attiny84`.
 
@@ -163,13 +173,46 @@ Using ETL in your own AVR project
 =================================
 
 1. Configure your project to compile with C++23.
-2. Add **two** include paths:
-   - `.../ETL/include`
-   - `.../ETL`
+2. Add the include path `.../ETL/include`.
+3. On AVR, add the bundled standard library as a *system* include directory, so that it is searched before the compiler's own C++ directories: `-isystem .../ETL/libstd/include/c++/v1`. ETL headers include standard headers by their standard names (`<memory>`, `<array>`, ...). On a host build, do not add it: ETL then uses the compiler's standard library.
 
-   The repository root is required because ETL headers include bundled standard-library headers with paths such as `libstd/include/memory`.
+4. Add `#include <etl.h>` in your source file.
 
-3. Add `#include <etl.h>` in your source file.
+Interrupts
+----------
+
+Interrupt handlers are attached to the vectors that the device headers declare on each peripheral, without macros:
+
+```cpp
+static volatile uint8_t ticks;
+
+static void onOverflow() { ticks = ticks + 1; }
+
+[[gnu::naked]] void onCompareMatchB() {        // saves what it uses and ends with reti
+    asm volatile("sbi %0, 0\n\treti" :: "I"(_SFR_IO_ADDR(GPIOR0)));
+}
+
+int main() {
+    etl::Interrupt<etl::Timer0::Overflow>::attach<onOverflow>();
+    etl::Interrupt<etl::Timer0::CompareMatchA>::attach<[] { /* ... */ }, etl::IsrKind::NonBlocking>();
+    etl::Interrupt<etl::Timer0::CompareMatchB>::attach<onCompareMatchB, etl::IsrKind::Naked>();
+    etl::Interrupt<etl::PinChangeIRQ0::Trigger>::attach<[] { /* ... */ }>();
+    // ... enable the interrupt sources, then sei()
+}
+```
+
+- `attach()` binds the handler at link time and generates no code: the vector is installed as soon as the program contains the call. It does not enable the interrupt source.
+- `IsrKind::Blocking` (default) and `IsrKind::NonBlocking` match avr-libc `ISR()` and `ISR_NOBLOCK`. A lambda, or a `static` or `inline` function, is inlined into the interrupt code, which is then identical to an `ISR()` with the same body (checked by CI). A function with external linkage is called, as from an `ISR()`.
+- `IsrKind::Naked` reaches a `[[gnu::naked]]` function through one jump from the vector.
+- Attaching the same handler from several source files is fine. Attaching another handler, or defining an avr-libc `ISR()`, for the same vector is a build error (`symbol '__vector_16' is already defined` or `multiple definition of '__vector_16'`).
+- Vector names: `TimerN::Overflow`, `TimerN::CompareMatchA`/`B`/`C`/`D`, `TimerN::Capture`, `PinChangeIRQN::Trigger`. Any other vector can be named with `etl::InterruptVector<USART_RX_vect_num>`.
+- On the host, `Interrupt<V>::raise()` runs the attached handler, so that handlers can be unit-tested.
+
+The hardware UART drivers (`Uart0`, and `Uart1` on the ATmega644) use the same mechanism: `start()` attaches their handlers, so a program that does not start a UART keeps the USART vectors free for its own handlers.
+
+ETL is header-only and can be included from any number of translation units.
+
+`etl.h` provides the global `operator new` / `operator delete` (including the sized and array forms) on top of `etl::FreeStore`. They are weak definitions: to use your own allocator, define these functions in a source file that does not include `etl.h`, and they take precedence. The free store is set up on its first use, so a program that never allocates pays nothing for it.
 
 If your project uses the freestore helpers, ETL provides:
 
