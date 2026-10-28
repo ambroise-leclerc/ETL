@@ -1,0 +1,4 @@
+extern "C" {
+void __etl_profile_@ETL_PROFILE@() {}
+void __etl_profile_mismatch_guard() {}
+}

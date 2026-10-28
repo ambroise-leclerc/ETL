@@ -1,0 +1,17 @@
+#pragma once
+
+#define __ETL_HAS_EXCEPTIONS @ETL_PROFILE_EXCEPTIONS@
+#define __ETL_HAS_RTTI @ETL_PROFILE_EXCEPTIONS@
+
+#if defined(__EXCEPTIONS) != __ETL_HAS_EXCEPTIONS
+#error "ETLStd profile conflicts with the compiler exception flags"
+#endif
+#if defined(__GXX_RTTI) != __ETL_HAS_RTTI
+#error "ETLStd profile conflicts with the compiler RTTI flags"
+#endif
+
+extern "C" void __etl_profile_@ETL_PROFILE@();
+// AVR's startup code retains .ctors even with --gc-sections. Every translation unit requires its
+// profile archive; mixing profiles extracts both archives and diagnoses the shared strong guard.
+[[gnu::used, gnu::section(".ctors")]] static void (*const __etl_profile_reference)() =
+    __etl_profile_@ETL_PROFILE@;

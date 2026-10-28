@@ -1,0 +1,15 @@
+[
+  {"mcu": "atmega32u4", "f_cpu": "8000000UL"},
+  {"mcu": "atmega48a", "f_cpu": "8000000UL"},
+  {"mcu": "atmega48pa", "f_cpu": "8000000UL"},
+  {"mcu": "atmega88a", "f_cpu": "8000000UL"},
+  {"mcu": "atmega88pa", "f_cpu": "8000000UL"},
+  {"mcu": "atmega168a", "f_cpu": "8000000UL"},
+  {"mcu": "atmega168p", "f_cpu": "8000000UL"},
+  {"mcu": "atmega168pa", "f_cpu": "8000000UL"},
+  {"mcu": "atmega328", "f_cpu": "8000000UL"},
+  {"mcu": "atmega328p", "f_cpu": "16000000UL", "timer0_vectors": "16 14"},
+  {"mcu": "atmega644a", "f_cpu": "8000000UL"},
+  {"mcu": "atmega644p", "f_cpu": "8000000UL"},
+  {"mcu": "attiny84", "f_cpu": "8000000UL", "timer0_vectors": "11 9"}
+]

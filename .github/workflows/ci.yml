@@ -15,6 +15,11 @@ jobs:
       - name: Self-test the source policy checker
         run: python3 tools/check_libstd_namespace.py --self-test
 
+      - name: Check supported AVR device matrix
+        run: |
+          python3 tools/test_avr_matrix.py
+          python3 tools/check_avr_matrix.py
+
       - name: Check ETLSTD and repository-qualified standard includes
         run: python3 tools/check_libstd_namespace.py
 
@@ -68,6 +73,7 @@ jobs:
         run: ctest --test-dir build --output-on-failure
 
   avr-smoke:
+    needs: avr-matrix
     name: avr (${{ matrix.toolchain.name }}, ${{ matrix.target.mcu }})
     runs-on: ubuntu-24.04
     strategy:
@@ -85,14 +91,7 @@ jobs:
           - name: avr-gcc-16.1.0
             url: https://github.com/ZakKemble/avr-gcc-build/releases/download/v16.1.0-1/avr-gcc-16.1.0-x64-linux.tar.bz2
             sha256: 8621ecc6514df50202b58b23b0f8f72f0e535ec35ee40426194e9a15c57692f6
-        target:
-          # timer0_vectors: Timer0 overflow and compare match A vector numbers
-          - mcu: atmega328p
-            f_cpu: 16000000UL
-            timer0_vectors: 16 14
-          - mcu: attiny84
-            f_cpu: 8000000UL
-            timer0_vectors: 11 9
+        target: ${{ fromJSON(needs.avr-matrix.outputs.regression) }}
 
     steps:
       - uses: actions/checkout@v4
@@ -131,6 +130,9 @@ jobs:
       - name: Build AVR smoke target
         run: cmake --build build-avr
 
+      - name: Check ETLStd package and profile boundaries
+        run: ctest --test-dir build-avr -R etlstd-profile --output-on-failure
+
       - name: Check HEX outputs
         run: |
           test -f build-avr/etl_avr_smoke.hex
@@ -155,13 +157,13 @@ jobs:
       - name: Build for every supported MCU
         if: matrix.target.mcu == 'atmega328p'
         run: |
-          for mcu in atmega48a atmega48pa atmega88a atmega88pa atmega168a atmega168p atmega168pa \
-                     atmega328 atmega328p atmega32u4 atmega644a atmega644p attiny84; do
+          python3 tools/check_avr_matrix.py --devices > "$RUNNER_TEMP/avr-devices"
+          while read -r mcu f_cpu; do
             echo "::group::${mcu}"
-            avr-g++ -std=c++23 -mmcu=${mcu} -DF_CPU=8000000UL -Os -Wall -Werror -Wno-literal-suffix \
+            avr-g++ -std=c++23 -mmcu=${mcu} -DF_CPU=${f_cpu} -Os -Wall -Werror -Wno-literal-suffix \
               -isystem libstd/include/c++/v1 -I. -Iinclude examples/avr/device_smoke.cpp -o device_smoke_${mcu}.elf
             echo "::endgroup::"
-          done
+          done < "$RUNNER_TEMP/avr-devices"
 
       - name: Check allocation functions
         run: |
@@ -202,11 +204,78 @@ jobs:
             echo '```'
           } >> "${GITHUB_STEP_SUMMARY}"
 
+  avr-matrix:
+    name: AVR profile matrix
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      regression: ${{ steps.matrix.outputs.regression }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: matrix
+        run: |
+          matrix=$(python3 tools/check_avr_matrix.py --github)
+          regression=$(python3 tools/check_avr_matrix.py --github-regression)
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "regression=$regression" >> "$GITHUB_OUTPUT"
+
+  avr-profiles:
+    name: AVR profile (${{ matrix.mcu }}, ${{ matrix.profile }})
+    needs: avr-matrix
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix: ${{ fromJSON(needs.avr-matrix.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache AVR toolchain
+        id: cache-toolchain
+        uses: actions/cache@v4
+        with:
+          path: toolchain
+          key: avr-toolchain-139fb9f03c0ddbcd94a74048141ed0ca461fa8701bc5752a73c2f6814d1f1391
+
+      - name: Download AVR toolchain
+        if: steps.cache-toolchain.outputs.cache-hit != 'true'
+        run: |
+          archive="$RUNNER_TEMP/avr-toolchain.tar.gz"
+          curl -fsSL -o "$archive" https://github.com/modern-avr/toolchain/releases/download/v14.2.0/toolchain-atmelavr-libstdcxx.linux_x86_64.tar.gz
+          echo "139fb9f03c0ddbcd94a74048141ed0ca461fa8701bc5752a73c2f6814d1f1391  $archive" | sha256sum --check
+          mkdir -p toolchain
+          tar -xaf "$archive" -C toolchain
+
+      - name: Add AVR toolchain to PATH
+        run: find "$PWD/toolchain" -type f -name avr-g++ -printf '%h\n' | head -n 1 >> "$GITHUB_PATH"
+
+      - name: Configure profile smoke
+        run: >
+          cmake -S . -B build-avr
+          -DCMAKE_TOOLCHAIN_FILE=cmake/avr-gcc-toolchain.cmake
+          -DETL_BUILD_HOST_TESTS=OFF
+          -DETL_BUILD_AVR_SMOKE=ON
+          -DETL_AVR_MCU=${{ matrix.mcu }}
+          -DETL_AVR_F_CPU=${{ matrix.f_cpu }}
+
+      - name: Compile, link and check profile artifacts
+        run: cmake --build build-avr --target etl_avr_std_${{ matrix.profile }}_smoke_check --parallel 2
+
+      - name: Upload ELF, HEX and link map
+        uses: actions/upload-artifact@v4
+        with:
+          name: avr-${{ matrix.mcu }}-${{ matrix.profile }}
+          path: |
+            build-avr/etl_avr_std_${{ matrix.profile }}_smoke.elf
+            build-avr/etl_avr_std_${{ matrix.profile }}_smoke.hex
+            build-avr/etl_avr_std_${{ matrix.profile }}_smoke.map
+          if-no-files-found: error
+
   # Single required check for branch protection, independent of the matrix contents
   ci-ok:
     name: ci-ok
     if: always()
-    needs: [source-policy, host-tests, avr-smoke]
+    needs: [source-policy, host-tests, avr-smoke, avr-matrix, avr-profiles]
     runs-on: ubuntu-24.04
     steps:
       - name: Check that all CI jobs succeeded
@@ -214,6 +283,8 @@ jobs:
           echo "source-policy: ${{ needs.source-policy.result }}"
           echo "host-tests: ${{ needs.host-tests.result }}"
           echo "avr-smoke: ${{ needs.avr-smoke.result }}"
+          test "${{ needs.avr-matrix.result }}" = success
+          test "${{ needs.avr-profiles.result }}" = success
           test "${{ needs.source-policy.result }}" = success
           test "${{ needs.host-tests.result }}" = success
           test "${{ needs.avr-smoke.result }}" = success

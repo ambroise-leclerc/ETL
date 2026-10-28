@@ -169,6 +169,76 @@ That produces:
 
 You can override `ETL_AVR_MCU` to validate another supported MCU such as `attiny84`.
 
+ETLStd CMake package
+--------------------
+
+AVR smoke builds also build the two exported runtime profile targets, `ETL::StdMinimal`
+and `ETL::StdFull`. To build and install the package independently of the examples:
+
+```sh
+cmake -S . -B build-std \
+  -DCMAKE_TOOLCHAIN_FILE=cmake/avr-gcc-toolchain.cmake \
+  -DETL_AVR_MCU=atmega328p -DETL_BUILD_HOST_TESTS=OFF -DETL_BUILD_STD=ON
+cmake --build build-std
+cmake --install build-std --prefix /tmp/etlstd --component ETLStd
+ctest --test-dir build-std -R etlstd-profile --output-on-failure
+```
+
+Consumers configure with the AVR toolchain, `ETL_AVR_MCU`, and `CMAKE_PREFIX_PATH=/tmp/etlstd`,
+then select a profile through its target:
+
+```cmake
+find_package(ETLStd 0.2 CONFIG REQUIRED)
+target_link_libraries(application PRIVATE ETL::StdMinimal) # or ETL::StdFull
+```
+
+For build-tree consumption, set `ETLStd_DIR` to `build-std` instead. Installed headers live
+under `include/ETLStd/c++/v1` and platform headers under `include/ETLStd/vendor`; runtime archives
+live under `lib/ETLStd/<GCC-multilib>`. A package can serve another MCU with the same GCC multilib.
+Rebuild and install for a different multilib. The install prefix can be moved after installation.
+
+Both targets select C++23, freestanding compilation and the canonical headers, and exclude the
+compiler's C++ headers and libstdc++. Minimal disables exceptions and RTTI; full enables their
+compiler options. These profiles do not expand the component support described in
+[the libstd support matrix](libstd/readme.md) or provide a hosted exception runtime.
+The generated internal configuration rejects incompatible flags; linking translation units from
+both profiles fails on `__etl_profile_mismatch_guard`. The existing host `etl` target remains
+independent, and host builds do not enable `ETL_BUILD_STD` by default.
+
+Profile smoke binaries are `etl_avr_std_minimal_smoke.{elf,hex,map}` and
+`etl_avr_std_full_smoke.{elf,hex,map}`. Build a single profile with
+`cmake --build build-avr --target etl_avr_std_minimal_smoke_check` (or `full`).
+The check targets reject missing artifacts and maps containing `libstdc++`, `GLIBCXX`, or the
+opposite profile archive. CI retains all three artifacts for each of the 26 combinations.
+
+[Package/profile checks](tools/test_etlstd_profiles.py) cover build-tree and relocated install-tree
+consumption, multilib/archive diagnostics, incompatible flags and mixed-profile link failures.
+[Matrix checks](tools/check_avr_matrix.py) validate documentation and modeled devices and emit
+the matrix consumed by [CI](.github/workflows/ci.yml).
+
+Supported AVR devices
+---------------------
+
+The CI profile matrix is generated from `tools/avr_matrix.json`. Both profiles compile and link
+for every device below; `python3 tools/check_avr_matrix.py` checks this table against the matrix
+and ETL's device dispatcher. These are compile/link checks, without simulator execution.
+
+| Device | F_CPU |
+| --- | --- |
+| `atmega32u4` | `8000000UL` |
+| `atmega48a` | `8000000UL` |
+| `atmega48pa` | `8000000UL` |
+| `atmega88a` | `8000000UL` |
+| `atmega88pa` | `8000000UL` |
+| `atmega168a` | `8000000UL` |
+| `atmega168p` | `8000000UL` |
+| `atmega168pa` | `8000000UL` |
+| `atmega328` | `8000000UL` |
+| `atmega328p` | `16000000UL` |
+| `atmega644a` | `8000000UL` |
+| `atmega644p` | `8000000UL` |
+| `attiny84` | `8000000UL` |
+
 Using ETL in your own AVR project
 =================================
 

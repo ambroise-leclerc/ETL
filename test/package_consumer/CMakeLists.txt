@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.25)
+project(ETLStdConsumer LANGUAGES CXX)
+find_package(ETLStd 0.2 CONFIG REQUIRED)
+set(ETLSTD_TEST_TARGET ETL::StdMinimal CACHE STRING "ETLStd profile to consume")
+add_executable(consumer main.cpp)
+target_link_libraries(consumer PRIVATE ${ETLSTD_TEST_TARGET})
