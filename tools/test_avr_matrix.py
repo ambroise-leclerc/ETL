@@ -13,6 +13,7 @@ from check_avr_matrix import PROFILES, ROOT, check_artifacts, devices
 
 class MatrixChecks(unittest.TestCase):
     def test_supported_devices_and_both_profiles(self):
+        """The emitted CI entries cover the complete documented device/profile product."""
         rows = devices()
         self.assertEqual(len(rows), 13)
         expected = {(row['mcu'], row['f_cpu'], profile) for row in rows for profile in PROFILES}
@@ -24,6 +25,7 @@ class MatrixChecks(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_drift(self):
+        """Missing/duplicate devices, clock drift and documentation drift must fail."""
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             for name in ('tools/avr_matrix.json', 'include/etl/ioports.h', 'README.md'):
@@ -44,6 +46,7 @@ class MatrixChecks(unittest.TestCase):
                 devices(root)
 
     def test_artifact_checks(self):
+        """Missing outputs, missing profile identity and contamination must fail."""
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             for profile in PROFILES:
@@ -66,6 +69,26 @@ class MatrixChecks(unittest.TestCase):
                 (root / f'{name}.hex').unlink()
                 with self.assertRaisesRegex(ValueError, 'Missing or empty'):
                     check_artifacts(root, profile)
+
+    def test_cli_modes_and_standalone_artifacts(self):
+        """Artifact checking works without sources; ambiguous/irrelevant CLI options fail."""
+        script = ROOT / 'tools/check_avr_matrix.py'
+        for args in (('--profile', 'full'), ('--artifacts', '.', '--github'),
+                     ('--artifacts', '.', '--devices'), ('--artifacts', '.', '--github-regression')):
+            result = subprocess.run([sys.executable, str(script), *args], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 2, result.stderr)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            standalone = root / 'checker.py'
+            shutil.copyfile(script, standalone)
+            for profile in PROFILES:
+                for suffix in ('elf', 'hex', 'map'):
+                    (root / f'etl_avr_std_{profile}_smoke.{suffix}').write_text(
+                        f'libetlstd_{profile}.a __etl_profile_{profile}')
+            result = subprocess.run([sys.executable, str(standalone), '--artifacts', str(root)],
+                                    capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn('artifacts: OK', result.stdout)
 
 
 if __name__ == '__main__':

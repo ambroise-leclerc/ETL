@@ -11,6 +11,7 @@ PROFILES = ("minimal", "full")
 
 
 def devices(root=ROOT):
+    """Load the device manifest and reject drift from modeled and documented support."""
     rows = json.loads((root / "tools/avr_matrix.json").read_text())
     names = [row["mcu"] for row in rows]
     if not names or len(names) != len(set(names)):
@@ -32,6 +33,7 @@ def devices(root=ROOT):
 
 
 def check_artifacts(directory, profile):
+    """Inspect only ELF/HEX/map outputs; no source tree or device manifest is needed."""
     name = f"etl_avr_std_{profile}_smoke"
     for suffix in ("elf", "hex", "map"):
         path = directory / f"{name}.{suffix}"
@@ -47,19 +49,24 @@ def check_artifacts(directory, profile):
 
 
 def main():
+    """Dispatch mutually exclusive matrix-output and standalone artifact-check modes."""
     parser = argparse.ArgumentParser(description=__doc__)
     output = parser.add_mutually_exclusive_group()
     output.add_argument("--github", action="store_true", help="emit all device/profile pairs as a GitHub matrix")
     output.add_argument("--devices", action="store_true", help="emit MCU/F_CPU rows for legacy device checks")
     output.add_argument("--github-regression", action="store_true", help="emit the existing interrupt regression targets")
-    parser.add_argument("--artifacts", type=Path)
+    output.add_argument("--artifacts", type=Path)
     parser.add_argument("--profile", choices=PROFILES)
     args = parser.parse_args()
+    if args.profile and not args.artifacts:
+        parser.error("--profile requires --artifacts")
     try:
-        rows = devices()
         if args.artifacts:
             for profile in (args.profile,) if args.profile else PROFILES:
                 check_artifacts(args.artifacts, profile)
+            print("AVR profile artifacts: OK")
+            return
+        rows = devices()
         if args.github:
             print(json.dumps({"include": [dict(mcu=row["mcu"], f_cpu=row["f_cpu"], profile=profile)
                                           for row in rows for profile in PROFILES]}, separators=(",", ":")))

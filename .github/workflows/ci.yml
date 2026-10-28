@@ -85,24 +85,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache AVR toolchain
-        id: cache-toolchain
-        uses: actions/cache@v4
+      - name: Set up AVR toolchain
+        uses: ./.github/actions/setup-avr
         with:
-          path: toolchain
-          key: avr-toolchain-${{ matrix.toolchain.sha256 }}
-
-      - name: Download AVR toolchain
-        if: steps.cache-toolchain.outputs.cache-hit != 'true'
-        run: |
-          archive="${RUNNER_TEMP}/$(basename "${{ matrix.toolchain.url }}")"
-          curl -fsSL -o "${archive}" "${{ matrix.toolchain.url }}"
-          echo "${{ matrix.toolchain.sha256 }}  ${archive}" | sha256sum --check
-          mkdir -p toolchain
-          tar -xaf "${archive}" -C toolchain
-
-      - name: Add AVR toolchain to PATH
-        run: find "${PWD}/toolchain" -type f -name avr-g++ -printf '%h\n' | head -n 1 >> "${GITHUB_PATH}"
+          url: ${{ matrix.toolchain.url }}
+          sha256: ${{ matrix.toolchain.sha256 }}
 
       - name: Show AVR compiler
         run: avr-g++ --version | head -n 1
@@ -224,24 +211,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache AVR toolchain
-        id: cache-toolchain
-        uses: actions/cache@v4
+      - name: Set up AVR toolchain
+        uses: ./.github/actions/setup-avr
         with:
-          path: toolchain
-          key: avr-toolchain-${{ matrix.toolchain.sha256 }}
-
-      - name: Download AVR toolchain
-        if: steps.cache-toolchain.outputs.cache-hit != 'true'
-        run: |
-          archive="${RUNNER_TEMP}/$(basename "${{ matrix.toolchain.url }}")"
-          curl -fsSL -o "$archive" "${{ matrix.toolchain.url }}"
-          echo "${{ matrix.toolchain.sha256 }}  $archive" | sha256sum --check
-          mkdir -p toolchain
-          tar -xaf "$archive" -C toolchain
-
-      - name: Add AVR toolchain to PATH
-        run: find "$PWD/toolchain" -type f -name avr-g++ -printf '%h\n' | head -n 1 >> "$GITHUB_PATH"
+          url: ${{ matrix.toolchain.url }}
+          sha256: ${{ matrix.toolchain.sha256 }}
 
       - name: Configure profile smoke
         run: >
@@ -264,6 +238,7 @@ jobs:
             build-avr/etl_avr_std_${{ matrix.target.profile }}_smoke.hex
             build-avr/etl_avr_std_${{ matrix.target.profile }}_smoke.map
           if-no-files-found: error
+          retention-days: 14
 
   # Single required check for branch protection, independent of the matrix contents
   ci-ok:

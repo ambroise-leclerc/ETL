@@ -222,7 +222,9 @@ The check targets reject missing artifacts and maps containing `libstdc++`, `GLI
 opposite profile archive. Both `avr-smoke` and `avr-profiles` use the pinned toolchains from
 `tools/avr_toolchains.json`. CI builds all 26 combinations on **each** of modern-avr GCC 14.2,
 ZakKemble GCC 15.2 and 16.1 (78 combinations in total), retaining all three artifacts for each.
-Profile jobs share the toolchain cache and run at most six concurrently.
+Profile jobs share the toolchain cache and run at most six concurrently. Both AVR jobs install
+that toolchain through [the shared setup action](.github/actions/setup-avr/action.yml).
+Uploaded profile artifacts are retained for 14 days.
 
 [Package/profile checks](tools/test_etlstd_profiles.py) cover build-tree and relocated install-tree
 consumption with mixed C/C++ sources, flash/SRAM equivalence to unprofiled binaries,
@@ -237,6 +239,16 @@ Supported AVR devices
 The CI profile matrix is generated from `tools/avr_matrix.json`. Both profiles compile and link
 for every device below; `python3 tools/check_avr_matrix.py` checks this table against the matrix
 and ETL's device dispatcher. These are compile/link checks, without simulator execution.
+
+`ETL_BUILD_AVR_SMOKE=ON` accepts only the 13 modeled devices in this table; selecting an unlisted
+MCU (for example `atmega2560`) now fails at configuration time, even with an explicit clock.
+The matrix's default `F_CPU` is recomputed on every configure and is not cached. An explicit
+`-DETL_AVR_F_CPU=...` remains a persistent user override. Use `-UETL_AVR_F_CPU` to clear it;
+this also clears automatically cached defaults left by earlier revisions of this branch.
+
+Artifact checks (`--artifacts DIR [--profile minimal|full]`) inspect outputs without reading the
+manifest, README or device dispatcher. Matrix/documentation drift is checked separately by CI
+and CTest. Artifact checking and matrix-output options are mutually exclusive.
 
 | Device | F_CPU |
 | --- | --- |

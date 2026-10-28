@@ -100,6 +100,8 @@ if (ETL_BUILD_HOST_TESTS)
 
         find_package(Python3 COMPONENTS Interpreter)
         if (Python3_Interpreter_FOUND)
+            add_test(NAME avr-matrix-defaults
+                     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/test_avr_defaults.py)
             add_test(NAME avr-matrix-checker
                      COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/test_avr_matrix.py)
             add_test(NAME avr-matrix

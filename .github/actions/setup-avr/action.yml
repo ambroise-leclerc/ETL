@@ -1,0 +1,35 @@
+name: Set up pinned AVR toolchain
+description: Restore or download a checksum-verified AVR GCC toolchain and add it to PATH.
+inputs:
+  url:
+    description: Toolchain archive URL from the shared manifest.
+    required: true
+  sha256:
+    description: Expected SHA-256 checksum of the archive.
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Cache AVR toolchain
+      id: cache-toolchain
+      uses: actions/cache@v4
+      with:
+        path: toolchain
+        key: avr-toolchain-${{ inputs.sha256 }}
+
+    - name: Download AVR toolchain
+      shell: bash
+      if: steps.cache-toolchain.outputs.cache-hit != 'true'
+      env:
+        AVR_TOOLCHAIN_URL: ${{ inputs.url }}
+        AVR_TOOLCHAIN_SHA256: ${{ inputs.sha256 }}
+      run: |
+        archive="${RUNNER_TEMP}/$(basename "$AVR_TOOLCHAIN_URL")"
+        curl -fsSL -o "${archive}" "$AVR_TOOLCHAIN_URL"
+        echo "$AVR_TOOLCHAIN_SHA256  ${archive}" | sha256sum --check
+        mkdir -p toolchain
+        tar -xaf "${archive}" -C toolchain
+
+    - name: Add AVR toolchain to PATH
+      shell: bash
+      run: find "${PWD}/toolchain" -type f -name avr-g++ -printf '%h\n' | head -n 1 >> "${GITHUB_PATH}"

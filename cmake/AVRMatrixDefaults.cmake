@@ -15,5 +15,7 @@ if (NOT found)
     message(FATAL_ERROR "ETL_AVR_MCU=${ETL_AVR_MCU} is not in tools/avr_matrix.json.")
 endif()
 if (NOT DEFINED ETL_AVR_F_CPU)
-    set(ETL_AVR_F_CPU "${frequency}" CACHE STRING "F_CPU definition for AVR smoke builds")
+    # Recompute automatic defaults on every configure. Only an explicit -D override belongs
+    # in the cache, so selecting another MCU also selects its default clock.
+    set(ETL_AVR_F_CPU "${frequency}")
 endif()
