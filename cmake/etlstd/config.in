@@ -1,7 +1,7 @@
 #pragma once
 
 #define __ETL_HAS_EXCEPTIONS @ETL_PROFILE_EXCEPTIONS@
-#define __ETL_HAS_RTTI @ETL_PROFILE_EXCEPTIONS@
+#define __ETL_HAS_RTTI @ETL_PROFILE_RTTI@
 
 #if defined(__EXCEPTIONS) != __ETL_HAS_EXCEPTIONS
 #error "ETLStd profile conflicts with the compiler exception flags"
